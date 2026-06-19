@@ -1,0 +1,25 @@
+libs/frontend/_shared/data-access/src/lib/programs/programs.store.ts
+  s_2605065349ee29::t_bb29db3bde0de4 49,51
+  h_d5b6f744415839 1,50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "c197f98744286440d78e97ff65cc4691eba71fc1",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_2605065349ee29": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "b679a103-1c81-4306-b30d-a7e7d5cbdc2a",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
