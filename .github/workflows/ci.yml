@@ -3,6 +3,12 @@ name: Continuous Integration
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  # GitHub only shares caches downward from the default branch, and a cache
+  # saved on refs/pull/N/merge is invisible to every other PR. Without a run on
+  # main there is nothing for PRs to restore, so each one re-downloads the whole
+  # pnpm store. This run exists to seed that cache.
+  push:
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -20,9 +26,9 @@ env:
   POSTGRES_PASSWORD: postgres
   POSTGRES_DB: metro_atlanta_saves
   DATABASE_URL: postgresql://postgres:postgres@localhost:5432/metro_atlanta_saves?schema=public
-  # nx.json carries an nxCloudId. Without an access token Nx would try to reach
-  # Nx Cloud and fail the run, so opt out explicitly.
-  NX_NO_CLOUD: 'true'
+  # Authenticates against the workspace in nx.json's nxCloudId, enabling remote
+  # caching. Runs from forks get an empty value and fall back to local caching.
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_DAEMON: 'false'
 
 jobs:
