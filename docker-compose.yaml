@@ -24,10 +24,10 @@ services:
       retries: 10
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: backend
+    # Prebuilt by .github/workflows/publish.yml. No `build:` key here on
+    # purpose — it is what stops the deployment host from compiling the app.
+    # Use docker-compose.build.yaml to build locally.
+    image: ghcr.io/c4g/metro-atlanta-saves-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     depends_on:
       db:
@@ -68,10 +68,7 @@ services:
       start_period: 60s
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: frontend
+    image: ghcr.io/c4g/metro-atlanta-saves-frontend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
       SERVICE_FQDN_FRONTEND_4000: /
