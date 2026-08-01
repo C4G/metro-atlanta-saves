@@ -17,7 +17,7 @@ Then setup the application locally by running the following commands in order:
 ```
 pnpm install
 
-docker compose -f ./docker-compose.dev.yml up -d
+docker compose -f ./docker-compose.dev.yaml up -d
 
 pnpm exec nx run backend:prisma-migrate
 
@@ -134,7 +134,7 @@ Have a look at the [Nx Console extensions](https://nx.dev/nx-console). It provid
 ## Deployment
 
 Production runs on [Coolify](https://coolify.io) as a **single Docker Compose resource** defined by
-[`docker-compose.yml`](./docker-compose.yml): three services (`frontend`, `backend`, `db`)
+[`docker-compose.yaml`](./docker-compose.yaml): three services (`frontend`, `backend`, `db`)
 and three named volumes. Coolify redeploys on push to `main` and terminates TLS through Traefik.
 
 Both apps are built from the multi-stage [`Dockerfile`](./Dockerfile) at the repo root:
