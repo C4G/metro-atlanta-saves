@@ -1,0 +1,17 @@
+# Local build overlay. docker-compose.yaml deliberately references prebuilt
+# GHCR images so the deployment host never compiles the app; this file adds the
+# `build:` keys back for building the same images locally.
+#
+#   docker compose -f docker-compose.yaml -f docker-compose.build.yaml build
+#   docker compose -f docker-compose.yaml -f docker-compose.build.yaml up -d
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend

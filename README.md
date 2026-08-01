@@ -137,11 +137,20 @@ Production runs on [Coolify](https://coolify.io) as a **single Docker Compose re
 [`docker-compose.yaml`](./docker-compose.yaml): three services (`frontend`, `backend`, `db`)
 and three named volumes. Coolify redeploys on push to `main` and terminates TLS through Traefik.
 
-Both apps are built from the multi-stage [`Dockerfile`](./Dockerfile) at the repo root:
+Images are **not** built on the deployment host. [`.github/workflows/publish.yml`](./.github/workflows/publish.yml)
+builds both targets of the multi-stage [`Dockerfile`](./Dockerfile) on every push to `main` and pushes
+them to GHCR, and the compose file references those tags:
+
+- `ghcr.io/c4g/metro-atlanta-saves-backend:latest`
+- `ghcr.io/c4g/metro-atlanta-saves-frontend:latest`
+
+Both are also tagged with the commit SHA, so `IMAGE_TAG=<sha>` pins or rolls back a deploy.
+
+To build the same images locally, add the build overlay:
 
 ```sh
-docker compose build
-docker compose up -d
+docker compose -f docker-compose.yaml -f docker-compose.build.yaml build
+docker compose -f docker-compose.yaml -f docker-compose.build.yaml up -d
 ```
 
 Database migrations run automatically: the backend entrypoint
