@@ -1,0 +1,20 @@
+docs/data-migration.md
+  s_c5440ce8601a8b::t_621fb75440005a 240-242
+  s_c5440ce8601a8b::t_94c9e28e8bc0d4 251-269
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "6b8db24c98ea55890b31352f76ccdc5c7bcff559",
+  "prompts": {},
+  "sessions": {
+    "s_c5440ce8601a8b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a1a6c23b-64f4-473e-aa53-3463bad34633",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
