@@ -1,6 +1,4 @@
 name: Continuous Integration
-env:
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 on:
   pull_request:
@@ -10,131 +8,79 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  actions: read
+  contents: read
+
+env:
+  # Credentials for the throwaway Postgres service below. The database is
+  # created and destroyed with the job and is never reachable from outside the
+  # runner, so these are deliberately literals rather than repository secrets.
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: metro_atlanta_saves
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/metro_atlanta_saves?schema=public
+  # nx.json carries an nxCloudId. Without an access token Nx would try to reach
+  # Nx Cloud and fail the run, so opt out explicitly.
+  NX_NO_CLOUD: 'true'
+  NX_DAEMON: 'false'
+
 jobs:
   main:
-    runs-on: [self-hosted, ci]
+    runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: metro_atlanta_saves
+        ports:
+          - 5432:5432
+        # Replaces the manual pg_isready polling the self-hosted job needed:
+        # the job does not start until this reports healthy.
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
+      # Full history so `nx affected --base=origin/main` can diff.
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Connect your workspace on nx.app and uncomment this to enable task distribution.
-      # The "--stop-agents-after" is optional, but allows idle agents to shut down once the "e2e-ci" targets have been requested
-      # - run: pnpm exec nx-cloud start-ci-run --distribute-on="4 linux-small-js" --stop-agents-after="e2e-ci"
-
       - uses: pnpm/action-setup@v4
 
-      # Cache the pnpm store
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'pnpm'
 
-      - name: Build
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply migrations and seed
         run: |
-          # Generate random port for PostgreSQL first
-          while ! DATABASE_PORT=$(shuf -i 49152-65535 -n 1) || ss -tan | grep -q ":$DATABASE_PORT "; do :; done
-          echo "Generated DATABASE_PORT=$DATABASE_PORT"
+          pnpm exec nx run backend:prisma-generate
+          pnpm exec nx run backend:prisma-migrate
+          pnpm exec nx run backend:prisma-seed
 
-          # Create .env file with all variables
-          cat > .env << EOF
-          DATABASE_HOST=localhost
-          POSTGRES_USER=${POSTGRES_USER}
-          POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-          POSTGRES_DB=${POSTGRES_DB}
-          DATABASE_PORT=${DATABASE_PORT}
-          DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DATABASE_PORT}/${POSTGRES_DB}?schema=public
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          MAIL_HOST=${{ secrets.MAIL_HOST }}
-          MAIL_USER=${{ secrets.MAIL_USER }}
-          MAIL_PORT=${{ secrets.MAIL_PORT }}
-          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
-          MAIL_FROM=${{ secrets.MAIL_FROM }}
-          NX_CLOUD_ACCESS_TOKEN=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-          EOF
+      - name: Lint, build, test
+        run: pnpm exec nx affected -t lint,build,test --base=origin/main --head=HEAD --parallel=3 --configuration=production
 
-          # Export DATABASE_PORT and PR_NUMBER for docker-compose
-          export DATABASE_PORT=$DATABASE_PORT
-          export PR_NUMBER=${PR_NUMBER}
-
-          echo "----- Spinning up Database -----"
-          docker compose -f ./docker-compose.yml -p "pr-${PR_NUMBER}" up -d
-
-          echo "----- Installing Dependencies -----"
-          pnpm install --frozen-lockfile
-          # pnpm exec playwright install --with-deps
-
-          echo "Waiting for database to be ready..."
-          # Wait for PostgreSQL to be ready to accept connections
-          max_attempts=30
-          attempt=0
-          until docker compose -p "pr-${PR_NUMBER}" exec -T metro-db pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} > /dev/null 2>&1 || [ $attempt -eq $max_attempts ]; do
-            attempt=$((attempt + 1))
-            echo "Waiting for database... (attempt $attempt/$max_attempts)"
-            sleep 2
-          done
-
-          if [ $attempt -eq $max_attempts ]; then
-            echo "Database failed to start within expected time"
-            docker compose -p "pr-${PR_NUMBER}" logs metro-db
-            exit 1
-          fi
-
-          echo "Database is ready!"
-
-          echo "----- Prisma Commands -----"
-          pnpm nx run backend:prisma-generate
-          pnpm nx run backend:prisma-migrate
-          pnpm nx run backend:prisma-seed
-
-          echo "----- lint, build, test -----"
-          # echo "Using API PORT: $API_PORT, Frontend PORT: $FE_PORT, Database PORT: $DATABASE_PORT"
-          pnpm exec nx affected -t lint,build,test --base=origin/main --head=HEAD --parallel=5 --configuration=production
-
-          echo "----- running e2e tests -----"
-          # Export all necessary environment variables and set CI=true for configuration
-          # export CI=true
-          # export API_PORT=$API_PORT 
-          # export FE_PORT=$FE_PORT 
-          # export DATABASE_PORT=$DATABASE_PORT
-
-          # Show environment debug information
-          # echo "E2E Test Environment Configuration:"
-          # echo "API_PORT=$API_PORT"
-          # echo "FE_PORT=$FE_PORT"
-          # echo "DATABASE_PORT=$DATABASE_PORT"
-          # echo "DATABASE_URL=$DATABASE_URL"
-
-          # Generate dynamic proxy configuration
-          # echo "Generating proxy configuration..."
-          # node apps/frontend/generate-proxy.js
-
-          # Verify the generated proxy configuration
-          # echo "Generated proxy.conf.json content:"
-          # cat apps/frontend/proxy.conf.json
-
-          # Run with browser headed=false mode to ensure they run in headless mode for CI
-          # echo "Starting e2e tests with debug flags..."
-          # DEBUG=pw:api,pw:browser,pw:webserver,pw:test PLAYWRIGHT_BROWSERS_PATH=0 PWDEBUG=console pnpm exec nx affected -t e2e --base=origin/main --head=HEAD --configuration=production --verbose
-
-      - name: Clean up
-        if: always()
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "Cleaning up Docker resources for PR ${PR_NUMBER}..."
-          # Stop and remove Docker containers and volumes
-          docker compose -p "pr-${PR_NUMBER}" -f ./docker-compose.yml down --volumes --remove-orphans
-
-          # Clean up workspace
-          echo "Cleaning up workspace files..."
-          rm -rf ${{ github.workspace }}/*
-          rm -rf ${{ github.workspace }}/.* 2>/dev/null || true
-          echo "Cleanup complete"
+      # E2E is not wired up yet. Enabling it needs a browser install plus the
+      # runtime variables the app reads at boot — JWT_SECRET (required, the API
+      # throws without it) and API_PORT / FE_PORT:
+      #
+      # - name: Install Playwright browsers
+      #   run: pnpm exec playwright install --with-deps
+      # - name: E2E
+      #   env:
+      #     JWT_SECRET: ci-only-not-a-real-secret
+      #     API_PORT: 3000
+      #     FE_PORT: 4200
+      #   run: pnpm exec nx affected -t e2e --base=origin/main --head=HEAD --configuration=production
