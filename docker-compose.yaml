@@ -33,6 +33,11 @@ services:
       db:
         condition: service_healthy
     environment:
+      # Publishes this service at <fqdn>/api. NOTE: because the path is not "/",
+      # Coolify also generates a Traefik stripprefix middleware that removes
+      # "/api" before forwarding — which breaks NestJS, whose setGlobalPrefix('api')
+      # expects it. "Strip Prefixes" must be OFF in the application's
+      # Configuration -> Advanced tab. See the Routing section of README.md.
       SERVICE_FQDN_BACKEND_3000: /api
       NODE_ENV: production
       API_PORT: 3000

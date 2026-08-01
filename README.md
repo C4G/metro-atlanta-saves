@@ -163,6 +163,21 @@ The frontend and API **must stay on one origin** — the Angular client calls ro
 `/api/...` paths, and the auth cookie is written with `path=/` and no domain, then forwarded
 by the SSR interceptor. Traefik routes `/api` to the backend and everything else to the frontend.
 
+**"Strip Prefixes" must be disabled** in the application's *Configuration → Advanced* tab.
+Because the backend is published on a non-root path (`SERVICE_FQDN_BACKEND_3000: /api`),
+Coolify otherwise generates a Traefik `stripprefix` middleware that removes `/api` before
+forwarding, while NestJS's `setGlobalPrefix('api')` expects it — so every API call returns a
+NestJS 404 (`{"message":"Cannot GET /health", ...}`). This is a per-application setting stored
+in Coolify, not in this repo, so **it must be re-applied if the resource is ever recreated.**
+
+The container healthcheck will not catch this: it requests `localhost:3000/api/health` from
+inside the container, bypassing Traefik entirely, so the deployment goes green with a fully
+broken API. Verify from outside instead:
+
+```sh
+curl -s -o /dev/null -w '%{http_code}\n' https://<domain>/api/health   # expect 200
+```
+
 ### Uploads
 
 User uploads live on volumes rather than in the image, split along a public/private line:
