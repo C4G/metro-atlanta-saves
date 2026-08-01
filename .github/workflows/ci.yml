@@ -3,6 +3,12 @@ name: Continuous Integration
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  # GitHub only shares caches downward from the default branch, and a cache
+  # saved on refs/pull/N/merge is invisible to every other PR. Without a run on
+  # main there is nothing for PRs to restore, so each one re-downloads the whole
+  # pnpm store. This run exists to seed that cache.
+  push:
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
