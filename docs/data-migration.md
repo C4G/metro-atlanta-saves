@@ -237,8 +237,9 @@ Each of these has a distinct failure mode, so check all of them.
 |---|---|---|
 | API is up | `curl -s https://metro-atlanta-saves.c4g.dev/api/health` → `{"status":"ok"}` | see the Routing section in the README |
 | Real login works | Sign in as a known production user | argon2 hashes did not restore |
-| Legacy image rows resolve | `GET /api/images/<id>` for a pre-migration row, as its owner | `UPLOAD_DIR` join is wrong, or files went to the wrong volume |
-| Private files are not public | `GET /images/<uuid>.png` with no token → **404** | the old unauthenticated static mount came back |
+| Every image row has a file | cross-check `SELECT path FROM images` against `find images -type f` on `mas-private` — the difference must be empty | `UPLOAD_DIR` join is wrong, or files went to the wrong volume |
+| Legacy image rows resolve | `GET /api/images/<id>` for a pre-migration row, as its owner | same as above, but confirms it end to end |
+| Private files are not public | `GET /images/<uuid>.jpg` with no token — check the **content type**, not the status | see below |
 | Cross-user access is refused | Request another user's image id as a non-admin → **403** | the ownership check on `GET /api/images/:id` is not active |
 | Public assets render | Load the home page; logo and hero images appear | `mas-assets` not mounted, or restored to the wrong root |
 | sharp variants exist | `GET /api/description/logo/<name>-406w.<ext>` → 200 | resize outputs were not in the copied tree |
@@ -246,6 +247,25 @@ Each of these has a distinct failure mode, so check all of them.
 
 That last row is the one worth not skipping. If a volume is misconfigured
 everything passes on the first deploy and the data disappears on the second.
+
+### Checking "private files are not public" correctly
+
+A private path returns **200, not 404** — the Angular SSR catch-all renders the
+app shell for any unmatched route. Status code alone tells you nothing here.
+Compare the content type and size against a known-good asset and a path that
+certainly does not exist:
+
+```sh
+B=https://metro-atlanta-saves.c4g.dev
+for u in "/images/<uuid>.jpg" "/assets/logo/<logo>.webp" "/definitely-not-real"; do
+  printf '%-44s ' "$u"
+  curl -s -o /tmp/b -w '%{content_type} %{size_download}\n' "$B$u"
+done
+```
+
+The private path must come back as `text/html` at roughly the same size as the
+nonsense path — that is the SPA shell, meaning nothing was served. If it returns
+an `image/*` content type, the file is genuinely exposed.
 
 ## What does not come across
 
