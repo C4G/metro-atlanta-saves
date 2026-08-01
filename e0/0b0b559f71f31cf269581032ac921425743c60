@@ -1,0 +1,2009 @@
+apps/e2e/playwright.config.ts
+  s_3c524d9508a5c0::t_c44e3fb212dfd4 1-77
+libs/backend/description/src/lib/description.controller.ts
+  s_c5440ce8601a8b::t_cadd9901d29c25 1-99
+libs/backend/introduction/src/lib/introduction.controller.ts
+  s_c5440ce8601a8b::t_702c2f09028c25 1-99
+libs/frontend/_shared/components/src/lib/searchable-dropdown/searchable-dropdown.component.ts
+  s_c5440ce8601a8b::t_94d934ad698cfa 1-122
+libs/frontend/about-us/src/lib/about-us.component.ts
+  s_c5440ce8601a8b::t_29b826f2075c3e 1-88
+libs/frontend/admin/src/lib/blogs/ui/add-blog/add-blog.component.ts
+  s_c5440ce8601a8b::t_31c45d551b03ae 1-109
+libs/frontend/admin/src/lib/education-management/educational-categories/educational-categories.component.ts
+  s_c5440ce8601a8b::t_35c2dae8112e82 1-50
+libs/frontend/admin/src/lib/education-management/educational-categories/ui/category-actions/category-actions.component.ts
+  s_c5440ce8601a8b::t_8495a583ac7fc5 1-77
+libs/frontend/admin/src/lib/education-management/educational-content/ui/content-actions/content-actions.component.ts
+  s_c5440ce8601a8b::t_927ce94c36269e 1-77
+libs/frontend/admin/src/lib/home-management/learnings/ui/add-learning/add-learning.component.ts
+  s_c5440ce8601a8b::t_00826dc334a9c3 1-114
+libs/frontend/admin/src/lib/home-management/stories/ui/add-story/add-story.component.ts
+  s_c5440ce8601a8b::t_46128bde2b9d85 1-133
+libs/frontend/admin/src/lib/partners/partners.component.ts
+  s_c5440ce8601a8b::t_eeff3647b88db3 1-69
+libs/frontend/admin/src/lib/partners/ui/add-partner/add-partner.component.ts
+  s_c5440ce8601a8b::t_786d39137f9535 1-125
+libs/frontend/admin/src/lib/partners/ui/partner-actions/partner-actions.component.ts
+  s_c5440ce8601a8b::t_a86edba8fb0589 1-76
+libs/frontend/admin/src/lib/user-guide/user-guide.component.ts
+  s_c5440ce8601a8b::t_d2e74b904c09a2 1-76
+libs/frontend/admin/src/lib/users/ui/partner-name/partner-name.component.ts
+  s_c5440ce8601a8b::t_bde520e178158e 1-30
+libs/frontend/login/src/lib/login.component.ts
+  s_c5440ce8601a8b::t_32f41a1e0b8393 1-88
+libs/frontend/partner-staff/src/lib/program/cohort-percentage-completion/cohort-percentage-completion.component.ts
+  s_c5440ce8601a8b::t_c02f08390c7665 1-124
+libs/frontend/partner-staff/src/lib/program/requirements/requirements.component.ts
+  s_c5440ce8601a8b::t_0bf5a7daa0e087 1-82
+libs/frontend/partner-staff/src/lib/program/requirements/ui/add-requirement/add-requirement.component.ts
+  s_c5440ce8601a8b::t_cb78fff4fcfe8e 1-93
+libs/frontend/partner-staff/src/lib/programs/programs.component.ts
+  s_c5440ce8601a8b::t_67346639e22fd6 1-102
+libs/frontend/partner-staff/src/lib/programs/ui/program-actions/clone-dialog/clone-dialog.component.ts
+  s_c5440ce8601a8b::t_f625b06e4269da 1-78
+libs/frontend/program-profiles/src/lib/course-progress/course-progress.component.ts
+  s_c5440ce8601a8b::t_79f20741a047ba 1-48
+libs/frontend/program-profiles/src/lib/program-profile/program-profile.component.ts
+  s_c5440ce8601a8b::t_cc18287eaf4012 1-106
+libs/frontend/user-guide/src/lib/user-guide/user-guide.component.ts
+  s_c5440ce8601a8b::t_ea798d603f990b 1-25
+pnpm-lock.yaml
+  s_3c524d9508a5c0::t_c6024ec8504704 1-21486
+.dockerignore
+  s_c5440ce8601a8b::t_045970d1a10b6a 1-31
+.env.example
+  s_c5440ce8601a8b::t_8038a80b0e416f 1-34
+.github/workflows/ci.yml
+  s_3c524d9508a5c0::t_1cc924ead6016c 1-140
+.gitignore
+  s_c5440ce8601a8b::t_e9f06b9fde8176 1-58
+.husky/pre-commit
+  s_3c524d9508a5c0::t_2536f205396a11 1
+Dockerfile
+  s_c5440ce8601a8b::t_3a91934bc5f6e0 1-77
+README.md
+  s_c5440ce8601a8b::t_35254132703d0b 1-207
+apps/backend/src/app/app.module.ts
+  s_c5440ce8601a8b::t_22a888fe2eddef 1-68
+apps/backend/src/app/health.controller.ts
+  s_c5440ce8601a8b::t_6c09b94d64cba5 1-15
+apps/backend/src/main.ts
+  s_c5440ce8601a8b::t_2b218f785ec0a6 1-43
+apps/frontend/server.ts
+  s_c5440ce8601a8b::t_f6f38baa169561 1-72
+docker-compose.prod.yml
+  s_c5440ce8601a8b::t_55c865277be32f 1-101
+docker/backend-entrypoint.sh
+  s_c5440ce8601a8b::t_3e45c68ace07e2 1-9
+libs/backend/cohorts/src/lib/cohorts.controller.ts
+  s_c5440ce8601a8b::t_dcf496ed510d8f 1-126
+libs/backend/cohorts/src/lib/cohorts.service.ts
+  s_c5440ce8601a8b::t_69af92d937dc9e 1-71
+libs/backend/discussion/src/lib/discussion.controller.ts
+  s_c5440ce8601a8b::t_7646543e6d8cb4 1-172
+libs/backend/educational-content/src/lib/educational-content.controller.ts
+  s_c5440ce8601a8b::t_d7e457abddfcfa 1-162
+libs/backend/educational-content/src/lib/educational-content.service.ts
+  s_c5440ce8601a8b::t_aa68fc60f04793 1-310
+libs/backend/images/src/lib/images.controller.ts
+  s_c5440ce8601a8b::t_ebf027a92b070f 1-221
+libs/backend/images/src/lib/images.service.ts
+  s_c5440ce8601a8b::t_e2110a35d67543 1-119
+libs/backend/shared/src/lib/util/index.ts
+  s_c5440ce8601a8b::t_8863c47228d4c0 1-15
+libs/backend/shared/src/lib/util/upload-paths.ts
+  s_c5440ce8601a8b::t_411f73901d75b9 1-52
+libs/backend/stories/src/lib/stories.controller.ts
+  s_c5440ce8601a8b::t_d92620beeed44c 1-126
+libs/backend/stories/src/lib/stories.service.ts
+  s_c5440ce8601a8b::t_0c9988600812f3 1-71
+package.json
+  s_3c524d9508a5c0::t_44422c9e2a6de4 1-154
+pnpm-workspace.yaml
+  s_3c524d9508a5c0::t_7766229ad2576d 1-33
+.editorconfig
+  s_3c524d9508a5c0::t_3e317df4faea6f 1-13
+.lintstagedrc.json
+  s_3c524d9508a5c0::t_1e83592d9d8480 1-5
+.prettierignore
+  s_3c524d9508a5c0::t_944708b5e845d1 1-6
+.prettierrc
+  s_3c524d9508a5c0::t_063d643c30f01d 1-5
+.vscode/extensions.json
+  s_3c524d9508a5c0::t_d55fd521f6a5db 1-13
+.vscode/settings.json
+  s_3c524d9508a5c0::t_73669150cc4be7 1-3
+apps/backend/eslint.config.js
+  s_3c524d9508a5c0::t_d4b5c567906e3d 1-5
+apps/backend/jest.config.ts
+  s_3c524d9508a5c0::t_6663ee81ba25fe 1-11
+apps/backend/prisma/migrations/20240224163537_dev/migration.sql
+  s_3c524d9508a5c0::t_6295eabeda1dbb 1-39
+apps/backend/prisma/migrations/20240227220323_dev/migration.sql
+  s_3c524d9508a5c0::t_67d4a32ff9267d 1-39
+apps/backend/prisma/migrations/20240228051131_dev/migration.sql
+  s_3c524d9508a5c0::t_3c2808af6fbe66 1-2
+apps/backend/prisma/migrations/20240306025902_dev/migration.sql
+  s_3c524d9508a5c0::t_3768cae5b14def 1-24
+apps/backend/prisma/migrations/20240307033445_dev/migration.sql
+  s_3c524d9508a5c0::t_6db9c823f65c95 1-112
+apps/backend/prisma/migrations/20240322035556_dev/migration.sql
+  s_3c524d9508a5c0::t_f6f6f6ffb4ca7d 1-15
+apps/backend/prisma/migrations/20240324205917_dev/migration.sql
+  s_3c524d9508a5c0::t_4fea92bde1d17b 1-6
+apps/backend/prisma/migrations/20240329021001_dev/migration.sql
+  s_3c524d9508a5c0::t_6fc19ae4406f08 1-12
+apps/backend/prisma/migrations/20240401030057_dev/migration.sql
+  s_3c524d9508a5c0::t_5d61a74136afc4 1-2
+apps/backend/prisma/migrations/20240403025848_dev/migration.sql
+  s_3c524d9508a5c0::t_a2806eb47f5522 1-11
+apps/backend/prisma/migrations/20240407004101_dev/migration.sql
+  s_3c524d9508a5c0::t_76dea299504ff4 1-11
+apps/backend/prisma/migrations/20240412013322_dev/migration.sql
+  s_3c524d9508a5c0::t_b73ed054b16ff2 1-11
+apps/backend/prisma/migrations/20240419223714_dev/migration.sql
+  s_3c524d9508a5c0::t_b4419f7828fb41 1-12
+apps/backend/prisma/migrations/20240421011111_dev/migration.sql
+  s_3c524d9508a5c0::t_caf9ace7ab9f23 1-10
+apps/backend/prisma/migrations/20240422032140_dev/migration.sql
+  s_3c524d9508a5c0::t_46930cffc373a2 1-3
+apps/backend/prisma/migrations/20240422081236_dev/migration.sql
+  s_3c524d9508a5c0::t_d982a51c93ffb7 1-5
+apps/backend/prisma/migrations/20240428024248_dev/migration.sql
+  s_3c524d9508a5c0::t_f687e28219ef30 1-42
+apps/backend/prisma/migrations/20240607173729_dev/migration.sql
+  s_3c524d9508a5c0::t_69485a6ea60e32 1-2
+apps/backend/prisma/migrations/20240829021007_dev/migration.sql
+  s_3c524d9508a5c0::t_9155aba298463e 1-7
+apps/backend/prisma/migrations/20240915015513_dev/migration.sql
+  s_3c524d9508a5c0::t_aeab37ff398901 1-28
+apps/backend/prisma/migrations/20240919023639_dev/migration.sql
+  s_3c524d9508a5c0::t_1fdec7bb8640d4 1-3
+apps/backend/prisma/migrations/20241001030419_dev/migration.sql
+  s_3c524d9508a5c0::t_c4ce339c201a08 1-20
+apps/backend/prisma/migrations/20241028014903_dev/migration.sql
+  s_3c524d9508a5c0::t_7d312f8fef0d8a 1-8
+apps/backend/prisma/migrations/20241102043315_dev/migration.sql
+  s_3c524d9508a5c0::t_3263425316270a 1-36
+apps/backend/prisma/migrations/20241103040615_dev/migration.sql
+  s_3c524d9508a5c0::t_ba660f3d56fb37 1-2
+apps/backend/prisma/migrations/20241127042353_dev/migration.sql
+  s_3c524d9508a5c0::t_36a2d940f1539a 1-2
+apps/backend/prisma/migrations/20241209025205_dev/migration.sql
+  s_3c524d9508a5c0::t_9e4a41bb670fdc 1-5
+apps/backend/prisma/migrations/20241217032637_dev/migration.sql
+  s_3c524d9508a5c0::t_81de476163b6a1 1-2
+apps/backend/prisma/migrations/20250212004158_dev/migration.sql
+  s_3c524d9508a5c0::t_5a5e5cbc2ec584 1-9
+apps/backend/prisma/migrations/20250214013803_dev/migration.sql
+  s_3c524d9508a5c0::t_0687f915f5d4f3 1-37
+apps/backend/prisma/migrations/20250223000612_dev/migration.sql
+  s_3c524d9508a5c0::t_a551a2267629f9 1-3
+apps/backend/prisma/migrations/20250302180610_dev/migration.sql
+  s_3c524d9508a5c0::t_3c46fbad497f03 1-5
+apps/backend/prisma/migrations/20250318171226_dev/migration.sql
+  s_3c524d9508a5c0::t_129df7ea4d3aff 1-20
+apps/backend/prisma/migrations/20250331000145_dev/migration.sql
+  s_3c524d9508a5c0::t_b784b5ee700eed 1-8
+apps/backend/prisma/migrations/20250418173725_dev/migration.sql
+  s_3c524d9508a5c0::t_faa65ca7f80a42 1-5
+apps/backend/prisma/migrations/20251024212311_dev/migration.sql
+  s_3c524d9508a5c0::t_23595780b4c1f8 1-5
+apps/backend/prisma/migrations/20260127044811_dev/migration.sql
+  s_3c524d9508a5c0::t_2e862fef70fd76 1-30
+apps/backend/prisma/migrations/20260218031051_dev/migration.sql
+  s_3c524d9508a5c0::t_2dfb23836447be 1-15
+apps/backend/prisma/migrations/20260228014159_dev/migration.sql
+  s_3c524d9508a5c0::t_4485cd7b4f6338 1-9
+apps/backend/prisma/migrations/20260307000000_dev/migration.sql
+  s_3c524d9508a5c0::t_9e0b60dd110b18 1-12
+apps/backend/prisma/migrations/20260307175807_dev/migration.sql
+  s_3c524d9508a5c0::t_69160eb8649dd1 1-2
+apps/backend/prisma/migrations/20260317000100_dev/migration.sql
+  s_3c524d9508a5c0::t_aac4705810f2d7 1-35
+apps/backend/prisma/migrations/20260318204137_dev/migration.sql
+  s_3c524d9508a5c0::t_4f66954776fea6 1-29
+apps/backend/prisma/migrations/20260319185309_add_discussion_tags/migration.sql
+  s_3c524d9508a5c0::t_038c444a9b2946 1-24
+apps/backend/prisma/migrations/20260319195416_add_color_to_discussion_tags/migration.sql
+  s_3c524d9508a5c0::t_61476c66a5f1cc 1-2
+apps/backend/prisma/migrations/20260319221234_add_is_announcement_field/migration.sql
+  s_3c524d9508a5c0::t_68aae28a815fe8 1-5
+apps/backend/prisma/migrations/20260319223005_add_is_pinned_field/migration.sql
+  s_3c524d9508a5c0::t_64c3751cc5f05b 1-5
+apps/backend/prisma/migrations/20260326024140_add_comment_replies/migration.sql
+  s_3c524d9508a5c0::t_3f59ebeeb16618 1-8
+apps/backend/prisma/migrations/20260326052248_add_discussion_boards/migration.sql
+  s_3c524d9508a5c0::t_c5e17b231c5651 1-77
+apps/backend/prisma/migrations/20260327164130_add_comment_votes/migration.sql
+  s_3c524d9508a5c0::t_014b6792c924eb 1-32
+apps/backend/prisma/migrations/20260403000000_seed_template_programs/migration.sql
+  s_3c524d9508a5c0::t_3eb648b5af995c 1-21
+apps/backend/prisma/migrations/20260412194604_add_push_subscriptions/migration.sql
+  s_3c524d9508a5c0::t_b60aa97f7a79c5 1-17
+apps/backend/prisma/migrations/20260417202320_add_is_admin_to_board_member/migration.sql
+  s_3c524d9508a5c0::t_b7a89a0296e13b 1-2
+apps/backend/prisma/migrations/20260417224508_dev/migration.sql
+  s_3c524d9508a5c0::t_8f9b438176d457 1-11
+apps/backend/prisma/migrations/20260424000000_add_hidden_fields/migration.sql
+  s_3c524d9508a5c0::t_b0c630207a0bbf 1-17
+apps/backend/prisma/migrations/migration_lock.toml
+  s_3c524d9508a5c0::t_c8f0db9c1fe1d2 1-3
+apps/backend/prisma/schema.prisma
+  s_3c524d9508a5c0::t_8477c7a525ddbd 1-484
+apps/backend/prisma/seed/data/allies-on-programs.ts
+  s_3c524d9508a5c0::t_34186e3a939786 1-31
+apps/backend/prisma/seed/data/blogs.ts
+  s_3c524d9508a5c0::t_2d6f4cf2d5e5c6 1-36
+apps/backend/prisma/seed/data/checkpoint-names.ts
+  s_3c524d9508a5c0::t_6c3be50a095674 1-57
+apps/backend/prisma/seed/data/cohorts.ts
+  s_3c524d9508a5c0::t_6e1b315356ceb0 1-22
+apps/backend/prisma/seed/data/contents-on-categories.ts
+  s_3c524d9508a5c0::t_590f09cdc7367d 1-41
+apps/backend/prisma/seed/data/description.ts
+  s_3c524d9508a5c0::t_e6037184ff3ac0 1-31
+apps/backend/prisma/seed/data/discussion-tags.ts
+  s_3c524d9508a5c0::t_80240c1b8f6cad 1-41
+apps/backend/prisma/seed/data/educational-category.ts
+  s_3c524d9508a5c0::t_712e0d6293708f 1-16
+apps/backend/prisma/seed/data/educational-content.ts
+  s_3c524d9508a5c0::t_d524140b349c8b 1-31
+apps/backend/prisma/seed/data/first-partner.ts
+  s_3c524d9508a5c0::t_805cefa9fbb2b7 1-36
+apps/backend/prisma/seed/data/first-program.ts
+  s_3c524d9508a5c0::t_5f5722efa69ddd 1-52
+apps/backend/prisma/seed/data/first-requirements.ts
+  s_3c524d9508a5c0::t_1e1cfea51716da 1-30
+apps/backend/prisma/seed/data/index.ts
+  s_3c524d9508a5c0::t_aa8e99021e7b20 1-22
+apps/backend/prisma/seed/data/introduction.ts
+  s_3c524d9508a5c0::t_67f4fda2e46508 1-22
+apps/backend/prisma/seed/data/learnings.ts
+  s_3c524d9508a5c0::t_ba78a1251502fc 1-56
+apps/backend/prisma/seed/data/notification-config.ts
+  s_3c524d9508a5c0::t_7daa8ca9e1de87 1-25
+apps/backend/prisma/seed/data/peer-evaluation-guide.ts
+  s_3c524d9508a5c0::t_675db691e485dc 1-35
+apps/backend/prisma/seed/data/stories.ts
+  s_3c524d9508a5c0::t_78a425d3c461fa 1-29
+apps/backend/prisma/seed/data/user-checkpoints.ts
+  s_3c524d9508a5c0::t_1124fabefaacb2 1-39
+apps/backend/prisma/seed/data/user-guide.ts
+  s_3c524d9508a5c0::t_67e87f7308e539 1-69
+apps/backend/prisma/seed/data/user-into-program.ts
+  s_3c524d9508a5c0::t_cca0f74c3b8681 1-31
+apps/backend/prisma/seed/data/users.ts
+  s_3c524d9508a5c0::t_1e46ff03da62c2 1-47
+apps/backend/prisma/seed/data/what-we-are.ts
+  s_3c524d9508a5c0::t_1ced4b0c3dd421 1-23
+apps/backend/prisma/seed/seed.ts
+  s_3c524d9508a5c0::t_9cd7a9dc472f55 1-64
+apps/backend/project.json
+  s_3c524d9508a5c0::t_8876f2d62369d7 1-95
+apps/backend/src/assets/templates/account-created.hbs
+  s_3c524d9508a5c0::t_a96f5ae188110d 1-16
+apps/backend/src/assets/templates/checkpoint-image-changed.hbs
+  s_3c524d9508a5c0::t_944b8850423f58 1-25
+apps/backend/src/assets/templates/forgot-password.hbs
+  s_3c524d9508a5c0::t_74eeb69337ef12 1-16
+apps/backend/src/assets/templates/new-educational-content.hbs
+  s_3c524d9508a5c0::t_5d9a595f8f84b5 1-11
+apps/backend/src/assets/templates/user-image-added.hbs
+  s_3c524d9508a5c0::t_78cf826d7cd922 1-16
+apps/backend/tsconfig.app.json
+  s_3c524d9508a5c0::t_ffc0b1a855d85f 1-10
+apps/backend/tsconfig.json
+  s_3c524d9508a5c0::t_bbe377179d8a3a 1-17
+apps/backend/tsconfig.spec.json
+  s_3c524d9508a5c0::t_843a9aa7c9747d 1-9
+apps/backend/webpack.config.js
+  s_3c524d9508a5c0::t_53f40a5f94d30c 1-19
+apps/e2e/eslint.config.js
+  s_3c524d9508a5c0::t_75c5d76dbde152 1-21
+apps/e2e/project.json
+  s_3c524d9508a5c0::t_ee4b858feb760f 1-7
+apps/e2e/tsconfig.json
+  s_3c524d9508a5c0::t_4fb576d42003b6 1-17
+apps/frontend/eslint.config.js
+  s_3c524d9508a5c0::t_0d33691c206a7b 1-44
+apps/frontend/generate-proxy.js
+  s_3c524d9508a5c0::t_cc0da399bdf640 1-19
+apps/frontend/jest.config.ts
+  s_3c524d9508a5c0::t_646071ed4042f4 1-22
+apps/frontend/ngsw-config.json
+  s_3c524d9508a5c0::t_3e502a9ca279ca 1-34
+apps/frontend/project.json
+  s_3c524d9508a5c0::t_01905933ee4563 1-87
+apps/frontend/proxy.conf.json
+  s_3c524d9508a5c0::t_f137810758c235 1-6
+apps/frontend/src/app/app.component.ts
+  s_3c524d9508a5c0::t_e3b357f79d52d1 1-17
+apps/frontend/src/app/app.config.server.ts
+  s_3c524d9508a5c0::t_5b5e81810307a0 1-10
+apps/frontend/src/app/app.config.ts
+  s_3c524d9508a5c0::t_0bff2906b65024 1-48
+apps/frontend/src/app/app.routes.server.ts
+  s_3c524d9508a5c0::t_e54975a217ffee 1-8
+apps/frontend/src/app/app.routes.ts
+  s_3c524d9508a5c0::t_5f02f1e5bad41a 1-186
+apps/frontend/src/app/discussion-board-forum.component.ts
+  s_3c524d9508a5c0::t_a62e178c37121a 1-3278
+apps/frontend/src/app/discussion-boards-dashboard.component.ts
+  s_3c524d9508a5c0::t_adc200737579b9 1-1602
+apps/frontend/src/app/rich-text-editor.component.ts
+  s_3c524d9508a5c0::t_496d1046aae6a0 1-678
+apps/frontend/src/index.html
+  s_3c524d9508a5c0::t_e0490ff4e21962 1-23
+apps/frontend/src/main.server.ts
+  s_3c524d9508a5c0::t_a2584bf3bf0c09 1-7
+apps/frontend/src/main.ts
+  s_3c524d9508a5c0::t_91bce4574c9bdb 1-5
+apps/frontend/src/manifest.json
+  s_3c524d9508a5c0::t_1cd8696acce88c 1-167
+apps/frontend/src/styles.scss
+  s_3c524d9508a5c0::t_a93434ecf0b43a 1-238
+apps/frontend/src/sw.js
+  s_3c524d9508a5c0::t_043e1221bb91e0 1-25
+apps/frontend/src/test-setup.ts
+  s_3c524d9508a5c0::t_943370a028725b 1-3
+apps/frontend/tailwind.config.js
+  s_3c524d9508a5c0::t_5e7a3bae17965b 1-11
+apps/frontend/tsconfig.app.json
+  s_3c524d9508a5c0::t_7bc77627ea317e 1-11
+apps/frontend/tsconfig.editor.json
+  s_3c524d9508a5c0::t_ec04237defa84c 1-7
+apps/frontend/tsconfig.json
+  s_3c524d9508a5c0::t_d80617f940cd68 1-21
+apps/frontend/tsconfig.spec.json
+  s_3c524d9508a5c0::t_afde5dc809f73a 1-12
+docker-compose.yml
+  s_3c524d9508a5c0::t_c45a6dfe01e825 1-13
+eslint.config.js
+  s_3c524d9508a5c0::t_078ec5ace5fb79 1-72
+jest.config.ts
+  s_3c524d9508a5c0::t_35f1f80035608d 1-5
+jest.preset.js
+  s_3c524d9508a5c0::t_c216ea633e9ee7 1-3
+libs/backend/allies-on-programs/README.md
+  s_3c524d9508a5c0::t_9e2f640d26cb5a 1-11
+libs/backend/allies-on-programs/eslint.config.js
+  s_3c524d9508a5c0::t_7b28088bae643e 1-5
+libs/backend/allies-on-programs/jest.config.ts
+  s_3c524d9508a5c0::t_87e1c3c8786799 1-11
+libs/backend/allies-on-programs/package.json
+  s_3c524d9508a5c0::t_64bce2dee74d50 1-7
+libs/backend/allies-on-programs/project.json
+  s_3c524d9508a5c0::t_292a794a49386a 1-20
+libs/backend/allies-on-programs/src/index.ts
+  s_3c524d9508a5c0::t_a45ade8bf1b41f 1-2
+libs/backend/allies-on-programs/src/lib/allies-on-programs.controller.ts
+  s_3c524d9508a5c0::t_552e8e953484d9 1-58
+libs/backend/allies-on-programs/src/lib/allies-on-programs.module.ts
+  s_3c524d9508a5c0::t_0cde1bf39866b7 1-12
+libs/backend/allies-on-programs/src/lib/allies-on-programs.service.ts
+  s_3c524d9508a5c0::t_5f4653be420cf4 1-147
+libs/backend/allies-on-programs/src/lib/dto/create-allies-on-programs.dto.ts
+  s_3c524d9508a5c0::t_7adfdb59a7b205 1-22
+libs/backend/allies-on-programs/tsconfig.json
+  s_3c524d9508a5c0::t_e10daa16f94cc4 1-13
+libs/backend/allies-on-programs/tsconfig.lib.json
+  s_3c524d9508a5c0::t_9bcba70c5acff2 1-11
+libs/backend/allies-on-programs/tsconfig.spec.json
+  s_3c524d9508a5c0::t_7c33b980fa27ad 1-9
+libs/backend/auth/README.md
+  s_3c524d9508a5c0::t_d430cb685bd559 1-11
+libs/backend/auth/eslint.config.js
+  s_3c524d9508a5c0::t_bc109212b87642 1-5
+libs/backend/auth/jest.config.ts
+  s_3c524d9508a5c0::t_0ef5ad06edd59c 1-11
+libs/backend/auth/package.json
+  s_3c524d9508a5c0::t_b6b0b8358a48bd 1-7
+libs/backend/auth/project.json
+  s_3c524d9508a5c0::t_ee0f74bae9b774 1-20
+libs/backend/auth/src/index.ts
+  s_3c524d9508a5c0::t_299438b1b3ab43 1
+libs/backend/auth/src/lib/auth.controller.ts
+  s_3c524d9508a5c0::t_801ad1ee08d7c4 1-59
+libs/backend/auth/src/lib/auth.module.ts
+  s_3c524d9508a5c0::t_634ee19468e954 1-12
+libs/backend/auth/src/lib/auth.service.ts
+  s_3c524d9508a5c0::t_7b6454774742db 1-181
+libs/backend/auth/src/lib/dto/auth.dto.ts
+  s_3c524d9508a5c0::t_e764b5ac1a0da4 1-24
+libs/backend/auth/src/lib/dto/forgot-password.dto.ts
+  s_3c524d9508a5c0::t_22daa79d48d381 1-13
+libs/backend/auth/src/lib/dto/index.ts
+  s_3c524d9508a5c0::t_a4cdb5cded8ac5 1-4
+libs/backend/auth/src/lib/dto/reset-password.dto.ts
+  s_3c524d9508a5c0::t_39937ed9dacb59 1-31
+libs/backend/auth/src/lib/dto/sign-up.dto.ts
+  s_3c524d9508a5c0::t_5564c07aed8dea 1-42
+libs/backend/auth/tsconfig.json
+  s_3c524d9508a5c0::t_a45ec1e6f7272b 1-13
+libs/backend/auth/tsconfig.lib.json
+  s_3c524d9508a5c0::t_4f5689ab032950 1-10
+libs/backend/auth/tsconfig.spec.json
+  s_3c524d9508a5c0::t_74c2eda340bddc 1-9
+libs/backend/blogs/README.md
+  s_3c524d9508a5c0::t_3ecf4fd1cd2aef 1-11
+libs/backend/blogs/eslint.config.js
+  s_3c524d9508a5c0::t_37f74463c4d7f2 1-5
+libs/backend/blogs/jest.config.ts
+  s_3c524d9508a5c0::t_89d97f78d068ab 1-11
+libs/backend/blogs/package.json
+  s_3c524d9508a5c0::t_689de92343c0e0 1-7
+libs/backend/blogs/project.json
+  s_3c524d9508a5c0::t_6a5cc7081f0a54 1-19
+libs/backend/blogs/src/index.ts
+  s_3c524d9508a5c0::t_39c52c8b920450 1
+libs/backend/blogs/src/lib/blogs.controller.ts
+  s_3c524d9508a5c0::t_c4d6312bf6e20b 1-49
+libs/backend/blogs/src/lib/blogs.module.ts
+  s_3c524d9508a5c0::t_089e5a35deffcb 1-10
+libs/backend/blogs/src/lib/blogs.service.ts
+  s_3c524d9508a5c0::t_b90478b2d5edf4 1-78
+libs/backend/blogs/src/lib/dto/create-blog.dto.ts
+  s_3c524d9508a5c0::t_ae670296ea547f 1-39
+libs/backend/blogs/src/lib/dto/update-blog.dto.ts
+  s_3c524d9508a5c0::t_892b3f2e2f0e52 1-4
+libs/backend/blogs/tsconfig.json
+  s_3c524d9508a5c0::t_3a230f7fac8ec4 1-13
+libs/backend/blogs/tsconfig.lib.json
+  s_3c524d9508a5c0::t_2b6ecc7d231aae 1-10
+libs/backend/blogs/tsconfig.spec.json
+  s_3c524d9508a5c0::t_9e39eb23c432b4 1-9
+libs/backend/checkpoint-names/README.md
+  s_3c524d9508a5c0::t_2b35816b056e53 1-11
+libs/backend/checkpoint-names/eslint.config.js
+  s_3c524d9508a5c0::t_2dddd06b5f72f8 1-5
+libs/backend/checkpoint-names/jest.config.ts
+  s_3c524d9508a5c0::t_3bba18cd9290b1 1-11
+libs/backend/checkpoint-names/package.json
+  s_3c524d9508a5c0::t_644febaf4bbdfa 1-7
+libs/backend/checkpoint-names/project.json
+  s_3c524d9508a5c0::t_122a945dccce17 1-20
+libs/backend/checkpoint-names/src/index.ts
+  s_3c524d9508a5c0::t_1b7b40557dc0f6 1
+libs/backend/checkpoint-names/src/lib/checkpoint-names.controller.ts
+  s_3c524d9508a5c0::t_329c5083412bd7 1-44
+libs/backend/checkpoint-names/src/lib/checkpoint-names.module.ts
+  s_3c524d9508a5c0::t_ee2b16420328e3 1-10
+libs/backend/checkpoint-names/src/lib/checkpoint-names.service.ts
+  s_3c524d9508a5c0::t_2125e31822a9a1 1-56
+libs/backend/checkpoint-names/tsconfig.json
+  s_3c524d9508a5c0::t_0cc41269a73d64 1-13
+libs/backend/checkpoint-names/tsconfig.lib.json
+  s_3c524d9508a5c0::t_bcd12501cda0d1 1-10
+libs/backend/checkpoint-names/tsconfig.spec.json
+  s_3c524d9508a5c0::t_6b386d7e533357 1-9
+libs/backend/checkpoints/README.md
+  s_3c524d9508a5c0::t_8ab1e6a9af7601 1-7
+libs/backend/checkpoints/eslint.config.js
+  s_3c524d9508a5c0::t_7ca2c6b8931f11 1-5
+libs/backend/checkpoints/jest.config.ts
+  s_3c524d9508a5c0::t_298fa28c322eed 1-11
+libs/backend/checkpoints/package.json
+  s_3c524d9508a5c0::t_030b79d3869ef3 1-7
+libs/backend/checkpoints/project.json
+  s_3c524d9508a5c0::t_39c027600cdfa6 1-19
+libs/backend/checkpoints/src/index.ts
+  s_3c524d9508a5c0::t_087e76eba79424 1-2
+libs/backend/checkpoints/src/lib/checkpoints.controller.ts
+  s_3c524d9508a5c0::t_033cd3c692bc62 1-157
+libs/backend/checkpoints/src/lib/checkpoints.module.ts
+  s_3c524d9508a5c0::t_f2e277a0381a9c 1-13
+libs/backend/checkpoints/src/lib/checkpoints.service.ts
+  s_3c524d9508a5c0::t_b3d752896934e8 1-132
+libs/backend/checkpoints/src/lib/dto/create-checkpoint.dto.ts
+  s_3c524d9508a5c0::t_2aed3554f6d4ea 1-58
+libs/backend/checkpoints/tsconfig.json
+  s_3c524d9508a5c0::t_452566c02bfef8 1-13
+libs/backend/checkpoints/tsconfig.lib.json
+  s_3c524d9508a5c0::t_978e50452f25dd 1-10
+libs/backend/checkpoints/tsconfig.spec.json
+  s_3c524d9508a5c0::t_3b50cb4f164fc8 1-9
+libs/backend/cohorts/README.md
+  s_3c524d9508a5c0::t_5f73ebb686e2a1 1-11
+libs/backend/cohorts/eslint.config.js
+  s_3c524d9508a5c0::t_19b8a1e829a86a 1-5
+libs/backend/cohorts/jest.config.ts
+  s_3c524d9508a5c0::t_5d7eb5fd7ac9f5 1-11
+libs/backend/cohorts/package.json
+  s_3c524d9508a5c0::t_3e32335840c8e4 1-7
+libs/backend/cohorts/project.json
+  s_3c524d9508a5c0::t_aa7ca7e6fc3238 1-19
+libs/backend/cohorts/src/index.ts
+  s_3c524d9508a5c0::t_d8e61951f86471 1
+libs/backend/cohorts/src/lib/cohorts.module.ts
+  s_3c524d9508a5c0::t_0b5e7e6850ec53 1-10
+libs/backend/cohorts/src/lib/dto/create-cohort.dto.ts
+  s_3c524d9508a5c0::t_e58fc898623c84 1-22
+libs/backend/cohorts/src/lib/dto/update-cohort.dto.ts
+  s_3c524d9508a5c0::t_d37b8b42d539d0 1-4
+libs/backend/cohorts/tsconfig.json
+  s_3c524d9508a5c0::t_ecdbce43bd5f14 1-13
+libs/backend/cohorts/tsconfig.lib.json
+  s_3c524d9508a5c0::t_e39738bc3d733a 1-10
+libs/backend/cohorts/tsconfig.spec.json
+  s_3c524d9508a5c0::t_e3265565940e34 1-9
+libs/backend/description/README.md
+  s_3c524d9508a5c0::t_0423908749f1e3 1-11
+libs/backend/description/eslint.config.js
+  s_3c524d9508a5c0::t_be84b035513804 1-5
+libs/backend/description/jest.config.ts
+  s_3c524d9508a5c0::t_394cc1f54f6e9b 1-11
+libs/backend/description/package.json
+  s_3c524d9508a5c0::t_792dc4de6459fb 1-7
+libs/backend/description/project.json
+  s_3c524d9508a5c0::t_d18bf69a621ff4 1-19
+libs/backend/description/src/index.ts
+  s_3c524d9508a5c0::t_f79399f085950c 1
+libs/backend/description/src/lib/description.module.ts
+  s_3c524d9508a5c0::t_996280c5406ff7 1-10
+libs/backend/description/src/lib/description.service.ts
+  s_3c524d9508a5c0::t_a031cc52de675d 1-22
+libs/backend/description/src/lib/dto/update-description.dto.ts
+  s_3c524d9508a5c0::t_aa25a1b6b0a0a8 1-68
+libs/backend/description/tsconfig.json
+  s_3c524d9508a5c0::t_9a77fa56749401 1-13
+libs/backend/description/tsconfig.lib.json
+  s_3c524d9508a5c0::t_b09558d1a1909c 1-10
+libs/backend/description/tsconfig.spec.json
+  s_3c524d9508a5c0::t_02ea9331381f7e 1-9
+libs/backend/discussion/README.md
+  s_3c524d9508a5c0::t_f8d77e4931e971 1-7
+libs/backend/discussion/eslint.config.js
+  s_3c524d9508a5c0::t_c67e829e57ae7b 1-5
+libs/backend/discussion/jest.config.ts
+  s_3c524d9508a5c0::t_285f0f98cf402a 1-11
+libs/backend/discussion/package.json
+  s_3c524d9508a5c0::t_3d78702028a39e 1-7
+libs/backend/discussion/project.json
+  s_3c524d9508a5c0::t_d953af007c5cd0 1-20
+libs/backend/discussion/src/index.ts
+  s_3c524d9508a5c0::t_c2289ecc6ef5e9 1-2
+libs/backend/discussion/src/lib/discussion-board.controller.ts
+  s_3c524d9508a5c0::t_d102a4b461f8ba 1-289
+libs/backend/discussion/src/lib/discussion-board.service.ts
+  s_3c524d9508a5c0::t_927251d79299df 1-508
+libs/backend/discussion/src/lib/discussion.module.ts
+  s_3c524d9508a5c0::t_4591f53474fe98 1-16
+libs/backend/discussion/src/lib/discussion.service.ts
+  s_3c524d9508a5c0::t_dcec57942fc957 1-1055
+libs/backend/discussion/src/lib/dto/add-board-member.dto.ts
+  s_3c524d9508a5c0::t_7eea7df1a07b85 1-12
+libs/backend/discussion/src/lib/dto/create-discussion-board.dto.ts
+  s_3c524d9508a5c0::t_64e9247cf2f7a4 1-47
+libs/backend/discussion/src/lib/dto/create-discussion-comment.dto.ts
+  s_3c524d9508a5c0::t_599024cbbc7c84 1-23
+libs/backend/discussion/src/lib/dto/create-discussion-post.dto.ts
+  s_3c524d9508a5c0::t_9e8dcf8d646dca 1-79
+libs/backend/discussion/src/lib/dto/create-discussion-tag.dto.ts
+  s_3c524d9508a5c0::t_9a2f435badc5fc 1-32
+libs/backend/discussion/src/lib/dto/update-discussion-board.dto.ts
+  s_3c524d9508a5c0::t_57a43467a13b97 1-22
+libs/backend/discussion/src/lib/dto/update-discussion-comment.dto.ts
+  s_3c524d9508a5c0::t_49b614a571eb33 1-10
+libs/backend/discussion/src/lib/dto/update-discussion-post.dto.ts
+  s_3c524d9508a5c0::t_6c27c00053469c 1-22
+libs/backend/discussion/tsconfig.json
+  s_3c524d9508a5c0::t_762dcca196faa1 1-13
+libs/backend/discussion/tsconfig.lib.json
+  s_3c524d9508a5c0::t_24924465ebc36d 1-10
+libs/backend/discussion/tsconfig.spec.json
+  s_3c524d9508a5c0::t_d18972fa8fe213 1-9
+libs/backend/educational-category/README.md
+  s_3c524d9508a5c0::t_71b2c7c915c04b 1-11
+libs/backend/educational-category/eslint.config.js
+  s_3c524d9508a5c0::t_9705db04d4824f 1-5
+libs/backend/educational-category/jest.config.ts
+  s_3c524d9508a5c0::t_5f3bb05b9e4cd7 1-11
+libs/backend/educational-category/package.json
+  s_3c524d9508a5c0::t_50da1de48277ff 1-7
+libs/backend/educational-category/project.json
+  s_3c524d9508a5c0::t_d2514f9b7d0c8a 1-19
+libs/backend/educational-category/src/index.ts
+  s_3c524d9508a5c0::t_f635cdeeb4eb1b 1
+libs/backend/educational-category/src/lib/educational-category.controller.ts
+  s_3c524d9508a5c0::t_17d9c5112dcc36 1-39
+libs/backend/educational-category/src/lib/educational-category.module.ts
+  s_3c524d9508a5c0::t_e19941d02302eb 1-10
+libs/backend/educational-category/src/lib/educational-category.service.ts
+  s_3c524d9508a5c0::t_5c6f44626e76ad 1-82
+libs/backend/educational-category/src/lib/request/category.ts
+  s_3c524d9508a5c0::t_119c7592d20f1b 1-7
+libs/backend/educational-category/tsconfig.json
+  s_3c524d9508a5c0::t_77c7ae883e78ee 1-13
+libs/backend/educational-category/tsconfig.lib.json
+  s_3c524d9508a5c0::t_9c6125acae857f 1-10
+libs/backend/educational-category/tsconfig.spec.json
+  s_3c524d9508a5c0::t_6e1c55942814df 1-9
+libs/backend/educational-content/README.md
+  s_3c524d9508a5c0::t_4e807fbcb3d167 1-11
+libs/backend/educational-content/eslint.config.js
+  s_3c524d9508a5c0::t_f20bcd0f6ff9a4 1-5
+libs/backend/educational-content/jest.config.ts
+  s_3c524d9508a5c0::t_4221278118cf4a 1-11
+libs/backend/educational-content/package.json
+  s_3c524d9508a5c0::t_1751ccbc60cb1a 1-7
+libs/backend/educational-content/project.json
+  s_3c524d9508a5c0::t_bd42826bf554c0 1-19
+libs/backend/educational-content/src/index.ts
+  s_3c524d9508a5c0::t_503d6d472be27c 1
+libs/backend/educational-content/src/lib/dto/notification-config.dto.ts
+  s_3c524d9508a5c0::t_917bb6e63aef5f 1-40
+libs/backend/educational-content/src/lib/dto/send-notification.dto.ts
+  s_3c524d9508a5c0::t_1c489fbd57ab1c 1-40
+libs/backend/educational-content/src/lib/educational-content.module.ts
+  s_3c524d9508a5c0::t_fed9fcf2662ef6 1-10
+libs/backend/educational-content/tsconfig.json
+  s_3c524d9508a5c0::t_b75d37362a6613 1-13
+libs/backend/educational-content/tsconfig.lib.json
+  s_3c524d9508a5c0::t_3692abd6e5e780 1-10
+libs/backend/educational-content/tsconfig.spec.json
+  s_3c524d9508a5c0::t_2a54ae1ce26c03 1-9
+libs/backend/images/README.md
+  s_3c524d9508a5c0::t_6bd46c2d358202 1-11
+libs/backend/images/eslint.config.js
+  s_3c524d9508a5c0::t_65ffad7ae8c4e4 1-5
+libs/backend/images/jest.config.ts
+  s_3c524d9508a5c0::t_6722f77d034108 1-11
+libs/backend/images/package.json
+  s_3c524d9508a5c0::t_58094da8b57ecb 1-11
+libs/backend/images/project.json
+  s_3c524d9508a5c0::t_5a1ecb4af0612a 1-20
+libs/backend/images/src/index.ts
+  s_3c524d9508a5c0::t_78dd504454be7c 1-3
+libs/backend/images/src/lib/images.module.ts
+  s_3c524d9508a5c0::t_9d00f36d56d461 1-14
+libs/backend/images/tsconfig.json
+  s_3c524d9508a5c0::t_5e578296210614 1-13
+libs/backend/images/tsconfig.lib.json
+  s_3c524d9508a5c0::t_581b13ad046729 1-10
+libs/backend/images/tsconfig.spec.json
+  s_3c524d9508a5c0::t_346616e9dcac50 1-9
+libs/backend/introduction/README.md
+  s_3c524d9508a5c0::t_618c5394547c29 1-11
+libs/backend/introduction/eslint.config.js
+  s_3c524d9508a5c0::t_d31cee2fdb251b 1-5
+libs/backend/introduction/jest.config.ts
+  s_3c524d9508a5c0::t_2a6ce465214a75 1-11
+libs/backend/introduction/package.json
+  s_3c524d9508a5c0::t_a90e47be0a2c73 1-7
+libs/backend/introduction/project.json
+  s_3c524d9508a5c0::t_f9340692371e94 1-19
+libs/backend/introduction/src/index.ts
+  s_3c524d9508a5c0::t_9f9525f392d830 1
+libs/backend/introduction/src/lib/dto/update-introduction.dto.ts
+  s_3c524d9508a5c0::t_986979e15697bf 1-58
+libs/backend/introduction/src/lib/introduction.module.ts
+  s_3c524d9508a5c0::t_9237c11dd6023f 1-10
+libs/backend/introduction/src/lib/introduction.service.ts
+  s_3c524d9508a5c0::t_a8e5202f071bda 1-22
+libs/backend/introduction/tsconfig.json
+  s_3c524d9508a5c0::t_9cdc741f1f29a6 1-13
+libs/backend/introduction/tsconfig.lib.json
+  s_3c524d9508a5c0::t_f97ab2af141ee1 1-10
+libs/backend/introduction/tsconfig.spec.json
+  s_3c524d9508a5c0::t_5661bf6aa08d53 1-9
+libs/backend/learnings/README.md
+  s_3c524d9508a5c0::t_bc83c0206b890d 1-11
+libs/backend/learnings/eslint.config.js
+  s_3c524d9508a5c0::t_83710501c32ee2 1-5
+libs/backend/learnings/jest.config.ts
+  s_3c524d9508a5c0::t_82486bb8ef1377 1-11
+libs/backend/learnings/package.json
+  s_3c524d9508a5c0::t_8994cc4ca2b495 1-7
+libs/backend/learnings/project.json
+  s_3c524d9508a5c0::t_8705b7c564bc45 1-19
+libs/backend/learnings/src/index.ts
+  s_3c524d9508a5c0::t_c0751c8740b81f 1
+libs/backend/learnings/src/lib/dto/create-learning.dto.ts
+  s_3c524d9508a5c0::t_11d99a16ee62ce 1-40
+libs/backend/learnings/src/lib/dto/update-learning.dto.ts
+  s_3c524d9508a5c0::t_f49a1541be0d5e 1-4
+libs/backend/learnings/src/lib/learnings.controller.ts
+  s_3c524d9508a5c0::t_3ebeb422ffdc96 1-44
+libs/backend/learnings/src/lib/learnings.module.ts
+  s_3c524d9508a5c0::t_92c8decbcf7ae5 1-10
+libs/backend/learnings/src/lib/learnings.service.ts
+  s_3c524d9508a5c0::t_425b2bf6733174 1-55
+libs/backend/learnings/tsconfig.json
+  s_3c524d9508a5c0::t_9441b2e97d09bb 1-13
+libs/backend/learnings/tsconfig.lib.json
+  s_3c524d9508a5c0::t_1f1c59885c8603 1-11
+libs/backend/learnings/tsconfig.spec.json
+  s_3c524d9508a5c0::t_7278ab3baffb1c 1-9
+libs/backend/mail/README.md
+  s_3c524d9508a5c0::t_67d3961431d664 1-11
+libs/backend/mail/eslint.config.js
+  s_3c524d9508a5c0::t_be8dd2f8ed6387 1-5
+libs/backend/mail/jest.config.ts
+  s_3c524d9508a5c0::t_47e1d535d3f5d6 1-11
+libs/backend/mail/package.json
+  s_3c524d9508a5c0::t_d8c474d3b2347f 1-7
+libs/backend/mail/project.json
+  s_3c524d9508a5c0::t_fdf9d9c634aa3e 1-20
+libs/backend/mail/src/index.ts
+  s_3c524d9508a5c0::t_545c4f89f1b789 1-2
+libs/backend/mail/src/lib/mail.module.ts
+  s_3c524d9508a5c0::t_b1a05abda93dbc 1-39
+libs/backend/mail/src/lib/mail.service.ts
+  s_3c524d9508a5c0::t_a9700238962742 1-79
+libs/backend/mail/tsconfig.json
+  s_3c524d9508a5c0::t_79854c9d944ea8 1-13
+libs/backend/mail/tsconfig.lib.json
+  s_3c524d9508a5c0::t_907b8a0a6f390d 1-10
+libs/backend/mail/tsconfig.spec.json
+  s_3c524d9508a5c0::t_3b9896bef0bcb3 1-9
+libs/backend/partners/README.md
+  s_3c524d9508a5c0::t_b1eae10614bfcf 1-11
+libs/backend/partners/eslint.config.js
+  s_3c524d9508a5c0::t_0f77695319d372 1-5
+libs/backend/partners/jest.config.ts
+  s_3c524d9508a5c0::t_f5a6b428cd91a7 1-11
+libs/backend/partners/package.json
+  s_3c524d9508a5c0::t_bf530d5d0a2c80 1-7
+libs/backend/partners/project.json
+  s_3c524d9508a5c0::t_f46ea7965e730c 1-19
+libs/backend/partners/src/index.ts
+  s_3c524d9508a5c0::t_d64459d6f619ef 1
+libs/backend/partners/src/lib/dto/create-partner.dto.ts
+  s_3c524d9508a5c0::t_e5be287a975e56 1-67
+libs/backend/partners/src/lib/dto/patch-partner.dto.ts
+  s_3c524d9508a5c0::t_1c6cb87e4d6e02 1-4
+libs/backend/partners/src/lib/partners.controller.ts
+  s_3c524d9508a5c0::t_91616d8807857e 1-40
+libs/backend/partners/src/lib/partners.module.ts
+  s_3c524d9508a5c0::t_521c3d4352c2a8 1-10
+libs/backend/partners/src/lib/partners.service.ts
+  s_3c524d9508a5c0::t_2c43e0cea1a635 1-60
+libs/backend/partners/tsconfig.json
+  s_3c524d9508a5c0::t_ae6cb73a1801c0 1-13
+libs/backend/partners/tsconfig.lib.json
+  s_3c524d9508a5c0::t_ad1a14d6c8c000 1-10
+libs/backend/partners/tsconfig.spec.json
+  s_3c524d9508a5c0::t_5650dcca2a27c4 1-9
+libs/backend/peer-evaluation-guide/jest.config.ts
+  s_3c524d9508a5c0::t_1d01ba21d1b3f6 1-11
+libs/backend/peer-evaluation-guide/project.json
+  s_3c524d9508a5c0::t_63dc5b9d0aaf7d 1-20
+libs/backend/peer-evaluation-guide/src/index.ts
+  s_3c524d9508a5c0::t_97e6eaa1e44793 1-3
+libs/backend/peer-evaluation-guide/src/lib/dto/update-peer-evaluation-guide.dto.ts
+  s_3c524d9508a5c0::t_dcf499bfc59ee8 1-20
+libs/backend/peer-evaluation-guide/src/lib/peer-evaluation-guide.controller.ts
+  s_3c524d9508a5c0::t_49fe75838f3ac6 1-18
+libs/backend/peer-evaluation-guide/src/lib/peer-evaluation-guide.module.ts
+  s_3c524d9508a5c0::t_c5ef7394c14194 1-10
+libs/backend/peer-evaluation-guide/src/lib/peer-evaluation-guide.service.ts
+  s_3c524d9508a5c0::t_506bcbee2a6d8a 1-19
+libs/backend/peer-evaluation-guide/tsconfig.json
+  s_3c524d9508a5c0::t_10593d5dc75b3b 1-13
+libs/backend/peer-evaluation-guide/tsconfig.lib.json
+  s_3c524d9508a5c0::t_33965b12f75c0f 1-10
+libs/backend/peer-evaluation-guide/tsconfig.spec.json
+  s_3c524d9508a5c0::t_a2c1a0c7bbf4aa 1-9
+libs/backend/prisma/README.md
+  s_3c524d9508a5c0::t_50ff748eb8ebb3 1-7
+libs/backend/prisma/eslint.config.js
+  s_3c524d9508a5c0::t_d9beee9e679943 1-5
+libs/backend/prisma/jest.config.ts
+  s_3c524d9508a5c0::t_b0db5693fa1693 1-11
+libs/backend/prisma/package.json
+  s_3c524d9508a5c0::t_044b4743e5ea17 1-7
+libs/backend/prisma/project.json
+  s_3c524d9508a5c0::t_72582fa6c67e95 1-19
+libs/backend/prisma/src/index.ts
+  s_3c524d9508a5c0::t_d178acfb617161 1-2
+libs/backend/prisma/src/lib/prisma.module.ts
+  s_3c524d9508a5c0::t_edf0bdb32a815a 1-9
+libs/backend/prisma/src/lib/prisma.service.ts
+  s_3c524d9508a5c0::t_cc57c2ef5c4946 1-10
+libs/backend/prisma/tsconfig.json
+  s_3c524d9508a5c0::t_6a85e9b8960e12 1-13
+libs/backend/prisma/tsconfig.lib.json
+  s_3c524d9508a5c0::t_17949919a9e658 1-10
+libs/backend/prisma/tsconfig.spec.json
+  s_3c524d9508a5c0::t_9411b1097a89ad 1-9
+libs/backend/programs/README.md
+  s_3c524d9508a5c0::t_8d7345392975d8 1-11
+libs/backend/programs/eslint.config.js
+  s_3c524d9508a5c0::t_05c994444c2fc4 1-5
+libs/backend/programs/jest.config.ts
+  s_3c524d9508a5c0::t_2aea98c43b0a3c 1-11
+libs/backend/programs/package.json
+  s_3c524d9508a5c0::t_172fef3c507c96 1-7
+libs/backend/programs/project.json
+  s_3c524d9508a5c0::t_aac50a51e33754 1-20
+libs/backend/programs/src/index.ts
+  s_3c524d9508a5c0::t_8a8aab6e9663b7 1-2
+libs/backend/programs/src/lib/dto/clone-progrmam.dto.ts
+  s_3c524d9508a5c0::t_b1505023a9fb19 1-13
+libs/backend/programs/src/lib/dto/create-program.dto.ts
+  s_3c524d9508a5c0::t_757d36267e5df9 1-99
+libs/backend/programs/src/lib/dto/enroll.dto.ts
+  s_3c524d9508a5c0::t_e8ab31873a889c 1-144
+libs/backend/programs/src/lib/dto/update-program.dto.ts
+  s_3c524d9508a5c0::t_2397873357e19a 1-4
+libs/backend/programs/src/lib/programs.controller.ts
+  s_3c524d9508a5c0::t_31070a447ffc8a 1-184
+libs/backend/programs/src/lib/programs.module.ts
+  s_3c524d9508a5c0::t_e8828a2ff6b101 1-10
+libs/backend/programs/src/lib/programs.service.ts
+  s_3c524d9508a5c0::t_b44494e8e0c8a2 1-319
+libs/backend/programs/tsconfig.json
+  s_3c524d9508a5c0::t_2bc598396cb06e 1-13
+libs/backend/programs/tsconfig.lib.json
+  s_3c524d9508a5c0::t_042fbb36f8e60c 1-10
+libs/backend/programs/tsconfig.spec.json
+  s_3c524d9508a5c0::t_f35149e757235e 1-9
+libs/backend/requirements/README.md
+  s_3c524d9508a5c0::t_4d5d88db349bae 1-11
+libs/backend/requirements/eslint.config.js
+  s_3c524d9508a5c0::t_d055c5242a3b33 1-5
+libs/backend/requirements/jest.config.ts
+  s_3c524d9508a5c0::t_10df1b0c26b193 1-11
+libs/backend/requirements/package.json
+  s_3c524d9508a5c0::t_f2311bf9c619a2 1-7
+libs/backend/requirements/project.json
+  s_3c524d9508a5c0::t_503f934877e76b 1-19
+libs/backend/requirements/src/index.ts
+  s_3c524d9508a5c0::t_625750bcd02a5d 1
+libs/backend/requirements/src/lib/dto/create-requirement.dto.ts
+  s_3c524d9508a5c0::t_8aecf7e4f56e0f 1-22
+libs/backend/requirements/src/lib/dto/update-requirement.dto.ts
+  s_3c524d9508a5c0::t_b3ed7a0e332520 1-4
+libs/backend/requirements/src/lib/requirements.controller.ts
+  s_3c524d9508a5c0::t_506e6d72d56223 1-93
+libs/backend/requirements/src/lib/requirements.module.ts
+  s_3c524d9508a5c0::t_bfc2c2b19b7484 1-12
+libs/backend/requirements/src/lib/requirements.service.ts
+  s_3c524d9508a5c0::t_2c003f6aa0f08e 1-88
+libs/backend/requirements/tsconfig.json
+  s_3c524d9508a5c0::t_97f96443c197e1 1-13
+libs/backend/requirements/tsconfig.lib.json
+  s_3c524d9508a5c0::t_123a988d3444c9 1-10
+libs/backend/requirements/tsconfig.spec.json
+  s_3c524d9508a5c0::t_334f58642c5fb1 1-9
+libs/backend/shared/README.md
+  s_3c524d9508a5c0::t_b4e3bcbb75aa7f 1-7
+libs/backend/shared/eslint.config.js
+  s_3c524d9508a5c0::t_470957c379304a 1-5
+libs/backend/shared/jest.config.ts
+  s_3c524d9508a5c0::t_b491cce5f0d723 1-11
+libs/backend/shared/package.json
+  s_3c524d9508a5c0::t_793c924ede02e7 1-7
+libs/backend/shared/project.json
+  s_3c524d9508a5c0::t_e84df48035d3e8 1-19
+libs/backend/shared/src/index.ts
+  s_3c524d9508a5c0::t_b009b2aafdf424 1
+libs/backend/shared/src/lib/util/decorator/get-user.decorator.ts
+  s_3c524d9508a5c0::t_96cf3786f906d2 1-6
+libs/backend/shared/src/lib/util/decorator/index.ts
+  s_3c524d9508a5c0::t_84a94a8b5fa996 1-2
+libs/backend/shared/src/lib/util/decorator/role.decorator.ts
+  s_3c524d9508a5c0::t_59a7f3084d319e 1-4
+libs/backend/shared/src/lib/util/edit-file-name.ts
+  s_3c524d9508a5c0::t_f43699389b915e 1-18
+libs/backend/shared/src/lib/util/format-currency.ts
+  s_3c524d9508a5c0::t_fdf58497c6bd24 1-4
+libs/backend/shared/src/lib/util/guard/index.ts
+  s_3c524d9508a5c0::t_4207c2abb02857 1-2
+libs/backend/shared/src/lib/util/guard/jwt.guard.ts
+  s_3c524d9508a5c0::t_07683fdc386e14 1-3
+libs/backend/shared/src/lib/util/guard/role.guard.ts
+  s_3c524d9508a5c0::t_6c0ba039b82344 1-21
+libs/backend/shared/src/lib/util/guid-file-name.ts
+  s_3c524d9508a5c0::t_fdbdda9e3aff3a 1-12
+libs/backend/shared/src/lib/util/is-user-admin.ts
+  s_3c524d9508a5c0::t_d6b44fb540d379 1-3
+libs/backend/shared/src/lib/util/is-user-partner-staff.ts
+  s_3c524d9508a5c0::t_70c9a062650653 1-3
+libs/backend/shared/src/lib/util/map-user.ts
+  s_3c524d9508a5c0::t_9c4d0834daad9b 1-7
+libs/backend/shared/src/lib/util/max-image-size-in-bytes.ts
+  s_3c524d9508a5c0::t_336f73dd0e1f9a 1-2
+libs/backend/shared/src/lib/util/random-password.ts
+  s_3c524d9508a5c0::t_a063445f5afddb 1-2
+libs/backend/shared/src/lib/util/strategy/index.ts
+  s_3c524d9508a5c0::t_026eee5c712879 1
+libs/backend/shared/src/lib/util/strategy/jwt.strategy.ts
+  s_3c524d9508a5c0::t_2b451a68253e33 1-22
+libs/backend/shared/src/lib/util/validate-image-file-type.ts
+  s_3c524d9508a5c0::t_05f6f0bdb15e70 1-13
+libs/backend/shared/src/lib/util/validate-user-any-role.ts
+  s_3c524d9508a5c0::t_4f994a28d8f857 1-4
+libs/backend/shared/src/lib/util/validate-user-is-admin-or-staff.ts
+  s_3c524d9508a5c0::t_0fedd370ddcd68 1-4
+libs/backend/shared/tsconfig.json
+  s_3c524d9508a5c0::t_3f57cef26311da 1-13
+libs/backend/shared/tsconfig.lib.json
+  s_3c524d9508a5c0::t_542208cb699e97 1-16
+libs/backend/shared/tsconfig.spec.json
+  s_3c524d9508a5c0::t_cd4fd27cfecb1f 1-9
+libs/backend/stories/README.md
+  s_3c524d9508a5c0::t_acda87e1d02faf 1-11
+libs/backend/stories/eslint.config.js
+  s_3c524d9508a5c0::t_9ee5f8d790c0d3 1-5
+libs/backend/stories/jest.config.ts
+  s_3c524d9508a5c0::t_49e9e5826553ac 1-11
+libs/backend/stories/package.json
+  s_3c524d9508a5c0::t_9ba11536a88592 1-7
+libs/backend/stories/project.json
+  s_3c524d9508a5c0::t_61266e6a72c961 1-19
+libs/backend/stories/src/index.ts
+  s_3c524d9508a5c0::t_6edba496836cc8 1
+libs/backend/stories/src/lib/dto/create-story.dto.ts
+  s_3c524d9508a5c0::t_497becf697fff4 1-32
+libs/backend/stories/src/lib/dto/update-story.dto.ts
+  s_3c524d9508a5c0::t_53c37fb429ea37 1-4
+libs/backend/stories/src/lib/stories.module.ts
+  s_3c524d9508a5c0::t_9b51562d0deacd 1-10
+libs/backend/stories/tsconfig.json
+  s_3c524d9508a5c0::t_e874980c697cfc 1-13
+libs/backend/stories/tsconfig.lib.json
+  s_3c524d9508a5c0::t_da5cf10bebae4f 1-11
+libs/backend/stories/tsconfig.spec.json
+  s_3c524d9508a5c0::t_82f452c0607e27 1-9
+libs/backend/user-guide/README.md
+  s_3c524d9508a5c0::t_045b5cdf308f0a 1-11
+libs/backend/user-guide/eslint.config.js
+  s_3c524d9508a5c0::t_96a9ef12f78d86 1-5
+libs/backend/user-guide/jest.config.ts
+  s_3c524d9508a5c0::t_85918b101443c8 1-11
+libs/backend/user-guide/package.json
+  s_3c524d9508a5c0::t_a3fded9967efc3 1-15
+libs/backend/user-guide/project.json
+  s_3c524d9508a5c0::t_61e6251eb0bac5 1-20
+libs/backend/user-guide/src/index.ts
+  s_3c524d9508a5c0::t_e62e8c8cf49f11 1-3
+libs/backend/user-guide/src/lib/dto/update-user-guide.dto.ts
+  s_3c524d9508a5c0::t_de911414fb8c11 1-20
+libs/backend/user-guide/src/lib/user-guide.controller.ts
+  s_3c524d9508a5c0::t_d2cf6df992ae59 1-18
+libs/backend/user-guide/src/lib/user-guide.module.ts
+  s_3c524d9508a5c0::t_1aa549688a6f29 1-10
+libs/backend/user-guide/src/lib/user-guide.service.ts
+  s_3c524d9508a5c0::t_1924b0b1978f20 1-19
+libs/backend/user-guide/tsconfig.json
+  s_3c524d9508a5c0::t_bf6624f9ef0245 1-13
+libs/backend/user-guide/tsconfig.lib.json
+  s_3c524d9508a5c0::t_860a2ccbf302ad 1-10
+libs/backend/user-guide/tsconfig.spec.json
+  s_3c524d9508a5c0::t_49facd7f1e561b 1-9
+libs/backend/users-on-programs/README.md
+  s_3c524d9508a5c0::t_ce52a7d277c0d6 1-11
+libs/backend/users-on-programs/eslint.config.js
+  s_3c524d9508a5c0::t_750ec95d4f38c9 1-5
+libs/backend/users-on-programs/jest.config.ts
+  s_3c524d9508a5c0::t_026e6f03d183d8 1-11
+libs/backend/users-on-programs/package.json
+  s_3c524d9508a5c0::t_6635db651d6a81 1-7
+libs/backend/users-on-programs/project.json
+  s_3c524d9508a5c0::t_10fb4356095489 1-19
+libs/backend/users-on-programs/src/index.ts
+  s_3c524d9508a5c0::t_beb8dcbbc2d6f6 1-2
+libs/backend/users-on-programs/src/lib/dto/create-users-on-programs.dto.ts
+  s_3c524d9508a5c0::t_feaa21b3b38e1e 1-193
+libs/backend/users-on-programs/src/lib/dto/update-users-on-programs.dto.ts
+  s_3c524d9508a5c0::t_72277e1a7492e8 1-4
+libs/backend/users-on-programs/src/lib/users-on-programs.controller.ts
+  s_3c524d9508a5c0::t_1d5bc99229ffb6 1-131
+libs/backend/users-on-programs/src/lib/users-on-programs.module.ts
+  s_3c524d9508a5c0::t_e49cf700abeca3 1-13
+libs/backend/users-on-programs/src/lib/users-on-programs.service.ts
+  s_3c524d9508a5c0::t_1bba716478dc6a 1-345
+libs/backend/users-on-programs/tsconfig.json
+  s_3c524d9508a5c0::t_1c6e27912d12fc 1-13
+libs/backend/users-on-programs/tsconfig.lib.json
+  s_3c524d9508a5c0::t_55f6ede07771ac 1-11
+libs/backend/users-on-programs/tsconfig.spec.json
+  s_3c524d9508a5c0::t_3ed0773648af83 1-9
+libs/backend/users/README.md
+  s_3c524d9508a5c0::t_e37e76dc542df5 1-11
+libs/backend/users/eslint.config.js
+  s_3c524d9508a5c0::t_fd0e130c669388 1-5
+libs/backend/users/jest.config.ts
+  s_3c524d9508a5c0::t_3ec8ead1b62a24 1-11
+libs/backend/users/package.json
+  s_3c524d9508a5c0::t_4a8431d3b13cd1 1-7
+libs/backend/users/project.json
+  s_3c524d9508a5c0::t_98fa65705ca9de 1-19
+libs/backend/users/src/index.ts
+  s_3c524d9508a5c0::t_e7facb81078f18 1-3
+libs/backend/users/src/lib/dto/create-user.dto.ts
+  s_3c524d9508a5c0::t_3cb625018aee70 1-71
+libs/backend/users/src/lib/dto/patch-user.dto.ts
+  s_3c524d9508a5c0::t_069d235cb48198 1-13
+libs/backend/users/src/lib/dto/send-bulk-email.dto.ts
+  s_3c524d9508a5c0::t_05665c86df5cd0 1-14
+libs/backend/users/src/lib/users.controller.ts
+  s_3c524d9508a5c0::t_2459fef1a0d6d3 1-53
+libs/backend/users/src/lib/users.module.ts
+  s_3c524d9508a5c0::t_b57eb794dae0c2 1-10
+libs/backend/users/src/lib/users.service.ts
+  s_3c524d9508a5c0::t_ab8004b2761c6d 1-135
+libs/backend/users/tsconfig.json
+  s_3c524d9508a5c0::t_b54d38585ddb0b 1-13
+libs/backend/users/tsconfig.lib.json
+  s_3c524d9508a5c0::t_72c5bbdebcd8fc 1-10
+libs/backend/users/tsconfig.spec.json
+  s_3c524d9508a5c0::t_e5e10a9493bd51 1-9
+libs/backend/what-we-are/package.json
+  s_3c524d9508a5c0::t_41323796f967af 1-7
+libs/backend/what-we-are/project.json
+  s_3c524d9508a5c0::t_ef51dcfcf3b473 1-19
+libs/backend/what-we-are/src/index.ts
+  s_3c524d9508a5c0::t_983529aae25763 1
+libs/backend/what-we-are/src/lib/dto/update-what-we-are.dto.ts
+  s_3c524d9508a5c0::t_d480a2fed922eb 1-40
+libs/backend/what-we-are/src/lib/what-we-are.controller.ts
+  s_3c524d9508a5c0::t_124f40aa1b7951 1-21
+libs/backend/what-we-are/src/lib/what-we-are.module.ts
+  s_3c524d9508a5c0::t_3d2daf2c3d61b2 1-10
+libs/backend/what-we-are/src/lib/what-we-are.service.ts
+  s_3c524d9508a5c0::t_fdeb1dfea9ba63 1-25
+libs/backend/what-we-are/tsconfig.json
+  s_3c524d9508a5c0::t_53022847f0cdf2 1-10
+libs/backend/what-we-are/tsconfig.lib.json
+  s_3c524d9508a5c0::t_3077dbedad02eb 1-10
+libs/frontend/_shared/auth/README.md
+  s_3c524d9508a5c0::t_80a3b2efea8640 1-7
+libs/frontend/_shared/auth/eslint.config.js
+  s_3c524d9508a5c0::t_10bccd6f4c66e8 1-44
+libs/frontend/_shared/auth/jest.config.ts
+  s_3c524d9508a5c0::t_45e7821d934d4c 1-22
+libs/frontend/_shared/auth/ng-package.json
+  s_3c524d9508a5c0::t_e7d46a377e21a3 1-7
+libs/frontend/_shared/auth/package.json
+  s_3c524d9508a5c0::t_2592df8b70000b 1-7
+libs/frontend/_shared/auth/project.json
+  s_3c524d9508a5c0::t_33bc1a36c3ec21 1-27
+libs/frontend/_shared/auth/src/index.ts
+  s_3c524d9508a5c0::t_137d40b4f72fca 1-2
+libs/frontend/_shared/auth/src/lib/data-access/auth-server.interceptor.ts
+  s_3c524d9508a5c0::t_4eea5862f644b3 1-31
+libs/frontend/_shared/auth/src/lib/data-access/auth.interceptor.ts
+  s_3c524d9508a5c0::t_ce0cf87fc0a1c7 1-10
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.ts
+  s_3c524d9508a5c0::t_c21bf262887a5e 1-363
+libs/frontend/_shared/auth/src/lib/data-access/index.ts
+  s_3c524d9508a5c0::t_79e838de925b9a 1-3
+libs/frontend/_shared/auth/src/lib/util/admin.guard.ts
+  s_3c524d9508a5c0::t_40e0f29f373830 1-21
+libs/frontend/_shared/auth/src/lib/util/auth.guard.ts
+  s_3c524d9508a5c0::t_81c7ad35372414 1-17
+libs/frontend/_shared/auth/src/lib/util/cookie.service.ts
+  s_3c524d9508a5c0::t_5029ab15792c30 1-48
+libs/frontend/_shared/auth/src/lib/util/index.ts
+  s_3c524d9508a5c0::t_579e4e6405a895 1-5
+libs/frontend/_shared/auth/src/lib/util/jwt-decode.ts
+  s_3c524d9508a5c0::t_8ed23bd2f3363a 1-51
+libs/frontend/_shared/auth/src/lib/util/partner-staff.guard.ts
+  s_3c524d9508a5c0::t_6af630785ba7fd 1-21
+libs/frontend/_shared/auth/src/test-setup.ts
+  s_3c524d9508a5c0::t_d3d70291683dbd 1-3
+libs/frontend/_shared/auth/tsconfig.json
+  s_3c524d9508a5c0::t_ee93f1cf9e015e 1-17
+libs/frontend/_shared/auth/tsconfig.lib.json
+  s_3c524d9508a5c0::t_4f3019a402bf8b 1-13
+libs/frontend/_shared/auth/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_59b4e0e86f9fa5 1-7
+libs/frontend/_shared/auth/tsconfig.spec.json
+  s_3c524d9508a5c0::t_ef76ef383e6bd9 1-12
+libs/frontend/_shared/components/README.md
+  s_3c524d9508a5c0::t_9ce8fbaa812ac9 1-7
+libs/frontend/_shared/components/eslint.config.js
+  s_3c524d9508a5c0::t_b9127cfec0e797 1-44
+libs/frontend/_shared/components/jest.config.ts
+  s_3c524d9508a5c0::t_6ce30829f9879f 1-22
+libs/frontend/_shared/components/ng-package.json
+  s_3c524d9508a5c0::t_0f90942eb3bb52 1-8
+libs/frontend/_shared/components/package.json
+  s_3c524d9508a5c0::t_65eb540e0d61bf 1-7
+libs/frontend/_shared/components/project.json
+  s_3c524d9508a5c0::t_b7dab9e685de44 1-27
+libs/frontend/_shared/components/src/index.ts
+  s_3c524d9508a5c0::t_4d7aa73887628c 1
+libs/frontend/_shared/components/src/lib/add-checkpoint/add-checkpoint.component.ts
+  s_3c524d9508a5c0::t_05ba1c143fb227 1-119
+libs/frontend/_shared/components/src/lib/add-checkpoint/index.ts
+  s_3c524d9508a5c0::t_24df6539b16ea6 1
+libs/frontend/_shared/components/src/lib/add-image/add-image.component.ts
+  s_3c524d9508a5c0::t_10c29d487448cb 1-173
+libs/frontend/_shared/components/src/lib/add-image/index.ts
+  s_3c524d9508a5c0::t_37409e650b165e 1
+libs/frontend/_shared/components/src/lib/add-user/add-user.component.ts
+  s_3c524d9508a5c0::t_93c53449ba023b 1-150
+libs/frontend/_shared/components/src/lib/add-user/index.ts
+  s_3c524d9508a5c0::t_8c1325b1e37a2d 1
+libs/frontend/_shared/components/src/lib/ag-grid/ag-grid.component.ts
+  s_3c524d9508a5c0::t_653746ea706dca 1-43
+libs/frontend/_shared/components/src/lib/ag-grid/index.ts
+  s_3c524d9508a5c0::t_f9f0e1086cea7f 1
+libs/frontend/_shared/components/src/lib/confirm-dialog/confirm-dialog.component.ts
+  s_3c524d9508a5c0::t_9384a039dd0a8d 1-32
+libs/frontend/_shared/components/src/lib/confirm-dialog/index.ts
+  s_3c524d9508a5c0::t_f819fe7619ed87 1
+libs/frontend/_shared/components/src/lib/document-dropzone/document-dropzone.component.ts
+  s_3c524d9508a5c0::t_9f52cbd897b547 1-87
+libs/frontend/_shared/components/src/lib/document-dropzone/index.ts
+  s_3c524d9508a5c0::t_032b8bebe29c79 1
+libs/frontend/_shared/components/src/lib/edit-profile/edit-profile.component.ts
+  s_3c524d9508a5c0::t_2da13d48f81918 1-90
+libs/frontend/_shared/components/src/lib/edit-profile/index.ts
+  s_3c524d9508a5c0::t_d861faef3b289a 1
+libs/frontend/_shared/components/src/lib/index.ts
+  s_3c524d9508a5c0::t_009fad75ac11d4 1-10
+libs/frontend/_shared/components/src/lib/mimic-user-modal/mimic-user-modal.component.ts
+  s_3c524d9508a5c0::t_1df12a66769504 1-74
+libs/frontend/_shared/components/src/lib/searchable-dropdown/index.ts
+  s_3c524d9508a5c0::t_4a421e94556c64 1
+libs/frontend/_shared/components/src/lib/view-dynamic-image/index.ts
+  s_3c524d9508a5c0::t_1e4ee1eb0ad9e3 1
+libs/frontend/_shared/components/src/lib/view-dynamic-image/view-dynamic-image.component.ts
+  s_3c524d9508a5c0::t_43b1c27d68e2f9 1-235
+libs/frontend/_shared/components/src/test-setup.ts
+  s_3c524d9508a5c0::t_f6672ade4c1f78 1-3
+libs/frontend/_shared/components/tsconfig.json
+  s_3c524d9508a5c0::t_2b75a70ac6e9ea 1-17
+libs/frontend/_shared/components/tsconfig.lib.json
+  s_3c524d9508a5c0::t_902b6ad4e38509 1-13
+libs/frontend/_shared/components/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_f8f59e28f18645 1-7
+libs/frontend/_shared/components/tsconfig.spec.json
+  s_3c524d9508a5c0::t_75ada9940c5b89 1-12
+libs/frontend/_shared/data-access/README.md
+  s_3c524d9508a5c0::t_3efb02e8103ebd 1-7
+libs/frontend/_shared/data-access/eslint.config.js
+  s_3c524d9508a5c0::t_4a2094fbddb642 1-44
+libs/frontend/_shared/data-access/jest.config.ts
+  s_3c524d9508a5c0::t_b522dc6252508f 1-22
+libs/frontend/_shared/data-access/ng-package.json
+  s_3c524d9508a5c0::t_1a6ad087120cf7 1-7
+libs/frontend/_shared/data-access/package.json
+  s_3c524d9508a5c0::t_c1744177ab6eb8 1-7
+libs/frontend/_shared/data-access/project.json
+  s_3c524d9508a5c0::t_cf473e9a4d2d33 1-27
+libs/frontend/_shared/data-access/src/index.ts
+  s_3c524d9508a5c0::t_8bef240c0a4ef3 1
+libs/frontend/_shared/data-access/src/lib/allies-on-programs/allies-on-programs.store.ts
+  s_3c524d9508a5c0::t_8af376d693bd80 1-134
+libs/frontend/_shared/data-access/src/lib/allies-on-programs/index.ts
+  s_3c524d9508a5c0::t_e1eee203459fea 1
+libs/frontend/_shared/data-access/src/lib/blogs/blogs.store.ts
+  s_3c524d9508a5c0::t_d8a81f257bdec5 1-152
+libs/frontend/_shared/data-access/src/lib/blogs/index.ts
+  s_3c524d9508a5c0::t_5efdc6102f3745 1
+libs/frontend/_shared/data-access/src/lib/checkpoint-names/checkpoint-names.store.ts
+  s_3c524d9508a5c0::t_e4d8f88b6f9be0 1-145
+libs/frontend/_shared/data-access/src/lib/checkpoint-names/index.ts
+  s_3c524d9508a5c0::t_9bdfce50deb890 1
+libs/frontend/_shared/data-access/src/lib/checkpoints/checkpoints.store.ts
+  s_3c524d9508a5c0::t_1d3bbf1cfd3fa8 1-242
+libs/frontend/_shared/data-access/src/lib/checkpoints/index.ts
+  s_3c524d9508a5c0::t_c4da54f5031b11 1
+libs/frontend/_shared/data-access/src/lib/cohorts/cohorts.store.ts
+  s_3c524d9508a5c0::t_cdee699d185c00 1-133
+libs/frontend/_shared/data-access/src/lib/cohorts/index.ts
+  s_3c524d9508a5c0::t_44e2a6438f62b8 1
+libs/frontend/_shared/data-access/src/lib/description/description.store.ts
+  s_3c524d9508a5c0::t_84e5d5ceaf26e3 1-70
+libs/frontend/_shared/data-access/src/lib/description/index.ts
+  s_3c524d9508a5c0::t_372ec4ee07ce89 1
+libs/frontend/_shared/data-access/src/lib/document-management/document-management.store.ts
+  s_3c524d9508a5c0::t_e0e918c8b3fecd 1-419
+libs/frontend/_shared/data-access/src/lib/document-management/index.ts
+  s_3c524d9508a5c0::t_a977a1c5046996 1
+libs/frontend/_shared/data-access/src/lib/educational-resources/educational-category.store.ts
+  s_3c524d9508a5c0::t_2c195df81955e4 1-131
+libs/frontend/_shared/data-access/src/lib/educational-resources/educational-content.store.ts
+  s_3c524d9508a5c0::t_a2421ba8b13d61 1-183
+libs/frontend/_shared/data-access/src/lib/educational-resources/index.ts
+  s_3c524d9508a5c0::t_1e8b551322b2ea 1-2
+libs/frontend/_shared/data-access/src/lib/images/images.store.ts
+  s_3c524d9508a5c0::t_4089ff5565722b 1-253
+libs/frontend/_shared/data-access/src/lib/images/index.ts
+  s_3c524d9508a5c0::t_f99099be7ebe6e 1
+libs/frontend/_shared/data-access/src/lib/index.ts
+  s_3c524d9508a5c0::t_6dab3d03d527d5 1-20
+libs/frontend/_shared/data-access/src/lib/introduction/index.ts
+  s_3c524d9508a5c0::t_36811b572e121c 1
+libs/frontend/_shared/data-access/src/lib/introduction/introduction.store.ts
+  s_3c524d9508a5c0::t_498a361f47738c 1-77
+libs/frontend/_shared/data-access/src/lib/learnings/index.ts
+  s_3c524d9508a5c0::t_44120c8c63f2ab 1
+libs/frontend/_shared/data-access/src/lib/learnings/learnings.store.ts
+  s_3c524d9508a5c0::t_fd0e3eccbe2424 1-157
+libs/frontend/_shared/data-access/src/lib/partners/index.ts
+  s_3c524d9508a5c0::t_06d91f0eea2deb 1
+libs/frontend/_shared/data-access/src/lib/partners/partners.store.ts
+  s_3c524d9508a5c0::t_e5f69572ff565c 1-127
+libs/frontend/_shared/data-access/src/lib/peer-evaluation-guide/index.ts
+  s_3c524d9508a5c0::t_31777658886f7c 1
+libs/frontend/_shared/data-access/src/lib/peer-evaluation-guide/peer-evaluation-guide.store.ts
+  s_3c524d9508a5c0::t_ae3443427719d7 1-68
+libs/frontend/_shared/data-access/src/lib/programs/index.ts
+  s_3c524d9508a5c0::t_37b89b52c7f42a 1
+libs/frontend/_shared/data-access/src/lib/programs/programs.store.ts
+  s_3c524d9508a5c0::t_08fbdfa64ea640 1-349
+libs/frontend/_shared/data-access/src/lib/stories/index.ts
+  s_3c524d9508a5c0::t_6248e1d72f55ab 1
+libs/frontend/_shared/data-access/src/lib/stories/stories.store.ts
+  s_3c524d9508a5c0::t_9085544c961298 1-142
+libs/frontend/_shared/data-access/src/lib/theme/index.ts
+  s_3c524d9508a5c0::t_6e0ed46b70f15e 1
+libs/frontend/_shared/data-access/src/lib/theme/theme.service.ts
+  s_3c524d9508a5c0::t_87d2e10c968deb 1-30
+libs/frontend/_shared/data-access/src/lib/user-guide/index.ts
+  s_3c524d9508a5c0::t_ad93137d6d9997 1
+libs/frontend/_shared/data-access/src/lib/user-guide/user-guide.store.ts
+  s_3c524d9508a5c0::t_704c03057fcaf5 1-70
+libs/frontend/_shared/data-access/src/lib/users-on-programs/index.ts
+  s_3c524d9508a5c0::t_54c68d3cc05c33 1
+libs/frontend/_shared/data-access/src/lib/users-on-programs/users-on-programs.store.ts
+  s_3c524d9508a5c0::t_4bc00ce623af15 1-284
+libs/frontend/_shared/data-access/src/lib/users/index.ts
+  s_3c524d9508a5c0::t_106eaca8aef986 1
+libs/frontend/_shared/data-access/src/lib/users/users.store.ts
+  s_3c524d9508a5c0::t_17425cc2e0306f 1-130
+libs/frontend/_shared/data-access/src/lib/what-we-are/index.ts
+  s_3c524d9508a5c0::t_dc24be00ac4013 1
+libs/frontend/_shared/data-access/src/lib/what-we-are/what-we-are.store.ts
+  s_3c524d9508a5c0::t_987d822006483a 1-67
+libs/frontend/_shared/data-access/src/test-setup.ts
+  s_3c524d9508a5c0::t_1f1ccc7a8719af 1-3
+libs/frontend/_shared/data-access/tsconfig.json
+  s_3c524d9508a5c0::t_40a9f9dd109aea 1-17
+libs/frontend/_shared/data-access/tsconfig.lib.json
+  s_3c524d9508a5c0::t_d801ca881ca2e1 1-13
+libs/frontend/_shared/data-access/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_1e496e87055199 1-7
+libs/frontend/_shared/data-access/tsconfig.spec.json
+  s_3c524d9508a5c0::t_d72ecd4d30a244 1-12
+libs/frontend/_shared/layout/README.md
+  s_3c524d9508a5c0::t_7d24b83404a5cb 1-7
+libs/frontend/_shared/layout/eslint.config.js
+  s_3c524d9508a5c0::t_1ba855fc7d22fc 1-44
+libs/frontend/_shared/layout/jest.config.ts
+  s_3c524d9508a5c0::t_17a03c008afe07 1-22
+libs/frontend/_shared/layout/ng-package.json
+  s_3c524d9508a5c0::t_b16d40f20780c0 1-7
+libs/frontend/_shared/layout/package.json
+  s_3c524d9508a5c0::t_3e05bcdad15003 1-7
+libs/frontend/_shared/layout/project.json
+  s_3c524d9508a5c0::t_ac0ff644e81ac1 1-27
+libs/frontend/_shared/layout/src/index.ts
+  s_3c524d9508a5c0::t_3379be49b8704e 1
+libs/frontend/_shared/layout/src/lib/footer/footer.component.ts
+  s_3c524d9508a5c0::t_c4f02aa7ecd2ad 1-28
+libs/frontend/_shared/layout/src/lib/footer/index.ts
+  s_3c524d9508a5c0::t_1a1de5338083e6 1
+libs/frontend/_shared/layout/src/lib/hero/hero.component.ts
+  s_3c524d9508a5c0::t_9bc11d1497f4a5 1-58
+libs/frontend/_shared/layout/src/lib/hero/index.ts
+  s_3c524d9508a5c0::t_2c270ac627e8bd 1
+libs/frontend/_shared/layout/src/lib/index.ts
+  s_3c524d9508a5c0::t_1688c81d558268 1-6
+libs/frontend/_shared/layout/src/lib/layout/breadcrumb/breadcrumb.component.ts
+  s_3c524d9508a5c0::t_db5b81b20e9906 1-82
+libs/frontend/_shared/layout/src/lib/layout/index.ts
+  s_3c524d9508a5c0::t_20db50b406d7e4 1
+libs/frontend/_shared/layout/src/lib/layout/layout.component.ts
+  s_3c524d9508a5c0::t_1a9794d6886af7 1-50
+libs/frontend/_shared/layout/src/lib/layout/nav/nav.component.ts
+  s_3c524d9508a5c0::t_4b16b6791de466 1-298
+libs/frontend/_shared/layout/src/lib/layout/sidenav/sidenav.component.ts
+  s_3c524d9508a5c0::t_427b37bb21c881 1-174
+libs/frontend/_shared/layout/src/lib/layout/update-notification/update-notification.component.ts
+  s_3c524d9508a5c0::t_53da0cc6a32cb0 1-55
+libs/frontend/_shared/layout/src/lib/services/provide-pwa-notifications.ts
+  s_3c524d9508a5c0::t_0f24ceae7a4b9f 1-21
+libs/frontend/_shared/layout/src/lib/services/push-notification.service.ts
+  s_3c524d9508a5c0::t_15ae2c72747c90 1-88
+libs/frontend/_shared/layout/src/lib/services/pwa-update.service.ts
+  s_3c524d9508a5c0::t_2e874f9787e1e1 1-102
+libs/frontend/_shared/layout/src/test-setup.ts
+  s_3c524d9508a5c0::t_56bf0951c563aa 1-3
+libs/frontend/_shared/layout/tsconfig.json
+  s_3c524d9508a5c0::t_1c37543b6317ab 1-17
+libs/frontend/_shared/layout/tsconfig.lib.json
+  s_3c524d9508a5c0::t_abcf149f4a296c 1-13
+libs/frontend/_shared/layout/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_7ecc723f2b2b26 1-7
+libs/frontend/_shared/layout/tsconfig.spec.json
+  s_3c524d9508a5c0::t_1cdcd2cd750b66 1-12
+libs/frontend/_shared/util/README.md
+  s_3c524d9508a5c0::t_2ca302e11c81ad 1-7
+libs/frontend/_shared/util/eslint.config.js
+  s_3c524d9508a5c0::t_c0c0861d45a24b 1-44
+libs/frontend/_shared/util/jest.config.ts
+  s_3c524d9508a5c0::t_65545ea5d88c0d 1-22
+libs/frontend/_shared/util/ng-package.json
+  s_3c524d9508a5c0::t_28d2ad8ec5bb63 1-7
+libs/frontend/_shared/util/package.json
+  s_3c524d9508a5c0::t_ebe2c4326840e2 1-7
+libs/frontend/_shared/util/project.json
+  s_3c524d9508a5c0::t_900d8ef4a958a7 1-27
+libs/frontend/_shared/util/src/index.ts
+  s_3c524d9508a5c0::t_fb19e041e68d58 1
+libs/frontend/_shared/util/src/lib/date-string-to-no-timezone.ts
+  s_3c524d9508a5c0::t_778025b59ef0da 1-20
+libs/frontend/_shared/util/src/lib/index.ts
+  s_3c524d9508a5c0::t_45e7eae8fd93ef 1-4
+libs/frontend/_shared/util/src/lib/seo.resolve.ts
+  s_3c524d9508a5c0::t_0e53d87fc456ae 1-19
+libs/frontend/_shared/util/src/lib/show-only-date.ts
+  s_3c524d9508a5c0::t_66ebb3268ca487 1-7
+libs/frontend/_shared/util/src/lib/url-regex.ts
+  s_3c524d9508a5c0::t_18c881c0e0139e 1
+libs/frontend/_shared/util/src/test-setup.ts
+  s_3c524d9508a5c0::t_a2664c52b89e73 1-3
+libs/frontend/_shared/util/tsconfig.json
+  s_3c524d9508a5c0::t_e68ead4a7a80ff 1-17
+libs/frontend/_shared/util/tsconfig.lib.json
+  s_3c524d9508a5c0::t_b778a28f3d6b53 1-13
+libs/frontend/_shared/util/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_25ee97a23a60f8 1-7
+libs/frontend/_shared/util/tsconfig.spec.json
+  s_3c524d9508a5c0::t_933ec10f7c8708 1-12
+libs/frontend/about-us/README.md
+  s_3c524d9508a5c0::t_7f322ec20d6fe5 1-7
+libs/frontend/about-us/eslint.config.js
+  s_3c524d9508a5c0::t_ca94d09cea0709 1-44
+libs/frontend/about-us/jest.config.ts
+  s_3c524d9508a5c0::t_10e16d27d72708 1-22
+libs/frontend/about-us/ng-package.json
+  s_3c524d9508a5c0::t_e031e53823b08b 1-7
+libs/frontend/about-us/package.json
+  s_3c524d9508a5c0::t_7c79df584093dd 1-7
+libs/frontend/about-us/project.json
+  s_3c524d9508a5c0::t_38a9ae48531dd5 1-27
+libs/frontend/about-us/src/index.ts
+  s_3c524d9508a5c0::t_67cd2548f56370 1
+libs/frontend/about-us/src/lib/index.ts
+  s_3c524d9508a5c0::t_bb3070eaec7839 1
+libs/frontend/about-us/src/test-setup.ts
+  s_3c524d9508a5c0::t_d64fe4cb978392 1-3
+libs/frontend/about-us/tsconfig.json
+  s_3c524d9508a5c0::t_ee6185dccaab00 1-17
+libs/frontend/about-us/tsconfig.lib.json
+  s_3c524d9508a5c0::t_348a2286c42c72 1-13
+libs/frontend/about-us/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_8155cb592686cd 1-7
+libs/frontend/about-us/tsconfig.spec.json
+  s_3c524d9508a5c0::t_fa5d35bb477af0 1-12
+libs/frontend/admin/README.md
+  s_3c524d9508a5c0::t_95eb5ac22dd35f 1-7
+libs/frontend/admin/eslint.config.js
+  s_3c524d9508a5c0::t_7a1e7783c9a763 1-44
+libs/frontend/admin/jest.config.ts
+  s_3c524d9508a5c0::t_1edac694d8f3fb 1-22
+libs/frontend/admin/ng-package.json
+  s_3c524d9508a5c0::t_9c8f0e57887b6a 1-7
+libs/frontend/admin/package.json
+  s_3c524d9508a5c0::t_822d977f3948c8 1-7
+libs/frontend/admin/project.json
+  s_3c524d9508a5c0::t_9d62886ffe323b 1-27
+libs/frontend/admin/src/index.ts
+  s_3c524d9508a5c0::t_970a3d6bda62c6 1
+libs/frontend/admin/src/lib/about-us-management/about-us-management.component.ts
+  s_3c524d9508a5c0::t_71c45067607ce1 1-72
+libs/frontend/admin/src/lib/about-us-management/ui/add-cohort/add-cohort.component.ts
+  s_3c524d9508a5c0::t_a3d2ca450aff85 1-134
+libs/frontend/admin/src/lib/about-us-management/ui/cohort-actions/cohort-actions.component.ts
+  s_3c524d9508a5c0::t_ce6f1298eed429 1-77
+libs/frontend/admin/src/lib/admin.routes.ts
+  s_3c524d9508a5c0::t_0aa8c1ca6c1ffe 1-223
+libs/frontend/admin/src/lib/blogs/admin-blogs.component.ts
+  s_3c524d9508a5c0::t_13cbeea28e508d 1-77
+libs/frontend/admin/src/lib/blogs/ui/blog-actions/blog-actions.component.ts
+  s_3c524d9508a5c0::t_a72d51857ca4e9 1-76
+libs/frontend/admin/src/lib/checkpoint-names/checkpoint-names.component.ts
+  s_3c524d9508a5c0::t_a0af0b2e4cb3d5 1-68
+libs/frontend/admin/src/lib/checkpoint-names/ui/add-checkpoint-name/add-checkpoint-name.component.ts
+  s_3c524d9508a5c0::t_d7b8a86dbd7da2 1-102
+libs/frontend/admin/src/lib/checkpoint-names/ui/checkpoint-names-actions/checkpoint-names-actions.component.ts
+  s_3c524d9508a5c0::t_a8d8b226357b17 1-77
+libs/frontend/admin/src/lib/education-management/content-notifications/content-notifications.component.ts
+  s_3c524d9508a5c0::t_7bc4be1210d61a 1-216
+libs/frontend/admin/src/lib/education-management/education-management.component.ts
+  s_3c524d9508a5c0::t_f3be38e06f90b1 1-82
+libs/frontend/admin/src/lib/education-management/educational-categories/ui/educational-category-form/educational-category-form.component.ts
+  s_3c524d9508a5c0::t_d526f349a7ecba 1-71
+libs/frontend/admin/src/lib/education-management/educational-content/educational-content.component.ts
+  s_3c524d9508a5c0::t_e7369c29acb773 1-68
+libs/frontend/admin/src/lib/education-management/educational-content/ui/category-badge/category-badge.component.ts
+  s_3c524d9508a5c0::t_39f82b365afb89 1-32
+libs/frontend/admin/src/lib/education-management/educational-content/ui/description-cell-renderer/description-cell-renderer.component.ts
+  s_3c524d9508a5c0::t_ec4a723e0239fe 1-61
+libs/frontend/admin/src/lib/education-management/educational-content/ui/educational-content-form/educational-content-form.component.ts
+  s_3c524d9508a5c0::t_d9ffc69715c9f6 1-284
+libs/frontend/admin/src/lib/email-blast/email-blast.component.ts
+  s_3c524d9508a5c0::t_583c032dee539e 1-110
+libs/frontend/admin/src/lib/email-blast/email-blast.store.ts
+  s_3c524d9508a5c0::t_922c19ded2d776 1-49
+libs/frontend/admin/src/lib/home-management/description/description.component.ts
+  s_3c524d9508a5c0::t_e032d918a84035 1-197
+libs/frontend/admin/src/lib/home-management/home-management.component.ts
+  s_3c524d9508a5c0::t_07f49db6e65baa 1-41
+libs/frontend/admin/src/lib/home-management/intorduction/introduction.component.ts
+  s_3c524d9508a5c0::t_8d7577406d7174 1-166
+libs/frontend/admin/src/lib/home-management/learnings/learnings.component.ts
+  s_3c524d9508a5c0::t_17d5d80806646c 1-93
+libs/frontend/admin/src/lib/home-management/learnings/ui/learning-actions/learning-actions.component.ts
+  s_3c524d9508a5c0::t_317f5088c72a38 1-93
+libs/frontend/admin/src/lib/home-management/stories/stories.component.ts
+  s_3c524d9508a5c0::t_bcb4f1803a76ea 1-92
+libs/frontend/admin/src/lib/home-management/stories/ui/story-actions/story-actions.component.ts
+  s_3c524d9508a5c0::t_d0c2529dae323f 1-93
+libs/frontend/admin/src/lib/home-management/what-we-are/what-we-are.component.ts
+  s_3c524d9508a5c0::t_f511977b36ee47 1-91
+libs/frontend/admin/src/lib/peer-evaluation-guide/peer-evaluation-guide.component.ts
+  s_3c524d9508a5c0::t_ea7fd257e358c9 1-76
+libs/frontend/admin/src/lib/users/ui/users-actions/users-actions.component.ts
+  s_3c524d9508a5c0::t_5369c5ce6bd36f 1-48
+libs/frontend/admin/src/lib/users/users.component.ts
+  s_3c524d9508a5c0::t_59015ef2d1b171 1-85
+libs/frontend/admin/src/test-setup.ts
+  s_3c524d9508a5c0::t_b1f9b41c874b2c 1-3
+libs/frontend/admin/tsconfig.json
+  s_3c524d9508a5c0::t_a52e624611bc15 1-17
+libs/frontend/admin/tsconfig.lib.json
+  s_3c524d9508a5c0::t_317361bfc4ce57 1-13
+libs/frontend/admin/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_435c23274aaf10 1-7
+libs/frontend/admin/tsconfig.spec.json
+  s_3c524d9508a5c0::t_9232e2a165318e 1-12
+libs/frontend/blogs/README.md
+  s_3c524d9508a5c0::t_fd47aea51b4b9c 1-7
+libs/frontend/blogs/eslint.config.js
+  s_3c524d9508a5c0::t_26daf272345b52 1-44
+libs/frontend/blogs/jest.config.ts
+  s_3c524d9508a5c0::t_64e921caf5fb7a 1-22
+libs/frontend/blogs/ng-package.json
+  s_3c524d9508a5c0::t_bc5a2299160c8d 1-7
+libs/frontend/blogs/package.json
+  s_3c524d9508a5c0::t_4f9403c70bcbd0 1-7
+libs/frontend/blogs/project.json
+  s_3c524d9508a5c0::t_bc72bab8e69de8 1-27
+libs/frontend/blogs/src/index.ts
+  s_3c524d9508a5c0::t_9db359933c0c6f 1
+libs/frontend/blogs/src/lib/blog/blog.component.ts
+  s_3c524d9508a5c0::t_7c23c1b3686955 1-116
+libs/frontend/blogs/src/lib/blogs.component.ts
+  s_3c524d9508a5c0::t_b89b7efe99128a 1-65
+libs/frontend/blogs/src/lib/blogs.routes.ts
+  s_3c524d9508a5c0::t_d7f7a07dc53635 1-29
+libs/frontend/blogs/src/test-setup.ts
+  s_3c524d9508a5c0::t_07af410acbcd68 1-3
+libs/frontend/blogs/tsconfig.json
+  s_3c524d9508a5c0::t_42d5bd6bc88bbf 1-17
+libs/frontend/blogs/tsconfig.lib.json
+  s_3c524d9508a5c0::t_46f877c0e3b0fd 1-13
+libs/frontend/blogs/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_26b366b6cb893f 1-7
+libs/frontend/blogs/tsconfig.spec.json
+  s_3c524d9508a5c0::t_bfd27aa94b93a9 1-12
+libs/frontend/dashboard/README.md
+  s_3c524d9508a5c0::t_541a7d14a202bd 1-7
+libs/frontend/dashboard/eslint.config.js
+  s_3c524d9508a5c0::t_23a46ebad5a73c 1-34
+libs/frontend/dashboard/jest.config.ts
+  s_3c524d9508a5c0::t_ddd70dbd332788 1-21
+libs/frontend/dashboard/ng-package.json
+  s_3c524d9508a5c0::t_c41c9ae6a8dffa 1-7
+libs/frontend/dashboard/package.json
+  s_3c524d9508a5c0::t_f3c6650244754d 1-6
+libs/frontend/dashboard/project.json
+  s_3c524d9508a5c0::t_823035135edbe7 1-36
+libs/frontend/dashboard/src/index.ts
+  s_3c524d9508a5c0::t_966cbde03f65b0 1
+libs/frontend/dashboard/src/lib/dashboard/dashboard.component.ts
+  s_3c524d9508a5c0::t_69eaeb25c84ccc 1-54
+libs/frontend/dashboard/src/test-setup.ts
+  s_3c524d9508a5c0::t_39508046c1cd19 1-3
+libs/frontend/dashboard/tsconfig.json
+  s_3c524d9508a5c0::t_c2aa32dbf1f445 1-17
+libs/frontend/dashboard/tsconfig.lib.json
+  s_3c524d9508a5c0::t_3571ae87b85620 1-13
+libs/frontend/dashboard/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_c6f5ca779306c3 1-7
+libs/frontend/dashboard/tsconfig.spec.json
+  s_3c524d9508a5c0::t_361e03ce55d893 1-12
+libs/frontend/educational-resources/README.md
+  s_3c524d9508a5c0::t_dc1a58488c13bd 1-7
+libs/frontend/educational-resources/eslint.config.js
+  s_3c524d9508a5c0::t_d0058896da5e3b 1-44
+libs/frontend/educational-resources/jest.config.ts
+  s_3c524d9508a5c0::t_c3ec85b2e22aa7 1-22
+libs/frontend/educational-resources/ng-package.json
+  s_3c524d9508a5c0::t_9e946efd6eb354 1-7
+libs/frontend/educational-resources/package.json
+  s_3c524d9508a5c0::t_04997be9622017 1-7
+libs/frontend/educational-resources/project.json
+  s_3c524d9508a5c0::t_9fa0110ac05004 1-27
+libs/frontend/educational-resources/src/index.ts
+  s_3c524d9508a5c0::t_4ef7746abdc69c 1
+libs/frontend/educational-resources/src/lib/educational-resources.component.ts
+  s_3c524d9508a5c0::t_20c70977b87751 1-95
+libs/frontend/educational-resources/src/test-setup.ts
+  s_3c524d9508a5c0::t_4e81cce8caad78 1-3
+libs/frontend/educational-resources/tsconfig.json
+  s_3c524d9508a5c0::t_a81610befb8202 1-17
+libs/frontend/educational-resources/tsconfig.lib.json
+  s_3c524d9508a5c0::t_ad3cca5d01a799 1-13
+libs/frontend/educational-resources/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_708379d1a0d5b2 1-7
+libs/frontend/educational-resources/tsconfig.spec.json
+  s_3c524d9508a5c0::t_d6e1c4bb621e09 1-12
+libs/frontend/enroll/README.md
+  s_3c524d9508a5c0::t_55f2443e54f25b 1-7
+libs/frontend/enroll/eslint.config.js
+  s_3c524d9508a5c0::t_c453f61847bf88 1-34
+libs/frontend/enroll/jest.config.ts
+  s_3c524d9508a5c0::t_f2043b25c83b65 1-21
+libs/frontend/enroll/ng-package.json
+  s_3c524d9508a5c0::t_a8ffbe51b2c9ce 1-7
+libs/frontend/enroll/package.json
+  s_3c524d9508a5c0::t_d1da379aac60ce 1-6
+libs/frontend/enroll/project.json
+  s_3c524d9508a5c0::t_bc1341b744cb19 1-36
+libs/frontend/enroll/src/index.ts
+  s_3c524d9508a5c0::t_9c87e2b45fbaf8 1
+libs/frontend/enroll/src/lib/enroll/enroll.component.ts
+  s_3c524d9508a5c0::t_85b1b367394153 1-282
+libs/frontend/enroll/src/test-setup.ts
+  s_3c524d9508a5c0::t_49956ee69a6277 1-3
+libs/frontend/enroll/tsconfig.json
+  s_3c524d9508a5c0::t_3aa633fbd87385 1-17
+libs/frontend/enroll/tsconfig.lib.json
+  s_3c524d9508a5c0::t_bef863aab13991 1-13
+libs/frontend/enroll/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_4c60bdc2397f63 1-7
+libs/frontend/enroll/tsconfig.spec.json
+  s_3c524d9508a5c0::t_d2dd8e4ee13a57 1-12
+libs/frontend/forgot-password/README.md
+  s_3c524d9508a5c0::t_d9cc10166a1a79 1-7
+libs/frontend/forgot-password/eslint.config.js
+  s_3c524d9508a5c0::t_e55a34fc5a5fdd 1-44
+libs/frontend/forgot-password/jest.config.ts
+  s_3c524d9508a5c0::t_3b0158fe5e666e 1-22
+libs/frontend/forgot-password/ng-package.json
+  s_3c524d9508a5c0::t_6be54e57759c44 1-7
+libs/frontend/forgot-password/package.json
+  s_3c524d9508a5c0::t_52518a056d8133 1-7
+libs/frontend/forgot-password/project.json
+  s_3c524d9508a5c0::t_3d06ec0c149b55 1-27
+libs/frontend/forgot-password/src/index.ts
+  s_3c524d9508a5c0::t_02c6083a321502 1
+libs/frontend/forgot-password/src/lib/forgot-password.component.ts
+  s_3c524d9508a5c0::t_4634910aa2b0fe 1-72
+libs/frontend/forgot-password/src/test-setup.ts
+  s_3c524d9508a5c0::t_7dae4612dbab8b 1-3
+libs/frontend/forgot-password/tsconfig.json
+  s_3c524d9508a5c0::t_1ecf9e853cfe17 1-17
+libs/frontend/forgot-password/tsconfig.lib.json
+  s_3c524d9508a5c0::t_1319132270e76e 1-13
+libs/frontend/forgot-password/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_772f004a4ed982 1-7
+libs/frontend/forgot-password/tsconfig.spec.json
+  s_3c524d9508a5c0::t_cad695e591254e 1-12
+libs/frontend/home/README.md
+  s_3c524d9508a5c0::t_2c3fc76af46455 1-7
+libs/frontend/home/eslint.config.js
+  s_3c524d9508a5c0::t_e3a1eb9fefc8bf 1-44
+libs/frontend/home/jest.config.ts
+  s_3c524d9508a5c0::t_da72b5d5dc408c 1-22
+libs/frontend/home/ng-package.json
+  s_3c524d9508a5c0::t_6461e5a8937164 1-7
+libs/frontend/home/package.json
+  s_3c524d9508a5c0::t_a5d791e41068ae 1-7
+libs/frontend/home/project.json
+  s_3c524d9508a5c0::t_9c664679d82b5a 1-27
+libs/frontend/home/src/index.ts
+  s_3c524d9508a5c0::t_06a4439b800e4a 1
+libs/frontend/home/src/lib/home.component.ts
+  s_3c524d9508a5c0::t_77b12330e34925 1-166
+libs/frontend/home/src/test-setup.ts
+  s_3c524d9508a5c0::t_8ad0412a245cce 1-3
+libs/frontend/home/tsconfig.json
+  s_3c524d9508a5c0::t_2fcc7e73ca6e09 1-17
+libs/frontend/home/tsconfig.lib.json
+  s_3c524d9508a5c0::t_8697d0338f4692 1-13
+libs/frontend/home/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_e70e955d4355a0 1-7
+libs/frontend/home/tsconfig.spec.json
+  s_3c524d9508a5c0::t_df2e62c71f57db 1-12
+libs/frontend/login/README.md
+  s_3c524d9508a5c0::t_820e8061997bf1 1-7
+libs/frontend/login/eslint.config.js
+  s_3c524d9508a5c0::t_4114d476820fe7 1-44
+libs/frontend/login/jest.config.ts
+  s_3c524d9508a5c0::t_7dfc6c3a3cf257 1-22
+libs/frontend/login/ng-package.json
+  s_3c524d9508a5c0::t_9a3c2979691fa4 1-7
+libs/frontend/login/package.json
+  s_3c524d9508a5c0::t_0d6c679a9db36b 1-7
+libs/frontend/login/project.json
+  s_3c524d9508a5c0::t_5a1ac578365fc7 1-27
+libs/frontend/login/src/index.ts
+  s_3c524d9508a5c0::t_017b1bd8cb7ca0 1
+libs/frontend/login/src/test-setup.ts
+  s_3c524d9508a5c0::t_4e2589da9e8a7a 1-3
+libs/frontend/login/tsconfig.json
+  s_3c524d9508a5c0::t_0253277849d154 1-17
+libs/frontend/login/tsconfig.lib.json
+  s_3c524d9508a5c0::t_a195d1e7636628 1-13
+libs/frontend/login/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_5a7b6d92df4a53 1-7
+libs/frontend/login/tsconfig.spec.json
+  s_3c524d9508a5c0::t_dec75f99497751 1-12
+libs/frontend/partner-staff/README.md
+  s_3c524d9508a5c0::t_1dea2832b39d20 1-7
+libs/frontend/partner-staff/eslint.config.js
+  s_3c524d9508a5c0::t_295c613723baae 1-44
+libs/frontend/partner-staff/jest.config.ts
+  s_3c524d9508a5c0::t_e67ce0242d49e9 1-22
+libs/frontend/partner-staff/ng-package.json
+  s_3c524d9508a5c0::t_3840cf909eb20e 1-7
+libs/frontend/partner-staff/package.json
+  s_3c524d9508a5c0::t_f58eff20cec860 1-7
+libs/frontend/partner-staff/project.json
+  s_3c524d9508a5c0::t_553c44b18c4cf4 1-27
+libs/frontend/partner-staff/src/index.ts
+  s_3c524d9508a5c0::t_0218854ab7c776 1
+libs/frontend/partner-staff/src/lib/partner-staff.routes.ts
+  s_3c524d9508a5c0::t_6a1f86917ab141 1-27
+libs/frontend/partner-staff/src/lib/program/allies-on-programs/allies-on-programs.component.ts
+  s_3c524d9508a5c0::t_beff3b6d3bc79c 1-75
+libs/frontend/partner-staff/src/lib/program/allies-on-programs/ui/add-allies-on-programs/add-allies-on-programs.component.ts
+  s_3c524d9508a5c0::t_605e3d9c82e2f0 1-76
+libs/frontend/partner-staff/src/lib/program/allies-on-programs/ui/add-allies-on-programs/users-for-programs.store.ts
+  s_3c524d9508a5c0::t_9d9a04195ab684 1-48
+libs/frontend/partner-staff/src/lib/program/allies-on-programs/ui/allies-on-programs-actions/allies-on-programs-actions.component.ts
+  s_3c524d9508a5c0::t_1906918e5d17bb 1-75
+libs/frontend/partner-staff/src/lib/program/allies-on-programs/ui/requirement-badge/requirement-badge.component.ts
+  s_3c524d9508a5c0::t_8491b641b30989 1-25
+libs/frontend/partner-staff/src/lib/program/cohort-percentage-completion/cohort-percentage-completion-by-user-chart.component.ts
+  s_3c524d9508a5c0::t_2aef6dcf2e5599 1-59
+libs/frontend/partner-staff/src/lib/program/cohort-percentage-completion/cohort-percentage-completion-chart.component.ts
+  s_3c524d9508a5c0::t_d748c97e3f4787 1-102
+libs/frontend/partner-staff/src/lib/program/cohort-percentage-completion/total-amount-saved-chart.component.ts
+  s_3c524d9508a5c0::t_8f2bb3cc3fb3bd 1-98
+libs/frontend/partner-staff/src/lib/program/cohort-percentage-completion/utils/inject-computed-users-combined.ts
+  s_3c524d9508a5c0::t_eaf20cd3fc894c 1-28
+libs/frontend/partner-staff/src/lib/program/document-managemant/document-management.component.ts
+  s_3c524d9508a5c0::t_1bb22e6434f7e7 1-254
+libs/frontend/partner-staff/src/lib/program/enrollments/enrollments.component.ts
+  s_3c524d9508a5c0::t_26b97d38b24a6b 1-116
+libs/frontend/partner-staff/src/lib/program/enrollments/ui/enrollments-actions/enrollments-actions.component.ts
+  s_3c524d9508a5c0::t_7bedbb3583394e 1-85
+libs/frontend/partner-staff/src/lib/program/program.component.ts
+  s_3c524d9508a5c0::t_68528ef3504936 1-79
+libs/frontend/partner-staff/src/lib/program/program.routes.ts
+  s_3c524d9508a5c0::t_cc31e58b025dc1 1-91
+libs/frontend/partner-staff/src/lib/program/requirements/requirements.store.ts
+  s_3c524d9508a5c0::t_1d9a8cb9092aad 1-145
+libs/frontend/partner-staff/src/lib/program/requirements/ui/requirement-actions/requirement-actions.component.ts
+  s_3c524d9508a5c0::t_d66205fe6f00db 1-75
+libs/frontend/partner-staff/src/lib/program/user-checkpoints/checkpoints.store.ts
+  s_3c524d9508a5c0::t_ff08d0e4de111b 1-186
+libs/frontend/partner-staff/src/lib/program/user-checkpoints/ui/checkpoint-actions/checkpoint-actions.component.ts
+  s_3c524d9508a5c0::t_d0f2d3dba9ee89 1-139
+libs/frontend/partner-staff/src/lib/program/user-checkpoints/user-checkpoints.component.ts
+  s_3c524d9508a5c0::t_8b92c46824dfcc 1-128
+libs/frontend/partner-staff/src/lib/program/users-on-programs/ui/add-users-on-programs/add-users-on-programs.component.ts
+  s_3c524d9508a5c0::t_d8ec04568cbad8 1-211
+libs/frontend/partner-staff/src/lib/program/users-on-programs/ui/add-users-on-programs/users-for-programs.store.ts
+  s_3c524d9508a5c0::t_92875cfe808d01 1-50
+libs/frontend/partner-staff/src/lib/program/users-on-programs/ui/requirement-badge/requirement-badge.component.ts
+  s_3c524d9508a5c0::t_5555fb64daeacb 1-25
+libs/frontend/partner-staff/src/lib/program/users-on-programs/ui/users-on-programs-actions/users-on-programs-actions.component.ts
+  s_3c524d9508a5c0::t_f79f802552196f 1-85
+libs/frontend/partner-staff/src/lib/program/users-on-programs/users-on-programs.component.ts
+  s_3c524d9508a5c0::t_e2fd29d557aba6 1-182
+libs/frontend/partner-staff/src/lib/programs/ui/add-program/add-program.component.ts
+  s_3c524d9508a5c0::t_c66e46900c930d 1-213
+libs/frontend/partner-staff/src/lib/programs/ui/program-actions/program-actions.component.ts
+  s_3c524d9508a5c0::t_2f66ad60f69a9d 1-106
+libs/frontend/partner-staff/src/test-setup.ts
+  s_3c524d9508a5c0::t_5616bc233970b5 1-3
+libs/frontend/partner-staff/tsconfig.json
+  s_3c524d9508a5c0::t_2e150b26eead0f 1-14
+libs/frontend/partner-staff/tsconfig.lib.json
+  s_3c524d9508a5c0::t_75a8585bd9fc19 1-13
+libs/frontend/partner-staff/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_2aacca228e96a5 1-7
+libs/frontend/partner-staff/tsconfig.spec.json
+  s_3c524d9508a5c0::t_42e4fc193b376a 1-12
+libs/frontend/peer-evaluation-guide/jest.config.ts
+  s_3c524d9508a5c0::t_ad276acdd2aa7d 1-22
+libs/frontend/peer-evaluation-guide/ng-package.json
+  s_3c524d9508a5c0::t_6c9a62e27401ff 1-7
+libs/frontend/peer-evaluation-guide/package.json
+  s_3c524d9508a5c0::t_c6547a3b7cff56 1-6
+libs/frontend/peer-evaluation-guide/project.json
+  s_3c524d9508a5c0::t_619faa71ea7aca 1-36
+libs/frontend/peer-evaluation-guide/src/index.ts
+  s_3c524d9508a5c0::t_e502aa96e8f0a2 1
+libs/frontend/peer-evaluation-guide/src/lib/peer-evaluation-guide.routes.ts
+  s_3c524d9508a5c0::t_d51c51dc8781a1 1-18
+libs/frontend/peer-evaluation-guide/src/lib/peer-evaluation-guide/peer-evaluation-guide.component.ts
+  s_3c524d9508a5c0::t_c9690c0df76b88 1-25
+libs/frontend/peer-evaluation-guide/src/test-setup.ts
+  s_3c524d9508a5c0::t_ca336897faa87c 1
+libs/frontend/peer-evaluation-guide/tsconfig.json
+  s_3c524d9508a5c0::t_c439751b99f94e 1-17
+libs/frontend/peer-evaluation-guide/tsconfig.lib.json
+  s_3c524d9508a5c0::t_8bff131ee8785d 1-13
+libs/frontend/peer-evaluation-guide/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_62b4f4f65e9f97 1-7
+libs/frontend/peer-evaluation-guide/tsconfig.spec.json
+  s_3c524d9508a5c0::t_48526a1492d7d7 1-12
+libs/frontend/program-profiles/README.md
+  s_3c524d9508a5c0::t_e8699340ecc191 1-7
+libs/frontend/program-profiles/eslint.config.js
+  s_3c524d9508a5c0::t_4660a059a079d3 1-44
+libs/frontend/program-profiles/jest.config.ts
+  s_3c524d9508a5c0::t_d95cdce829577e 1-22
+libs/frontend/program-profiles/ng-package.json
+  s_3c524d9508a5c0::t_a5eb036245cbb8 1-7
+libs/frontend/program-profiles/package.json
+  s_3c524d9508a5c0::t_5aab091c0c6473 1-7
+libs/frontend/program-profiles/project.json
+  s_3c524d9508a5c0::t_d0784645b6a96b 1-27
+libs/frontend/program-profiles/src/index.ts
+  s_3c524d9508a5c0::t_dfa7c6bccd429e 1
+libs/frontend/program-profiles/src/lib/description/description.component.ts
+  s_3c524d9508a5c0::t_61506d6e590310 1-25
+libs/frontend/program-profiles/src/lib/participants/participants.component.ts
+  s_3c524d9508a5c0::t_d3bcd75525f7ee 1-27
+libs/frontend/program-profiles/src/lib/program-profiles.routes.ts
+  s_3c524d9508a5c0::t_f339ef7cac9ce3 1-68
+libs/frontend/program-profiles/src/lib/receipts/receipts.component.ts
+  s_3c524d9508a5c0::t_c03adae2473396 1-154
+libs/frontend/program-profiles/src/lib/savings/savings.component.ts
+  s_3c524d9508a5c0::t_09528f0840f707 1-103
+libs/frontend/program-profiles/src/lib/savings/ui/savings-actions/savings-actions.component.ts
+  s_3c524d9508a5c0::t_c8d727c790b4b1 1-115
+libs/frontend/program-profiles/src/test-setup.ts
+  s_3c524d9508a5c0::t_c15a37ca25714b 1-3
+libs/frontend/program-profiles/tsconfig.json
+  s_3c524d9508a5c0::t_4180f903045070 1-17
+libs/frontend/program-profiles/tsconfig.lib.json
+  s_3c524d9508a5c0::t_5bc244f5fc4875 1-13
+libs/frontend/program-profiles/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_5c9216b71ca2b5 1-7
+libs/frontend/program-profiles/tsconfig.spec.json
+  s_3c524d9508a5c0::t_e857a7a5b4bfd5 1-12
+libs/frontend/register/README.md
+  s_3c524d9508a5c0::t_217347214cb907 1-7
+libs/frontend/register/eslint.config.js
+  s_3c524d9508a5c0::t_56e54a228b38fb 1-44
+libs/frontend/register/jest.config.ts
+  s_3c524d9508a5c0::t_9fa74ebf4f32a8 1-22
+libs/frontend/register/ng-package.json
+  s_3c524d9508a5c0::t_99da75b3355190 1-7
+libs/frontend/register/package.json
+  s_3c524d9508a5c0::t_ff4b7b2fb1195b 1-7
+libs/frontend/register/project.json
+  s_3c524d9508a5c0::t_e68b5ba342101d 1-27
+libs/frontend/register/src/index.ts
+  s_3c524d9508a5c0::t_a0afb91c8c9069 1
+libs/frontend/register/src/lib/register.component.ts
+  s_3c524d9508a5c0::t_e7c67263ca21ad 1-111
+libs/frontend/register/src/test-setup.ts
+  s_3c524d9508a5c0::t_4ff5c0e6c884be 1-3
+libs/frontend/register/tsconfig.json
+  s_3c524d9508a5c0::t_f197b4cf2a97f1 1-17
+libs/frontend/register/tsconfig.lib.json
+  s_3c524d9508a5c0::t_7a6aefe4cf1216 1-13
+libs/frontend/register/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_782fb095e954a8 1-7
+libs/frontend/register/tsconfig.spec.json
+  s_3c524d9508a5c0::t_bc272ba85b9075 1-12
+libs/frontend/reset-password/README.md
+  s_3c524d9508a5c0::t_0caf92e5a8ecbe 1-7
+libs/frontend/reset-password/eslint.config.js
+  s_3c524d9508a5c0::t_db9219fe80d103 1-44
+libs/frontend/reset-password/jest.config.ts
+  s_3c524d9508a5c0::t_25127cf86cbd6a 1-22
+libs/frontend/reset-password/ng-package.json
+  s_3c524d9508a5c0::t_bb7514284e81b3 1-7
+libs/frontend/reset-password/package.json
+  s_3c524d9508a5c0::t_2eeb944d2cb9e0 1-7
+libs/frontend/reset-password/project.json
+  s_3c524d9508a5c0::t_a33734a9e5c499 1-27
+libs/frontend/reset-password/src/index.ts
+  s_3c524d9508a5c0::t_92bca6a83209d3 1
+libs/frontend/reset-password/src/lib/reset-password.component.ts
+  s_3c524d9508a5c0::t_932406713ace3d 1-83
+libs/frontend/reset-password/src/test-setup.ts
+  s_3c524d9508a5c0::t_f7476ce372c07b 1-3
+libs/frontend/reset-password/tsconfig.json
+  s_3c524d9508a5c0::t_bc01cea4190348 1-17
+libs/frontend/reset-password/tsconfig.lib.json
+  s_3c524d9508a5c0::t_6035ec14bd83b5 1-13
+libs/frontend/reset-password/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_44b2ab0753e682 1-7
+libs/frontend/reset-password/tsconfig.spec.json
+  s_3c524d9508a5c0::t_9af996881190e5 1-12
+libs/frontend/savings-calculator/README.md
+  s_3c524d9508a5c0::t_5fc58c7c28b154 1-7
+libs/frontend/savings-calculator/eslint.config.js
+  s_3c524d9508a5c0::t_d734972eb39c52 1-44
+libs/frontend/savings-calculator/jest.config.ts
+  s_3c524d9508a5c0::t_e089705af384bd 1-22
+libs/frontend/savings-calculator/ng-package.json
+  s_3c524d9508a5c0::t_0c742c331a21b5 1-7
+libs/frontend/savings-calculator/package.json
+  s_3c524d9508a5c0::t_455232a5e51092 1-7
+libs/frontend/savings-calculator/project.json
+  s_3c524d9508a5c0::t_c37b1c11c0eeb7 1-27
+libs/frontend/savings-calculator/src/index.ts
+  s_3c524d9508a5c0::t_b86823278b788f 1
+libs/frontend/savings-calculator/src/lib/data-access/savings-calculator.store.ts
+  s_3c524d9508a5c0::t_783adb762af9ce 1-41
+libs/frontend/savings-calculator/src/lib/savings-calculator.component.ts
+  s_3c524d9508a5c0::t_11fe87b498cc2b 1-43
+libs/frontend/savings-calculator/src/lib/savings-chart-data.model.ts
+  s_3c524d9508a5c0::t_c06b0140a492ce 1-6
+libs/frontend/savings-calculator/src/lib/savings-data.model.ts
+  s_3c524d9508a5c0::t_3064a7b217fb24 1-6
+libs/frontend/savings-calculator/src/lib/ui/savings-chart/savings-chart.component.ts
+  s_3c524d9508a5c0::t_c40c2120698707 1-87
+libs/frontend/savings-calculator/src/lib/ui/savings-form/savings-form.component.ts
+  s_3c524d9508a5c0::t_757254044b343f 1-100
+libs/frontend/savings-calculator/src/test-setup.ts
+  s_3c524d9508a5c0::t_1ff820d2883653 1-3
+libs/frontend/savings-calculator/tsconfig.json
+  s_3c524d9508a5c0::t_73997224fa86ba 1-17
+libs/frontend/savings-calculator/tsconfig.lib.json
+  s_3c524d9508a5c0::t_b79595f544d232 1-13
+libs/frontend/savings-calculator/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_2130ca202267e9 1-7
+libs/frontend/savings-calculator/tsconfig.spec.json
+  s_3c524d9508a5c0::t_edcfba365fa835 1-12
+libs/frontend/team/README.md
+  s_3c524d9508a5c0::t_9dcda4777752c3 1-7
+libs/frontend/team/eslint.config.js
+  s_3c524d9508a5c0::t_becd3f80c888f5 1-44
+libs/frontend/team/jest.config.ts
+  s_3c524d9508a5c0::t_cee9a891c464b1 1-22
+libs/frontend/team/ng-package.json
+  s_3c524d9508a5c0::t_4c213683feafa8 1-7
+libs/frontend/team/package.json
+  s_3c524d9508a5c0::t_f0e2f100c6ab81 1-7
+libs/frontend/team/project.json
+  s_3c524d9508a5c0::t_0f3afdae02c554 1-27
+libs/frontend/team/src/index.ts
+  s_3c524d9508a5c0::t_6cbe1254f83a06 1
+libs/frontend/team/src/lib/demo/demo.component.ts
+  s_3c524d9508a5c0::t_c086d3b5e6da9b 1-28
+libs/frontend/team/src/lib/description/description.component.ts
+  s_3c524d9508a5c0::t_2dad71c07d33c1 1-35
+libs/frontend/team/src/lib/goal/goal.component.ts
+  s_3c524d9508a5c0::t_e745fda0bc2e96 1-22
+libs/frontend/team/src/lib/lighthouse/lighthouse.component.ts
+  s_3c524d9508a5c0::t_dd3d30a5e8c75a 1-19
+libs/frontend/team/src/lib/members/members.component.ts
+  s_3c524d9508a5c0::t_8217fe19bea224 1-55
+libs/frontend/team/src/lib/members/members.store.ts
+  s_3c524d9508a5c0::t_8b91362cd67ee3 1-56
+libs/frontend/team/src/lib/presentation/presentation.component.ts
+  s_3c524d9508a5c0::t_e5cf0e12344332 1-37
+libs/frontend/team/src/lib/project-peer-evaluations/project-peer-evaluations.component.ts
+  s_3c524d9508a5c0::t_5d8174125fb69e 1-27
+libs/frontend/team/src/lib/team.component.ts
+  s_3c524d9508a5c0::t_570cc4b30118ea 1-46
+libs/frontend/team/src/lib/team.routes.ts
+  s_3c524d9508a5c0::t_2c2e0bc45b9cd0 1-104
+libs/frontend/team/src/lib/weekly-updates/weekly-updates.component.ts
+  s_3c524d9508a5c0::t_2c86cec1256b8a 1-28
+libs/frontend/team/src/test-setup.ts
+  s_3c524d9508a5c0::t_23d3b4b52fdaeb 1-3
+libs/frontend/team/tsconfig.json
+  s_3c524d9508a5c0::t_a9f2ebdb1d5d4a 1-17
+libs/frontend/team/tsconfig.lib.json
+  s_3c524d9508a5c0::t_c8b34d0b4c1f84 1-13
+libs/frontend/team/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_5476ccfb932aa9 1-7
+libs/frontend/team/tsconfig.spec.json
+  s_3c524d9508a5c0::t_66dd708e0acc6e 1-12
+libs/frontend/user-guide/README.md
+  s_3c524d9508a5c0::t_722ea9bd36d7e1 1-8
+libs/frontend/user-guide/eslint.config.js
+  s_3c524d9508a5c0::t_324b62af0fb7ab 1-44
+libs/frontend/user-guide/jest.config.ts
+  s_3c524d9508a5c0::t_d682ff79ffba08 1-22
+libs/frontend/user-guide/ng-package.json
+  s_3c524d9508a5c0::t_75bb265ea3a3cc 1-7
+libs/frontend/user-guide/package.json
+  s_3c524d9508a5c0::t_51534c0549f1ba 1-6
+libs/frontend/user-guide/project.json
+  s_3c524d9508a5c0::t_c368475cbfa513 1-36
+libs/frontend/user-guide/src/index.ts
+  s_3c524d9508a5c0::t_6ec5fb9336b243 1
+libs/frontend/user-guide/src/lib/user-guide.routes.ts
+  s_3c524d9508a5c0::t_59b1e01a9ff5ee 1-18
+libs/frontend/user-guide/src/test-setup.ts
+  s_3c524d9508a5c0::t_b9d88f4e6ceea8 1-3
+libs/frontend/user-guide/tsconfig.json
+  s_3c524d9508a5c0::t_da13957486706c 1-17
+libs/frontend/user-guide/tsconfig.lib.json
+  s_3c524d9508a5c0::t_965eb2c2161384 1-13
+libs/frontend/user-guide/tsconfig.lib.prod.json
+  s_3c524d9508a5c0::t_92990ed9266d30 1-7
+libs/frontend/user-guide/tsconfig.spec.json
+  s_3c524d9508a5c0::t_1e22925247b646 1-12
+libs/models/README.md
+  s_3c524d9508a5c0::t_6671d0405a2da3 1-7
+libs/models/eslint.config.js
+  s_3c524d9508a5c0::t_1a8877182dfc3e 1-5
+libs/models/project.json
+  s_3c524d9508a5c0::t_854b579e613a20 1-19
+libs/models/src/index.ts
+  s_3c524d9508a5c0::t_4e02edcb330431 1-11
+libs/models/src/lib/educational-resources.ts
+  s_3c524d9508a5c0::t_6debc2fbc1d40b 1-18
+libs/models/src/lib/extended-checkpoint.ts
+  s_3c524d9508a5c0::t_20dca9cb236810 1-7
+libs/models/src/lib/extended-image.ts
+  s_3c524d9508a5c0::t_b3a71cd0f2fa41 1-11
+libs/models/src/lib/extended-program.ts
+  s_3c524d9508a5c0::t_661ee8decb5c59 1-6
+libs/models/src/lib/forgot-response.ts
+  s_3c524d9508a5c0::t_e3b6c8cada5854 1-3
+libs/models/src/lib/nav.ts
+  s_3c524d9508a5c0::t_5aadb2540dc378 1-4
+libs/models/src/lib/notification-config.ts
+  s_3c524d9508a5c0::t_d3650c869ce994 1-9
+libs/models/src/lib/user-full.ts
+  s_3c524d9508a5c0::t_6609ce92ac144b 1-3
+libs/models/src/lib/user-on-program-agg.ts
+  s_3c524d9508a5c0::t_947a81072d23c5 1-16
+libs/models/src/lib/users-names-only.ts
+  s_3c524d9508a5c0::t_e000ab7d5c552e 1-3
+libs/models/src/lib/users-on-programs-with-name.ts
+  s_3c524d9508a5c0::t_e611ecc48db188 1-11
+libs/models/tsconfig.json
+  s_3c524d9508a5c0::t_4b86a2ef5e35db 1-13
+libs/models/tsconfig.lib.json
+  s_3c524d9508a5c0::t_96b00688cd0453 1-10
+nx.json
+  s_3c524d9508a5c0::t_0dde077768dd04 1-160
+tsconfig.angular-base.json
+  s_3c524d9508a5c0::t_2bc7471c261993 1-20
+tsconfig.base.json
+  s_3c524d9508a5c0::t_d2bedb123cd784 1-70
+tsconfig.nest-base.json
+  s_3c524d9508a5c0::t_57cdb22355bd38 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "e00b0b559f71f31cf269581032ac921425743c60",
+  "prompts": {},
+  "sessions": {
+    "s_3c524d9508a5c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b172570-6c78-4567-b165-01ad419e92e7",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    },
+    "s_c5440ce8601a8b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a1a6c23b-64f4-473e-aa53-3463bad34633",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
