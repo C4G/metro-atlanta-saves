@@ -157,11 +157,109 @@ Database migrations run automatically: the backend entrypoint
 (`docker/backend-entrypoint.sh`) applies `prisma migrate deploy` before the API starts, and
 `depends_on: service_healthy` holds it until Postgres is accepting connections.
 
+### Environments
+
+Both environments are Docker Compose resources on the same Coolify instance
+(`coolify.c4g.dev`), but they run on different servers.
+
+| | Production | Staging |
+| --- | --- | --- |
+| URL | `brpatl.com`, `www.brpatl.com` | `metro-atlanta-saves.c4g.dev` |
+| Coolify resource | `metro-atlanta-saves` | `metro-atlanta-saves-staging` |
+| Server | `brp-01` — a DigitalOcean droplet added to Coolify as a **remote server** | Coolify's own host (`localhost`) |
+| Mail | real `MAIL_*` | **empty on purpose** — see [`docs/data-migration.md`](./docs/data-migration.md) |
+| Data | real | a copy of production, including real PII |
+
+Production is a remote server rather than its own Coolify instance so the
+control plane does not consume the droplet's 4 GB of RAM. The running containers
+do not depend on Coolify being reachable — only deployments do.
+
+`brp-01` was rebuilt onto Ubuntu 26.04 LTS in August 2026. Two things about that
+host are easy to get wrong:
+
+- **sshd drop-in ordering.** `sshd` uses the *first* value it finds for each
+  key, and DigitalOcean images ship `/etc/ssh/sshd_config.d/50-cloud-init.conf`
+  containing `PasswordAuthentication yes`. Hardening must sort ahead of it —
+  the config lives in `00-hardening.conf`.
+- **ufw does not constrain Docker-published ports.** `DOCKER-USER` is empty and
+  there is no ufw-docker integration, so anything a container publishes is
+  reachable from the internet regardless of ufw. This is how the pre-migration
+  host ended up serving Postgres on `0.0.0.0:5432`. `docker-compose.yaml`
+  publishes nothing and routes everything through Traefik; adding a `ports:`
+  entry means adding a `DOCKER-USER` rule too.
+
+### Deploying
+
+**Production deploys only from the Coolify "Deploy" button.** Auto-deploy is
+disabled on the resource, and no workflow targets it. Deploy production only
+after staging has gone green on the same commit, because the compose file
+tracks `:latest`.
+
+**Staging deploys from [`publish.yml`](./.github/workflows/publish.yml)** on
+push to `main`: it builds both images, pushes them to GHCR, and only then calls
+Coolify's deploy endpoint. That ordering is the point — letting Coolify redeploy
+directly on git push races the image build (~6 minutes) and deploys the
+*previous* `:latest`. Staging's own "Auto Deploy" toggle must therefore stay
+**off**, or both triggers fire and the race returns.
+
+The deploy step is gated on two repository settings:
+
+| Name | Kind | Value |
+| --- | --- | --- |
+| `COOLIFY_APP_UUID` | **variable** | staging's resource UUID |
+| `COOLIFY_TOKEN` | secret | a Coolify API token with the **`deploy`** permission |
+
+`COOLIFY_APP_UUID` must be a *variable*, not a secret — the workflow reads
+`vars.COOLIFY_APP_UUID`, and `vars.` and `secrets.` are separate namespaces. If
+it is stored as a secret the expression resolves to empty, the step's `if:`
+evaluates false, and **the deploy is silently skipped** while the workflow still
+reports success. A UUID is not a credential, and as a variable its value is
+readable, so you can confirm which environment it points at.
+
+The token needs the `deploy` permission specifically; a token that can create
+applications and set environment variables still returns
+`403 Missing required permissions: deploy`.
+
+### Backups
+
+Coolify's automated-backup UI only manages databases created as their own
+resource, so it does **not** cover the in-compose `db` service. Schedule a
+`pg_dump` separately — see [`docs/data-migration.md`](./docs/data-migration.md)
+for the dump, the verification step, and the restore.
+
+### What the Coolify API cannot do
+
+Useful to know before automating anything against it:
+
+- `is_strip_prefix_enabled` is rejected outright — UI only, and it matters (see
+  Routing below).
+- Environment variable **values** are never returned. Every `GET` reports
+  `value: ""`, including for variables that demonstrably work, so there is no
+  readback path — verify from the running container's environment instead.
+- `is_auto_deploy_enabled` accepts a `PATCH` but is not returned by any `GET`.
+- `docker_compose_domains` takes an **array** on `PATCH` but reads back as an
+  object.
+
 ### Routing
 
 The frontend and API **must stay on one origin** — the Angular client calls root-relative
 `/api/...` paths, and the auth cookie is written with `path=/` and no domain, then forwarded
 by the SSR interceptor. Traefik routes `/api` to the backend and everything else to the frontend.
+
+**"Strip Prefixes" must be disabled** in the application's *Configuration → Advanced* tab.
+Because the backend is published on a non-root path (`SERVICE_FQDN_BACKEND_3000: /api`),
+Coolify otherwise generates a Traefik `stripprefix` middleware that removes `/api` before
+forwarding, while NestJS's `setGlobalPrefix('api')` expects it — so every API call returns a
+NestJS 404 (`{"message":"Cannot GET /health", ...}`). This is a per-application setting stored
+in Coolify, not in this repo, so **it must be re-applied if the resource is ever recreated.**
+
+The container healthcheck will not catch this: it requests `localhost:3000/api/health` from
+inside the container, bypassing Traefik entirely, so the deployment goes green with a fully
+broken API. Verify from outside instead:
+
+```sh
+curl -s -o /dev/null -w '%{http_code}\n' https://<domain>/api/health   # expect 200
+```
 
 ### Uploads
 
@@ -182,6 +280,9 @@ path to them.
 
 Backups of the `db` service are not managed by Coolify's database-backup UI (that only covers
 databases created as their own resource) — schedule a `pg_dump` task separately.
+
+To seed a deployment from the legacy droplet's database and uploads, follow
+[`docs/data-migration.md`](./docs/data-migration.md).
 
 ## Set up CI!
 
