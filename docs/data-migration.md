@@ -115,9 +115,29 @@ this layout exists to protect.
 
 ## 2. Transfer
 
+The destination is the Coolify host — `coolify.c4g.dev`, which is also where
+`metro-atlanta-saves.c4g.dev` resolves. It is a different machine from the legacy
+droplet (`brpatl.com`).
+
 ```sh
-scp ~/mas.dump ~/mas-private.tgz ~/mas-assets.tgz <coolify-host>:~/
+scp ~/mas.dump ~/mas-private.tgz ~/mas-assets.tgz root@coolify.c4g.dev:~/
 ```
+
+That requires the droplet to have SSH access to the Coolify host, which it will
+not have unless someone authorized its key there. Rather than establishing new
+trust between the two servers for a one-off copy, relay through a workstation
+that already reaches both:
+
+```sh
+scp -3 root@brpatl.com:'~/mas.dump ~/mas-private.tgz ~/mas-assets.tgz' \
+       root@coolify.c4g.dev:~/
+```
+
+`-3` streams the data through the local machine instead of opening a connection
+between the servers.
+
+The Coolify host is shared with other applications, so check there is room before
+copying — `df -h ~` on the destination, against the size of the three files.
 
 ## 3. Identify the volumes and containers (on the Coolify host)
 
