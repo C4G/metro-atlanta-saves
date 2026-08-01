@@ -1,0 +1,20 @@
+{
+  "name": "backend-user-guide",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/user-guide/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/user-guide",
+        "tsConfig": "libs/backend/user-guide/tsconfig.lib.json",
+        "packageJson": "libs/backend/user-guide/package.json",
+        "main": "libs/backend/user-guide/src/index.ts",
+        "assets": ["libs/backend/user-guide/*.md"]
+      }
+    }
+  }
+}

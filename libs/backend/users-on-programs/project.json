@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-users-on-programs",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/users-on-programs/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/users-on-programs",
+        "tsConfig": "libs/backend/users-on-programs/tsconfig.lib.json",
+        "packageJson": "libs/backend/users-on-programs/package.json",
+        "main": "libs/backend/users-on-programs/src/index.ts",
+        "assets": ["libs/backend/users-on-programs/*.md"]
+      }
+    }},
+  "tags": []
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-requirements",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/requirements/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/requirements",
+        "tsConfig": "libs/backend/requirements/tsconfig.lib.json",
+        "packageJson": "libs/backend/requirements/package.json",
+        "main": "libs/backend/requirements/src/index.ts",
+        "assets": ["libs/backend/requirements/*.md"]
+      }
+    }},
+  "tags": []
+}

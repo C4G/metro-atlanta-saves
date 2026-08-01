@@ -1,0 +1,87 @@
+{
+  "name": "frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "mas",
+  "sourceRoot": "apps/frontend/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/frontend",
+        "index": "apps/frontend/src/index.html",
+        "browser": "apps/frontend/src/main.ts",
+        "polyfills": [],
+        "tsConfig": "apps/frontend/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/frontend/src/favicon.ico",
+          "apps/frontend/src/robots.txt",
+          "apps/frontend/src/assets",
+          "apps/frontend/src/manifest.json",
+          "apps/frontend/src/sw.js",
+          {
+            "glob": "**/*",
+            "input": "node_modules/tinymce",
+            "output": "/tinymce/"
+          }
+        ],
+        "styles": ["apps/frontend/src/styles.scss"],
+        "scripts": [],
+        "server": "apps/frontend/src/main.server.ts",
+        "prerender": false,
+        "ssr": {
+          "entry": "apps/frontend/server.ts"
+        }
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1.2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "250kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@nx/angular:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "frontend:build:production"
+        },
+        "development": {
+          "buildTarget": "frontend:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/frontend/proxy.conf.json"
+      },
+      "continuous": true,
+      "dependsOn": [{ "projects": "backend", "target": "serve" }]
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "frontend:build"
+      }
+    }
+  }
+}

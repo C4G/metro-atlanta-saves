@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-learnings",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/learnings/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/learnings",
+        "tsConfig": "libs/backend/learnings/tsconfig.lib.json",
+        "packageJson": "libs/backend/learnings/package.json",
+        "main": "libs/backend/learnings/src/index.ts",
+        "assets": ["libs/backend/learnings/*.md"]
+      }
+    }},
+  "tags": []
+}

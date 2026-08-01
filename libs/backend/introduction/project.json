@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-introduction",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/introduction/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/introduction",
+        "tsConfig": "libs/backend/introduction/tsconfig.lib.json",
+        "packageJson": "libs/backend/introduction/package.json",
+        "main": "libs/backend/introduction/src/index.ts",
+        "assets": ["libs/backend/introduction/*.md"]
+      }
+    }},
+  "tags": []
+}

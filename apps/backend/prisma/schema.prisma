@@ -1,0 +1,484 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  Administrator
+  Partner_Staff
+}
+
+enum CheckpointType {
+  Savings
+  Credit_Score
+  Receipt
+  Other
+}
+
+enum YesNoMaybe {
+  Yes
+  No
+  Maybe
+}
+
+enum CommentVoteType {
+  UP
+  DOWN
+}
+
+model User {
+  id               String             @id @default(uuid())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  lastLogin        DateTime?
+  firstName        String
+  lastName         String
+  email            String             @unique
+  forgot           String?
+  hash             String
+  role             Role?
+  partner          Partner?           @relation(fields: [partnerId], references: [id])
+  partnerId        String?
+  bio              String?
+  UsersOnPrograms  UsersOnPrograms[]
+  enrollment       Enrollment[]
+  Image            Image[]
+  alliesOnPrograms AlliesOnPrograms[]
+  discussionPosts  DiscussionPost[]
+  discussionComments DiscussionComment[]
+  discussionBoardsCreated DiscussionBoard[] @relation("DiscussionBoardCreatedBy")
+  discussionBoardMembers DiscussionBoardMember[] @relation("DiscussionBoardMembers")
+  discussionCommentVotes DiscussionCommentVote[]
+  pushSubscriptions      PushSubscription[]
+
+  @@map("users")
+}
+
+model DiscussionPost {
+  id              String                  @id @default(uuid())
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @default(now())
+  title           String
+  body            String
+  isAnnouncement  Boolean                 @default(false)
+  isPinned        Boolean                 @default(false)
+  author          User                    @relation(fields: [authorId], references: [id])
+  authorId        String
+  board           DiscussionBoard?        @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId         String?
+  comments        DiscussionComment[]
+  tags            DiscussionPostTag[]
+
+  @@index([createdAt])
+  @@index([authorId])
+  @@index([boardId])
+  @@index([isAnnouncement])
+  @@index([isPinned])
+  @@map("discussionPosts")
+}
+
+model DiscussionTag {
+  id      String              @id @default(uuid())
+  name    String
+  color   String              @default("blue")
+  board   DiscussionBoard?    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId String?
+  posts   DiscussionPostTag[]
+
+  @@index([boardId])
+  @@map("discussionTags")
+}
+
+model DiscussionPostTag {
+  post   DiscussionPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  tag    DiscussionTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  String
+
+  @@id([postId, tagId])
+  @@map("discussionPostTags")
+}
+
+model DiscussionComment {
+  id              String         @id @default(uuid())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now())
+  body            String
+  upvotes         Int            @default(0)
+  downvotes       Int            @default(0)
+  post            DiscussionPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId          String
+  author          User           @relation(fields: [authorId], references: [id])
+  authorId        String
+  parentComment   DiscussionComment? @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  parentCommentId String?
+  replies         DiscussionComment[] @relation("CommentReplies")
+  votes           DiscussionCommentVote[]
+
+  @@index([postId, createdAt])
+  @@index([authorId])
+  @@index([parentCommentId])
+  @@map("discussionComments")
+}
+
+model DiscussionCommentVote {
+  id        String            @id @default(uuid())
+  createdAt DateTime          @default(now())
+  comment   DiscussionComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      CommentVoteType
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("discussionCommentVotes")
+}
+
+model DiscussionBoard {
+  id          String                      @id @default(uuid())
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @default(now())
+  name        String
+  description String?
+  program     Program?                    @relation(fields: [programId], references: [id], onDelete: SetNull)
+  programId   String?
+  cohort      Cohort?                     @relation(fields: [cohortId], references: [id], onDelete: SetNull)
+  cohortId    String?
+  createdBy   User                        @relation("DiscussionBoardCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  members     DiscussionBoardMember[]
+  posts       DiscussionPost[]
+  tags        DiscussionTag[]
+
+  @@index([programId])
+  @@index([cohortId])
+  @@index([createdById])
+  @@map("discussionBoards")
+}
+
+model DiscussionBoardMember {
+  id          String          @id @default(uuid())
+  createdAt   DateTime        @default(now())
+  isAdmin     Boolean         @default(false)
+  board       DiscussionBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId     String
+  user        User            @relation("DiscussionBoardMembers", fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+
+  @@unique([boardId, userId])
+  @@index([boardId])
+  @@index([userId])
+  @@map("discussionBoardMembers")
+}
+
+model Cohort {
+  id                String              @id @default(uuid())
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  name              String
+  description       String
+  imageUrl          String
+  discussionBoards  DiscussionBoard[]
+
+  @@map("cohorts")
+}
+
+model Story {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  name        String
+  description String
+  imageUrl    String
+  hidden      Boolean  @default(false)
+
+  @@map("stories")
+}
+
+model AlliesOnPrograms {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  program   Program  @relation(fields: [programId], references: [id])
+  programId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@id([userId, programId])
+}
+
+model UsersOnPrograms {
+  user                 User         @relation(fields: [userId], references: [id])
+  userId               String
+  program              Program      @relation(fields: [programId], references: [id])
+  programId            String
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @default(now())
+  requirementStatus    String[]
+  married              Boolean      @default(false)
+  educationStatus      String?
+  militaryStatus       Boolean      @default(false)
+  placeOfEmployment    String?
+  jobTitle             String?
+  annualIncome         Float?
+  monthsEmployed       Int?
+  address              String?
+  start                DateTime?
+  end                  DateTime?
+  birthdate            DateTime?
+  phone                String?
+  gender               String?
+  race                 String?
+  creditScoreIncentive Boolean      @default(false)
+  totalAmountPaidOut   Float        @default(0.00)
+  paidDate             DateTime?
+  checkpoints          Checkpoint[]
+  graduated            Boolean      @default(false)
+  inactive             Boolean      @default(false)
+
+  @@id([userId, programId])
+}
+
+model EducationalCategory {
+  id                                String                                       @id @default(uuid())
+  category                          String                                       @unique
+  createdAt                         DateTime                                     @default(now())
+  updatedAt                         DateTime                                     @default(now())
+  EducationalCategoryContentMapping EducationalContentsOnEducationalCategories[]
+
+  @@map("educationalCategories")
+}
+
+model EducationalContent {
+  id                                String                                       @id @default(uuid())
+  title                             String
+  description                       String
+  image                             String?
+  link                              String?
+  file                              String?
+  createdAt                         DateTime                                     @default(now())
+  updatedAt                         DateTime                                     @default(now())
+  EducationalCategoryContentMapping EducationalContentsOnEducationalCategories[]
+  Requirement                       Requirement[]
+
+  @@map("educationalContents")
+}
+
+model EducationalContentsOnEducationalCategories {
+  categoryId String
+  contentId  String
+  category   EducationalCategory @relation(fields: [categoryId], references: [id])
+  content    EducationalContent  @relation(fields: [contentId], references: [id])
+
+  @@id([categoryId, contentId])
+}
+
+model Partner {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  name      String
+  address   String?
+  twitter   String?
+  facebook  String?
+  linkedIn  String?
+  tiktok    String?
+  website   String?
+  program   Program[]
+  users     User[]
+
+  @@map("partners")
+}
+
+model Program {
+  id               String              @id @default(uuid())
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @default(now())
+  name             String
+  isTemplate       Boolean            @default(false)
+  Requirement      Requirement[]
+  UsersOnPrograms  UsersOnPrograms[]
+  alliesOnPrograms AlliesOnPrograms[]
+  partner          Partner             @relation(fields: [partnerId], references: [id])
+  partnerId        String
+  description      String?
+  startDate        DateTime?
+  endDate          DateTime?
+  checkpointNames  CheckpointName[]
+  enrollment       Enrollment[]
+  Image            Image[]
+  discussionBoards DiscussionBoard[]
+
+  @@map("programs")
+}
+
+model Requirement {
+  id                   String              @id @default(uuid())
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @default(now())
+  name                 String
+  program              Program             @relation(fields: [programId], references: [id])
+  programId            String
+  educationalContentId String?
+  EducationalContent   EducationalContent? @relation(fields: [educationalContentId], references: [id])
+
+  @@map("requirements")
+}
+
+model Checkpoint {
+  id              String          @id @default(uuid())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now())
+  name            String          @default("Month 1")
+  checkpointName  CheckpointName  @relation(fields: [name], references: [name])
+  savedMoney      Float?
+  UsersOnPrograms UsersOnPrograms @relation(fields: [userId, programId], references: [userId, programId])
+  userId          String
+  programId       String
+  creditScore     Int?
+  application     String?
+  images          Image[]
+
+  @@map("checkpoints")
+}
+
+model Image {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @default(now())
+  viewedAt      DateTime    @default(now())
+  name          String
+  type          String
+  path          String
+  program       Program?    @relation(fields: [programId], references: [id])
+  programId     String?
+  user          User?       @relation(fields: [userId], references: [id])
+  userId        String?
+  checkpoint    Checkpoint? @relation(fields: [checkpointId], references: [id])
+  checkpointId  String?
+  imageVerified Boolean     @default(false)
+
+  @@map("images")
+}
+
+model Blog {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  title     String
+  slug      String   @unique
+  subTitle  String?
+  body      String
+
+  @@map("blogs")
+}
+
+model Learning {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  title     String
+  body      String
+  sequence  Int
+  hidden    Boolean  @default(false)
+
+  @@map("learnings")
+}
+
+model Description {
+  id         String  @id @default(uuid())
+  title      String
+  body       String
+  buttonText String?
+  buttonLink String?
+  logoUrl    String?
+  hidden     Boolean @default(false)
+}
+
+model Introduction {
+  id           String  @id @default(uuid())
+  title        String
+  imageText    String?
+  imageUrl     String
+  hidden       Boolean @default(false)
+  imageHidden  Boolean @default(false)
+}
+
+model WhatWeAre {
+  id                  String  @id @default(uuid())
+  whoWeAreDescription String
+  whatWeDoDescription String
+  hidden              Boolean @default(false)
+}
+
+model UserGuide {
+  id   String @id @default(uuid())
+  body String
+}
+
+model PeerEvaluationGuide {
+  id   String @id @default(uuid())
+  body String
+}
+
+model NotificationConfig {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  heading   String
+  body      String
+  programId String?
+  userId    String?
+}
+
+model CheckpointName {
+  name       String         @id
+  type       CheckpointType @default(Other)
+  sequence   Int            @default(999)
+  Checkpoint Checkpoint[]
+  Program    Program[]
+}
+
+model Enrollment {
+  id                   String      @id @default(uuid())
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @default(now())
+  program              Program     @relation(fields: [programId], references: [id])
+  programId            String
+  user                 User        @relation(fields: [userId], references: [id])
+  userId               String
+  phone                String
+  birthdate            DateTime?
+  race                 String
+  gender               String
+  placeOfEmployment    String
+  jobTitle             String
+  monthsEmployed       Int
+  zipCode              Int
+  address              String
+  annualIncome         Float
+  meetingAvailablility YesNoMaybe?
+  employerCommitted    YesNoMaybe?
+  interest             String?
+  gain                 String?
+
+  @@unique([userId, programId])
+  @@map("enrollments")
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+
+  @@map("pushSubscriptions")
+}

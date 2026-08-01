@@ -1,0 +1,27 @@
+{
+  "name": "@mas/frontend-blogs",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/blogs/src",
+  "prefix": "mas",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/frontend/blogs/ng-package.json",
+        "tsConfig": "libs/frontend/blogs/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/frontend/blogs/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/frontend/blogs/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    }
+  }
+}

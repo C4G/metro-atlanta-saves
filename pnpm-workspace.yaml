@@ -1,0 +1,33 @@
+# Single-package repo — the apps/ and libs/ projects are wired together through
+# tsconfig.base.json paths by Nx, not as pnpm workspace packages. This file exists
+# to hold pnpm settings.
+
+# Flat, npm-style node_modules instead of pnpm's symlinked layout. The CD workflow
+# copies node_modules verbatim onto the server, where symlinks into the pnpm store
+# would not resolve.
+nodeLinker: hoisted
+
+# Equivalent of npm's legacy-peer-deps: don't fail the install on peer conflicts.
+strictPeerDependencies: false
+
+# Hard-fail the install on a Node version outside the `engines` range in
+# package.json, rather than only warning.
+engineStrict: true
+
+# pnpm blocks dependency install scripts by default. Native/binary packages need
+# theirs to run; the rest are telemetry or postinstall ads and stay off.
+allowBuilds:
+  '@nestjs/core': false
+  '@parcel/watcher': true
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@scarf/scarf': false
+  '@swc/core': true
+  argon2: true
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true
+  nx: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true

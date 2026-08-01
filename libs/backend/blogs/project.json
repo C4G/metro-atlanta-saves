@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-blogs",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/blogs/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/blogs",
+        "tsConfig": "libs/backend/blogs/tsconfig.lib.json",
+        "packageJson": "libs/backend/blogs/package.json",
+        "main": "libs/backend/blogs/src/index.ts",
+        "assets": ["libs/backend/blogs/*.md"]
+      }
+    }},
+  "tags": []
+}

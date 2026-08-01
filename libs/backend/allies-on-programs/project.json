@@ -1,0 +1,20 @@
+{
+  "name": "@mas/backend-allies-on-programs",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/allies-on-programs/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/allies-on-programs",
+        "tsConfig": "libs/backend/allies-on-programs/tsconfig.lib.json",
+        "packageJson": "libs/backend/allies-on-programs/package.json",
+        "main": "libs/backend/allies-on-programs/src/index.ts",
+        "assets": ["libs/backend/allies-on-programs/*.md"]
+      }
+    }
+  },
+  "tags": []
+}

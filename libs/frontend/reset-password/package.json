@@ -1,0 +1,7 @@
+{
+  "name": "@mas/frontend-reset-password",
+  "version": "0.0.1",
+  "peerDependencies": {},
+  "dependencies": {},
+  "sideEffects": false
+}

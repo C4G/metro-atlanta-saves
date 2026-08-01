@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-users",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/users/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/users",
+        "tsConfig": "libs/backend/users/tsconfig.lib.json",
+        "packageJson": "libs/backend/users/package.json",
+        "main": "libs/backend/users/src/index.ts",
+        "assets": ["libs/backend/users/*.md"]
+      }
+    }},
+  "tags": []
+}

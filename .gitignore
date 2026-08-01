@@ -1,0 +1,58 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+dist
+tmp
+/out-tsc
+
+# dependencies
+node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+pnpm-debug.log
+yarn-error.log
+
+# lockfiles from other package managers — this repo uses pnpm
+package-lock.json
+yarn.lock
+bun.lockb
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+.nx/cache
+.nx/workspace-data
+.angular
+.env
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+# User-uploaded files. In production these live on Docker volumes mounted at
+# UPLOAD_DIR; locally they land in .uploads/ (see libs/backend/shared upload-paths).
+.uploads
+/images
+/uploads

@@ -1,0 +1,7 @@
+{
+  "name": "@mas/frontend-shared-auth",
+  "version": "0.0.1",
+  "peerDependencies": {},
+  "dependencies": {},
+  "sideEffects": false
+}

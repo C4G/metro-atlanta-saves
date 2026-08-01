@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-educational-content",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/educational-content/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/educational-content",
+        "tsConfig": "libs/backend/educational-content/tsconfig.lib.json",
+        "packageJson": "libs/backend/educational-content/package.json",
+        "main": "libs/backend/educational-content/src/index.ts",
+        "assets": ["libs/backend/educational-content/*.md"]
+      }
+    }},
+  "tags": []
+}

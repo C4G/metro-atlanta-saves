@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-what-we-are",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/what-we-are/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/what-we-are",
+        "tsConfig": "libs/backend/what-we-are/tsconfig.lib.json",
+        "packageJson": "libs/backend/what-we-are/package.json",
+        "main": "libs/backend/what-we-are/src/index.ts",
+        "assets": ["libs/backend/what-we-are/*.md"]
+      }
+    }},
+  "tags": []
+}

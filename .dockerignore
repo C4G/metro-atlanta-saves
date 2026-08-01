@@ -1,0 +1,31 @@
+.git
+.github
+.husky
+.vscode
+.idea
+
+node_modules
+dist
+tmp
+out-tsc
+.nx
+.angular
+coverage
+
+# Local env — real values come from Coolify, never from a baked-in file.
+.env
+.env.*
+!.env.example
+
+# Runtime upload directories. These are volumes in production; baking the
+# committed/local copies into the image only creates files that the mount
+# then shadows.
+uploads
+images
+.uploads
+
+apps/e2e
+Dockerfile
+.dockerignore
+docker-compose*.yml
+README.md

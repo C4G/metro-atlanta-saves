@@ -1,0 +1,27 @@
+{
+  "name": "@mas/frontend-reset-password",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/reset-password/src",
+  "prefix": "mas",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/frontend/reset-password/ng-package.json",
+        "tsConfig": "libs/frontend/reset-password/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/frontend/reset-password/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/frontend/reset-password/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    }
+  }
+}

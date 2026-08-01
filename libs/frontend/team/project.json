@@ -1,0 +1,27 @@
+{
+  "name": "@mas/frontend-team",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/team/src",
+  "prefix": "mas",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/frontend/team/ng-package.json",
+        "tsConfig": "libs/frontend/team/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/frontend/team/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/frontend/team/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    }
+  }
+}

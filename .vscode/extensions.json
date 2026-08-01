@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "nrwl.angular-console",
+    "esbenp.prettier-vscode",
+    "firsttris.vscode-jest-runner",
+    "ms-playwright.playwright",
+    "prisma.prisma",
+    "angular.ng-template",
+    "ms-azuretools.vscode-docker",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss"
+  ]
+}

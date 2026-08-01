@@ -1,0 +1,25 @@
+{{#if approved}}
+  <p>
+    Great news! Your checkpoint submission for
+    <strong>
+      {{name}}
+    </strong>
+    has been approved!
+  </p>
+  <p>
+    All images you submitted for this checkpoint have been reviewed and accepted. You can continue with your program
+    progress.
+  </p>
+{{else}}
+  <p>
+    Your checkpoint submission for
+    <strong>
+      {{name}}
+    </strong>
+    has been rejected.
+  </p>
+  <p>
+    The images you submitted for this checkpoint did not meet the requirements. Please review the checkpoint
+    requirements and resubmit new images that clearly demonstrate completion of this checkpoint.
+  </p>
+{{/if}}

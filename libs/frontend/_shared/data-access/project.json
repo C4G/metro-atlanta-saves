@@ -1,0 +1,27 @@
+{
+  "name": "@mas/frontend-shared-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/_shared/data-access/src",
+  "prefix": "mas",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/frontend/_shared/data-access/ng-package.json",
+        "tsConfig": "libs/frontend/_shared/data-access/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/frontend/_shared/data-access/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/frontend/_shared/data-access/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    }
+  }
+}

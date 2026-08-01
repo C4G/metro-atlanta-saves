@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-checkpoints",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/checkpoints/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/checkpoints",
+        "tsConfig": "libs/backend/checkpoints/tsconfig.lib.json",
+        "packageJson": "libs/backend/checkpoints/package.json",
+        "main": "libs/backend/checkpoints/src/index.ts",
+        "assets": ["libs/backend/checkpoints/*.md"]
+      }
+    }},
+  "tags": []
+}

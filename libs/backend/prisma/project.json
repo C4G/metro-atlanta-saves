@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-prisma",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/prisma/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/prisma",
+        "tsConfig": "libs/backend/prisma/tsconfig.lib.json",
+        "packageJson": "libs/backend/prisma/package.json",
+        "main": "libs/backend/prisma/src/index.ts",
+        "assets": ["libs/backend/prisma/*.md"]
+      }
+    }},
+  "tags": []
+}

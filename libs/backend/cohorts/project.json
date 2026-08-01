@@ -1,0 +1,19 @@
+{
+  "name": "@mas/backend-cohorts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/cohorts/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/cohorts",
+        "tsConfig": "libs/backend/cohorts/tsconfig.lib.json",
+        "packageJson": "libs/backend/cohorts/package.json",
+        "main": "libs/backend/cohorts/src/index.ts",
+        "assets": ["libs/backend/cohorts/*.md"]
+      }
+    }},
+  "tags": []
+}

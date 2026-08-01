@@ -1,0 +1,20 @@
+{
+  "name": "backend-peer-evaluation-guide",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/peer-evaluation-guide/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/peer-evaluation-guide",
+        "tsConfig": "libs/backend/peer-evaluation-guide/tsconfig.lib.json",
+        "packageJson": "libs/backend/peer-evaluation-guide/package.json",
+        "main": "libs/backend/peer-evaluation-guide/src/index.ts",
+        "assets": ["libs/backend/peer-evaluation-guide/*.md"]
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@mas/frontend-forgot-password",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/forgot-password/src",
+  "prefix": "mas",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/frontend/forgot-password/ng-package.json",
+        "tsConfig": "libs/frontend/forgot-password/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/frontend/forgot-password/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/frontend/forgot-password/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    }
+  }
+}
