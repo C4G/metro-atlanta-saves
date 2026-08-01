@@ -198,6 +198,9 @@ path to them.
 Backups of the `db` service are not managed by Coolify's database-backup UI (that only covers
 databases created as their own resource) — schedule a `pg_dump` task separately.
 
+To seed a deployment from the legacy droplet's database and uploads, follow
+[`docs/data-migration.md`](./docs/data-migration.md).
+
 ## Set up CI!
 
 Nx comes with local caching already built-in (check your `nx.json`). On CI you might want to go a step further.
