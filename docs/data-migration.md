@@ -33,34 +33,60 @@ You need shell access on both the legacy droplet and the Coolify host.
 
 ---
 
-## 0. Confirm the Postgres major version
+## 0. Locate the source database
 
-On the droplet:
+The droplet runs Postgres in Docker rather than natively — the application runs
+under pm2 on the host, but the database is a container:
 
-```sh
-psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tAc 'SHOW server_version'
+```
+CONTAINER ID   IMAGE                STATUS          PORTS                      NAMES
+8b3d656596c4   postgres:16-alpine   Up 15 months    0.0.0.0:5432->5432/tcp     backend-local-db-1
 ```
 
-`docker-compose.yaml` pins `postgres:16-alpine`. A restore into 16 works for any
-source version **16 or older**. If the droplet reports 17 or newer, bump the
-image tag before continuing — `pg_restore` cannot read a dump from a newer
-server.
+That is the same image `docker-compose.yaml` pins, so there is no version skew to
+work around. Confirm the container is still the one in use and holds real data
+before dumping anything:
+
+```sh
+DB_SRC=backend-local-db-1
+
+docker exec "$DB_SRC" sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tAc \
+  "SELECT (SELECT count(*) FROM users) AS users, \
+          (SELECT count(*) FROM images) AS images, \
+          (SELECT count(*) FROM _prisma_migrations) AS migrations"'
+```
+
+Expect a plausible user count and 55 migrations. If it errors with "relation does
+not exist", this is not the production database — stop and find the right one.
+
+> **Unrelated but worth acting on:** that container publishes `0.0.0.0:5432`, so
+> production Postgres is listening on the droplet's public interface. Nothing in
+> this migration depends on it — every command below goes through `docker exec`.
+> Consider binding it to `127.0.0.1:5432` regardless of how this migration goes.
 
 ## 1. Dump the database and files (on the droplet)
 
-Load the existing credentials, then dump. `--no-owner --no-privileges` keeps the
-droplet's role names out of the dump, which otherwise fail to restore inside the
-container.
+Run `pg_dump` inside the container, where `POSTGRES_USER` and `POSTGRES_DB` are
+already set — no credentials in your shell history and no `.env` to source.
+`--no-owner --no-privileges` keeps the droplet's role names out of the dump,
+which would otherwise fail to restore under a different role.
 
 ```sh
-set -a; . /var/www/brpatl/backend/.env; set +a
-
-pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
-  --no-owner --no-privileges -Fc -f ~/mas.dump
+docker exec "$DB_SRC" sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+  --no-owner --no-privileges -Fc' > ~/mas.dump
 ```
 
-The uploads live in two places that map to two different volumes. Stage each one
-so the tarball root lines up with the volume root.
+Use `docker exec` **without** `-t`. A TTY would corrupt the binary custom-format
+dump on its way to the file. Check it landed intact:
+
+```sh
+ls -lh ~/mas.dump && file ~/mas.dump   # expect: PostgreSQL custom database dump
+```
+
+The uploaded files are **on the host**, not in a container — only the database was
+containerized on the droplet; the app itself runs under pm2. They live in two
+places that map to two different volumes, so stage each one separately to line the
+tarball root up with the volume root.
 
 ```sh
 # Private uploads -> mas-private (backend only)
@@ -149,7 +175,8 @@ Sanity check:
 ```sh
 docker exec -i "$DB" sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tAc \
   "SELECT (SELECT count(*) FROM users) AS users, \
-          (SELECT count(*) FROM \"_prisma_migrations\") AS migrations"'
+          (SELECT count(*) FROM images) AS images, \
+          (SELECT count(*) FROM _prisma_migrations) AS migrations"'
 ```
 
 Expect the production user count and 55 migrations.
