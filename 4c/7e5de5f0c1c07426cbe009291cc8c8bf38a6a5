@@ -1,0 +1,55 @@
+.husky/pre-commit
+  s_3c524d9508a5c0::t_1e381c88dd6ef8 1
+pnpm-workspace.yaml
+  s_3c524d9508a5c0::t_f697f1fc8899e3 13-16
+  s_3c524d9508a5c0::t_a38dc62f3498c8 4-12
+  s_3c524d9508a5c0::t_7bfee815923072 19
+  s_3c524d9508a5c0::t_29c3a4e92d39b5 1-3,17-18,20-33
+.github/workflows/cd.yml
+  s_3c524d9508a5c0::t_a653464ee9d649 47,49-52
+  s_3c524d9508a5c0::t_33c0f9ce78aa4e 22-24,28
+.gitignore
+  s_3c524d9508a5c0::t_45d631b4bc9c3b 33,35-39
+package.json
+  s_3c524d9508a5c0::t_1f53edfcd57a43 5
+  s_3c524d9508a5c0::t_d58fd21d646987 117
+  s_3c524d9508a5c0::t_a77d1356a499e8 6-8
+.github/workflows/ci.yml
+  s_3c524d9508a5c0::t_657e411eb5a9f0 24,26-28,32
+  s_3c524d9508a5c0::t_4142261174907a 93-95,99
+  s_3c524d9508a5c0::t_7b9e6749ef7d46 71-72
+  s_3c524d9508a5c0::t_5c97d5aa7fdc8e 125
+README.md
+  s_3c524d9508a5c0::t_377158641eda43 155
+  s_3c524d9508a5c0::t_c33c9db5aa7f36 55-73,76,90
+  s_3c524d9508a5c0::t_e47e9d55e2c56e 156
+  s_3c524d9508a5c0::t_7159ab756f9b01 46
+  s_3c524d9508a5c0::t_e900c1551cffe3 9,12-19,22,24,26
+  s_3c524d9508a5c0::t_8ed04346fda7f2 74-75,77-89
+  s_3c524d9508a5c0::t_82144a1244fb8f 126-127
+apps/e2e/playwright.config.ts
+  s_3c524d9508a5c0::t_352f1d381a372f 27,34
+pnpm-lock.yaml
+  s_3c524d9508a5c0::t_63318701dee260 1-21486
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "4c7e5de5f0c1c07426cbe009291cc8c8bf38a6a5",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_3c524d9508a5c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b172570-6c78-4567-b165-01ad419e92e7",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
