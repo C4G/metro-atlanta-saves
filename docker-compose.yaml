@@ -28,6 +28,9 @@ services:
     # purpose — it is what stops the deployment host from compiling the app.
     # Use docker-compose.build.yaml to build locally.
     image: ghcr.io/c4g/metro-atlanta-saves-backend:${IMAGE_TAG:-latest}
+    # Coolify recreates the stack with `docker compose up -d`, which otherwise
+    # reuses a locally cached image when the moving `latest` tag changes.
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       db:
@@ -74,6 +77,7 @@ services:
 
   frontend:
     image: ghcr.io/c4g/metro-atlanta-saves-frontend:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     environment:
       SERVICE_FQDN_FRONTEND_4000: /
