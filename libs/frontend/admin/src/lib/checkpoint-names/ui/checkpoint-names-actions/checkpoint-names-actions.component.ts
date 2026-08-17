@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { CheckpointNamesStore } from '@mas/frontend-shared-data-access';
-import type { CheckpointName } from '@prisma/client';
+import type { CheckpointName } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { AddCheckpointNameComponent } from '../add-checkpoint-name/add-checkpoint-name.component';

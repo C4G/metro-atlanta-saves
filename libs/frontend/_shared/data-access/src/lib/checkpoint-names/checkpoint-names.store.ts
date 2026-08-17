@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import type { CheckpointName, Prisma } from '@prisma/client';
+import type { CheckpointName, Prisma } from '@mas/prisma-client/browser';
 import { pipe, switchMap } from 'rxjs';
 
 type ProgramWithCheckpointNames = Prisma.ProgramGetPayload<{

@@ -11,7 +11,7 @@ import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
 import { FooterComponent } from '@mas/frontend-shared-layout';
-// import { YesNoMaybe } from '@prisma/client';
+// import { YesNoMaybe } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-enroll',

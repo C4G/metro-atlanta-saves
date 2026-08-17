@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
-import { type Program } from '@prisma/client';
+import { type Program } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 import { AddProgramComponent } from '../add-program/add-program.component';

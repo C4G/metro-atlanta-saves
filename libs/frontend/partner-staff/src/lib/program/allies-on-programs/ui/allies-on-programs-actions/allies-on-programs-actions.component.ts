@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { AlliesOnProgramsStore } from '@mas/frontend-shared-data-access';
-import { type User } from '@prisma/client';
+import { type User } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 

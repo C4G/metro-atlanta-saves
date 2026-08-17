@@ -15,7 +15,7 @@ import { UpdateDiscussionCommentDto } from './dto/update-discussion-comment.dto'
 import { PrismaService } from '@mas/backend-prisma';
 import { MailService } from '@mas/backend-mail';
 import { UserFull } from '@mas/models';
-import { CommentVoteType, Prisma } from '@prisma/client';
+import { CommentVoteType, Prisma } from '@mas/prisma-client';
 import { v4 } from 'uuid';
 import * as webpush from 'web-push';
 

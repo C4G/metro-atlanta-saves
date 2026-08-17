@@ -1,0 +1,6 @@
+model WhatWeAre {
+  id                  String  @id @default(uuid())
+  whoWeAreDescription String
+  whatWeDoDescription String
+  hidden              Boolean @default(false)
+}

@@ -1,0 +1,7 @@
+model CheckpointName {
+  name       String         @id
+  type       CheckpointType @default(Other)
+  sequence   Int            @default(999)
+  Checkpoint Checkpoint[]
+  Program    Program[]
+}

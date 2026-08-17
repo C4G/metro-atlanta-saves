@@ -1,7 +1,7 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Validate } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+import { Role } from '@mas/prisma-client';
 
 function isValidRoles(value: Role) {
   const validValues = [Role.Administrator, Role.Partner_Staff];

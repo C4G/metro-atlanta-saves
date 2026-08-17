@@ -1,0 +1,16 @@
+model Checkpoint {
+  id              String          @id @default(uuid())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now())
+  name            String          @default("Month 1")
+  checkpointName  CheckpointName  @relation(fields: [name], references: [name])
+  savedMoney      Float?
+  UsersOnPrograms UsersOnPrograms @relation(fields: [userId, programId], references: [userId, programId])
+  userId          String
+  programId       String
+  creditScore     Int?
+  application     String?
+  images          Image[]
+
+  @@map("checkpoints")
+}

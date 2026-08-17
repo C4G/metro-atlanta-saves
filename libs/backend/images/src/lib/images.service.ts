@@ -1,6 +1,6 @@
 import { PrismaService } from '@mas/backend-prisma';
 import { BadRequestException, Injectable, StreamableFile } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@mas/prisma-client';
 import { imageAbsPath, imageRelPath } from '@mas/backend-shared';
 import { createReadStream } from 'fs';
 

@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { EducationalContentStore } from '@mas/frontend-shared-data-access';
-import { type Requirement } from '@prisma/client';
+import { type Requirement } from '@mas/prisma-client/browser';
 import { RequirementsStore } from '../../requirements.store';
 
 @Component({

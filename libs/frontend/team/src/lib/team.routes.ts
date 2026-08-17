@@ -1,8 +1,6 @@
 import { Route } from '@angular/router';
 import { seoResolver } from '@mas/frontend-shared-util';
 
-const TITLE_SUFFIX = '| Building Resilient Professionals';
-
 export const teamRoutes: Route[] = [
   {
     path: '',
@@ -14,7 +12,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./members/members.component'),
         data: {
           seo: {
-            title: `C4G Team ${TITLE_SUFFIX}`,
+            title: 'C4G Team',
             description:
               'The team with varying experience with web development working to bring savings education to families.',
           },
@@ -26,7 +24,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./description/description.component'),
         data: {
           seo: {
-            title: `Project Description ${TITLE_SUFFIX}`,
+            title: 'Project Description',
             description:
               'The project description for Building Resilient Professionals Computing For Good Spring 2024 team.',
           },
@@ -38,7 +36,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./goal/goal.component'),
         data: {
           seo: {
-            title: `Project Goal ${TITLE_SUFFIX}`,
+            title: 'Project Goal',
             description:
               'Our goal is to bring 1000 families into the Building Resilient Professionals program and save $1000.',
           },
@@ -50,7 +48,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./lighthouse/lighthouse.component'),
         data: {
           seo: {
-            title: `Lighthouse Report ${TITLE_SUFFIX}`,
+            title: 'Lighthouse Report',
             description: 'Our lighthouse scores represented as images for the home page of this site.',
           },
         },
@@ -61,7 +59,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./presentation/presentation.component'),
         data: {
           seo: {
-            title: `Presentation Slides ${TITLE_SUFFIX}`,
+            title: 'Presentation Slides',
             description: 'Powerpoint slides show casing goals, timeline, architecture and team members.',
           },
         },
@@ -72,7 +70,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./weekly-updates/weekly-updates.component'),
         data: {
           seo: {
-            title: `Weekly Updates ${TITLE_SUFFIX}`,
+            title: 'Weekly Updates',
             description: 'Weekly Updates(notion board which has all tasks completed and being worked on)',
           },
         },
@@ -83,7 +81,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./project-peer-evaluations/project-peer-evaluations.component'),
         data: {
           seo: {
-            title: `Project Peer Evaluations ${TITLE_SUFFIX}`,
+            title: 'Project Peer Evaluations',
             description: 'Project Peer Evaluations(typeform survey for Project Peer Evaluations)',
           },
         },
@@ -94,7 +92,7 @@ export const teamRoutes: Route[] = [
         loadComponent: () => import('./demo/demo.component'),
         data: {
           seo: {
-            title: `Demo ${TITLE_SUFFIX}`,
+            title: 'Demo',
             description: 'demo',
           },
         },

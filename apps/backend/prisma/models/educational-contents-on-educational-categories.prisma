@@ -1,0 +1,8 @@
+model EducationalContentsOnEducationalCategories {
+  categoryId String
+  contentId  String
+  category   EducationalCategory @relation(fields: [categoryId], references: [id])
+  content    EducationalContent  @relation(fields: [contentId], references: [id])
+
+  @@id([categoryId, contentId])
+}

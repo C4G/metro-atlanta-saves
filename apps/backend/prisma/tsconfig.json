@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig.nest-base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["seed/**/*.ts"],
+  "exclude": ["seed/**/*.spec.ts", "seed/**/*.test.ts"]
+}

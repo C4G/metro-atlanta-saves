@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 import { MatDialog } from '@angular/material/dialog';
-import { type Cohort } from '@prisma/client';
+import { type Cohort } from '@mas/prisma-client/browser';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { CohortsStore } from '@mas/frontend-shared-data-access';

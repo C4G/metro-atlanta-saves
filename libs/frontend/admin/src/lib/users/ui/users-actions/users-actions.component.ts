@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { AddUserComponent } from '@mas/frontend-shared-components';
-import { type User } from '@prisma/client';
+import { type User } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 

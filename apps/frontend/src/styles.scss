@@ -95,6 +95,25 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  border: 2px solid currentColor;
+  border-radius: 0.25rem;
+  background: white;
+  color: black;
+  font-weight: 500;
+  transform: translateY(-150%);
+  transition: transform 150ms ease-in-out;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 .mat-mdc-snack-bar-container {
   &.success {
     --mat-snackbar-container-color: #4caf50;

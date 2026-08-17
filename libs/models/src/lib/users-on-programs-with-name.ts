@@ -1,4 +1,4 @@
-import { UsersOnPrograms } from '@prisma/client';
+import { UsersOnPrograms } from '@mas/prisma-client/browser';
 
 export type UsersOnProgramsWithName = UsersOnPrograms & {
   userId: string;

@@ -5,7 +5,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { type Cohort } from '@prisma/client';
+import { type Cohort } from '@mas/prisma-client/browser';
 import { MatDialog } from '@angular/material/dialog';
 
 type CohortsState = {

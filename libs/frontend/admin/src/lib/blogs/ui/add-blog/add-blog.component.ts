@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { BlogsStore, ThemeService } from '@mas/frontend-shared-data-access';
-import type { Blog } from '@prisma/client';
+import type { Blog } from '@mas/prisma-client/browser';
 import { EditorComponent, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 @Component({

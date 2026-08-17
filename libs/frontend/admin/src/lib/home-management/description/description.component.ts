@@ -28,11 +28,8 @@ import { EditorComponent } from '@tinymce/tinymce-angular';
           <p class="font-medium">Description Section Visibility</p>
           <p class="text-sm text-gray-500">Toggle to show or hide the logo and description section on the home page</p>
         </div>
-        <mat-slide-toggle
-          [checked]="!$any(descriptionStore.description())?.hidden"
-          (change)="onToggleHidden($event.checked)"
-        >
-          {{ $any(descriptionStore.description())?.hidden ? 'Hidden' : 'Visible' }}
+        <mat-slide-toggle [checked]="!descriptionStore.description()?.hidden" (change)="onToggleHidden($event.checked)">
+          {{ descriptionStore.description()?.hidden ? 'Hidden' : 'Visible' }}
         </mat-slide-toggle>
       </div>
       <form #form="ngForm" class="flex flex-col gap-4" [formGroup]="descriptionForm" (ngSubmit)="onSubmit()">
@@ -153,24 +150,26 @@ export default class DescriptionComponent {
     });
   }
 
-  onFileSelected(event: any): void {
-    if (!event.target.files?.[0]) {
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
       this.selectedFileError.set('Image is required');
       return;
     }
-    if (!/(jpg|jpeg|png|webp)$/.test(event.target.files[0].type)) {
+    if (!/(jpg|jpeg|png|webp)$/.test(file.type)) {
       this.selectedFileError.set('Only supported types: jpg, jpeg, png, webp');
       return;
     }
     this.selectedFileError.set('');
-    this.selectedFile.set(event.target.files[0]);
-    this.selectedFileName.set(event.target.files[0].name);
+    this.selectedFile.set(file);
+    this.selectedFileName.set(file.name);
   }
 
   onToggleHidden(checked: boolean): void {
     const current = this.descriptionStore.description();
     if (current) {
-      this.descriptionStore.patchDescription({ ...current, hidden: !checked } as any);
+      this.descriptionStore.patchDescription({ ...current, hidden: !checked });
     }
   }
 

@@ -140,7 +140,7 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
           class="h-[28px] rounded px-1.5 text-xs font-semibold text-gray-600 bg-white border border-gray-200 hover:border-gray-300 focus:outline-none focus:border-blue-400 cursor-pointer transition-colors mr-0.5"
           [value]="currentHeadingLevel()"
           (mousedown)="$event.stopPropagation()"
-          (change)="setHeading($any($event.target).value)"
+          (change)="setHeading($event)"
         >
           <option value="1">Title</option>
           <option value="2">Heading</option>
@@ -421,7 +421,7 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
             class="rte-link-input w-48 text-xs rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition"
             placeholder="https://"
             [value]="pendingLinkUrl()"
-            (input)="pendingLinkUrl.set($any($event.target).value)"
+            (input)="setPendingLinkUrl($event)"
             (keydown.enter)="confirmLink()"
             (keydown.escape)="cancelLink()"
           />
@@ -646,14 +646,19 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
     this.linkMode.set('none');
   }
 
-  setHeading(value: string): void {
+  setHeading(event: Event): void {
     if (!this.editor) return;
+    const value = (event.target as HTMLSelectElement).value;
     const level = parseInt(value) as 0 | 1 | 2 | 3;
     if (level === 0) {
       this.editor.chain().focus().setParagraph().run();
     } else {
       this.editor.chain().focus().setHeading({ level }).run();
     }
+  }
+
+  setPendingLinkUrl(event: Event): void {
+    this.pendingLinkUrl.set((event.target as HTMLInputElement).value);
   }
 
   handleImageUpload(event: Event): void {

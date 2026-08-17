@@ -12,38 +12,30 @@ This workspace uses [pnpm](https://pnpm.io). If you don't have it yet, enable it
 corepack enable pnpm
 ```
 
-Then setup the application locally by running the following commands in order:
+Then set up and start the application with one command:
 
 ```
-pnpm install
-
-docker compose -f ./docker-compose.dev.yaml up -d
-
-pnpm exec nx run backend:prisma-migrate
-
-pnpm exec nx run backend:prisma-seed
-
-pnpm exec nx run backend:prisma-generate
+pnpm start:local
 ```
 
-After running the above commands, you can start serving the application.
+This installs dependencies, creates `.env` from `.env.example` when needed, starts and waits for
+PostgreSQL, generates the Prisma client, applies migrations, loads the seed data, and starts both
+development servers. Open http://localhost:4200/ when compilation finishes.
 
 ## Environment Setup
 
-1. Copy the `.env.example` file to `.env`:
+`pnpm start:local` creates `.env` from `.env.example` if `.env` does not exist. Update `.env` with
+your specific configuration values as needed:
 
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Update the `.env` file with your specific configuration values:
-   - Set database credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, etc.)
-   - Configure JWT secret
-   - Set up mail server details if needed
+- Set database credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, etc.)
+- Configure JWT secret
+- Set up mail server details if needed
 
 ## Start the app
 
-To start the development client run `pnpm exec nx serve frontend`. Run `pnpm exec nx serve backend` to start server. Open your browser and navigate to http://localhost:4200/. Happy coding!
+Run `pnpm start:local`. The frontend's Nx target starts the backend as a dependency. Press Ctrl+C
+to stop the application servers; PostgreSQL remains available for the next run. To stop it too, run
+`docker compose -f ./docker-compose.dev.yaml down`.
 
 **NOTE**: When running this project on a Windows machine, to facilitate hot reload and ensure optimal performance use
 `WSL 2`.

@@ -57,7 +57,8 @@ ENV UPLOAD_DIR=/data/uploads
 WORKDIR /app
 COPY --from=build /workspace/node_modules ./node_modules
 COPY --from=build /workspace/dist/apps/backend ./
-COPY --from=build /workspace/apps/backend/prisma ./prisma
+COPY --from=build /workspace/apps/backend/prisma ./apps/backend/prisma
+COPY --from=build /workspace/prisma.config.ts ./prisma.config.ts
 COPY docker/backend-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3000

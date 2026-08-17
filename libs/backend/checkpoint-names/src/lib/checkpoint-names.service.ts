@@ -1,6 +1,6 @@
 import { PrismaService } from '@mas/backend-prisma';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import type { CheckpointName } from '@prisma/client';
+import type { CheckpointName } from '@mas/prisma-client';
 
 @Injectable()
 export class CheckpointNamesService {

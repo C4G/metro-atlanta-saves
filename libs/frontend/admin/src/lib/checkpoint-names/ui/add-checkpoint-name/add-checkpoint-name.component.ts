@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { CheckpointNamesStore } from '@mas/frontend-shared-data-access';
-import { CheckpointName, CheckpointType } from '@prisma/client';
+import { CheckpointName, CheckpointType } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-add-checkpoint-name',

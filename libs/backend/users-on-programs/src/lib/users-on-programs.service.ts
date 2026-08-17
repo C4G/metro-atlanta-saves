@@ -3,7 +3,7 @@ import { PrismaService } from '@mas/backend-prisma';
 import { formatCurrency } from '@mas/backend-shared';
 import { UsersOnProgramsWithName } from '@mas/models';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@mas/prisma-client';
 import * as ExcelJS from 'exceljs';
 import { CreateUsersOnProgramsDto } from './dto/create-users-on-programs.dto';
 import { UpdateUsersOnProgramsDto } from './dto/update-users-on-programs.dto';

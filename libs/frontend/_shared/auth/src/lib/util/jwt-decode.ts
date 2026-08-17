@@ -1,4 +1,4 @@
-import type { Role } from '@prisma/client';
+import type { Role } from '@mas/prisma-client/browser';
 import type { UserFull } from '@mas/models';
 
 export interface JwtPayload {

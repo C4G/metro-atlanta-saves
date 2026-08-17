@@ -1,0 +1,14 @@
+model EducationalContent {
+  id                                String                                       @id @default(uuid())
+  title                             String
+  description                       String
+  image                             String?
+  link                              String?
+  file                              String?
+  createdAt                         DateTime                                     @default(now())
+  updatedAt                         DateTime                                     @default(now())
+  EducationalCategoryContentMapping EducationalContentsOnEducationalCategories[]
+  Requirement                       Requirement[]
+
+  @@map("educationalContents")
+}

@@ -6,7 +6,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
-import type { User } from '@prisma/client';
+import type { User } from '@mas/prisma-client/browser';
 
 type AlliesState = {
   programId: string | null;

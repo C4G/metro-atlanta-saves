@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 import { seoResolver } from '@mas/frontend-shared-util';
 
-const TITLE_SUFFIX = '- Program | Building Resilient Professionals';
+const TITLE_SUFFIX = '- Program';
 
 export const programRoutes: Route[] = [
   {

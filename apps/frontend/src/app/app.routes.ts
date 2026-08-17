@@ -2,8 +2,6 @@ import { Route } from '@angular/router';
 import { adminGuard, authGuard, partnerStaffGuard } from '@mas/frontend-shared-auth';
 import { seoResolver } from '@mas/frontend-shared-util';
 
-const TITLE_SUFFIX = '| Building Resilient Professionals';
-
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -11,7 +9,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-home').then((m) => m.HomeComponent),
     data: {
       seo: {
-        title: `Helping You Save Money ${TITLE_SUFFIX}`,
+        title: 'Financial Wellbeing Programs',
         description:
           'We are here to help you save money! Did you know that having an emergency savings fund increases happiness and decreases stress?',
       },
@@ -23,7 +21,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-about-us').then((m) => m.AboutUsComponent),
     data: {
       seo: {
-        title: `About Us ${TITLE_SUFFIX}`,
+        title: 'About Us',
         description:
           'Our goal and promise it to help those that need it with saving money for your family and future. We are driven and passionate about homelessness and helping those in need.',
       },
@@ -35,7 +33,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-savings-calculator').then((m) => m.SavingsCalculatorComponent),
     data: {
       seo: {
-        title: `Savings Interest Calculator ${TITLE_SUFFIX}`,
+        title: 'Savings Interest Calculator',
         description:
           'Monthly contributions and compounding interest can lead to more money in your pocket for your family. Get started today with our monthly interest calculator and see what you can save!',
       },
@@ -51,7 +49,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-educational-resources').then((m) => m.EducationalResourcesComponent),
     data: {
       seo: {
-        title: `Educational Resources ${TITLE_SUFFIX}`,
+        title: 'Educational Resources',
         description: 'Educational Resources selected by our team to help you save',
       },
     },
@@ -64,7 +62,7 @@ export const appRoutes: Route[] = [
       import('./discussion-boards-dashboard.component').then((m) => m.DiscussionBoardsDashboardComponent),
     data: {
       seo: {
-        title: `Discussion Boards ${TITLE_SUFFIX}`,
+        title: 'Discussion Boards',
         description: 'Browse and access discussion boards for your programs and cohorts.',
       },
     },
@@ -76,7 +74,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./discussion-board-forum.component').then((m) => m.DiscussionBoardForumComponent),
     data: {
       seo: {
-        title: `Discussion Board ${TITLE_SUFFIX}`,
+        title: 'Discussion Board',
         description: 'Participate in board-specific discussions.',
       },
     },
@@ -117,7 +115,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-login').then((m) => m.LoginComponent),
     data: {
       seo: {
-        title: `Log In ${TITLE_SUFFIX}`,
+        title: 'Log In',
         description: 'Log in to Building Resilient Professionals! ',
       },
     },
@@ -128,7 +126,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-forgot-password').then((m) => m.ForgotPasswordComponent),
     data: {
       seo: {
-        title: `Forgot Password ${TITLE_SUFFIX}`,
+        title: 'Forgot Password',
         description: 'It looks like you forgot your password. Fill in the form to receive an email to reset it.',
       },
     },
@@ -139,7 +137,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-reset-password').then((m) => m.ResetPasswordComponent),
     data: {
       seo: {
-        title: `Reset Password ${TITLE_SUFFIX}`,
+        title: 'Reset Password',
         description: 'Resetting your password is easy as submitting your new password!',
       },
     },
@@ -150,7 +148,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-register').then((m) => m.RegisterComponent),
     data: {
       seo: {
-        title: `Register ${TITLE_SUFFIX}`,
+        title: 'Register',
         description: 'The registration page to sign up for Building Resilient Professionals! ',
       },
     },
@@ -162,7 +160,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-dashboard').then((m) => m.DashboardComponent),
     data: {
       seo: {
-        title: `Dashboard ${TITLE_SUFFIX}`,
+        title: 'Dashboard',
         description: 'The dashboard for registering for upcoming programs within BRP.',
       },
     },
@@ -174,7 +172,7 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-enroll').then((m) => m.EnrollComponent),
     data: {
       seo: {
-        title: `Enroll in Program ${TITLE_SUFFIX}`,
+        title: 'Enroll in Program',
         description: 'Enrollment form to apply for a program within BRP.',
       },
     },

@@ -1,0 +1,11 @@
+model Story {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  name        String
+  description String
+  imageUrl    String
+  hidden      Boolean  @default(false)
+
+  @@map("stories")
+}

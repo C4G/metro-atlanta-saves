@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@mas/prisma-client';
 
 export const seedDescription = async (prisma: PrismaClient) => {
   const hasData = await prisma.description.count();
@@ -11,7 +11,7 @@ export const seedDescription = async (prisma: PrismaClient) => {
   const data = await prisma.description.createMany({
     data: [
       {
-        title: 'FINANCIAL WELLBEING ALLIANCE',
+        title: 'Financial Wellbeing Alliance programs',
         body: `<p>United Way and its partners offer several innovative financial wellbeing programs:</p>
         <ol>
           <li>Financial Achievement Club (FAC)</li>

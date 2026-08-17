@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { type User } from '@prisma/client';
+import { type User } from '@mas/prisma-client/browser';
 import { PartnersStore } from '@mas/frontend-shared-data-access';
 import { AuthStore } from '@mas/frontend-shared-auth';
 

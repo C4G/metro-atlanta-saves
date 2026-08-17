@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { LearningsStore } from '@mas/frontend-shared-data-access';
-import { type Learning } from '@prisma/client';
+import { type Learning } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 import { AddLearningComponent } from '../add-learning/add-learning.component';
@@ -18,10 +18,10 @@ import { AddLearningComponent } from '../add-learning/add-learning.component';
       <button
         class="!flex !justify-center !content-center"
         mat-icon-button
-        [title]="$any(learning())?.hidden ? 'Show on home page' : 'Hide from home page'"
+        [title]="learning()?.hidden ? 'Show on home page' : 'Hide from home page'"
         (click)="toggleHidden()"
       >
-        <mat-icon>{{ $any(learning())?.hidden ? 'visibility_off' : 'visibility' }}</mat-icon>
+        <mat-icon>{{ learning()?.hidden ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       <button
         class="!flex !justify-center !content-center"
@@ -52,19 +52,19 @@ export class LearningActionsComponent implements ICellRendererAngularComp {
   private learningsStore = inject(LearningsStore);
   learning = signal<Learning | null>(null);
 
-  agInit(params: ICellRendererParams<any, any, any>): void {
-    this.learning.set(params.data);
+  agInit(params: ICellRendererParams<Learning, unknown, unknown>): void {
+    this.learning.set(params.data ?? null);
   }
 
-  refresh(params: ICellRendererParams<any, any, any>): boolean {
-    this.learning.set(params.data);
+  refresh(params: ICellRendererParams<Learning, unknown, unknown>): boolean {
+    this.learning.set(params.data ?? null);
     return true;
   }
 
   toggleHidden(): void {
     const item = this.learning();
     if (item) {
-      this.learningsStore.patchLearning({ id: item.id, hidden: !(item as any).hidden });
+      this.learningsStore.patchLearning({ id: item.id, hidden: !item.hidden });
     }
   }
 

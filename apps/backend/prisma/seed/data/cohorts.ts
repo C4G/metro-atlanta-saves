@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@mas/prisma-client';
 
 export const seedCohorts = async (prisma: PrismaClient) => {
   const hasData = await prisma.cohort.count();

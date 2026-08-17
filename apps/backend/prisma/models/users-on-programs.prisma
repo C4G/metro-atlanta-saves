@@ -1,0 +1,31 @@
+model UsersOnPrograms {
+  user                 User         @relation(fields: [userId], references: [id])
+  userId               String
+  program              Program      @relation(fields: [programId], references: [id])
+  programId            String
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @default(now())
+  requirementStatus    String[]
+  married              Boolean      @default(false)
+  educationStatus      String?
+  militaryStatus       Boolean      @default(false)
+  placeOfEmployment    String?
+  jobTitle             String?
+  annualIncome         Float?
+  monthsEmployed       Int?
+  address              String?
+  start                DateTime?
+  end                  DateTime?
+  birthdate            DateTime?
+  phone                String?
+  gender               String?
+  race                 String?
+  creditScoreIncentive Boolean      @default(false)
+  totalAmountPaidOut   Float        @default(0.00)
+  paidDate             DateTime?
+  checkpoints          Checkpoint[]
+  graduated            Boolean      @default(false)
+  inactive             Boolean      @default(false)
+
+  @@id([userId, programId])
+}

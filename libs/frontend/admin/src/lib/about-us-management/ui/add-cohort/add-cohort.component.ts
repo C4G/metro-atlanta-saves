@@ -5,7 +5,7 @@ import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/in
 import { MatButton } from '@angular/material/button';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CohortsStore } from '@mas/frontend-shared-data-access';
-import type { Cohort } from '@prisma/client';
+import type { Cohort } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-add-cohort',

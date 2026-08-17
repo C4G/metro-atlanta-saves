@@ -1,8 +1,6 @@
 import { Route } from '@angular/router';
 import { seoResolver } from '@mas/frontend-shared-util';
 
-const TITLE_SUFFIX = '| Building Resilient Professionals';
-
 export const userGuideRoutes: Route[] = [
   {
     path: '',
@@ -10,7 +8,7 @@ export const userGuideRoutes: Route[] = [
     resolve: [seoResolver],
     data: {
       seo: {
-        title: `User Guide ${TITLE_SUFFIX}`,
+        title: 'User Guide',
         description: 'This is a guide built to help you navigate the Building Resilient Professionals site.',
       },
     },

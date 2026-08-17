@@ -1,0 +1,9 @@
+model Introduction {
+  id          String  @id @default(uuid())
+  title       String
+  titleEnding String  @default("Financial Wellbeing Alliance")
+  imageText   String?
+  imageUrl    String
+  hidden      Boolean @default(false)
+  imageHidden Boolean @default(false)
+}
