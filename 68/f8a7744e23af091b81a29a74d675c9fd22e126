@@ -1,0 +1,381 @@
+apps/backend/prisma/seed/data/notification-config.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/models/src/lib/extended-checkpoint.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+apps/backend/prisma/tsconfig.json
+  s_d4fec38220421c::t_270eb5f9f61407 1-9
+libs/frontend/admin/src/lib/home-management/learnings/ui/learning-actions/learning-actions.component.ts
+  s_d4fec38220421c::t_4bb8689f53e5e9 21,24,67
+  s_d4fec38220421c::t_45c9af340818fd 55-56,59-60
+  s_d4fec38220421c::t_10f4c0971cb342 7
+apps/backend/prisma/models/introduction.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-9
+libs/backend/images/src/lib/images.service.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 3
+apps/frontend/src/styles.scss
+  s_d4fec38220421c::t_cad0400e2dbdf8 98-116
+apps/backend/prisma/models/user.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-27
+libs/frontend/_shared/data-access/src/lib/what-we-are/what-we-are.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/enroll/src/lib/enroll/enroll.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 14
+libs/frontend/_shared/data-access/src/lib/stories/stories.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 9
+libs/models/src/lib/user-on-program-agg.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+libs/frontend/_shared/data-access/src/lib/blogs/blogs.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/prisma-client/project.json
+  s_d4fec38220421c::t_971ec438787aff 1-19
+apps/backend/prisma/seed/data/introduction.ts
+  s_d4fec38220421c::t_3d556c6a7d0425 15
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+  s_d4fec38220421c::t_e2cd0beef6b4ab 14,16
+apps/backend/prisma/migrations/20260816010000_add_introduction_title_ending/migration.sql
+  s_d4fec38220421c::t_3d556c6a7d0425 1-2
+apps/backend/prisma/models/allies-on-programs.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-10
+apps/backend/prisma/seed/data/user-guide.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/backend/users/src/lib/dto/create-user.dto.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 4
+apps/backend/prisma/seed/data/stories.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/seed/data/what-we-are.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/frontend/partner-staff/src/lib/program/requirements/requirements.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/partner-staff/src/lib/program/program.routes.ts
+  s_d4fec38220421c::t_1072dfeab675d0 4
+libs/frontend/admin/src/lib/education-management/educational-categories/ui/educational-category-form/educational-category-form.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 10
+apps/backend/prisma/seed/seed.ts
+  s_d4fec38220421c::t_6d7a35053dff56 1-3,29-36
+pnpm-lock.yaml
+  s_d4fec38220421c::t_6f2512ad1b59d1 82-88,155-157,182-184,209,247-248,318-320,394-395,405-407,1540-1553,1581-1586,1605-1610,1629-1634,1653-1658,1677-1682,1701-1706,1725-1730,1749-1754,1773-1778,1797-1802,1821-1826,1845-1850,1869-1874,1893-1898,1917-1922,1941-1946,1965-1970,1989-1994,2013-2018,2037-2042,2061-2066,2079-2084,2103-2108,2127-2132,2151-2156,2175-2180,3272-3274,3276-3277,3279-3281,3283-3284,3286,3553-3561,3564,3568-3593,3595-3596,3598-3599,3601-3602,3604-3606,3608-3688,4285-4317,4336-4338,4369-4371,4417-4419,4429-4431,4640-4674,5021-5024,5132-5134,5234-5241,5323-5326,5352-5354,5498-5500,5728-5730,5737-5784,5852-5855,5879-5884,5892-5895,5908-5910,6004-6007,6029-6031,6040-6042,6060-6063,6105-6108,6170-6174,6378-6380,6384-6387,6392-6394,6411-6413,6485-6488,6613-6615,6636-6638,6662-6665,6733-6738,6989-6992,7106-7108,7772-7774,7788-7791,8142-8145,8149-8152,8360-8362,8596-8598,8605-8641,8694-8696,8985-9008,9034-9036,9038-9045,9065-9067,9183-9185,9218-9220,9262-9265,9298-9300,9357-9360,9381-9383,9434-9437,9650-9652,9825-9828,9832-9835,9863-9865,10070-10073,10081-10084,10226-10230,10398-10405,10769-10771,10889,10895,11097,11107,11128,11155,11165,11186,12237-12246,12269-12271,12281-12283,12293-12295,12305-12307,12317-12319,12329-12331,12341-12343,12353-12355,12365-12367,12377-12379,12389-12391,12401-12403,12413-12415,12425-12427,12437-12439,12449-12451,12461-12463,12473-12475,12485-12487,12497-12499,12509-12511,12518-12520,12530-12532,12542-12544,12554-12556,12566-12568,13006,13107,13893,13898-13900,13903,13905,13907,13910-13911,13913,13937-13938,14486-14604,14606,14608-14613,14615-14623,14625,14627-14631,14633,14635-14638,14640,14642-14644,15156-15185,15215-15216,15252-15253,15311-15316,15324-15327,15525-15564,15566-15604,15989-15990,16150-16151,16269-16283,16395-16398,16417-16418,16562-16563,16815-16816,16821-16866,16905-16906,16924-16929,16934-16935,16942-16943,17040-17041,17068-17072,17079-17080,17091-17092,17126-17127,17252-17280,17596-17597,17601-17604,17610-17611,17628-17631,17718-17723,17854-17857,17879-17880,17898-17899,17981-17984,18278-18279,18355-18356,18596,18837,19305-19306,19318-19319,19917-19928,19935-19938,20191-20192,20476-20477,20483-20519,20555-20560,20832-20845,20881,20883-20888,20890-20896,20914-20919,21119-21120,21155-21159,21209-21210,21243-21244,21298-21299,21312-21313,21405-21408,21616-21617,21857-21858,21861-21862,21883-21884,22117-22118,22126-22127,22262-22267,22433-22436,22453,22469,22805-22809
+libs/frontend/_shared/data-access/src/lib/description/description.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/_shared/data-access/src/lib/peer-evaluation-guide/peer-evaluation-guide.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+apps/backend/prisma/models/program.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-21
+libs/frontend/admin/src/lib/checkpoint-names/ui/checkpoint-names-actions/checkpoint-names-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 7
+libs/frontend/partner-staff/src/lib/program/requirements/ui/add-requirement/add-requirement.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/_shared/data-access/src/lib/users-on-programs/users-on-programs.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 10
+apps/backend/prisma/seed/data/educational-content.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/backend/users-on-programs/src/lib/users-on-programs.service.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 6
+apps/backend/prisma/models/cohort.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-11
+apps/backend/prisma/models/push-subscription.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-11
+libs/backend/introduction/src/lib/dto/update-introduction.dto.ts
+  s_d4fec38220421c::t_b1b95f63f9cdd7 21-23
+  s_d4fec38220421c::t_3d556c6a7d0425 24-28
+libs/frontend/team/src/lib/team.routes.ts
+  s_d4fec38220421c::t_1072dfeab675d0 15,27,39,51,62,73,84,95
+libs/frontend/_shared/data-access/src/lib/programs/programs.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 10
+apps/backend/prisma/models/users-on-programs.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-31
+apps/backend/prisma/seed/data/users.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/frontend/program-profiles/src/lib/program-profiles.routes.ts
+  s_d4fec38220421c::t_1072dfeab675d0 4
+libs/frontend/_shared/layout/src/lib/layout/layout.component.ts
+  s_d4fec38220421c::t_cad0400e2dbdf8 19-21,32
+apps/backend/prisma/models/educational-category.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-9
+apps/backend/prisma/models/partner.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-16
+apps/backend/prisma/models/checkpoint-name.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-7
+libs/frontend/admin/src/lib/partners/ui/add-partner/add-partner.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 9
+libs/frontend/_shared/components/src/lib/add-user/add-user.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 7
+libs/frontend/_shared/components/src/lib/edit-profile/edit-profile.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 7
+libs/frontend/_shared/data-access/src/lib/checkpoint-names/checkpoint-names.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 9
+apps/backend/prisma/seed/data/description.ts
+  s_d4fec38220421c::t_e2cd0beef6b4ab 14
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/models/requirement.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-12
+apps/backend/prisma/seed/data/discussion-tags.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/frontend/home/src/lib/home.component.ts
+  s_d4fec38220421c::t_4bb8689f53e5e9 21,24,42,107
+  s_d4fec38220421c::t_e2cd0beef6b4ab 33-35
+  s_d4fec38220421c::t_71665a5654588b 43-58,61-76,78-104,106,108-119,122-130,135-137,139-140
+  s_d4fec38220421c::t_81762db54a4f65 22-23
+apps/backend/prisma/models/learning.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-11
+libs/models/src/lib/extended-image.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+libs/prisma-client/src/browser.ts
+  s_d4fec38220421c::t_971ec438787aff 1
+apps/backend/prisma/models/notification-config.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-9
+docker/backend-entrypoint.sh
+  s_d4fec38220421c::t_6d7a35053dff56 7
+libs/models/src/lib/users-names-only.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+apps/backend/prisma/models/discussion-tag.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-11
+apps/backend/prisma/seed/data/educational-category.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/seed/data/user-checkpoints.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/seed/data/checkpoint-names.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/models/what-we-are.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-6
+.gitignore
+  s_d4fec38220421c::t_6d7a35053dff56 59-60
+  s_d4fec38220421c::t_971ec438787aff 61
+apps/backend/prisma/seed/data/cohorts.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/models/discussion-post.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-22
+libs/frontend/partner-staff/src/lib/program/user-checkpoints/checkpoints.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+apps/backend/prisma/models/educational-content.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-14
+apps/backend/prisma/seed/data/contents-on-categories.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/models/user-guide.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-4
+apps/frontend/src/app/rich-text-editor.component.ts
+  s_d4fec38220421c::t_61b7af62cc06da 662-663
+  s_d4fec38220421c::t_39ec40b1a9f712 143,424,649,651,660-661
+apps/backend/prisma/seed/data/first-program.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/frontend/_shared/data-access/src/lib/learnings/learnings.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 9
+libs/backend/discussion/src/lib/discussion.service.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 18
+libs/frontend/partner-staff/src/lib/program/allies-on-programs/ui/allies-on-programs-actions/allies-on-programs-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+apps/backend/prisma/models/discussion-comment.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-21
+libs/frontend/partner-staff/src/lib/programs/ui/program-actions/program-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 9
+apps/backend/prisma/models/discussion-comment-vote.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-14
+libs/prisma-client/package.json
+  s_d4fec38220421c::t_971ec438787aff 1-6
+libs/frontend/admin/src/lib/checkpoint-names/ui/add-checkpoint-name/add-checkpoint-name.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+prisma.config.ts
+  s_d4fec38220421c::t_6d7a35053dff56 1,3-4,6-10,15-16
+  s_d4fec38220421c::t_5c0f173fe206c5 2,11-14
+  s_d4fec38220421c::t_e763c61d79072d 5
+apps/e2e/src/home-accessibility.spec.ts
+  s_d4fec38220421c::t_f830433579fd15 1-15,21-38,40-42
+  s_d4fec38220421c::t_6abaf48a400e39 39
+  s_d4fec38220421c::t_d0410de9c0218d 16-20
+libs/frontend/admin/src/lib/admin.routes.ts
+  s_d4fec38220421c::t_1072dfeab675d0 4
+libs/frontend/_shared/util/src/lib/seo.resolve.ts
+  s_d4fec38220421c::t_96b4132f6899ae 5
+  s_d4fec38220421c::t_3d556c6a7d0425 2,6-11,15-20,22-24,33-40
+  s_d4fec38220421c::t_35b389c75c513e 21
+libs/frontend/_shared/data-access/src/lib/partners/partners.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+apps/backend/prisma/seed/data/first-requirements.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/backend/checkpoint-names/src/lib/checkpoint-names.controller.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 5
+apps/backend/prisma/migrations/20260816000000_fix_homepage_accessibility_content/migration.sql
+  s_d4fec38220421c::t_81762db54a4f65 3,5-8
+  s_d4fec38220421c::t_7444e208d32663 1-2,4,9-12
+libs/frontend/admin/src/lib/users/ui/users-actions/users-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 6
+libs/backend/shared/src/lib/util/map-user.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 2
+apps/backend/prisma/models/educational-contents-on-educational-categories.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-8
+libs/frontend/_shared/components/src/lib/add-checkpoint/add-checkpoint.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 12
+libs/frontend/admin/src/lib/about-us-management/ui/add-cohort/add-cohort.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/admin/src/lib/home-management/learnings/ui/add-learning/add-learning.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 7
+apps/backend/prisma/seed/data/peer-evaluation-guide.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/seed/data/allies-on-programs.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+apps/backend/prisma/seed/data/blogs.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/frontend/about-us/src/lib/about-us.component.ts
+  s_d4fec38220421c::t_e2cd0beef6b4ab 17,19
+apps/frontend/src/index.html
+  s_d4fec38220421c::t_cad0400e2dbdf8 5,15
+libs/backend/prisma/src/lib/prisma.service.ts
+  s_d4fec38220421c::t_6d7a35053dff56 2-3,8-16
+apps/backend/prisma/models/discussion-board.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-21
+libs/frontend/admin/src/lib/about-us-management/ui/cohort-actions/cohort-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 6
+libs/frontend/admin/src/lib/partners/ui/partner-actions/partner-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 7
+libs/frontend/blogs/src/lib/blogs.routes.ts
+  s_d4fec38220421c::t_60f6b085984e9b 11,22
+libs/models/src/lib/extended-program.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+apps/backend/prisma/models/description.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-9
+scripts/start-local.sh
+  s_d4fec38220421c::t_1f407b65c505bb 1-44
+libs/frontend/admin/src/lib/home-management/description/description.component.ts
+  s_d4fec38220421c::t_4bb8689f53e5e9 32,172
+  s_d4fec38220421c::t_45c9af340818fd 153-156,160,165-166
+  s_d4fec38220421c::t_9b31cbf7c275e7 31
+libs/frontend/admin/src/lib/blogs/ui/blog-actions/blog-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/admin/src/lib/home-management/what-we-are/what-we-are.component.ts
+  s_d4fec38220421c::t_4bb8689f53e5e9 21,78,86-89
+  s_d4fec38220421c::t_9b31cbf7c275e7 20
+libs/frontend/_shared/data-access/src/lib/checkpoints/checkpoints.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+package.json
+  s_d4fec38220421c::t_2b019d0f2d94a0 101
+  s_d4fec38220421c::t_6d7a35053dff56 46
+  s_d4fec38220421c::t_1f407b65c505bb 11
+  s_d4fec38220421c::t_dd30497900b976 45,69,78,125,150,154
+apps/backend/prisma/models/checkpoint.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-16
+apps/frontend/src/app/discussion-board-forum.component.ts
+  s_d4fec38220421c::t_cfd7c11ea4679c 3045-3046
+  s_d4fec38220421c::t_39ec40b1a9f712 83-84,881,1591,1599,2211-2216,3015,3043-3044
+apps/backend/prisma/models/peer-evaluation-guide.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-4
+libs/frontend/_shared/data-access/src/lib/allies-on-programs/allies-on-programs.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 9
+libs/frontend/partner-staff/src/lib/programs/programs.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+apps/backend/prisma/models/discussion-post-tag.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-9
+apps/backend/prisma/seed/data/first-partner.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/frontend/admin/src/lib/home-management/stories/ui/add-story/add-story.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 7
+libs/backend/programs/src/lib/dto/enroll.dto.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 2
+libs/frontend/partner-staff/src/lib/program/requirements/ui/requirement-actions/requirement-actions.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 5
+libs/frontend/user-guide/src/lib/user-guide.routes.ts
+  s_d4fec38220421c::t_60f6b085984e9b 11
+apps/backend/prisma/models/discussion-board-member.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-14
+libs/frontend/admin/src/lib/blogs/ui/add-blog/add-blog.component.ts
+  s_d4fec38220421c::t_10f4c0971cb342 7
+libs/models/src/lib/users-on-programs-with-name.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+libs/frontend/admin/src/lib/education-management/content-notifications/content-notifications.component.ts
+  s_d4fec38220421c::t_39ec40b1a9f712 83,187-188
+apps/backend/prisma/models/enums.prisma
+  s_d4fec38220421c::t_a5c5d57292a492 4-6,11-13,17-19
+  s_d4fec38220421c::t_487e49c61c23c9 1-3,7-10,14-16,20-22
+libs/backend/programs/src/lib/dto/create-program.dto.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 2
+apps/backend/prisma/models/image.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-18
+libs/frontend/_shared/auth/src/lib/util/jwt-decode.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+README.md
+  s_d4fec38220421c::t_999d29f853e3d7 30-32
+  s_d4fec38220421c::t_1f407b65c505bb 15,18,21-23,27-28,36-38
+apps/backend/prisma/schema.prisma
+  s_d4fec38220421c::t_971ec438787aff 3
+  s_d4fec38220421c::t_6d7a35053dff56 2
+libs/prisma-client/src/index.ts
+  s_d4fec38220421c::t_971ec438787aff 1
+apps/backend/prisma/seed/data/user-into-program.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/prisma-client/tsconfig.lib.json
+  s_d4fec38220421c::t_971ec438787aff 1-9
+apps/backend/prisma/seed/data/learnings.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 1
+libs/frontend/partner-staff/src/lib/partner-staff.routes.ts
+  s_d4fec38220421c::t_1072dfeab675d0 4
+tsconfig.base.json
+  s_d4fec38220421c::t_f995426020a11d 35
+  s_d4fec38220421c::t_971ec438787aff 34
+libs/frontend/_shared/data-access/src/lib/user-guide/user-guide.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/_shared/data-access/src/lib/cohorts/cohorts.store.ts
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/frontend/admin/src/lib/home-management/intorduction/introduction.component.ts
+  s_d4fec38220421c::t_3d556c6a7d0425 54-64,117,170,174
+  s_d4fec38220421c::t_913d4cca70951c 128-131
+  s_d4fec38220421c::t_45c9af340818fd 138-141,145,151-152
+  s_d4fec38220421c::t_4bb8689f53e5e9 21,24,27,34,37,157,162
+  s_d4fec38220421c::t_e2cd0beef6b4ab 46,68,118
+apps/frontend/src/app/app.routes.ts
+  s_d4fec38220421c::t_60f6b085984e9b 12,24,36,52,65,77,118,129,140,151,163,175
+libs/frontend/_shared/data-access/src/lib/introduction/introduction.store.ts
+  s_d4fec38220421c::t_35b389c75c513e 10-12,15,36,43,59,62
+  s_d4fec38220421c::t_e2cd0beef6b4ab 21,24
+  s_d4fec38220421c::t_d337b2c3428524 9
+  s_d4fec38220421c::t_3d556c6a7d0425 5,22,35,37,41
+  s_d4fec38220421c::t_10f4c0971cb342 8
+libs/backend/auth/src/lib/auth.service.ts
+  s_d4fec38220421c::t_5a00fc90198f1b 13,76
+libs/frontend/_shared/layout/src/lib/layout/nav/nav.component.ts
+  s_d4fec38220421c::t_cad0400e2dbdf8 29-30
+libs/frontend/_shared/layout/src/lib/layout/sidenav/sidenav.component.ts
+  s_d4fec38220421c::t_71665a5654588b 37,39,42-49,58-107
+  s_d4fec38220421c::t_cad0400e2dbdf8 34-35,56-57,108-109,111-124
+apps/backend/prisma/models/enrollment.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-26
+libs/models/src/lib/user-full.ts
+  s_d4fec38220421c::t_10f4c0971cb342 1
+apps/backend/prisma/models/story.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-11
+libs/backend/checkpoint-names/src/lib/checkpoint-names.service.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 3
+libs/frontend/admin/src/lib/home-management/stories/ui/story-actions/story-actions.component.ts
+  s_d4fec38220421c::t_45c9af340818fd 54-55,58-59
+  s_d4fec38220421c::t_10f4c0971cb342 7
+  s_d4fec38220421c::t_4bb8689f53e5e9 21,24,67
+Dockerfile
+  s_d4fec38220421c::t_6d7a35053dff56 60-61
+libs/backend/allies-on-programs/src/lib/allies-on-programs.service.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 3
+apps/backend/prisma/models/blog.prisma
+  s_d4fec38220421c::t_487e49c61c23c9 1-11
+apps/backend/project.json
+  s_d4fec38220421c::t_e763c61d79072d 26,32,39,45,51,57,63,69,76,90
+  s_d4fec38220421c::t_7d731afc17bd50 84
+  s_d4fec38220421c::t_270eb5f9f61407 83
+libs/backend/shared/src/lib/util/decorator/role.decorator.ts
+  s_d4fec38220421c::t_7a8fa5708dde4d 2
+libs/prisma-client/tsconfig.json
+  s_d4fec38220421c::t_971ec438787aff 1-10
+libs/frontend/peer-evaluation-guide/src/lib/peer-evaluation-guide.routes.ts
+  s_d4fec38220421c::t_60f6b085984e9b 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "68f8a7744e23af091b81a29a74d675c9fd22e126",
+  "prompts": {},
+  "sessions": {
+    "s_d4fec38220421c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a00d8c-1b9d-7132-974c-d22dd5761266",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": null
+    }
+  }
+}
