@@ -1,6 +1,6 @@
 import { PrismaService } from '@mas/backend-prisma';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@mas/prisma-client';
 import { CreateAlliesOnProgramsDto } from './dto/create-allies-on-programs.dto';
 
 @Injectable()

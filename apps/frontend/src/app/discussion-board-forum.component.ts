@@ -80,6 +80,8 @@ type BoardMember = {
   isAdmin?: boolean;
 };
 
+type ManagementTab = 'general' | 'members' | 'tags';
+
 @Component({
   selector: 'mas-discussion-board-forum',
   standalone: true,
@@ -876,7 +878,7 @@ type BoardMember = {
                           type="text"
                           class="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-lg font-bold text-gray-900 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition"
                           [value]="editPostTitle()"
-                          (input)="editPostTitle.set($any($event.target).value)"
+                          (input)="setEditPostTitle($event)"
                           placeholder="Post title"
                         />
                       } @else {
@@ -1586,14 +1588,7 @@ type BoardMember = {
 
               <!-- Pill Tab Bar -->
               <div class="flex gap-1 px-5 py-3 border-b border-gray-100">
-                @for (
-                  tab of [
-                    { id: 'general', label: 'General' },
-                    { id: 'members', label: 'Members' },
-                    { id: 'tags', label: 'Categories' },
-                  ];
-                  track tab.id
-                ) {
+                @for (tab of managementTabs; track tab.id) {
                   <button
                     type="button"
                     class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors"
@@ -1601,7 +1596,7 @@ type BoardMember = {
                     [class.text-white]="managementTab() === tab.id"
                     [class.text-gray-500]="managementTab() !== tab.id"
                     [class.hover:bg-gray-100]="managementTab() !== tab.id"
-                    (click)="managementTab.set($any(tab.id))"
+                    (click)="managementTab.set(tab.id)"
                   >
                     {{ tab.label }}
                   </button>
@@ -2213,7 +2208,12 @@ export class DiscussionBoardForumComponent implements OnInit {
   pinningPostId = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
   showManagementModal = signal(false);
-  managementTab = signal<'general' | 'members' | 'tags'>('general');
+  readonly managementTabs: ReadonlyArray<{ id: ManagementTab; label: string }> = [
+    { id: 'general', label: 'General' },
+    { id: 'members', label: 'Members' },
+    { id: 'tags', label: 'Categories' },
+  ];
+  managementTab = signal<ManagementTab>('general');
   editingBoardName = signal('');
   editingBoardDescription = signal('');
   savingBoardName = signal(false);
@@ -3012,7 +3012,7 @@ export class DiscussionBoardForumComponent implements OnInit {
     });
   }
 
-  openManagementModal(tab: 'general' | 'members' | 'tags' = 'general'): void {
+  openManagementModal(tab: ManagementTab = 'general'): void {
     this.managementTab.set(tab);
     this.addMemberSearch.set('');
     this.pendingMembersToAdd.set([]);
@@ -3038,6 +3038,10 @@ export class DiscussionBoardForumComponent implements OnInit {
     }
     this.showManagementModal.set(true);
     document.body.style.overflow = 'hidden';
+  }
+
+  setEditPostTitle(event: Event): void {
+    this.editPostTitle.set((event.target as HTMLInputElement).value);
   }
 
   closeManagementModal(): void {

@@ -1,0 +1,21 @@
+model DiscussionBoard {
+  id          String                  @id @default(uuid())
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @default(now())
+  name        String
+  description String?
+  program     Program?                @relation(fields: [programId], references: [id], onDelete: SetNull)
+  programId   String?
+  cohort      Cohort?                 @relation(fields: [cohortId], references: [id], onDelete: SetNull)
+  cohortId    String?
+  createdBy   User                    @relation("DiscussionBoardCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  members     DiscussionBoardMember[]
+  posts       DiscussionPost[]
+  tags        DiscussionTag[]
+
+  @@index([programId])
+  @@index([cohortId])
+  @@index([createdById])
+  @@map("discussionBoards")
+}

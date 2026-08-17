@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { AgGridComponent } from '@mas/frontend-shared-components';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
-import { CheckpointName } from '@prisma/client';
+import { CheckpointName } from '@mas/prisma-client/browser';
 import { type ColDef } from 'ag-grid-community';
 import { AddProgramComponent } from './ui/add-program/add-program.component';
 import { ProgramActionsComponent } from './ui/program-actions/program-actions.component';

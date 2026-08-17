@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import type { CheckpointName, Enrollment, Program } from '@prisma/client';
+import type { CheckpointName, Enrollment, Program } from '@mas/prisma-client/browser';
 import { pipe, switchMap } from 'rxjs';
 
 type AddProgram = Omit<Program, 'id' | 'createdAt' | 'updatedAt'>;

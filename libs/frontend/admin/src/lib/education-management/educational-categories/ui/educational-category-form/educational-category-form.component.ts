@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { EducationalCategoryStore } from '@mas/frontend-shared-data-access';
-import { EducationalCategory } from '@prisma/client';
+import { EducationalCategory } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-educational-resources-content-create',

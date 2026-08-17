@@ -1,0 +1,27 @@
+model User {
+  id                      String                  @id @default(uuid())
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @default(now())
+  lastLogin               DateTime?
+  firstName               String
+  lastName                String
+  email                   String                  @unique
+  forgot                  String?
+  hash                    String
+  role                    Role?
+  partner                 Partner?                @relation(fields: [partnerId], references: [id])
+  partnerId               String?
+  bio                     String?
+  UsersOnPrograms         UsersOnPrograms[]
+  enrollment              Enrollment[]
+  Image                   Image[]
+  alliesOnPrograms        AlliesOnPrograms[]
+  discussionPosts         DiscussionPost[]
+  discussionComments      DiscussionComment[]
+  discussionBoardsCreated DiscussionBoard[]       @relation("DiscussionBoardCreatedBy")
+  discussionBoardMembers  DiscussionBoardMember[] @relation("DiscussionBoardMembers")
+  discussionCommentVotes  DiscussionCommentVote[]
+  pushSubscriptions       PushSubscription[]
+
+  @@map("users")
+}

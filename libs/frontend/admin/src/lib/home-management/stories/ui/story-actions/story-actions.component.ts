@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { StoriesStore } from '@mas/frontend-shared-data-access';
-import { type Story } from '@prisma/client';
+import { type Story } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 import { AddStoryComponent } from '../add-story/add-story.component';
@@ -18,10 +18,10 @@ import { AddStoryComponent } from '../add-story/add-story.component';
       <button
         class="!flex !justify-center !content-center"
         mat-icon-button
-        [title]="$any(story())?.hidden ? 'Show on home page' : 'Hide from home page'"
+        [title]="story()?.hidden ? 'Show on home page' : 'Hide from home page'"
         (click)="toggleHidden()"
       >
-        <mat-icon>{{ $any(story())?.hidden ? 'visibility_off' : 'visibility' }}</mat-icon>
+        <mat-icon>{{ story()?.hidden ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       <button
         class="!flex !justify-center !content-center"
@@ -51,12 +51,12 @@ export class StoryActionsComponent implements ICellRendererAngularComp {
   private dialog = inject(MatDialog);
   private storiesStore = inject(StoriesStore);
   story = signal<Story | null>(null);
-  agInit(params: ICellRendererParams<any, any, any>): void {
-    this.story.set(params.data);
+  agInit(params: ICellRendererParams<Story, unknown, unknown>): void {
+    this.story.set(params.data ?? null);
   }
 
-  refresh(params: ICellRendererParams<any, any, any>): boolean {
-    this.story.set(params.data);
+  refresh(params: ICellRendererParams<Story, unknown, unknown>): boolean {
+    this.story.set(params.data ?? null);
     return true;
   }
 
@@ -64,7 +64,7 @@ export class StoryActionsComponent implements ICellRendererAngularComp {
     const item = this.story();
     if (item) {
       this.storiesStore.setEditStoryId(item.id);
-      this.storiesStore.patchStory({ hidden: !(item as any).hidden });
+      this.storiesStore.patchStory({ hidden: !item.hidden });
     }
   }
 

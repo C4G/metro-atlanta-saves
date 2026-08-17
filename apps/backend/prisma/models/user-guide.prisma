@@ -1,0 +1,4 @@
+model UserGuide {
+  id   String @id @default(uuid())
+  body String
+}

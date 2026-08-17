@@ -80,7 +80,7 @@ const SPECIFIC_USER_VALUE = '__specific_user__';
               <input
                 matInput
                 [value]="userDisplayValue()"
-                (input)="onUserInput($any($event.target).value)"
+                (input)="onUserInput($event)"
                 [matAutocomplete]="userAuto"
                 placeholder="Search by name or email..."
               />
@@ -184,7 +184,8 @@ export default class ContentNotificationsComponent {
     });
   }
 
-  onUserInput(value: string) {
+  onUserInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
     this.userSearchQuery.set(value);
     this.userDisplayValue.set(value);
     this.notificationForm.get('userId')?.setValue('');

@@ -1,0 +1,9 @@
+model DiscussionPostTag {
+  post   DiscussionPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  tag    DiscussionTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  String
+
+  @@id([postId, tagId])
+  @@map("discussionPostTags")
+}

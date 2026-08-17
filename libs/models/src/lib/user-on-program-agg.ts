@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@mas/prisma-client/browser';
 
 export type UserOnProgramAgg = Prisma.UsersOnProgramsGetPayload<{
   include: {

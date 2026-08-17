@@ -26,8 +26,8 @@ import { PushNotificationService } from '../../services/push-notification.servic
       >
         <mat-icon>menu</mat-icon>
       </button>
-      <a routerLink="/">
-        <img src="assets/Logo/BRP_Logo.webp" height="36" width="66" class="h-9 w-auto" alt="BRP" />
+      <a routerLink="/" aria-label="Building Resilient Professionals home">
+        <img src="assets/Logo/BRP_Logo.webp" height="36" width="66" class="h-9 w-auto" alt="" />
       </a>
       <div class="ml-auto flex items-center gap-4">
         @if (!authStore.user()) {

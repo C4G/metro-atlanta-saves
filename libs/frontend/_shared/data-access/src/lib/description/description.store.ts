@@ -5,7 +5,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { type Description } from '@prisma/client';
+import { type Description } from '@mas/prisma-client/browser';
 
 type DescriptionState = {
   description: Description | null;

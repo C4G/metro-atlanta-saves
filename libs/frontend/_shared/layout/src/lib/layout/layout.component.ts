@@ -16,7 +16,9 @@ const MOBILE_MEDIA = '(max-width: 600px)';
   imports: [NavComponent, MatSidenavModule, SidenavComponent, UpdateNotificationComponent, BreadcrumbComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mas-nav (openNav)="drawer.toggle()" />
+    <header>
+      <mas-nav (openNav)="drawer.toggle()" />
+    </header>
     <mat-sidenav-container autosize class="mt-14 sm:mt-16">
       <mat-sidenav
         #drawer
@@ -27,7 +29,7 @@ const MOBILE_MEDIA = '(max-width: 600px)';
       >
         <mas-sidenav class="p-4" />
       </mat-sidenav>
-      <main>
+      <main id="main-content" tabindex="-1">
         <mas-breadcrumb />
         <ng-content />
       </main>

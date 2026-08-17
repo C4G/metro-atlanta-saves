@@ -17,11 +17,8 @@ import { WhatWeAreStore } from '@mas/frontend-shared-data-access';
           <p class="font-medium">Who We Are / What We Do Section Visibility</p>
           <p class="text-sm text-gray-500">Toggle to show or hide this section on the home page</p>
         </div>
-        <mat-slide-toggle
-          [checked]="!$any(whatWeAreStore.whatWeAre())?.hidden"
-          (change)="onToggleHidden($event.checked)"
-        >
-          {{ $any(whatWeAreStore.whatWeAre())?.hidden ? 'Hidden' : 'Visible' }}
+        <mat-slide-toggle [checked]="!whatWeAreStore.whatWeAre()?.hidden" (change)="onToggleHidden($event.checked)">
+          {{ whatWeAreStore.whatWeAre()?.hidden ? 'Hidden' : 'Visible' }}
         </mat-slide-toggle>
       </div>
       <form #form="ngForm" class="flex flex-col gap-4" [formGroup]="whatWeAreForm" (ngSubmit)="onSubmit()">
@@ -78,7 +75,7 @@ export default class WhatWeAreComponent {
   onToggleHidden(checked: boolean): void {
     const current = this.whatWeAreStore.whatWeAre();
     if (current) {
-      this.whatWeAreStore.patchWhatWeAre({ ...current, hidden: !checked } as any);
+      this.whatWeAreStore.patchWhatWeAre({ ...current, hidden: !checked });
     }
   }
 
@@ -86,6 +83,9 @@ export default class WhatWeAreComponent {
     if (this.whatWeAreForm.invalid) {
       return;
     }
-    this.whatWeAreStore.patchWhatWeAre(this.whatWeAreForm.getRawValue() as any);
+    const current = this.whatWeAreStore.whatWeAre();
+    if (current) {
+      this.whatWeAreStore.patchWhatWeAre({ ...current, ...this.whatWeAreForm.getRawValue() });
+    }
   }
 }

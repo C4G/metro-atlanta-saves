@@ -2,7 +2,6 @@ import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/com
 import { PrismaService } from '@mas/backend-prisma';
 import { AuthDto, SignUpDto } from './dto';
 import * as argon from 'argon2';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { mapUser } from '@mas/backend-shared';
@@ -11,7 +10,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { MailService } from '@mas/backend-mail';
 import { v4 } from 'uuid';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@mas/prisma-client';
 import { PatchUserDto } from '@mas/backend-users';
 
 @Injectable({})
@@ -74,7 +73,7 @@ export class AuthService {
       await this.updateLastLogin(user.id);
       return { ...user, accessToken };
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code == 'P2002') {
           throw new ForbiddenException(['Credentials taken']);
         }

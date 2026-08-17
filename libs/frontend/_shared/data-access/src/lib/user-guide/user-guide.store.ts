@@ -5,7 +5,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { type UserGuide } from '@prisma/client';
+import { type UserGuide } from '@mas/prisma-client/browser';
 
 type UserGuideState = {
   userGuide: UserGuide | null;

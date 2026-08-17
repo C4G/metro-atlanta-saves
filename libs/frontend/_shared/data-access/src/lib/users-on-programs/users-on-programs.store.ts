@@ -7,7 +7,7 @@ import { UserOnProgramAgg, UsersOnProgramsWithName } from '@mas/models';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { Checkpoint, type UsersOnPrograms } from '@prisma/client';
+import { Checkpoint, type UsersOnPrograms } from '@mas/prisma-client/browser';
 import { pipe, switchMap } from 'rxjs';
 
 type AddUsersOnPrograms = Omit<UsersOnPrograms, 'createdAt' | 'updatedAt' | 'programId'>;

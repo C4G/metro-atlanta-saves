@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { CheckpointName } from '@prisma/client';
+import { CheckpointName } from '@mas/prisma-client';
 import {
   IsArray,
   IsBoolean,

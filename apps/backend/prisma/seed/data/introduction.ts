@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@mas/prisma-client';
 
 export const seedIntroduction = async (prisma: PrismaClient) => {
   const hasData = await prisma.introduction.count();
@@ -11,8 +11,9 @@ export const seedIntroduction = async (prisma: PrismaClient) => {
   const data = await prisma.introduction.createMany({
     data: [
       {
-        title: 'BUILDING RESILIENT PROFESSIONALS',
-        imageText: 'Atlanta Cohort Graduates',
+        title: 'Financial wellbeing programs for Atlanta communities',
+        titleEnding: 'Financial Wellbeing Alliance',
+        imageText: 'Financial Wellbeing Alliance participants pose together in front of graduation decorations',
         imageUrl: '/assets/background/atlanta-cohort.webp',
       },
     ],

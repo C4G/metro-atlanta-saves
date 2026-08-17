@@ -1,0 +1,14 @@
+model DiscussionBoardMember {
+  id        String          @id @default(uuid())
+  createdAt DateTime        @default(now())
+  isAdmin   Boolean         @default(false)
+  board     DiscussionBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId   String
+  user      User            @relation("DiscussionBoardMembers", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@unique([boardId, userId])
+  @@index([boardId])
+  @@index([userId])
+  @@map("discussionBoardMembers")
+}

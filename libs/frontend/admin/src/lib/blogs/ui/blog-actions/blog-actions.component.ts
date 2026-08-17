@@ -5,7 +5,7 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { BlogsStore } from '@mas/frontend-shared-data-access';
-import { type Blog } from '@prisma/client';
+import { type Blog } from '@mas/prisma-client/browser';
 import { AddBlogComponent } from '../add-blog/add-blog.component';
 import { MatIconButton } from '@angular/material/button';
 

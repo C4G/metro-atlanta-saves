@@ -1,0 +1,11 @@
+model DiscussionTag {
+  id      String              @id @default(uuid())
+  name    String
+  color   String              @default("blue")
+  board   DiscussionBoard?    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId String?
+  posts   DiscussionPostTag[]
+
+  @@index([boardId])
+  @@map("discussionTags")
+}

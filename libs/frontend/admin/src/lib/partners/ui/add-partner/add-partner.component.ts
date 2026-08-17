@@ -6,7 +6,7 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { PartnersStore } from '@mas/frontend-shared-data-access';
 import { URL_REGEX } from '@mas/frontend-shared-util';
-import { Partner } from '@prisma/client';
+import { Partner } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-add-partner',

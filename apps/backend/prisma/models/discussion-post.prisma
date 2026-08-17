@@ -1,0 +1,22 @@
+model DiscussionPost {
+  id             String              @id @default(uuid())
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now())
+  title          String
+  body           String
+  isAnnouncement Boolean             @default(false)
+  isPinned       Boolean             @default(false)
+  author         User                @relation(fields: [authorId], references: [id])
+  authorId       String
+  board          DiscussionBoard?    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId        String?
+  comments       DiscussionComment[]
+  tags           DiscussionPostTag[]
+
+  @@index([createdAt])
+  @@index([authorId])
+  @@index([boardId])
+  @@index([isAnnouncement])
+  @@index([isPinned])
+  @@map("discussionPosts")
+}

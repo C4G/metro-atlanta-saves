@@ -31,53 +31,88 @@ import { AuthStore } from '@mas/frontend-shared-auth';
     `,
   ],
   template: `
-    @if (authStore.user()?.role === 'Administrator') {
-      <mat-accordion>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>Admin</mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="flex flex-col">
-            @for (item of adminItems(); track item.name) {
-              <a
-                class="nav-item p-2 pl-6"
-                routerLinkActive="active"
-                [routerLink]="item.routerLink"
-                [routerLinkActiveOptions]="{ exact: true }"
-              >
-                {{ item.name }}
-              </a>
-            }
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    }
-    @if (authStore.isStaff()) {
-      <mat-accordion>
-        <mat-expansion-panel [expanded]="authStore.user()?.role === 'Partner_Staff'">
-          <mat-expansion-panel-header>
-            <mat-panel-title>Partner Staff</mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="flex flex-col">
-            @for (item of partnerStaffItems(); track item.name) {
-              <a
-                class="nav-item p-2 pl-6"
-                routerLinkActive="active"
-                [routerLink]="item.routerLink"
-                [routerLinkActiveOptions]="{ exact: true }"
-              >
-                {{ item.name }}
-              </a>
-            }
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    }
-    @if (authStore.user()) {
+    <nav aria-label="Primary" class="flex flex-col gap-4">
+      @if (authStore.user()?.role === 'Administrator') {
+        <mat-accordion>
+          <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Admin</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="flex flex-col">
+              @for (item of adminItems(); track item.name) {
+                <a
+                  class="nav-item p-2 pl-6"
+                  routerLinkActive="active"
+                  [routerLink]="item.routerLink"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                >
+                  {{ item.name }}
+                </a>
+              }
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      }
+      @if (authStore.isStaff()) {
+        <mat-accordion>
+          <mat-expansion-panel [expanded]="authStore.user()?.role === 'Partner_Staff'">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Partner Staff</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="flex flex-col">
+              @for (item of partnerStaffItems(); track item.name) {
+                <a
+                  class="nav-item p-2 pl-6"
+                  routerLinkActive="active"
+                  [routerLink]="item.routerLink"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                >
+                  {{ item.name }}
+                </a>
+              }
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      }
+      @if (authStore.user()) {
+        <div class="flex flex-col gap-1">
+          @for (item of basicItems(); track item.name) {
+            <a
+              class="nav-item p-2"
+              routerLinkActive="active"
+              [routerLink]="item.routerLink"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              {{ item.name }}
+            </a>
+          }
+        </div>
+        @if (programsStore.usersPrograms().length > 0) {
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="!authStore.isStaff()">
+              <mat-expansion-panel-header>
+                <mat-panel-title>Programs</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="flex flex-col">
+                @for (program of nonTemplatePrograms(); track program.id) {
+                  <a
+                    class="nav-item p-2 pl-6"
+                    routerLinkActive="active"
+                    [routerLink]="['/program-profiles', program.id]"
+                  >
+                    {{ formatName(program.name) }}
+                  </a>
+                }
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        }
+      }
       <div class="flex flex-col gap-1">
-        @for (item of basicItems(); track item.name) {
+        @for (item of navItems(); track item.name) {
           <a
-            class="nav-item p-2"
+            class="p-2 border-b-2 border-solid border-transparent"
+            [class.active]="'border-grey'"
             routerLinkActive="active"
             [routerLink]="item.routerLink"
             [routerLinkActiveOptions]="{ exact: true }"
@@ -86,36 +121,7 @@ import { AuthStore } from '@mas/frontend-shared-auth';
           </a>
         }
       </div>
-      @if (programsStore.usersPrograms().length > 0) {
-        <mat-accordion>
-          <mat-expansion-panel [expanded]="!authStore.isStaff()">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Programs</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="flex flex-col">
-              @for (program of nonTemplatePrograms(); track program.id) {
-                <a class="nav-item p-2 pl-6" routerLinkActive="active" [routerLink]="['/program-profiles', program.id]">
-                  {{ formatName(program.name) }}
-                </a>
-              }
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
-      }
-    }
-    <div class="flex flex-col gap-1">
-      @for (item of navItems(); track item.name) {
-        <a
-          class="p-2 border-b-2 border-solid border-transparent"
-          [class.active]="'border-grey'"
-          routerLinkActive="active"
-          [routerLink]="item.routerLink"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          {{ item.name }}
-        </a>
-      }
-    </div>
+    </nav>
     <button class="mt-auto" mat-icon-button aria-label="Toggle dark mode" (click)="themeService.toggleDarkMode()">
       <mat-icon>{{ themeService.darkMode() ? 'wb_sunny' : 'nights_stay' }}</mat-icon>
     </button>

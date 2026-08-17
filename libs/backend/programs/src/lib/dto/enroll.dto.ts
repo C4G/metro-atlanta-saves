@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { YesNoMaybe } from '@prisma/client';
+import { YesNoMaybe } from '@mas/prisma-client';
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class EnrollDto {

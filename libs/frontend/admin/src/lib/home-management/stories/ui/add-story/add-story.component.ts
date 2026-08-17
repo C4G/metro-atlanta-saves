@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { StoriesStore } from '@mas/frontend-shared-data-access';
-import type { Story } from '@prisma/client';
+import type { Story } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-add-story',

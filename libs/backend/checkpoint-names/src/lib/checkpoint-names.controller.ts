@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@n
 import { JwtGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CheckpointNamesService } from './checkpoint-names.service';
-import type { CheckpointName } from '@prisma/client';
+import type { CheckpointName } from '@mas/prisma-client';
 
 @Controller('checkpoint-names')
 @ApiBearerAuth()

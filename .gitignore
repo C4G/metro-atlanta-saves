@@ -56,3 +56,6 @@ Thumbs.db
 .uploads
 /images
 /uploads
+
+# Prisma 7's generated TypeScript client is recreated by prisma generate.
+/libs/prisma-client/src/generated/prisma

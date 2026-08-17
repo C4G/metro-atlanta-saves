@@ -9,7 +9,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { CheckpointNamesStore, CheckpointsStore, UsersOnProgramsStore } from '@mas/frontend-shared-data-access';
-import { Checkpoint } from '@prisma/client';
+import { Checkpoint } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-add-checkpoint',

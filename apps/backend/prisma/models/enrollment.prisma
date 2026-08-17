@@ -1,0 +1,26 @@
+model Enrollment {
+  id                   String      @id @default(uuid())
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @default(now())
+  program              Program     @relation(fields: [programId], references: [id])
+  programId            String
+  user                 User        @relation(fields: [userId], references: [id])
+  userId               String
+  phone                String
+  birthdate            DateTime?
+  race                 String
+  gender               String
+  placeOfEmployment    String
+  jobTitle             String
+  monthsEmployed       Int
+  zipCode              Int
+  address              String
+  annualIncome         Float
+  meetingAvailablility YesNoMaybe?
+  employerCommitted    YesNoMaybe?
+  interest             String?
+  gain                 String?
+
+  @@unique([userId, programId])
+  @@map("enrollments")
+}

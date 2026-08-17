@@ -1,8 +1,6 @@
 import { Route } from '@angular/router';
 import { seoResolver } from '@mas/frontend-shared-util';
 
-const TITLE_SUFFIX = '| Building Resilient Professionals';
-
 export const peerEvaluationGuideRoutes: Route[] = [
   {
     path: '',
@@ -10,7 +8,7 @@ export const peerEvaluationGuideRoutes: Route[] = [
     resolve: [seoResolver],
     data: {
       seo: {
-        title: `Peer Evaluation Guide ${TITLE_SUFFIX}`,
+        title: 'Peer Evaluation Guide',
         description: 'Instructions on how to access and complete the Peer Evaluation Survey.',
       },
     },

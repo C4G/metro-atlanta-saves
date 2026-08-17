@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 import { seoResolver } from '@mas/frontend-shared-util';
 
-const TITLE_SUFFIX = '- Admin | Building Resilient Professionals';
+const TITLE_SUFFIX = '- Admin';
 
 export const adminRoutes: Route[] = [
   {

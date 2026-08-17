@@ -1,0 +1,9 @@
+model Description {
+  id         String  @id @default(uuid())
+  title      String
+  body       String
+  buttonText String?
+  buttonLink String?
+  logoUrl    String?
+  hidden     Boolean @default(false)
+}

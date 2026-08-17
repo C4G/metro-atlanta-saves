@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@mas/prisma-client';
 
 export const seedAlliesIntoProgram = async (prisma: PrismaClient) => {
   const program = await prisma.program.findFirst({

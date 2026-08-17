@@ -1,0 +1,22 @@
+enum Role {
+  Administrator
+  Partner_Staff
+}
+
+enum CheckpointType {
+  Savings
+  Credit_Score
+  Receipt
+  Other
+}
+
+enum YesNoMaybe {
+  Yes
+  No
+  Maybe
+}
+
+enum CommentVoteType {
+  UP
+  DOWN
+}

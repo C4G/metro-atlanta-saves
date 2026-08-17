@@ -18,23 +18,23 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
           <p class="text-sm text-gray-500">Hide the entire hero section (heading + image) from the home page</p>
         </div>
         <mat-slide-toggle
-          [checked]="!$any(introductionStore.introduction()).hidden"
+          [checked]="!introductionStore.introduction().hidden"
           (change)="onToggleHidden($event.checked)"
         >
-          {{ $any(introductionStore.introduction()).hidden ? 'Section Hidden' : 'Section Visible' }}
+          {{ introductionStore.introduction().hidden ? 'Section Hidden' : 'Section Visible' }}
         </mat-slide-toggle>
       </div>
-      @if (!$any(introductionStore.introduction()).hidden) {
+      @if (!introductionStore.introduction().hidden) {
         <div class="flex items-center justify-between mb-6 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
           <div>
             <p class="font-medium">Hero Image Visibility</p>
             <p class="text-sm text-gray-500">Hide only the background image — the heading text will still show</p>
           </div>
           <mat-slide-toggle
-            [checked]="!$any(introductionStore.introduction()).imageHidden"
+            [checked]="!introductionStore.introduction().imageHidden"
             (change)="onToggleImageHidden($event.checked)"
           >
-            {{ $any(introductionStore.introduction()).imageHidden ? 'Image Hidden' : 'Image Visible' }}
+            {{ introductionStore.introduction().imageHidden ? 'Image Hidden' : 'Image Visible' }}
           </mat-slide-toggle>
         </div>
       }
@@ -43,6 +43,7 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
           <mat-form-field class="sm:col-span-2">
             <mat-label>Title</mat-label>
             <input matInput formControlName="title" />
+            <mat-hint>Use sentence or title case and describe the page topic.</mat-hint>
             @if (
               (introductionForm.get('title')?.touched || form.submitted) &&
               introductionForm.get('title')?.errors?.['required']
@@ -50,9 +51,21 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
               <mat-error>Please enter a title.</mat-error>
             }
           </mat-form-field>
+          <mat-form-field class="sm:col-span-2">
+            <mat-label>Browser Title Ending</mat-label>
+            <input matInput formControlName="titleEnding" />
+            <mat-hint>Added after every page title, separated by a vertical bar.</mat-hint>
+            @if (
+              (introductionForm.get('titleEnding')?.touched || form.submitted) &&
+              introductionForm.get('titleEnding')?.errors?.['required']
+            ) {
+              <mat-error>Please enter a browser title ending.</mat-error>
+            }
+          </mat-form-field>
           <mat-form-field>
             <mat-label>Image Alt Text</mat-label>
             <input matInput formControlName="imageText" />
+            <mat-hint>Briefly describe the image's meaningful content.</mat-hint>
             @if (
               (introductionForm.get('imageText')?.touched || form.submitted) &&
               introductionForm.get('imageText')?.errors?.['required']
@@ -101,7 +114,8 @@ export default class IntroductionComponent {
   introductionForm = this.fb.group({
     id: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     title: this.fb.control('', { validators: Validators.required, nonNullable: true }),
-    imageText: [''],
+    titleEnding: this.fb.control('', { validators: Validators.required, nonNullable: true }),
+    imageText: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     imageUrl: this.fb.control('', { validators: Validators.required, nonNullable: true }),
   });
 
@@ -111,36 +125,41 @@ export default class IntroductionComponent {
       const introductionData = this.introductionStore.introduction();
       untracked(() => {
         if (introductionData) {
-          this.introductionForm.patchValue(introductionData);
+          this.introductionForm.patchValue({
+            ...introductionData,
+            imageText: introductionData.imageText ?? '',
+          });
           this.selectedFileName.set(introductionData.imageUrl ?? '');
         }
       });
     });
   }
 
-  onFileSelected(event: any): void {
-    if (!event.target.files?.[0]) {
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
       this.selectedFileError.set('Image is required');
       return;
     }
-    if (!/(jpg|jpeg|png|webp)$/.test(event.target.files[0].type)) {
+    if (!/(jpg|jpeg|png|webp)$/.test(file.type)) {
       this.selectedFileError.set('Only supported types: jpg, jpeg, png, webp');
       return;
     }
 
     this.selectedFileError.set('');
-    this.selectedFile.set(event.target.files[0] ?? null);
-    this.selectedFileName.set(event.target.files[0].name);
+    this.selectedFile.set(file);
+    this.selectedFileName.set(file.name);
   }
 
   onToggleHidden(checked: boolean): void {
     const current = this.introductionStore.introduction();
-    this.introductionStore.patchIntroduction({ ...current, hidden: !checked } as any);
+    this.introductionStore.patchIntroduction({ ...current, hidden: !checked });
   }
 
   onToggleImageHidden(checked: boolean): void {
     const current = this.introductionStore.introduction();
-    this.introductionStore.patchIntroduction({ ...current, imageHidden: !checked } as any);
+    this.introductionStore.patchIntroduction({ ...current, imageHidden: !checked });
   }
 
   onSubmit() {
@@ -148,10 +167,11 @@ export default class IntroductionComponent {
       return;
     }
 
-    const { id, title, imageText, imageUrl } = this.introductionForm.getRawValue();
+    const { id, title, titleEnding, imageText, imageUrl } = this.introductionForm.getRawValue();
     const formData = new FormData();
     formData.append('id', id);
     formData.append('title', title);
+    formData.append('titleEnding', titleEnding);
     formData.append('imageText', imageText ?? '');
 
     const file = this.selectedFile();

@@ -1,0 +1,11 @@
+model Blog {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  title     String
+  slug      String   @unique
+  subTitle  String?
+  body      String
+
+  @@map("blogs")
+}

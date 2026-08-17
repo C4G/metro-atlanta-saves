@@ -31,6 +31,8 @@
       "@mas/backend-mail": ["libs/backend/mail/src/index.ts"],
       "@mas/backend-partners": ["libs/backend/partners/src/index.ts"],
       "@mas/backend-prisma": ["libs/backend/prisma/src/index.ts"],
+      "@mas/prisma-client": ["libs/prisma-client/src/index.ts"],
+      "@mas/prisma-client/browser": ["libs/prisma-client/src/browser.ts"],
       "@mas/backend-programs": ["libs/backend/programs/src/index.ts"],
       "@mas/backend-requirements": ["libs/backend/requirements/src/index.ts"],
       "@mas/backend-shared": ["libs/backend/shared/src/index.ts"],

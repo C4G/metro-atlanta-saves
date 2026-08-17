@@ -6,7 +6,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { type Learning } from '@prisma/client';
+import { type Learning } from '@mas/prisma-client/browser';
 import { MatDialog } from '@angular/material/dialog';
 
 type AddLearning = Omit<Learning, 'id' | 'createdAt' | 'updatedAt' | 'hidden'>;

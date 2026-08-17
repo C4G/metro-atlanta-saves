@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import type { Role, User } from '@prisma/client';
+import type { Role, User } from '@mas/prisma-client/browser';
 import { MatIcon } from '@angular/material/icon';
 import { MatOption } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';

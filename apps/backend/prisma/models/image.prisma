@@ -1,0 +1,18 @@
+model Image {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @default(now())
+  viewedAt      DateTime    @default(now())
+  name          String
+  type          String
+  path          String
+  program       Program?    @relation(fields: [programId], references: [id])
+  programId     String?
+  user          User?       @relation(fields: [userId], references: [id])
+  userId        String?
+  checkpoint    Checkpoint? @relation(fields: [checkpointId], references: [id])
+  checkpointId  String?
+  imageVerified Boolean     @default(false)
+
+  @@map("images")
+}

@@ -14,9 +14,9 @@ import { CohortsStore } from '@mas/frontend-shared-data-access';
   template: `
     <mas-hero
       [data]="{
-        heading: 'ABOUT US',
+        heading: 'About us',
         imgSrc: '/assets/background/atlanta-cohort.webp',
-        imgAlt: 'Atlanta Cohort Graduates',
+        imgAlt: 'Financial Wellbeing Alliance participants pose together in front of graduation decorations',
         imgSrcset: '640w, 828w, 1080w, 1920w',
         imgSizes: '100vw',
       }"

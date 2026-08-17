@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { PartnersStore } from '@mas/frontend-shared-data-access';
-import { type Partner } from '@prisma/client';
+import { type Partner } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
 import { AddPartnerComponent } from '../add-partner/add-partner.component';

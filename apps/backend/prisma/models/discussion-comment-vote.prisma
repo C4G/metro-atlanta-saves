@@ -1,0 +1,14 @@
+model DiscussionCommentVote {
+  id        String            @id @default(uuid())
+  createdAt DateTime          @default(now())
+  comment   DiscussionComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      CommentVoteType
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("discussionCommentVotes")
+}

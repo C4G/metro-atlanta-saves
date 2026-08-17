@@ -21,6 +21,14 @@ export class UpdateIntroductionDto {
   @IsString()
   @ApiProperty({
     type: String,
+    example: 'Financial Wellbeing Alliance',
+    description: 'The site name appended to browser page titles',
+  })
+  titleEnding!: string;
+
+  @IsString()
+  @ApiProperty({
+    type: String,
     example: 'The Image Text',
     description: 'The introduction image text',
   })

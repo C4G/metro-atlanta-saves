@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role } from '@mas/prisma-client';
 import * as argon from 'argon2';
 
 export const seedUsers = async (prisma: PrismaClient) => {
