@@ -1,0 +1,225 @@
+apps/backend/src/app/scoped-impersonation.integration.spec.ts
+  s_06b40b4edea879::t_6e26f4cb138ed5 1-11,13-37,39-44,51-71,81-88,90-93,99-101,103-108,110-122,124-128,130-131,166-167
+  s_06b40b4edea879::t_67a81b07211e5d 95-98
+  s_06b40b4edea879::t_25fe9838bcd8c3 94
+  s_06b40b4edea879::t_10e0569b805572 12,38,132-165
+  s_06b40b4edea879::t_89b1440778b737 72-80,89,102,109,123,129
+  s_06b40b4edea879::t_92f331378e6d16 45-50
+apps/backend/src/app/managed-session.guard.spec.ts
+  s_06b40b4edea879::t_5567ac5df0f46b 39
+  s_06b40b4edea879::t_568a3ed21f4827 1-29,31-38,40-46,48-54
+  s_06b40b4edea879::t_b354a775a4a14c 30,47
+libs/backend/stories/src/lib/stories.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 4,48,92,122
+libs/frontend/_shared/auth/src/lib/data-access/auth.interceptor.ts
+  s_06b40b4edea879::t_822042f66a7f56 4
+libs/frontend/_shared/auth/src/lib/util/partner-staff.guard.ts
+  s_06b40b4edea879::t_3ed954fc3641f3 4
+  s_06b40b4edea879::t_3090e09571385f 3,5,9,11-14,16-17,20
+libs/backend/auth/src/lib/auth.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 16,45
+  s_06b40b4edea879::t_d8f68c68cf83ee 4
+libs/frontend/reset-password/src/lib/reset-password.component.ts
+  s_06b40b4edea879::t_7cded4ca1b3aa7 64-65,75,79
+apps/backend/src/app/users-controller.spec.ts
+  s_06b40b4edea879::t_17c153db051a2d 1
+  s_06b40b4edea879::t_10e0569b805572 2-28
+  s_06b40b4edea879::t_dc307ea57308c0 29-30
+libs/backend/introduction/src/lib/introduction.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 4,61
+libs/backend/discussion/src/lib/discussion-board.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 3,14
+libs/backend/educational-content/src/lib/educational-content.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 23-30,49,99,150,157
+  s_06b40b4edea879::t_1eccb8a48b2569 164
+libs/backend/blogs/src/lib/blogs.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 5,16,38,45
+.env.example
+  s_06b40b4edea879::t_3cad379979e178 23-26
+libs/backend/educational-category/src/lib/educational-category.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 4,20,27,34
+apps/backend/src/app/app.module.ts
+  s_06b40b4edea879::t_f742b83335d954 14
+  s_06b40b4edea879::t_d4d88cd75c234a 40
+  s_06b40b4edea879::t_c83409c4694a3b 26,31-32,39,47-48
+  s_06b40b4edea879::t_caf17d10f1a6b5 28
+  s_06b40b4edea879::t_dbf4f9c660e7a0 45-46
+  s_06b40b4edea879::t_b0c1240065b773 41-44
+  s_06b40b4edea879::t_dd19d0637310f4 49
+libs/backend/auth/src/lib/credential-migration.service.ts
+  s_06b40b4edea879::t_fa46fee2ff8637 1,3-7,9-33,36-46,48,50-58,62-67,70-95
+libs/backend/allies-on-programs/src/lib/allies-on-programs.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 1
+  s_06b40b4edea879::t_c017a426944619 2-7,18
+libs/frontend/_shared/auth/src/lib/data-access/auth-server.interceptor.ts
+  s_06b40b4edea879::t_822042f66a7f56 13
+libs/backend/mail/src/lib/mail.service.ts
+  s_06b40b4edea879::t_7cded4ca1b3aa7 9-10
+apps/backend/src/app/auth-password.spec.ts
+  s_06b40b4edea879::t_f84de3e88d5c68 1-31
+apps/backend/prisma/models/user.prisma
+  s_06b40b4edea879::t_da52b7864bfc22 6-7,13
+  s_06b40b4edea879::t_d81941b0162a73 9-11,28-29
+libs/backend/auth/src/lib/scoped-impersonation.ts
+  s_06b40b4edea879::t_d40930e2d80391 111,118,136
+  s_06b40b4edea879::t_a4e1651ccd9fd2 23
+  s_06b40b4edea879::t_9d6bc0d8d88983 1-22,24-45,47-51,53-110,112-117,119-135
+  s_06b40b4edea879::t_92f331378e6d16 46,52
+  s_06b40b4edea879::t_b8d0ebf0b29917 137-139
+apps/backend/prisma/verify-better-auth-migration.ts
+  s_06b40b4edea879::t_56002b1db90bf2 1-18
+apps/backend/src/app/auth-schema.spec.ts
+  s_06b40b4edea879::t_0f8471553c5b86 2-4,12-24
+  s_06b40b4edea879::t_e98ef8294463a0 1,5-11
+libs/backend/users/src/lib/users.controller.ts
+  s_06b40b4edea879::t_2c0f86ab5334ed 17-21
+  s_06b40b4edea879::t_cc596933ac8f08 2,12
+  s_06b40b4edea879::t_8b94f301814e70 46-50
+apps/backend/src/app/auth-bootstrap.spec.ts
+  s_06b40b4edea879::t_c83409c4694a3b 18,20
+  s_06b40b4edea879::t_3cad379979e178 19
+  s_06b40b4edea879::t_b6bd854c9fe8ef 7,10,88-99
+  s_06b40b4edea879::t_418e98b83d866a 15,46,129-159
+  s_06b40b4edea879::t_db66cbe403e6ab 4-6,14,36-40,42-45,47-56,61,69-80,102-128
+  s_06b40b4edea879::t_c8b0bd0d1149b2 41
+  s_06b40b4edea879::t_0b004087ad338a 81-87,100-101
+  s_06b40b4edea879::t_1a5e921c6f6908 1-2,8-9,11-13,16-17,21-34,57-60,62-64,66-67,160-161
+  s_06b40b4edea879::t_32b0ce2f81a396 3,35,65,68
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.ts
+  s_06b40b4edea879::t_601389d5e00ad2 1,50-56,78,114,202,209,237,273
+  s_06b40b4edea879::t_812128c26d9264 103-105,307-310
+  s_06b40b4edea879::t_d3f443050baef1 207,235
+  s_06b40b4edea879::t_822042f66a7f56 2,116,123,160-165,169-184,204,210,238
+  s_06b40b4edea879::t_51b7ce7a63fc4b 12,84,112-113,117,167-168,200,203,205,208,228-233,236
+  s_06b40b4edea879::t_80daeb35251c84 85,106-111,115,118-122,124-127,135-136,185-187,195-199,206,211-220,239-254,260-261,295,297-306,331-336
+libs/backend/users/src/lib/users.service.ts
+  s_06b40b4edea879::t_d3f443050baef1 30
+apps/backend/jest.config.ts
+  s_06b40b4edea879::t_840d61a00ace64 34-36,38-39
+  s_06b40b4edea879::t_0239deffc0c9d1 2-26,37
+  s_06b40b4edea879::t_3310ee4b6680d7 33,41
+libs/backend/cohorts/src/lib/cohorts.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 4,48,92,122
+libs/backend/users-on-programs/src/lib/users-on-programs.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 18
+  s_06b40b4edea879::t_7f15e1f34ef511 19-24,39,49,59,75,101,118
+libs/backend/programs/src/lib/programs.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 19,33
+apps/backend/src/app/auth-migration.spec.ts
+  s_06b40b4edea879::t_991ed578d21861 18
+  s_06b40b4edea879::t_3e3901d2d8fd13 17,19-20
+  s_06b40b4edea879::t_4e9855e7ba1d15 1-12,14-16,21-23
+  s_06b40b4edea879::t_918cc67a6bb2cf 13
+libs/backend/auth/src/lib/better-auth.ts
+  s_06b40b4edea879::t_3cad379979e178 24
+  s_06b40b4edea879::t_afd3082bdda7da 45-58
+  s_06b40b4edea879::t_ca8ef0a73255e3 7,67-70
+  s_06b40b4edea879::t_92f331378e6d16 35,41
+  s_06b40b4edea879::t_a4e1651ccd9fd2 8,28-34,36-40,42-44
+  s_06b40b4edea879::t_7cded4ca1b3aa7 63-64
+  s_06b40b4edea879::t_c83409c4694a3b 1,3-6,9-18,20-23,25-27,59-60,71-73
+  s_06b40b4edea879::t_b0c1240065b773 2,19,61-62,65-66
+libs/frontend/_shared/components/src/lib/mimic-user-modal/mimic-user-modal.component.ts
+  s_06b40b4edea879::t_812128c26d9264 21,26
+  s_06b40b4edea879::t_bbf3cee9749968 27-28,57,66-67,75
+libs/backend/partners/src/lib/partners.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 4,11
+libs/backend/images/src/lib/images.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 10,42
+libs/backend/shared/src/lib/util/guard/managed-session.guard.ts
+  s_06b40b4edea879::t_b354a775a4a14c 1-43
+libs/backend/users/src/index.ts
+  s_06b40b4edea879::t_17c153db051a2d 2
+package.json
+  s_06b40b4edea879::t_e6dff644a10d32 129,155
+  s_06b40b4edea879::t_ca372218236355 33,48,69
+apps/backend/src/app/scoped-impersonation.spec.ts
+  s_06b40b4edea879::t_985b6a374e29ec 1-36
+apps/backend/src/main.ts
+  s_06b40b4edea879::t_c83409c4694a3b 14-16
+libs/backend/description/src/lib/description.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 4,61
+apps/backend/prisma/migrations/20260904000000_add_better_auth/migration.sql
+  s_06b40b4edea879::t_72b4f03c919d6f 46-47
+  s_06b40b4edea879::t_da52b7864bfc22 5-8
+  s_06b40b4edea879::t_209d512c51d026 13-14,61-89
+  s_06b40b4edea879::t_76b7d7576a914d 1-4,9-12,15-45,48-60,90-104
+apps/backend/src/app/users-service.spec.ts
+  s_06b40b4edea879::t_10e0569b805572 1-39
+libs/backend/shared/src/lib/util/guard/index.ts
+  s_06b40b4edea879::t_b354a775a4a14c 2
+libs/backend/auth/src/lib/auth.module.ts
+  s_06b40b4edea879::t_d4d88cd75c234a 5,10-11
+libs/backend/requirements/src/lib/requirements.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 16,24
+libs/frontend/_shared/auth/src/lib/util/auth.guard.ts
+  s_06b40b4edea879::t_3090e09571385f 3,5,9,11-12,15-19
+  s_06b40b4edea879::t_3ed954fc3641f3 4
+openspec/changes/migrate-to-better-auth/tasks.md
+  s_06b40b4edea879::t_0b004087ad338a 9
+  s_06b40b4edea879::t_33eecc95be4e14 7
+  s_06b40b4edea879::t_89a8fdbe6ace06 18
+  s_06b40b4edea879::t_0d0f68275df8d8 14-17,22
+  s_06b40b4edea879::t_cbc28558708a45 23-25,30-32
+  s_06b40b4edea879::t_b3bd891d01e63e 26,33-34,38-41,45
+  s_06b40b4edea879::t_6482af2839c8f6 10
+  s_06b40b4edea879::t_d61c9feb529136 8
+libs/backend/checkpoint-names/src/lib/checkpoint-names.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 2,9
+apps/backend/src/app/managed-session.integration.spec.ts
+  s_06b40b4edea879::t_17c153db051a2d 1
+  s_06b40b4edea879::t_1fd8837dd0bd1f 2-90
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.spec.ts
+  s_06b40b4edea879::t_f6fbf5f6d029d0 74-107,121
+  s_06b40b4edea879::t_92d49de1fee050 1,3-6,8-73,122
+  s_06b40b4edea879::t_601389d5e00ad2 7,108-120
+  s_06b40b4edea879::t_17c153db051a2d 2
+  s_06b40b4edea879::t_b4f418784e3349 123-126
+libs/frontend/_shared/auth/src/lib/util/auth.guard.spec.ts
+  s_06b40b4edea879::t_5347f38a71ea24 1,3-31,33-35,37-38,40,45-46,50
+  s_06b40b4edea879::t_1cfce724a5482f 2,32,36,39,41-44,47-49
+  s_06b40b4edea879::t_0843163ef683ed 51-58
+libs/frontend/_shared/components/src/lib/mimic-user-modal/mimic-user-modal.component.spec.ts
+  s_06b40b4edea879::t_ed08d3e0316a5e 20
+  s_06b40b4edea879::t_17c153db051a2d 2
+  s_06b40b4edea879::t_df50077803dc97 1,3-19,21-41
+libs/backend/checkpoints/src/lib/checkpoints.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 17,23
+libs/backend/discussion/src/lib/discussion.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 28,39,68,84,94,104,115,121,127,138,161,168
+libs/backend/auth/src/index.ts
+  s_06b40b4edea879::t_a4e1651ccd9fd2 3
+  s_06b40b4edea879::t_fa46fee2ff8637 4
+  s_06b40b4edea879::t_c83409c4694a3b 2
+apps/backend/prisma/models/better-auth.prisma
+  s_06b40b4edea879::t_d81941b0162a73 1-32,35-50
+  s_06b40b4edea879::t_72b4f03c919d6f 33-34
+libs/backend/learnings/src/lib/learnings.controller.ts
+  s_06b40b4edea879::t_cc596933ac8f08 5,16,33,40
+libs/frontend/_shared/auth/src/lib/util/admin.guard.ts
+  s_06b40b4edea879::t_3090e09571385f 3,5,9,11-14,16-17,20
+  s_06b40b4edea879::t_3ed954fc3641f3 4
+apps/backend/src/app/credential-migration.spec.ts
+  s_06b40b4edea879::t_fa46fee2ff8637 1-57
+  s_06b40b4edea879::t_c197420b13bfc5 58-69
+libs/frontend/_shared/auth/src/lib/data-access/auth.interceptor.spec.ts
+  s_06b40b4edea879::t_23690244a9b345 1,3-39
+pnpm-lock.yaml
+  s_06b40b4edea879::t_9b3b23b198ba19 47-49,92-94,155-157,330-332,408-410,1444-1525,3311-3322,3545-3548,3552-3554,4266-4290,4426-4428,4522-4524,4600-4605,5285-5354,5702-5704,5773-5775,5840,6170-6172,6488,6786-6793,7012-7015,7644-7646,7792-7795,8411-8414,9661-9663,9928-9930,10232-10239,11055-11057,12438-12495,14146-14151,14743-14744,14747-14750,15343-15352,15510-15511,15617-15618,15711-15722,16320,16519-16557,16938-16939,17010-17011,17377-17381,18215-18228,18443-18446,19299-19300,19500-19501,19894,20379-20380,21810-21811,22094-22095,22429-22450,23288-23289
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "0873a5390539482c755bf3c724e23c50f60c4287",
+  "prompts": {},
+  "sessions": {
+    "s_06b40b4edea879": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06a97-0080-7c90-a6c4-b14b953791ca",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
