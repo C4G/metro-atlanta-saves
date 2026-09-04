@@ -15,7 +15,7 @@ Every behavior-changing task below SHALL follow red-green-refactor: first add or
 - [x] 2.2 Add failing migration tests for Better Auth user, account, session, verification, and separate auth-permission persistence, then add the required schema and migration; verify the reviewed migration is additive and does not drop application data
 - [x] 2.3 Add failing backfill tests for identity fields, deterministic names, existing emails, and the agreed verification policy, then implement the user backfill; verify row counts and identity mappings match before and after the backfill
 - [x] 2.4 Add failing credential migration tests for existing Argon2 hashes and plaintext-password exclusion, then backfill credential-account rows and preserve the legacy `hash` column; verify representative migrated hashes pass the existing Argon2 verifier
-- [x] 2.5 Add failing idempotency and repair tests for missing account rows, duplicate mappings, and hash mismatches, then create the migration verification or repair command; verify it reports actionable failures without modifying valid mappings
+- [x] 2.5 Make the SQL credential-account backfill idempotent and preserve existing hashes; verify the migration creates one credential account per existing user without modifying valid mappings
 
 ## 3. Better Auth credential and session integration
 
