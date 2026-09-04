@@ -1,4 +1,10 @@
-import { JwtGuard, RoleGuard, Roles, validateUserAnyRole, validateUserIsAdminOrStaff } from '@mas/backend-shared';
+import {
+  ManagedSessionGuard,
+  RoleGuard,
+  Roles,
+  validateUserAnyRole,
+  validateUserIsAdminOrStaff,
+} from '@mas/backend-shared';
 import { Body, Controller, Delete, Get, Param, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { CreateAlliesOnProgramsDto } from './dto/create-allies-on-programs.dto';
 
@@ -9,7 +15,7 @@ import { AlliesOnProgramsService } from './allies-on-programs.service';
 
 @Controller('allies-on-programs')
 @ApiBearerAuth()
-@UseGuards(JwtGuard, RoleGuard)
+@UseGuards(ManagedSessionGuard, RoleGuard)
 @Roles('Administrator', 'Partner_Staff')
 @ApiTags('allies-on-programs')
 export class AlliesOnProgramsController {

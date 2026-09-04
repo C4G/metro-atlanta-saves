@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { JwtGuard, RoleGuard, Roles } from '@mas/backend-shared';
+import { ManagedSessionGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CheckpointNamesService } from './checkpoint-names.service';
 import type { CheckpointName } from '@mas/prisma-client';
 
 @Controller('checkpoint-names')
 @ApiBearerAuth()
-@UseGuards(JwtGuard)
+@UseGuards(ManagedSessionGuard)
 @ApiTags('checkpint-names')
 export class CheckpointNamesController {
   constructor(private checkpointNamesService: CheckpointNamesService) {}

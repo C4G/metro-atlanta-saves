@@ -14,13 +14,13 @@ import {
 import { CheckpointsService } from './checkpoints.service';
 import { ProgramsService } from '@mas/backend-programs';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
-import { JwtGuard, RoleGuard, Roles, validateUserAnyRole } from '@mas/backend-shared';
+import { ManagedSessionGuard, RoleGuard, Roles, validateUserAnyRole } from '@mas/backend-shared';
 import { UserFull } from '@mas/models';
 import { UsersService } from '@mas/backend-users';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '@mas/backend-prisma';
 
-@UseGuards(JwtGuard)
+@UseGuards(ManagedSessionGuard)
 @Controller('checkpoints')
 @ApiBearerAuth()
 @ApiTags('checkpoints')

@@ -10,20 +10,7 @@ export const authServerInterceptor: HttpInterceptorFn = (req: HttpRequest<unknow
     const cookieHeader = platformRequest.headers.get('cookie');
 
     if (cookieHeader) {
-      // Extract accessToken from cookies
-      const accessTokenMatch = cookieHeader.match(/accessToken=([^;]+)/);
-      const accessToken = accessTokenMatch ? accessTokenMatch[1] : null;
-
-      // Clone the request and add both cookie header and Authorization header
-      const headers: Record<string, string> = {
-        cookie: cookieHeader,
-      };
-
-      if (accessToken) {
-        headers['authorization'] = `Bearer ${accessToken}`;
-      }
-
-      req = req.clone({ setHeaders: headers });
+      req = req.clone({ setHeaders: { cookie: cookieHeader }, withCredentials: true });
     }
   }
 

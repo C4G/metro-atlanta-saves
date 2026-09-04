@@ -3,11 +3,14 @@ model User {
   createdAt               DateTime                @default(now())
   updatedAt               DateTime                @default(now())
   lastLogin               DateTime?
-  firstName               String
-  lastName                String
+  firstName               String                  @default("")
+  lastName                String                  @default("")
   email                   String                  @unique
+  name                    String                  @default("")
+  emailVerified           Boolean                 @default(false)
+  image                   String?
   forgot                  String?
-  hash                    String
+  hash                    String                  @default("")
   role                    Role?
   partner                 Partner?                @relation(fields: [partnerId], references: [id])
   partnerId               String?
@@ -22,6 +25,8 @@ model User {
   discussionBoardMembers  DiscussionBoardMember[] @relation("DiscussionBoardMembers")
   discussionCommentVotes  DiscussionCommentVote[]
   pushSubscriptions       PushSubscription[]
+  sessions                Session[]
+  accounts                Account[]
 
   @@map("users")
 }

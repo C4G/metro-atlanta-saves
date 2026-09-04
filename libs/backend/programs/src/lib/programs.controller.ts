@@ -16,7 +16,7 @@ import { UpdateProgramDto } from './dto/update-program.dto';
 import {
   isUserAdmin,
   isUserParterStaff,
-  JwtGuard,
+  ManagedSessionGuard,
   RoleGuard,
   Roles,
   validateUserAnyRole,
@@ -30,7 +30,7 @@ import { CloneProgramDto } from './dto/clone-progrmam.dto';
 @Controller('programs')
 @ApiBearerAuth()
 @ApiTags('programs')
-@UseGuards(JwtGuard)
+@UseGuards(ManagedSessionGuard)
 export class ProgramsController {
   constructor(private readonly programsService: ProgramsService) {}
 

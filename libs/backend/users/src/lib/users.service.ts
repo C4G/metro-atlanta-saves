@@ -27,7 +27,7 @@ export class UsersService {
       const userIds = programsAndUsers.map((program) => program.UsersOnPrograms.map((user) => user.userId)).flat();
 
       const users = await this.prisma.user.findMany({
-        where: { id: { in: userIds } },
+        where: { id: { in: userIds }, role: null },
       });
       return users.map((obj) => mapUser(obj));
     } else {

@@ -1,4 +1,5 @@
-import { computed, inject, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 
 import { HttpClient } from '@angular/common/http';
@@ -8,17 +9,13 @@ import { Router } from '@angular/router';
 import { ForgotResponse, UserFull } from '@mas/models';
 import { tapResponse } from '@ngrx/operators';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap } from 'rxjs';
-import { CookieService } from '../util/cookie.service';
-import { isPlatformBrowser } from '@angular/common';
-import { decodeJwt, jwtPayloadToUserData } from '../util/jwt-decode';
+import { firstValueFrom, pipe, switchMap } from 'rxjs';
 
 type ForgotPasswordData = {
   email: string;
 };
 
 type ResetPasswordData = {
-  email: string;
   password: string;
   token: string;
 };
@@ -50,8 +47,13 @@ const initialState: AuthState = {
 };
 
 const BASE_URL = '/api/auth';
-const AUTH_TOKEN_COOKIE = 'accessToken';
-const ORIGINAL_TOKEN_COOKIE = 'originalToken';
+const LEGACY_AUTH_COOKIES = ['accessToken', 'originalToken'];
+
+export const clearLegacyAuthCookies = (document: Document): void => {
+  for (const name of LEGACY_AUTH_COOKIES) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  }
+};
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -71,28 +73,15 @@ export const AuthStore = signalStore(
       store,
       snackBar = inject(MatSnackBar),
       router = inject(Router),
-      cookieService = inject(CookieService),
       http = inject(HttpClient),
       dialogRef = inject(MatDialog),
+      document = inject(DOCUMENT),
     ) => {
       const update = (data: { user?: AuthState['user']; realUser?: AuthState['realUser'] }): void => {
         patchState(store, { user: data.user, realUser: data.realUser });
-        // When mimicking: accessToken = mimicked user, originalToken = real admin
-        // When not mimicking: accessToken = current user, no originalToken
-        if (data.user?.accessToken) {
-          cookieService.setCookie(AUTH_TOKEN_COOKIE, data.user.accessToken, 7);
-          // If realUser exists, we're mimicking - store original admin token
-          if (data.realUser?.accessToken) {
-            cookieService.setCookie(ORIGINAL_TOKEN_COOKIE, data.realUser.accessToken, 7);
-          } else {
-            // Not mimicking, clear originalToken if it exists
-            cookieService.deleteCookie(ORIGINAL_TOKEN_COOKIE);
-          }
-        } else if (!data.user && !data.realUser) {
-          cookieService.deleteCookie(AUTH_TOKEN_COOKIE);
-          cookieService.deleteCookie(ORIGINAL_TOKEN_COOKIE);
-        }
       };
+
+      const currentUser = () => http.get<UserFull>('/api/users/me', { withCredentials: true });
 
       const navigateAfterAuthChange = async (): Promise<void> => {
         const currentUrl = router.url;
@@ -111,28 +100,31 @@ export const AuthStore = signalStore(
 
       const mimicUser = rxMethod<string>(
         pipe(
-          switchMap((email) =>
-            http.post<UserFull>(`${BASE_URL}/mimic-user`, { email }).pipe(
-              tapResponse({
-                next: async (user) => {
-                  dialogRef.closeAll();
-                  const realUser = store.user();
-                  update({ user, realUser });
-                  snackBar.open(`You are now mimicking ${user.firstName} ${user.lastName}`, undefined, {
-                    panelClass: 'success',
-                    duration: 5000,
-                  });
-                  await navigateAfterAuthChange();
-                },
-                error: () => {
-                  snackBar.open(
-                    'There was an error mimicking the user, please check the email and try again',
-                    undefined,
-                    { panelClass: 'error', duration: 5000 },
-                  );
-                },
-              }),
-            ),
+          switchMap((userId) =>
+            http
+              .post(`${BASE_URL}/scoped-impersonate`, { userId, returnPath: router.url }, { withCredentials: true })
+              .pipe(
+                switchMap(() => currentUser()),
+                tapResponse({
+                  next: async (user) => {
+                    dialogRef.closeAll();
+                    const realUser = store.user();
+                    update({ user, realUser });
+                    snackBar.open(`You are now mimicking ${user.firstName} ${user.lastName}`, undefined, {
+                      panelClass: 'success',
+                      duration: 5000,
+                    });
+                    await navigateAfterAuthChange();
+                  },
+                  error: () => {
+                    snackBar.open(
+                      'There was an error mimicking the user, please check the email and try again',
+                      undefined,
+                      { panelClass: 'error', duration: 5000 },
+                    );
+                  },
+                }),
+              ),
           ),
         ),
       );
@@ -140,7 +132,8 @@ export const AuthStore = signalStore(
       const login = rxMethod<LoginData>(
         pipe(
           switchMap((requestData) =>
-            http.post<UserFull>(`${BASE_URL}/signin`, requestData).pipe(
+            http.post(`${BASE_URL}/sign-in/email`, requestData, { withCredentials: true }).pipe(
+              switchMap(() => currentUser()),
               tapResponse({
                 next: (user) => {
                   update({ user });
@@ -164,24 +157,34 @@ export const AuthStore = signalStore(
       const register = rxMethod<RegisterData>(
         pipe(
           switchMap((requestData) =>
-            http.post<UserFull>(`${BASE_URL}/signup`, requestData).pipe(
-              tapResponse({
-                next: (user) => {
-                  update({ user });
-                  snackBar.open('You have signed up, welcome to Building Resilient Professionals!', undefined, {
-                    panelClass: 'success',
-                    duration: 5000,
-                  });
-                  router.navigate(['/dashboard']);
+            http
+              .post(
+                `${BASE_URL}/sign-up/email`,
+                {
+                  ...requestData,
+                  name: `${requestData.firstName} ${requestData.lastName}`.trim(),
                 },
-                error: () => {
-                  snackBar.open('There was an error signing you up, please try again.', undefined, {
-                    panelClass: 'error',
-                    duration: 5000,
-                  });
-                },
-              }),
-            ),
+                { withCredentials: true },
+              )
+              .pipe(
+                switchMap(() => currentUser()),
+                tapResponse({
+                  next: (user) => {
+                    update({ user });
+                    snackBar.open('You have signed up, welcome to Building Resilient Professionals!', undefined, {
+                      panelClass: 'success',
+                      duration: 5000,
+                    });
+                    router.navigate(['/dashboard']);
+                  },
+                  error: () => {
+                    snackBar.open('There was an error signing you up, please try again.', undefined, {
+                      panelClass: 'error',
+                      duration: 5000,
+                    });
+                  },
+                }),
+              ),
           ),
         ),
       );
@@ -189,23 +192,32 @@ export const AuthStore = signalStore(
       const forgotPassword = rxMethod<ForgotPasswordData>(
         pipe(
           switchMap((requestData) =>
-            http.post<ForgotResponse>(`${BASE_URL}/forgot-password`, requestData).pipe(
-              tapResponse({
-                next: ({ message }) => {
-                  snackBar.open(message, undefined, {
-                    panelClass: 'success',
-                    duration: 5000,
-                  });
-                  router.navigate(['/']);
+            http
+              .post<ForgotResponse>(
+                `${BASE_URL}/request-password-reset`,
+                {
+                  ...requestData,
+                  redirectTo: '/reset-password',
                 },
-                error: () => {
-                  snackBar.open('There was an error requesting password reset, please try again.', undefined, {
-                    panelClass: 'error',
-                    duration: 5000,
-                  });
-                },
-              }),
-            ),
+                { withCredentials: true },
+              )
+              .pipe(
+                tapResponse({
+                  next: ({ message }) => {
+                    snackBar.open(message, undefined, {
+                      panelClass: 'success',
+                      duration: 5000,
+                    });
+                    router.navigate(['/']);
+                  },
+                  error: () => {
+                    snackBar.open('There was an error requesting password reset, please try again.', undefined, {
+                      panelClass: 'error',
+                      duration: 5000,
+                    });
+                  },
+                }),
+              ),
           ),
         ),
       );
@@ -213,29 +225,40 @@ export const AuthStore = signalStore(
       const resetPassword = rxMethod<ResetPasswordData>(
         pipe(
           switchMap((requestData) =>
-            http.post<UserFull>(`${BASE_URL}/reset-password`, requestData).pipe(
-              tapResponse({
-                next: (user) => {
-                  update({ user });
-                  snackBar.open(`Your password was reset and you're logged in!`, undefined, {
-                    panelClass: 'success',
-                    duration: 5000,
-                  });
-                  router.navigate(['/']);
+            http
+              .post(
+                `${BASE_URL}/reset-password`,
+                {
+                  newPassword: requestData.password,
+                  token: requestData.token,
                 },
-                error: () => {
-                  snackBar.open('There was an error resetting your password, please try again.', undefined, {
-                    panelClass: 'error',
-                    duration: 5000,
-                  });
-                },
-              }),
-            ),
+                { withCredentials: true },
+              )
+              .pipe(
+                tapResponse({
+                  next: () => {
+                    update({ user: null, realUser: null });
+                    snackBar.open('Your password was reset. Please sign in again.', undefined, {
+                      panelClass: 'success',
+                      duration: 5000,
+                    });
+                    router.navigate(['/']);
+                  },
+                  error: () => {
+                    snackBar.open('There was an error resetting your password, please try again.', undefined, {
+                      panelClass: 'error',
+                      duration: 5000,
+                    });
+                  },
+                }),
+              ),
           ),
         ),
       );
 
       const logout = async (): Promise<void> => {
+        await firstValueFrom(http.post(`${BASE_URL}/sign-out`, {}, { withCredentials: true }));
+        clearLegacyAuthCookies(document);
         update({ user: null, realUser: null });
         snackBar.open('You have been logged out!', undefined, {
           panelClass: 'success',
@@ -247,7 +270,7 @@ export const AuthStore = signalStore(
       const patch = rxMethod<Partial<UserFull>>(
         pipe(
           switchMap((userData) =>
-            http.patch<UserFull>(`${BASE_URL}`, { ...userData, id: store.user()?.id }).pipe(
+            http.patch<UserFull>('/api/users/me', userData, { withCredentials: true }).pipe(
               tapResponse({
                 next: (user) => {
                   patchState(store, (state) => ({ user: { ...state.user, ...user } }));
@@ -269,12 +292,22 @@ export const AuthStore = signalStore(
         ),
       );
 
-      const stopMimickingUser = (): void => {
+      const stopMimickingUser = async (): Promise<void> => {
         const name = `${store.user()?.firstName} ${store.user()?.lastName}`;
-        const user = store.realUser();
-        // Clean up original token cookie
-        cookieService.deleteCookie(ORIGINAL_TOKEN_COOKIE);
-        update({ user, realUser: null });
+        try {
+          const user = await firstValueFrom(
+            http
+              .post(`${BASE_URL}/scoped-stop-impersonating`, {}, { withCredentials: true })
+              .pipe(switchMap(() => currentUser())),
+          );
+          update({ user, realUser: null });
+        } catch {
+          snackBar.open('There was an error stopping impersonation, please try again.', undefined, {
+            panelClass: 'error',
+            duration: 5000,
+          });
+          return;
+        }
         snackBar.open(`You are no longer mimicking ${name}`, undefined, {
           panelClass: 'success',
           duration: 5000,
@@ -295,67 +328,12 @@ export const AuthStore = signalStore(
     },
   ),
   withHooks({
-    onInit(store, cookieService = inject(CookieService), platformId = inject(PLATFORM_ID)) {
-      const isBrowser = isPlatformBrowser(platformId);
-
-      // Check for originalToken to detect if we're mimicking
-      const accessToken = cookieService.getCookie(AUTH_TOKEN_COOKIE);
-      const originalToken = cookieService.getCookie(ORIGINAL_TOKEN_COOKIE);
-
-      if (accessToken && originalToken) {
-        // Mimicking scenario: accessToken = mimicked user, originalToken = real admin
-        const userDecoded = decodeJwt(accessToken);
-        const realDecoded = decodeJwt(originalToken);
-
-        if (!userDecoded || !realDecoded) {
-          // Invalid tokens, clear cookies
-          if (isBrowser) {
-            cookieService.deleteCookie(AUTH_TOKEN_COOKIE);
-            cookieService.deleteCookie(ORIGINAL_TOKEN_COOKIE);
-          }
-          patchState(store, { loading: false });
-          return;
-        }
-
-        // Set both mimicked user and real user
-        patchState(store, {
-          user: {
-            ...jwtPayloadToUserData(userDecoded),
-            accessToken,
-          },
-          realUser: {
-            ...jwtPayloadToUserData(realDecoded),
-            accessToken: originalToken,
-          },
-          loading: false,
-          authRefreshed: true,
-        });
-      } else if (accessToken) {
-        // Normal login scenario
-        const decoded = decodeJwt(accessToken);
-
-        if (!decoded) {
-          // Invalid token, clear cookie and don't proceed
-          if (isBrowser) {
-            cookieService.deleteCookie(AUTH_TOKEN_COOKIE);
-          }
-          patchState(store, { loading: false });
-          return;
-        }
-
-        // Set user with full decoded JWT data
-        patchState(store, {
-          user: {
-            ...jwtPayloadToUserData(decoded),
-            accessToken,
-          },
-          loading: false,
-          authRefreshed: true,
-        });
-      } else {
-        // No token found, not logged in
-        patchState(store, { loading: false });
-      }
+    onInit(store, http = inject(HttpClient), document = inject(DOCUMENT)) {
+      clearLegacyAuthCookies(document);
+      http.get<UserFull>('/api/users/me', { withCredentials: true }).subscribe({
+        next: (user) => patchState(store, { user, realUser: null, loading: false, authRefreshed: true }),
+        error: () => patchState(store, { user: null, realUser: null, loading: false, authRefreshed: true }),
+      });
     },
   }),
 );

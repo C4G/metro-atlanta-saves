@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { EducationalCategoryService } from './educational-category.service';
 
-import { JwtGuard, RoleGuard, Roles } from '@mas/backend-shared';
+import { ManagedSessionGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { CategoryRequest } from './request/category';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -17,21 +17,21 @@ export class EducationalCategoryController {
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Post('')
   createCategory(@Body() body: CategoryRequest) {
     return this.educationalCategoryService.addEducationalCategory(body.category);
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Patch('/:id')
   patchCategory(@Param('id') id: string, @Body() body: CategoryRequest) {
     return this.educationalCategoryService.patchEducationalCategory(id, body.category);
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Delete('/:id')
   deleteCategory(@Param('id') id: string) {
     return this.educationalCategoryService.deleteEducationalCategory(id);

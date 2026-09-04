@@ -6,8 +6,8 @@ import { Injectable } from '@nestjs/common';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendForgotPassword(email: string, token: string) {
-    const url = `https://brpatl.com/reset-password?token=${token}&email=${email}`;
+  async sendForgotPassword(email: string, token: string, resetUrl?: string) {
+    const url = resetUrl ?? `https://brpatl.com/reset-password?token=${token}&email=${email}`;
 
     await this.mailerService.sendMail({
       to: email,

@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@n
 import { LearningsService } from './learnings.service';
 import { CreateLearningDto } from './dto/create-learning.dto';
 import { UpdateLearningDto } from './dto/update-learning.dto';
-import { JwtGuard, RoleGuard, Roles } from '@mas/backend-shared';
+import { ManagedSessionGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('learnings')
@@ -13,7 +13,7 @@ export class LearningsController {
 
   @Post()
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   create(@Body() createLearningDto: CreateLearningDto) {
     return this.learningsService.create(createLearningDto);
   }
@@ -30,14 +30,14 @@ export class LearningsController {
 
   @Patch(':id')
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   update(@Param('id') id: string, @Body() updateLearningDto: UpdateLearningDto) {
     return this.learningsService.update(id, updateLearningDto);
   }
 
   @Delete(':id')
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   remove(@Param('id') id: string) {
     return this.learningsService.remove(id);
   }

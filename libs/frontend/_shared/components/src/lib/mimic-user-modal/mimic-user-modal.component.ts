@@ -18,12 +18,14 @@ import { SearchableDropdownComponent } from '../searchable-dropdown';
         <div class="grid grid-cols-1 gap-4">
           @if (formattedUsers().length > 0) {
             <mas-searchable-dropdown
-              formControlName="email"
+              formControlName="userId"
               [items]="formattedUsers()"
               label="User"
               [required]="true"
             />
-            @if ((mimicForm.get('email')?.touched || form.submitted) && mimicForm.get('email')?.errors?.['required']) {
+            @if (
+              (mimicForm.get('userId')?.touched || form.submitted) && mimicForm.get('userId')?.errors?.['required']
+            ) {
               <mat-error>User is required.</mat-error>
             }
           } @else {
@@ -52,7 +54,7 @@ export class MimicUserModalComponent {
   }
 
   mimicForm = this.fb.group({
-    email: ['', [Validators.required]],
+    userId: ['', [Validators.required]],
   });
 
   formattedUsers = computed(() => {
@@ -61,7 +63,8 @@ export class MimicUserModalComponent {
     return this.usersStore
       .users()
       .filter((user) => user.email !== currentUser?.email) // Filter out current user
-      .map((user) => ({ label: `${user.firstName} ${user.lastName} (${user.email})`, value: user.email }));
+      .filter((user) => !user.role)
+      .map((user) => ({ label: `${user.firstName} ${user.lastName} (${user.email})`, value: user.id }));
   });
 
   submitForm() {
@@ -69,6 +72,6 @@ export class MimicUserModalComponent {
       return;
     }
 
-    this.authStore.mimicUser(this.mimicForm.getRawValue().email);
+    this.authStore.mimicUser(this.mimicForm.getRawValue().userId);
   }
 }

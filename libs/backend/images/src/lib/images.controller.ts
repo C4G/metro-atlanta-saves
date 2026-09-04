@@ -7,7 +7,7 @@ import {
   IMAGES_DIR,
   isUserAdmin,
   isUserParterStaff,
-  JwtGuard,
+  ManagedSessionGuard,
   MAX_IMAGE_SIZE_IN_BYTES,
   privateDir,
   validateUserIsAdminOrStaff,
@@ -39,7 +39,7 @@ import { diskStorage } from 'multer';
 import { unlink } from 'node:fs';
 import { ImagesService } from './images.service';
 
-@UseGuards(JwtGuard)
+@UseGuards(ManagedSessionGuard)
 @Controller('images')
 @ApiBearerAuth()
 @ApiTags('images')

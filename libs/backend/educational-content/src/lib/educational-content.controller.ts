@@ -20,7 +20,14 @@ import { EducationalContentWithCategories } from '@mas/models';
 import { EducationalContentService } from './educational-content.service';
 import { NotificationConfigDto } from './dto/notification-config.dto';
 
-import { assetDir, editFileName, JwtGuard, MAX_IMAGE_SIZE_IN_BYTES, RoleGuard, Roles } from '@mas/backend-shared';
+import {
+  assetDir,
+  editFileName,
+  ManagedSessionGuard,
+  MAX_IMAGE_SIZE_IN_BYTES,
+  RoleGuard,
+  Roles,
+} from '@mas/backend-shared';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -39,7 +46,7 @@ export class EducationalContentController {
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Post('')
   @UseInterceptors(
     AnyFilesInterceptor({
@@ -89,7 +96,7 @@ export class EducationalContentController {
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Patch('/:id')
   @UseInterceptors(
     AnyFilesInterceptor({
@@ -140,21 +147,21 @@ export class EducationalContentController {
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Get('notification-config')
   getNotificationConfig() {
     return this.educationalContentService.getNotificationConfig();
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Put('notification-config')
   saveNotificationConfig(@Body() body: NotificationConfigDto) {
     return this.educationalContentService.saveNotificationConfig(body);
   }
 
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Delete('/:id')
   deleteContent(@Param('id') id: string) {
     return this.educationalContentService.deleteEducationalContent(id);

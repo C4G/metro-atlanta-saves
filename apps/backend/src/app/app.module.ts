@@ -11,7 +11,7 @@ import { EducationalContentModule } from '@mas/backend-educational-content';
 import { ImagesModule } from '@mas/backend-images';
 import { IntroductionModule } from '@mas/backend-introduction';
 import { LearningsModule } from '@mas/backend-learnings';
-import { MailModule } from '@mas/backend-mail';
+import { MailModule, MailService } from '@mas/backend-mail';
 import { PartnersModule } from '@mas/backend-partners';
 import { PrismaModule } from '@mas/backend-prisma';
 import { ProgramsModule } from '@mas/backend-programs';
@@ -23,15 +23,29 @@ import { UserGuideModule } from '@mas/backend-user-guide';
 import { UsersModule } from '@mas/backend-users';
 import { UsersOnProgramsModule } from '@mas/backend-users-on-programs';
 import { WhatWeAreModule } from '@mas/backend-what-we-are';
+import { AuthModule as BetterAuthModule } from '@thallesp/nestjs-better-auth';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { HealthController } from './health.controller';
+import { createBetterAuth } from '@mas/backend-auth';
+import { PrismaService } from '@mas/backend-prisma';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    BetterAuthModule.forRootAsync({
+      isGlobal: true,
+      imports: [PrismaModule, MailModule],
+      inject: [ConfigService, PrismaService, MailService],
+      useFactory: (config: ConfigService, prisma: PrismaService, mailService: MailService) => ({
+        auth: createBetterAuth(prisma, config, mailService),
+        // Keep legacy JWT services available only for temporary rollback endpoints;
+        // protected application routes use ManagedSessionGuard.
+        disableGlobalAuthGuard: true,
+      }),
     }),
     JwtModule.register({
       global: true,
