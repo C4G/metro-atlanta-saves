@@ -38,13 +38,11 @@ import { PrismaService } from '@mas/backend-prisma';
     }),
     BetterAuthModule.forRootAsync({
       isGlobal: true,
+      disableGlobalAuthGuard: true,
       imports: [PrismaModule, MailModule],
       inject: [ConfigService, PrismaService, MailService],
       useFactory: (config: ConfigService, prisma: PrismaService, mailService: MailService) => ({
         auth: createBetterAuth(prisma, config, mailService),
-        // Keep legacy JWT services available only for temporary rollback endpoints;
-        // protected application routes use ManagedSessionGuard.
-        disableGlobalAuthGuard: true,
       }),
     }),
     JwtModule.register({

@@ -25,6 +25,11 @@ describe('Better Auth bootstrap', () => {
       .useValue({
         $connect: jest.fn(),
         $disconnect: jest.fn(),
+        description: { findFirst: jest.fn().mockResolvedValue({ id: 'description-1' }) },
+        introduction: { findFirst: jest.fn().mockResolvedValue({ id: 'intro-1' }) },
+        learning: { findMany: jest.fn().mockResolvedValue([{ id: 'learning-1' }]) },
+        story: { findMany: jest.fn().mockResolvedValue([{ id: 'story-1' }]) },
+        whatWeAre: { findFirst: jest.fn().mockResolvedValue({ id: 'what-we-are-1' }) },
       })
       .compile();
 
@@ -85,6 +90,19 @@ describe('Better Auth bootstrap', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toBeNull();
+  });
+
+  it('allows anonymous access to public home-page content', async () => {
+    for (const path of [
+      '/api/description',
+      '/api/introduction',
+      '/api/learnings',
+      '/api/stories',
+      '/api/what-we-are',
+    ]) {
+      const response = await request(app.getHttpServer()).get(path);
+      expect(response.status).toBe(200);
+    }
   });
 
   it('uses the Better Auth secret separately from the rollback JWT secret', () => {
