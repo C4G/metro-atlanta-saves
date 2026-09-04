@@ -1,0 +1,45 @@
+libs/frontend/_shared/components/src/lib/mimic-user-modal/mimic-user-modal.component.spec.ts
+  s_06b40b4edea879::t_e624b02c54ee17 9,12-14,31,35-39
+libs/backend/auth/src/lib/scoped-impersonation.ts
+  s_06b40b4edea879::t_6221d2a7158543 23-29
+openspec/changes/migrate-to-better-auth/design.md
+  s_06b40b4edea879::t_ba0b98d82976ca 40-41,71
+openspec/changes/migrate-to-better-auth/specs/authentication/better-auth/spec.md
+  s_06b40b4edea879::t_ba0b98d82976ca 56,69-74,81,83-84,117,122
+libs/backend/users/src/lib/users.controller.ts
+  s_06b40b4edea879::t_6221d2a7158543 25
+apps/backend/src/app/users-service.spec.ts
+  s_06b40b4edea879::t_e624b02c54ee17 19-35,48-57,60,62-77
+openspec/changes/migrate-to-better-auth/proposal.md
+  s_06b40b4edea879::t_ba0b98d82976ca 15-16
+apps/backend/src/app/scoped-impersonation.integration.spec.ts
+  s_06b40b4edea879::t_6f60365abadf77 116
+  s_06b40b4edea879::t_15020f78fac8b9 15,24-25,119,123,132-136
+  s_06b40b4edea879::t_ed7a63dbe2ac32 137
+apps/backend/src/app/scoped-impersonation.spec.ts
+  s_06b40b4edea879::t_b76b65e37bc6c2 9,33
+  s_06b40b4edea879::t_e624b02c54ee17 8,31
+libs/backend/users/src/lib/users.service.ts
+  s_06b40b4edea879::t_6221d2a7158543 5,18-19,21-22,24,26-27,29-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "960e8bcfb49650e98bd804a8cea784b0fcfbd40f",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_06b40b4edea879": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06a97-0080-7c90-a6c4-b14b953791ca",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
