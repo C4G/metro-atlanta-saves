@@ -1,5 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -122,5 +123,15 @@ describe('AuthStore managed sessions', () => {
       'originalToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;',
     ]);
     expect(writes.join(';')).not.toContain('unrelated');
+  });
+
+  it('does not attempt to write legacy cookies during SSR initialization', () => {
+    TestBed.overrideProvider(PLATFORM_ID, { useValue: 'server' });
+    const store = TestBed.inject(AuthStore);
+    const http = TestBed.inject(HttpTestingController);
+
+    http.expectOne('/api/users/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(store.authRefreshed()).toBe(true);
   });
 });
