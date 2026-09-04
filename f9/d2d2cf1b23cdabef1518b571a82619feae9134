@@ -1,0 +1,27 @@
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.spec.ts
+  s_06b40b4edea879::t_b062dfe828f4bc 38,40-42,53,67,83,102,139-140
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.ts
+  s_06b40b4edea879::t_b062dfe828f4bc 12,51,339-345
+  s_06b40b4edea879::t_23e8fa767e71e3 346-347
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "f9d2d2cf1b23cdabef1518b571a82619feae9134",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_06b40b4edea879": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06a97-0080-7c90-a6c4-b14b953791ca",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
