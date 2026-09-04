@@ -1,0 +1,12 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "e2a0903842cf1ed09113986889a82bae16fe645a",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
