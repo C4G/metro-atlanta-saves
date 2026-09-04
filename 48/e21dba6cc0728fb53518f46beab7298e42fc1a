@@ -1,0 +1,27 @@
+openspec/changes/migrate-to-better-auth/specs/authentication/better-auth/spec.md
+  s_06b40b4edea879::t_6f5e95d0ad58ab 1-122
+openspec/changes/migrate-to-better-auth/tasks.md
+  s_06b40b4edea879::t_a88e6266ef0cfe 1-45
+openspec/changes/migrate-to-better-auth/design.md
+  s_06b40b4edea879::t_6f5e95d0ad58ab 1-73
+openspec/changes/migrate-to-better-auth/.openspec.yaml
+  s_06b40b4edea879::t_adcac50a60b58e 1-2
+openspec/changes/migrate-to-better-auth/proposal.md
+  s_06b40b4edea879::t_def8f9cd48a6ad 1-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "48e21dba6cc0728fb53518f46beab7298e42fc1a",
+  "prompts": {},
+  "sessions": {
+    "s_06b40b4edea879": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06a97-0080-7c90-a6c4-b14b953791ca",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
