@@ -1,0 +1,26 @@
+.agents/skills/openspec-apply-change/SKILL.md
+  h_d5b6f744415839 1-188
+.agents/skills/openspec-archive-change/SKILL.md
+  h_d5b6f744415839 1-182
+.agents/skills/openspec-explore/SKILL.md
+  h_d5b6f744415839 1-335
+.agents/skills/openspec-propose/SKILL.md
+  h_d5b6f744415839 1-153
+.agents/skills/openspec-sync-specs/SKILL.md
+  h_d5b6f744415839 1-262
+.agents/skills/openspec-update-change/SKILL.md
+  h_d5b6f744415839 1-91
+openspec/config.yaml
+  h_d5b6f744415839 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "e701de0d7fa769a9c41c0c0f3e7b49b000c5ed3a",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
