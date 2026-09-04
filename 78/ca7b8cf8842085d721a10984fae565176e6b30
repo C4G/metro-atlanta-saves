@@ -1,0 +1,19 @@
+openspec/changes/migrate-to-better-auth/tasks.md
+  s_06b40b4edea879::t_0d68baeed4dda1 1-4,8-10,14-18,22-26,30-34,38-41,43,45-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "78ca7b8cf8842085d721a10984fae565176e6b30",
+  "prompts": {},
+  "sessions": {
+    "s_06b40b4edea879": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06a97-0080-7c90-a6c4-b14b953791ca",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
