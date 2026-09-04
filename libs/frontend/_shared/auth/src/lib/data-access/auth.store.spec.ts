@@ -35,8 +35,11 @@ describe('AuthStore managed sessions', () => {
   it('loads the current user from the server on initialization', () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
-    const req = http.expectOne('/api/users/me');
+    const session = http.expectOne('/api/auth/get-session');
 
+    expect(session.request.withCredentials).toBe(true);
+    session.flush({ session: { id: 'session-1' }, user: { id: user.id } });
+    const req = http.expectOne('/api/users/me');
     expect(req.request.withCredentials).toBe(true);
     req.flush(user);
 
@@ -47,7 +50,7 @@ describe('AuthStore managed sessions', () => {
   it('signs in through Better Auth and refreshes the server-owned profile', () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
-    http.expectOne('/api/users/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne('/api/auth/get-session').flush(null);
 
     store.login({ email: user.email, password: 'Password123!' });
     const signIn = http.expectOne('/api/auth/sign-in/email');
@@ -61,6 +64,7 @@ describe('AuthStore managed sessions', () => {
   it('signs out the managed session and clears local auth state', async () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/auth/get-session').flush({ session: { id: 'session-1' }, user: { id: user.id } });
     http.expectOne('/api/users/me').flush(user);
 
     const logout = store.logout();
@@ -76,6 +80,7 @@ describe('AuthStore managed sessions', () => {
   it('starts impersonation with a target ID and retains the originating profile locally', () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/auth/get-session').flush({ session: { id: 'session-1' }, user: { id: user.id } });
     http.expectOne('/api/users/me').flush(user);
 
     const target = { ...user, id: 'target-1', firstName: 'Target' };
@@ -94,6 +99,7 @@ describe('AuthStore managed sessions', () => {
   it('returns from impersonation through the server and clears the originating profile', async () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/auth/get-session').flush({ session: { id: 'session-1' }, user: { id: user.id } });
     http.expectOne('/api/users/me').flush({ ...user, id: 'target-1', firstName: 'Target' });
     store.update({ user: { ...user, id: 'target-1', firstName: 'Target' }, realUser: user });
 
@@ -130,7 +136,8 @@ describe('AuthStore managed sessions', () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
 
-    http.expectOne('/api/users/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne('/api/auth/get-session').flush(null);
+    http.expectNone('/api/users/me');
 
     expect(store.authRefreshed()).toBe(true);
   });

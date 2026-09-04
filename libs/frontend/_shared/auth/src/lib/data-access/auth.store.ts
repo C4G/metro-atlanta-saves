@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { ForgotResponse, UserFull } from '@mas/models';
 import { tapResponse } from '@ngrx/operators';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { firstValueFrom, pipe, switchMap } from 'rxjs';
+import { firstValueFrom, of, pipe, switchMap } from 'rxjs';
 
 type ForgotPasswordData = {
   email: string;
@@ -48,6 +48,7 @@ const initialState: AuthState = {
 
 const BASE_URL = '/api/auth';
 const LEGACY_AUTH_COOKIES = ['accessToken', 'originalToken'];
+type ManagedSessionResponse = { session: unknown; user: unknown } | null;
 
 export const clearLegacyAuthCookies = (document: Document): void => {
   for (const name of LEGACY_AUTH_COOKIES) {
@@ -335,10 +336,15 @@ export const AuthStore = signalStore(
       if (isPlatformBrowser(platformId)) {
         clearLegacyAuthCookies(document);
       }
-      http.get<UserFull>('/api/users/me', { withCredentials: true }).subscribe({
-        next: (user) => patchState(store, { user, realUser: null, loading: false, authRefreshed: true }),
-        error: () => patchState(store, { user: null, realUser: null, loading: false, authRefreshed: true }),
-      });
+      http
+        .get<ManagedSessionResponse>(`${BASE_URL}/get-session`, { withCredentials: true })
+        .pipe(
+          switchMap((session) => (session ? http.get<UserFull>('/api/users/me', { withCredentials: true }) : of(null))),
+        )
+        .subscribe({
+          next: (user) => patchState(store, { user, realUser: null, loading: false, authRefreshed: true }),
+          error: () => patchState(store, { user: null, realUser: null, loading: false, authRefreshed: true }),
+        });
     },
   }),
 );
