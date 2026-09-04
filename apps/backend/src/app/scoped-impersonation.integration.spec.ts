@@ -12,6 +12,7 @@ describe('scoped impersonation endpoints', () => {
   let auth: ReturnType<typeof betterAuth>;
   let adminId = '';
   let staffId = '';
+  let samePartnerStaffTargetId = '';
   let allowedTargetId = '';
   let disallowedTargetId = '';
 
@@ -20,6 +21,8 @@ describe('scoped impersonation endpoints', () => {
       findUnique: jest.fn(({ where }: { where: { id: string } }) => {
         if (where.id === adminId) return { id: adminId, role: 'Administrator', partnerId: null };
         if (where.id === staffId) return { id: staffId, role: 'Partner_Staff', partnerId: 'partner-a' };
+        if (where.id === samePartnerStaffTargetId)
+          return { id: samePartnerStaffTargetId, role: 'Partner_Staff', partnerId: 'partner-a' };
         if (where.id === allowedTargetId) return { id: allowedTargetId, role: null, partnerId: null };
         if (where.id === disallowedTargetId) return { id: disallowedTargetId, role: null, partnerId: null };
         return null;
@@ -110,12 +113,14 @@ describe('scoped impersonation endpoints', () => {
     expect(targetSession.body).toBeNull();
   });
 
-  it('allows Partner Staff only for a target in a matching partner program', async () => {
+  it('allows Partner Staff only for same-partner staff or regular users in a matching partner program', async () => {
     const staff = await signUp(`staff-${Date.now()}@example.com`);
     const allowed = await signUp(`allowed-${Date.now()}@example.com`);
+    const samePartnerStaff = await signUp(`same-partner-staff-${Date.now()}@example.com`);
     const disallowed = await signUp(`disallowed-${Date.now()}@example.com`);
     staffId = staff.id;
     allowedTargetId = allowed.id;
+    samePartnerStaffTargetId = samePartnerStaff.id;
     disallowedTargetId = disallowed.id;
 
     const allowedResponse = await request(app.getHttpServer())
@@ -123,6 +128,12 @@ describe('scoped impersonation endpoints', () => {
       .set('Cookie', cookieHeader(staff.cookies))
       .send({ userId: allowed.id });
     expect(allowedResponse.status).toBe(200);
+
+    const samePartnerStaffResponse = await request(app.getHttpServer())
+      .post('/api/auth/scoped-impersonate')
+      .set('Cookie', cookieHeader(staff.cookies))
+      .send({ userId: samePartnerStaff.id });
+    expect(samePartnerStaffResponse.status).toBe(200);
 
     const disallowedResponse = await request(app.getHttpServer())
       .post('/api/auth/scoped-impersonate')

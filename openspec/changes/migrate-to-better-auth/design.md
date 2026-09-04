@@ -37,8 +37,8 @@ Administrator authorization will allow any target user. Partner Staff authorizat
 
 1. The requester has application role `Partner_Staff`.
 2. The requester has a non-null `partnerId`.
-3. The target has no elevated application role.
-4. A `UsersOnPrograms` membership exists for the target where the related program's `partnerId` equals the requester's `partnerId`.
+3. The target is either another `Partner_Staff` user with the same `partnerId`, or a regular user with no application role.
+4. For a regular target, a `UsersOnPrograms` membership exists where the related program's `partnerId` equals the requester's `partnerId`.
 
 The check will use current database relationships and will not rely on the candidate list returned to the frontend.
 
@@ -68,6 +68,6 @@ Deploy database changes and the new backend/frontend together. The deployment ma
 - [Better Auth schema conflicts with the existing `users` model or role enum] -> Generate the schema, manually reconcile it with existing Prisma relations, and use a separate auth-permission field if the Admin plugin role field cannot safely use the domain role.
 - [NestJS body parsing prevents auth requests from being read] -> Mount the handler in the documented order and test sign-in, sign-out, session lookup, and impersonation through the real server.
 - [Partner Staff bypasses the filtered candidate list] -> Treat the backend partner-program query as the only security boundary and test direct requests for users from other partners.
-- [Impersonation exposes target elevated privileges] -> Reject elevated targets for Partner Staff and evaluate protected requests as the target identity.
+- [Impersonation exposes target elevated privileges] -> Reject administrators and out-of-partner staff targets for Partner Staff and evaluate protected requests as the target identity.
 - [All users are logged out at deployment] -> Announce the sign-in requirement and verify that existing passwords work before production cutover.
 - [Rollback leaves incompatible cookies] -> Keep rollback credentials available temporarily and clear both legacy and new auth cookies during the transition path.

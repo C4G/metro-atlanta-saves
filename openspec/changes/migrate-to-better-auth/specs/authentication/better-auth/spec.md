@@ -53,7 +53,7 @@ The system SHALL preserve each migrated user's existing identifier, email addres
 
 ### Requirement: Impersonation is restricted by requester role and target scope
 
-The system SHALL allow `Administrator` users to impersonate permitted users. The system SHALL allow `Partner_Staff` users to impersonate only regular users who are members of at least one program owned by the requesting staff member's partner. The system SHALL reject impersonation requests from all other users.
+The system SHALL allow `Administrator` users to impersonate any user. The system SHALL allow `Partner_Staff` users to impersonate either another `Partner_Staff` user associated with the same partner or a regular user who is a member of at least one program owned by the requesting staff member's partner. The system SHALL reject impersonation requests from all other users.
 
 #### Scenario: Administrator impersonates a user
 
@@ -66,16 +66,22 @@ The system SHALL allow `Administrator` users to impersonate permitted users. The
 - **AND** the target has a program membership whose program belongs to the requesting staff member's partner
 - **THEN** the system creates an impersonation session for the target
 
+#### Scenario: Partner Staff impersonates same-partner staff
+
+- **WHEN** an authenticated `Partner_Staff` with a partner association requests impersonation of another `Partner_Staff` user
+- **AND** the target has the same partner association as the requesting staff member
+- **THEN** the system creates an impersonation session for the target
+
 #### Scenario: Partner Staff targets a user outside their partner
 
 - **WHEN** an authenticated `Partner_Staff` requests impersonation of a regular user
 - **AND** the target has no membership in a program owned by the requesting staff member's partner
 - **THEN** the system rejects the request and does not create an impersonation session
 
-#### Scenario: Partner Staff targets an elevated user
+#### Scenario: Partner Staff targets an elevated or out-of-partner staff user
 
-- **WHEN** an authenticated `Partner_Staff` requests impersonation of a user whose application role is `Administrator` or `Partner_Staff`
-- **THEN** the system rejects the request even if the target belongs to one of the partner's programs
+- **WHEN** an authenticated `Partner_Staff` requests impersonation of an `Administrator` or a `Partner_Staff` user associated with another partner
+- **THEN** the system rejects the request
 
 #### Scenario: User without impersonation permission makes a request
 
@@ -108,15 +114,14 @@ The system SHALL record the originating user for an impersonation session and SH
 
 ### Requirement: Candidate discovery reflects impersonation permissions
 
-The system SHALL present administrators with all permitted targets and SHALL present partner staff with only regular users in their partner's programs. Server-side authorization SHALL remain authoritative even when a target is not shown in the user interface.
+The system SHALL present administrators with all users and SHALL present partner staff with same-partner staff and regular users in their partner's programs. Server-side authorization SHALL remain authoritative even when a target is not shown in the user interface.
 
 #### Scenario: Partner Staff loads impersonation candidates
 
 - **WHEN** a `Partner_Staff` user opens the impersonation flow
-- **THEN** users outside the partner's programs and users with elevated application roles are excluded from the candidate list
+- **THEN** administrators and partner staff from other partners are excluded, along with regular users outside the partner's programs
 
 #### Scenario: Client bypasses candidate filtering
 
 - **WHEN** a `Partner_Staff` submits a target identifier that is not an allowed candidate
 - **THEN** the server rejects the request
-

@@ -63,7 +63,6 @@ export class MimicUserModalComponent {
     return this.usersStore
       .users()
       .filter((user) => user.email !== currentUser?.email) // Filter out current user
-      .filter((user) => !user.role)
       .map((user) => ({ label: `${user.firstName} ${user.lastName} (${user.email})`, value: user.id }));
   });
 

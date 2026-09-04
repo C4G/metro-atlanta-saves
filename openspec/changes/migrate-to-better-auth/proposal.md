@@ -12,8 +12,8 @@ The application currently uses long-lived, client-readable JWTs containing copie
 - Preserve email/password sign-in, registration, password reset, profile updates, and application role checks.
 - Add session-based impersonation with these authorization rules:
   - `Administrator` users may impersonate any permitted target.
-  - `Partner_Staff` users may impersonate only regular users enrolled in at least one program owned by their partner.
-  - `Partner_Staff` users may not impersonate administrators or other partner staff.
+  - `Partner_Staff` users may impersonate other `Partner_Staff` users for the same partner, or regular users enrolled in at least one program owned by their partner.
+  - `Partner_Staff` users may not impersonate administrators or partner staff from another partner.
   - Other users may not impersonate anyone.
 - **BREAKING**: Existing JWT access tokens and cookies will no longer authenticate after cutover; users will sign in again.
 - **BREAKING**: Authentication endpoints and cookie behavior may change to Better Auth conventions unless compatibility wrappers are retained.

@@ -22,7 +22,7 @@ export class UsersController {
   @Get()
   @Roles('Administrator', 'Partner_Staff')
   users(@Req() request: Request & { user: UserFull }) {
-    return this.usersService.getUsers(request.user.partnerId);
+    return this.usersService.getUsers(request.user);
   }
 
   @Get('names')

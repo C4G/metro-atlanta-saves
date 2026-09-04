@@ -20,7 +20,13 @@ async function canImpersonate(prisma: PrismaService, requesterId: string, target
 
   if (!requester || !target || requester.id === target.id) return false;
   if (requester.role === 'Administrator') return true;
-  if (requester.role !== 'Partner_Staff' || !requester.partnerId || target.role !== null) return false;
+  if (requester.role !== 'Partner_Staff' || !requester.partnerId) return false;
+
+  if (target.role === 'Partner_Staff') {
+    return target.partnerId === requester.partnerId;
+  }
+
+  if (target.role !== null) return false;
 
   const membership = await prisma.usersOnPrograms.findFirst({
     where: {
