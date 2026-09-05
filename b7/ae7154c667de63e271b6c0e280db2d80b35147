@@ -1,0 +1,24 @@
+apps/backend/src/app/auth-bootstrap.spec.ts
+  s_363187badac276::t_ffec83d08e57d4 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b7ae7154c667de63e271b6c0e280db2d80b35147",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_363187badac276": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06fa6-2815-74b2-aae9-b13490f4c170",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
