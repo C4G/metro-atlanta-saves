@@ -25,7 +25,7 @@ import { CreateDiscussionCommentDto } from './dto/create-discussion-comment.dto'
 import { CreateDiscussionTagDto } from './dto/create-discussion-tag.dto';
 import { UpdateDiscussionPostDto } from './dto/update-discussion-post.dto';
 import { UpdateDiscussionCommentDto } from './dto/update-discussion-comment.dto';
-import { DISCUSSION_IMAGES_DIR, JwtGuard, privateDir, RoleGuard, Roles } from '@mas/backend-shared';
+import { DISCUSSION_IMAGES_DIR, ManagedSessionGuard, privateDir, RoleGuard, Roles } from '@mas/backend-shared';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserFull } from '@mas/models';
 
@@ -36,7 +36,7 @@ export class DiscussionController {
   constructor(private readonly discussionService: DiscussionService) {}
 
   @Post('upload-image')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -65,7 +65,7 @@ export class DiscussionController {
   }
 
   @Post()
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   create(@Req() req: Request & { user: UserFull }, @Body() dto: CreateDiscussionPostDto) {
     return this.discussionService.createPost(req.user, dto);
   }
@@ -81,7 +81,7 @@ export class DiscussionController {
   }
 
   @Post(':id/comments')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   createComment(
     @Req() req: Request & { user: UserFull },
     @Param('id') postId: string,
@@ -91,7 +91,7 @@ export class DiscussionController {
   }
 
   @Delete(':postId/comments/:commentId')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   removeComment(
     @Req() req: Request & { user: UserFull },
     @Param('postId') postId: string,
@@ -101,7 +101,7 @@ export class DiscussionController {
   }
 
   @Post(':postId/comments/:commentId/vote')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   voteComment(
     @Req() req: Request & { user: UserFull },
     @Param('postId') postId: string,
@@ -112,19 +112,19 @@ export class DiscussionController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   remove(@Req() req: Request & { user: UserFull }, @Param('id') id: string) {
     return this.discussionService.removePost(id, req.user);
   }
 
   @Patch(':id')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   updatePost(@Req() req: Request & { user: UserFull }, @Param('id') id: string, @Body() dto: UpdateDiscussionPostDto) {
     return this.discussionService.updatePost(id, req.user, dto);
   }
 
   @Patch(':postId/comments/:commentId')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   updateComment(
     @Req() req: Request & { user: UserFull },
     @Param('postId') postId: string,
@@ -135,7 +135,7 @@ export class DiscussionController {
   }
 
   @Patch(':id/pin')
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   togglePin(@Param('id') id: string, @Req() req: any) {
     return this.discussionService.togglePin(id, req.user);
   }
@@ -158,14 +158,14 @@ export class DiscussionController {
 
   @Post('tags')
   @Roles('Administrator', 'Partner_Staff')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   createTag(@Body() dto: CreateDiscussionTagDto) {
     return this.discussionService.createTag(dto);
   }
 
   @Delete('tags/:id')
   @Roles('Administrator', 'Partner_Staff')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   deleteTag(@Param('id') id: string) {
     return this.discussionService.deleteTag(id);
   }

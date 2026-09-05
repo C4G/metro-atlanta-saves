@@ -15,7 +15,13 @@ import {
 import { UsersOnProgramsService } from './users-on-programs.service';
 import { CreateUsersOnProgramsDto } from './dto/create-users-on-programs.dto';
 import { UpdateUsersOnProgramsDto } from './dto/update-users-on-programs.dto';
-import { JwtGuard, RoleGuard, Roles, validateUserAnyRole, validateUserIsAdminOrStaff } from '@mas/backend-shared';
+import {
+  ManagedSessionGuard,
+  RoleGuard,
+  Roles,
+  validateUserAnyRole,
+  validateUserIsAdminOrStaff,
+} from '@mas/backend-shared';
 
 import { ProgramsService } from '@mas/backend-programs';
 import { UserFull } from '@mas/models';
@@ -30,7 +36,7 @@ export class UsersOnProgramsController {
     private programsService: ProgramsService,
   ) {}
 
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   @Get('program/:id')
   async getUsersOnPrograms(@Req() request: Request & { user: UserFull }, @Param('id') id: string) {
     const userInProgram = await this.programsService.isUserInProgram(request.user.id, id);
@@ -40,7 +46,7 @@ export class UsersOnProgramsController {
     return this.usersOnProgramsService.getUsersOnPrograms(id);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   @Get('user/program/:id')
   async getUserOnProgram(@Req() request: Request & { user: UserFull }, @Param('id') id: string) {
     const userInProgram = await this.programsService.isUserInProgram(request.user.id, id);
@@ -50,7 +56,7 @@ export class UsersOnProgramsController {
     return this.usersOnProgramsService.getUserOnProgram(id, request.user.id);
   }
 
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Roles('Administrator', 'Partner_Staff')
   @Post()
   async createUsersOnPrograms(
@@ -66,7 +72,7 @@ export class UsersOnProgramsController {
     return this.usersOnProgramsService.addUsersOnPrograms(createUsersDto);
   }
 
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Roles('Administrator', 'Partner_Staff')
   @Patch()
   async patchUsersOnPrograms(
@@ -92,7 +98,7 @@ export class UsersOnProgramsController {
     );
   }
 
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Roles('Administrator', 'Partner_Staff')
   @Delete('user/:userId/program/:programId')
   async deleteUsersOnPrograms(
@@ -109,7 +115,7 @@ export class UsersOnProgramsController {
     return this.usersOnProgramsService.deleteUsersOnPrograms(userId, programId);
   }
 
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   @Roles('Administrator', 'Partner_Staff')
   @Get('/excel-sheet/:programId')
   async downloadExcel(

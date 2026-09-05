@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
-import { JwtGuard, RoleGuard, Roles } from '@mas/backend-shared';
+import { ManagedSessionGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { UsersService } from './users.service';
 import { PatchUserDto } from './dto/patch-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -9,15 +9,20 @@ import { UserFull } from '@mas/models';
 
 @Controller('users')
 @ApiBearerAuth()
-@UseGuards(JwtGuard, RoleGuard)
+@UseGuards(ManagedSessionGuard, RoleGuard)
 @ApiTags('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @Get('me')
+  me(@Req() request: Request & { user: UserFull }) {
+    return request.user;
+  }
+
   @Get()
   @Roles('Administrator', 'Partner_Staff')
   users(@Req() request: Request & { user: UserFull }) {
-    return this.usersService.getUsers(request.user.partnerId);
+    return this.usersService.getUsers(request.user);
   }
 
   @Get('names')
@@ -36,6 +41,11 @@ export class UsersController {
   @Roles('Administrator', 'Partner_Staff')
   createUser(@Body() body: CreateUserDto) {
     return this.usersService.createUser(body);
+  }
+
+  @Patch('me')
+  patchMe(@Req() request: Request & { user: UserFull }, @Body() body: Omit<PatchUserDto, 'id'>) {
+    return this.usersService.patchUser(request.user.id, { ...body, id: request.user.id });
   }
 
   @Patch('/:id')

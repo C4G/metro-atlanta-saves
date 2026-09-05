@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, ForgotPasswordDto, ResetPasswordDto, SignUpDto } from './dto';
-import { JwtGuard, RoleGuard, Roles } from '@mas/backend-shared';
+import { ManagedSessionGuard } from '@mas/backend-shared';
 import { UserFull } from '@mas/models';
 import { PatchUserDto } from '@mas/backend-users';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -13,19 +13,12 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get()
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   getMe(@Req() request: Request & { user: UserFull }) {
     if (!request.user) {
       throw new BadRequestException(['No user details provided']);
     }
     return this.authService.getUser(request.user.email);
-  }
-
-  @UseGuards(JwtGuard, RoleGuard)
-  @Roles('Administrator', 'Partner_Staff')
-  @Post('mimic-user')
-  mimicUser(@Body() dto: { email: string }) {
-    return this.authService.mimicUser(dto.email);
   }
 
   @Post('signup')
@@ -49,7 +42,7 @@ export class AuthController {
   }
 
   @Patch()
-  @UseGuards(JwtGuard)
+  @UseGuards(ManagedSessionGuard)
   async patchMe(@Req() request: Request & { user: UserFull }, @Body() userDto: PatchUserDto) {
     if (request.user.id !== userDto.id) {
       throw new BadRequestException(['No user details provided']);

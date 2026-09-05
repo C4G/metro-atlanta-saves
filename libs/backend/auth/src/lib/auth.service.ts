@@ -83,25 +83,6 @@ export class AuthService {
     }
   }
 
-  async mimicUser(email: string): Promise<UserFull> {
-    const _user: User | null = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-    if (!_user) throw new ForbiddenException('Credentials incorrect');
-
-    const user = mapUser(_user);
-    const accessToken = (await this.signToken(user)).access_token;
-
-    const firstProgram = await this.prisma.usersOnPrograms.findFirst({
-      select: { programId: true },
-      where: { userId: user.id },
-    });
-
-    return { ...user, accessToken, firstProgramId: firstProgram?.programId };
-  }
-
   async signin(dto: AuthDto): Promise<UserFull> {
     const _user: User | null = await this.prisma.user.findUnique({
       where: {

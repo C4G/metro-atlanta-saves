@@ -1,7 +1,7 @@
 import {
   assetDir,
   editFileName,
-  JwtGuard,
+  ManagedSessionGuard,
   MAX_IMAGE_SIZE_IN_BYTES,
   RoleGuard,
   Roles,
@@ -45,7 +45,7 @@ export class StoriesController {
     }),
   )
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   create(
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -89,7 +89,7 @@ export class StoriesController {
     }),
   )
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   update(
     @Param('id') id: string,
     @UploadedFile(
@@ -119,7 +119,7 @@ export class StoriesController {
 
   @Delete(':id')
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   remove(@Param('id') id: string) {
     return this.storiesService.remove(id);
   }

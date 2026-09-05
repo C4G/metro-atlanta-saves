@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { PartnersService } from './partners.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
-import { JwtGuard, RoleGuard, Roles } from '@mas/backend-shared';
+import { ManagedSessionGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { UpdatePartnerDto } from './dto/patch-partner.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('partners')
 @ApiBearerAuth()
 @Roles('Administrator')
-@UseGuards(JwtGuard, RoleGuard)
+@UseGuards(ManagedSessionGuard, RoleGuard)
 @ApiTags('partners')
 export class PartnersController {
   constructor(private readonly partnersService: PartnersService) {}

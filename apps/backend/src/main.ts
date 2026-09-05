@@ -11,7 +11,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { assetDir } from '@mas/backend-shared';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
+  });
 
   // Enable CORS for development
   app.enableCors({

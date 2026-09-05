@@ -50,7 +50,6 @@ export class ResetPasswordComponent {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
-  email = input('');
   token = input('');
   set = input('');
 
@@ -59,12 +58,11 @@ export class ResetPasswordComponent {
   });
 
   emailAndTokenEffect = effect(() => {
-    const email = this.email();
     const token = this.token();
 
     untracked(() => {
-      if (!email || !token) {
-        this.snackBar.open('Missing email or token, please click the link in your email', undefined, {
+      if (!token) {
+        this.snackBar.open('Missing reset token, please click the link in your email', undefined, {
           panelClass: 'error',
           duration: 5000,
         });
@@ -74,10 +72,10 @@ export class ResetPasswordComponent {
   });
 
   submitForm() {
-    if (this.resetPasswordForm.invalid || !this.email() || !this.token()) {
+    if (this.resetPasswordForm.invalid || !this.token()) {
       return;
     }
 
-    this.authStore.resetPassword({ ...this.resetPasswordForm.getRawValue(), email: this.email(), token: this.token() });
+    this.authStore.resetPassword({ ...this.resetPasswordForm.getRawValue(), token: this.token() });
   }
 }

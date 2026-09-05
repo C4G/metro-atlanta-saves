@@ -13,7 +13,7 @@ import {
 import { RequirementsService } from './requirements.service';
 import { CreateRequirementDto } from './dto/create-requirement.dto';
 import { UpdateRequirementDto } from './dto/update-requirement.dto';
-import { JwtGuard, RoleGuard, Roles, validateUserAnyRole } from '@mas/backend-shared';
+import { ManagedSessionGuard, RoleGuard, Roles, validateUserAnyRole } from '@mas/backend-shared';
 import { UserFull } from '@mas/models';
 import { ProgramsService } from '@mas/backend-programs';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -21,7 +21,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @Controller('requirements')
 @ApiBearerAuth()
 @Roles('Partner_Staff')
-@UseGuards(JwtGuard, RoleGuard)
+@UseGuards(ManagedSessionGuard, RoleGuard)
 @ApiTags('requirements')
 export class RequirementsController {
   constructor(

@@ -1,7 +1,7 @@
 import {
   assetDir,
   editFileName,
-  JwtGuard,
+  ManagedSessionGuard,
   MAX_IMAGE_SIZE_IN_BYTES,
   RoleGuard,
   Roles,
@@ -58,7 +58,7 @@ export class IntroductionController {
     }),
   )
   @Roles('Administrator')
-  @UseGuards(JwtGuard, RoleGuard)
+  @UseGuards(ManagedSessionGuard, RoleGuard)
   async update(
     @UploadedFile(
       new ParseFilePipeBuilder()

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '@mas/backend-prisma';
 import { mapUser, randomPassword } from '@mas/backend-shared';
 import { PatchUserDto } from './dto/patch-user.dto';
-import { UsersNamesOnly } from '@mas/models';
+import { UserFull, UsersNamesOnly } from '@mas/models';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as argon from 'argon2';
 import { MailService } from '@mas/backend-mail';
@@ -15,29 +15,31 @@ export class UsersService {
     private mailService: MailService,
   ) {}
 
-  async getUsers(partnerId: string | null) {
-    if (partnerId) {
-      // user is partner
+  async getUsers(requestingUser: Pick<UserFull, 'role' | 'partnerId'>) {
+    const orderBy = [{ firstName: 'asc' as const }, { lastName: 'asc' as const }];
 
-      const programsAndUsers = await this.prisma.program.findMany({
-        where: { partnerId },
-        include: { UsersOnPrograms: { select: { userId: true } } },
-      });
-
-      const userIds = programsAndUsers.map((program) => program.UsersOnPrograms.map((user) => user.userId)).flat();
-
-      const users = await this.prisma.user.findMany({
-        where: { id: { in: userIds } },
-      });
-      return users.map((obj) => mapUser(obj));
-    } else {
-      // user is admin
-      const users = await this.prisma.user.findMany({
-        orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
-      });
-
+    if (requestingUser.role === 'Administrator') {
+      const users = await this.prisma.user.findMany({ orderBy });
       return users.map((obj) => mapUser(obj));
     }
+
+    if (requestingUser.role !== 'Partner_Staff' || !requestingUser.partnerId) {
+      return [];
+    }
+
+    const users = await this.prisma.user.findMany({
+      where: {
+        OR: [
+          { role: 'Partner_Staff', partnerId: requestingUser.partnerId },
+          {
+            role: null,
+            UsersOnPrograms: { some: { program: { partnerId: requestingUser.partnerId } } },
+          },
+        ],
+      },
+      orderBy,
+    });
+    return users.map((obj) => mapUser(obj));
   }
 
   async findOne(id: string) {

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtGuard } from '@mas/backend-shared';
+import { ManagedSessionGuard } from '@mas/backend-shared';
 import { DiscussionBoardService } from './discussion-board.service';
 import { DiscussionService } from './discussion.service';
 import { CreateDiscussionBoardDto } from './dto/create-discussion-board.dto';
@@ -11,7 +11,7 @@ import { CreateDiscussionCommentDto } from './dto/create-discussion-comment.dto'
 
 @ApiTags('Discussion Boards')
 @ApiBearerAuth()
-@UseGuards(JwtGuard)
+@UseGuards(ManagedSessionGuard)
 @Controller('discussion-boards')
 export class DiscussionBoardController {
   constructor(
