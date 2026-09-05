@@ -199,7 +199,10 @@ export const AuthStore = signalStore(
                 `${BASE_URL}/request-password-reset`,
                 {
                   ...requestData,
-                  redirectTo: '/reset-password',
+                  // Better Auth resolves relative callback URLs against the API
+                  // origin. Use the browser origin so the token is returned to
+                  // the Angular reset-password route (localhost:4200 locally).
+                  redirectTo: `${document.location.origin}/reset-password`,
                 },
                 { withCredentials: true },
               )

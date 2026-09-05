@@ -77,6 +77,22 @@ describe('AuthStore managed sessions', () => {
     expect(store.realUser()).toBeNull();
   });
 
+  it('requests password reset with a callback on the frontend origin', () => {
+    const store = TestBed.inject(AuthStore);
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/auth/get-session').flush(null);
+
+    store.forgotPassword({ email: user.email });
+
+    const request = http.expectOne('/api/auth/request-password-reset');
+    expect(request.request.body).toEqual({
+      email: user.email,
+      redirectTo: `${document.location.origin}/reset-password`,
+    });
+    expect(request.request.withCredentials).toBe(true);
+    request.flush({ message: 'If the email exists, check your email.' });
+  });
+
   it('starts impersonation with a target ID and retains the originating profile locally', () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
