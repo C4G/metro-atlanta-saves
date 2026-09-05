@@ -17,6 +17,7 @@ describe('Better Auth bootstrap', () => {
   beforeAll(async () => {
     process.env['BETTER_AUTH_SECRET'] = 'test-secret-that-is-long-enough-for-better-auth';
     process.env['BETTER_AUTH_URL'] = 'http://localhost:3000';
+    process.env['JWT_SECRET'] = 'legacy-test-secret';
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
