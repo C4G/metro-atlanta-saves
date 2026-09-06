@@ -8,6 +8,18 @@ export const adminRoutes: Route[] = [
     path: '',
     children: [
       {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () => import('./admin-settings/admin-settings.component'),
+        resolve: [seoResolver],
+        data: {
+          seo: {
+            title: `Admin Settings ${TITLE_SUFFIX}`,
+            description: 'Manage all administrative sections of the platform.',
+          },
+        },
+      },
+      {
         path: 'users',
         loadComponent: () => import('./users/users.component'),
         resolve: [seoResolver],

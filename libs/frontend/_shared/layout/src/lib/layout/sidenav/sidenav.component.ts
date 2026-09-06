@@ -14,44 +14,19 @@ import { AuthStore } from '@mas/frontend-shared-auth';
   },
   imports: [RouterLink, RouterLinkActive, MatIcon, MatIconButton, MatExpansionModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [
-    `
-      :host ::ng-deep .mat-expansion-panel-header {
-        background-color: #455a64 !important;
-      }
-      :host ::ng-deep .mat-expansion-panel-header:hover {
-        background-color: #546e7a !important;
-      }
-      :host ::ng-deep .mat-panel-title {
-        color: white !important;
-      }
-      :host ::ng-deep .mat-expansion-indicator::after {
-        border-color: white !important;
-      }
-    `,
-  ],
   template: `
     <nav aria-label="Primary" class="flex flex-col gap-4">
       @if (authStore.user()?.role === 'Administrator') {
-        <mat-accordion>
-          <mat-expansion-panel [expanded]="true">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Admin</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="flex flex-col">
-              @for (item of adminItems(); track item.name) {
-                <a
-                  class="nav-item p-2 pl-6"
-                  routerLinkActive="active"
-                  [routerLink]="item.routerLink"
-                  [routerLinkActiveOptions]="{ exact: true }"
-                >
-                  {{ item.name }}
-                </a>
-              }
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
+        <div class="flex flex-col">
+          <a
+            class="nav-item p-2"
+            routerLinkActive="active"
+            [routerLink]="'/admin'"
+            [routerLinkActiveOptions]="{ exact: false }"
+          >
+            Admin Settings
+          </a>
+        </div>
       }
       @if (authStore.isStaff()) {
         <mat-accordion>
@@ -143,19 +118,6 @@ export class SidenavComponent {
     { name: 'User Guide', routerLink: '/user-guide' },
     { name: 'Discussion Boards', routerLink: '/discussion-boards' },
     { name: 'Peer Evaluation Guide', routerLink: '/peer-evaluation-guide' },
-  ]);
-
-  adminItems = signal<Nav[]>([
-    { name: 'Users', routerLink: '/admin/users' },
-    { name: 'Partners', routerLink: '/admin/partners' },
-    { name: 'Blogs', routerLink: '/admin/blogs' },
-    { name: 'Education Management', routerLink: '/admin/education-management' },
-    { name: 'Home Management', routerLink: '/admin/home-management' },
-    { name: 'About Us Management', routerLink: '/admin/about-us-management' },
-    { name: 'User Guide', routerLink: '/admin/user-guide' },
-    { name: 'Checkpoint Names', routerLink: '/admin/checkpoint-names' },
-    { name: 'Email Campaign', routerLink: '/admin/email-blast' },
-    { name: 'Peer Evaluation Guide', routerLink: '/admin/peer-evaluation-guide' },
   ]);
 
   partnerStaffItems = signal<Nav[]>([{ name: 'Programs', routerLink: 'partner-staff/programs' }]);

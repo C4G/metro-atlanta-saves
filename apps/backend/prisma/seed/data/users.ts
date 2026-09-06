@@ -44,4 +44,20 @@ export const seedUsers = async (prisma: PrismaClient) => {
     ],
   });
   console.log('Users added: ', { data });
+
+  // Create Better Auth Account records so credentials work via /api/auth/sign-in/email.
+  // Better Auth stores passwords in the `accounts` table, not the `users` table.
+  const users = await prisma.user.findMany({ select: { id: true, email: true } });
+  for (const user of users) {
+    await prisma.account.create({
+      data: {
+        userId: user.id,
+        accountId: user.id,
+        providerId: 'credential',
+        issuer: 'credential',
+        password: hashedPassword,
+      },
+    });
+  }
+  console.log('Better Auth accounts created for seeded users.');
 };
