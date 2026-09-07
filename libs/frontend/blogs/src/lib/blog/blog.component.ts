@@ -59,7 +59,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         </div>
         <mat-divider />
         @if (blogsStore.blog()?.body; as body) {
-          <div class="mt-8 wysiwyg" [innerHTML]="sanitizer.bypassSecurityTrustHtml(body)"></div>
+          <div class="mt-8 rich-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(body)"></div>
         }
       </div>
     </div>

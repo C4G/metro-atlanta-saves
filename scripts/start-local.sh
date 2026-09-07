@@ -41,4 +41,5 @@ echo "Loading seed data..."
 pnpm exec nx run backend:prisma-seed
 
 echo "Starting the frontend and backend development servers..."
+node apps/frontend/generate-proxy.js
 exec pnpm exec nx serve frontend

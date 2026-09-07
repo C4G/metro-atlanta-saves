@@ -15,7 +15,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { lastValueFrom } from 'rxjs';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { FooterComponent, PushNotificationService } from '@mas/frontend-shared-layout';
-import { RichTextEditorComponent } from './rich-text-editor.component';
+import { RichTextEditorComponent } from '@mas/frontend-shared-components';
 
 type DiscussionUser = {
   id: string;
@@ -87,77 +87,6 @@ type ManagementTab = 'general' | 'members' | 'tags';
   standalone: true,
   imports: [CommonModule, NgClass, NgTemplateOutlet, RouterLink, FooterComponent, RichTextEditorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [
-    `
-      ::ng-deep .rich-content :is(h1, h2, h3, h4, h5, h6) {
-        font-weight: 700;
-        line-height: 1.3;
-      }
-      ::ng-deep .rich-content h1 {
-        font-size: 1.5rem;
-        margin: 0.75rem 0 0.4rem;
-      }
-      ::ng-deep .rich-content h2 {
-        font-size: 1.25rem;
-        margin: 0.75rem 0 0.4rem;
-      }
-      ::ng-deep .rich-content h3 {
-        font-size: 1.1rem;
-        margin: 0.6rem 0 0.35rem;
-      }
-      ::ng-deep .rich-content p {
-        margin: 0.35rem 0;
-        min-height: 1em;
-      }
-      ::ng-deep .rich-content p:empty {
-        min-height: 1.65em;
-      }
-      ::ng-deep .rich-content p:first-child {
-        margin-top: 0;
-      }
-      ::ng-deep .rich-content p:last-child {
-        margin-bottom: 0;
-      }
-      ::ng-deep .rich-content ul {
-        list-style-type: disc;
-        padding-left: 1.5rem;
-        margin: 0.35rem 0;
-      }
-      ::ng-deep .rich-content ol {
-        list-style-type: decimal;
-        padding-left: 1.5rem;
-        margin: 0.35rem 0;
-      }
-      ::ng-deep .rich-content li {
-        margin: 0.15rem 0;
-      }
-      ::ng-deep .rich-content a {
-        color: #2563eb;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-      }
-      ::ng-deep .rich-content a:hover {
-        color: #1d4ed8;
-      }
-      ::ng-deep .rich-content strong {
-        font-weight: 600;
-      }
-      ::ng-deep .rich-content em {
-        font-style: italic;
-      }
-      ::ng-deep .rich-content u {
-        text-decoration: underline;
-        text-underline-offset: 2px;
-      }
-      ::ng-deep .rich-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        display: block;
-        margin: 0.5rem 0;
-      }
-    `,
-  ],
   template: `
     @if (loading()) {
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
@@ -667,8 +596,9 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     [class.ring-red-400]="showPostErrors() && isBodyEmpty(newPostBody())"
                   >
                     <mas-rich-text-editor
-                      [value]="newPostBody()"
-                      (valueChange)="newPostBody.set($event); showPostErrors.set(false)"
+                      [(value)]="newPostBody"
+                      (valueChange)="showPostErrors.set(false)"
+                      [uploadEndpoint]="discussionImageUploadEndpoint()"
                       placeholder="Share your thoughts in detail..."
                       [disabled]="creatingPost() || !isLoggedIn()"
                       minHeight="160px"
@@ -767,7 +697,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                           <div>
                             <p class="text-[9px] font-bold uppercase tracking-widest text-blue-400 mb-1">Message</p>
                             <div
-                              class="rounded-md bg-white border border-blue-200 px-3 py-2.5 min-h-[100px] text-sm text-gray-700 overflow-auto prose prose-sm max-w-none"
+                              class="rich-content rounded-md bg-white border border-blue-200 px-3 py-2.5 min-h-[100px] text-sm text-gray-700 overflow-auto prose prose-sm max-w-none"
                               [innerHTML]="emailPreviewBody"
                             ></div>
                           </div>
@@ -1074,8 +1004,8 @@ type ManagementTab = 'general' | 'members' | 'tags';
                 @if (editingPostId() === post.id) {
                   <div class="px-5 py-4 border-b border-gray-200 space-y-4">
                     <mas-rich-text-editor
-                      [value]="editPostBody()"
-                      (valueChange)="editPostBody.set($event)"
+                      [(value)]="editPostBody"
+                      [uploadEndpoint]="discussionImageUploadEndpoint()"
                       placeholder="Post body..."
                       minHeight="120px"
                     />
@@ -1143,8 +1073,8 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     @if (isLoggedIn()) {
                       <div class="rounded-lg border border-gray-200 bg-white overflow-hidden">
                         <mas-rich-text-editor
-                          [value]="newCommentBody()"
-                          (valueChange)="newCommentBody.set($event)"
+                          [(value)]="newCommentBody"
+                          [uploadEndpoint]="discussionImageUploadEndpoint()"
                           placeholder="Add a comment..."
                           [disabled]="creatingComment()"
                           minHeight="96px"
@@ -1267,8 +1197,8 @@ type ManagementTab = 'general' | 'members' | 'tags';
                             @if (editingCommentId() === comment.id) {
                               <div class="mt-2 rounded-lg border border-gray-200 bg-white overflow-hidden">
                                 <mas-rich-text-editor
-                                  [value]="editCommentBody()"
-                                  (valueChange)="editCommentBody.set($event)"
+                                  [(value)]="editCommentBody"
+                                  [uploadEndpoint]="discussionImageUploadEndpoint()"
                                   [noBorder]="true"
                                   minHeight="72px"
                                 />
@@ -1463,8 +1393,8 @@ type ManagementTab = 'general' | 'members' | 'tags';
                             @if (replyingToCommentId() === comment.id) {
                               <div class="mt-2 mb-2 max-w-xl space-y-2">
                                 <mas-rich-text-editor
-                                  [value]="newReplyBody()"
-                                  (valueChange)="newReplyBody.set($event)"
+                                  [(value)]="newReplyBody"
+                                  [uploadEndpoint]="discussionImageUploadEndpoint()"
                                   placeholder="Write a reply..."
                                   [disabled]="creatingReply()"
                                   minHeight="72px"
@@ -2150,6 +2080,12 @@ export class DiscussionBoardForumComponent implements OnInit {
   private pushNotifications = inject(PushNotificationService);
 
   boardId = signal<string | null>(null);
+  discussionImageUploadEndpoint = computed(() => {
+    const boardId = this.boardId();
+    return boardId
+      ? `/api/discussion-posts/upload-image?boardId=${encodeURIComponent(boardId)}`
+      : '/api/discussion-posts/upload-image';
+  });
   board = signal<BoardInfo | null>(null);
   posts = signal<DiscussionPost[]>([]);
   availableTags = signal<DiscussionTag[]>([]);

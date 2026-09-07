@@ -8,9 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatError, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { CheckpointNamesStore, PartnersStore, ProgramsStore, ThemeService } from '@mas/frontend-shared-data-access';
+import { CheckpointNamesStore, PartnersStore, ProgramsStore } from '@mas/frontend-shared-data-access';
+import { RichTextEditorComponent } from '@mas/frontend-shared-components';
 import { ExtendedProgram } from '@mas/models';
-import { EditorComponent, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 function dateRangeValidator(control: AbstractControl) {
   const startDate = control.get('startDate')?.value;
@@ -35,11 +35,10 @@ function dateRangeValidator(control: AbstractControl) {
     MatOption,
     MatDatepickerModule,
     MatHint,
-    EditorComponent,
+    RichTextEditorComponent,
     MatSelect,
     MatOption,
   ],
-  providers: [{ provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2 mat-dialog-title>{{ data ? 'Edit' : 'Add' }} Program</h2>
@@ -110,21 +109,7 @@ function dateRangeValidator(control: AbstractControl) {
           </mat-form-field>
           <div class="sm:col-span-2">
             <mat-label>Description</mat-label>
-            <editor
-              apiKey="goqs3emxc9qfnlk1vk4gq4a1ciccd4vlpl7e02cruoew0y9v"
-              formControlName="description"
-              [init]="{
-                license_key: 'gpl',
-                base_url: '/tinymce',
-                suffix: '.min',
-                plugins: 'lists link table code help wordcount',
-                toolbar:
-                  'undo redo | blocks | bold italic | numlist bullist | alignleft aligncenter alignright alignjustify | outdent indent',
-                promotion: false,
-                skin: themeService.darkMode() ? 'oxide-dark' : undefined,
-                content_css: themeService.darkMode() ? 'dark' : undefined,
-              }"
-            />
+            <mas-rich-text-editor formControlName="description" minHeight="220px" />
             @if (
               (programForm.get('description')?.touched || form.submitted) &&
               programForm.get('description')?.errors?.['required']
@@ -148,7 +133,6 @@ export class AddProgramComponent {
   private fb = inject(NonNullableFormBuilder);
   private programsStore = inject(ProgramsStore);
   private authStore = inject(AuthStore);
-  themeService = inject(ThemeService);
   partnersStore = inject(PartnersStore);
   partnerId = this.authStore.user()?.partnerId;
   data = inject<ExtendedProgram | null>(MAT_DIALOG_DATA);

@@ -3,13 +3,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ThemeService } from '@mas/frontend-shared-data-access';
-import { EditorComponent } from '@tinymce/tinymce-angular';
+import { RichTextEditorComponent } from '@mas/frontend-shared-components';
 import { EmailBlastStore } from './email-blast.store';
 
 @Component({
   selector: 'mas-email-blast',
-  imports: [EditorComponent, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatButtonModule],
+  imports: [RichTextEditorComponent, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EmailBlastStore],
   template: `
@@ -37,21 +36,7 @@ import { EmailBlastStore } from './email-blast.store';
         </div>
         <div>
           <mat-label>Body</mat-label>
-          <editor
-            apiKey="goqs3emxc9qfnlk1vk4gq4a1ciccd4vlpl7e02cruoew0y9v"
-            formControlName="body"
-            [init]="{
-              license_key: 'gpl',
-              base_url: '/tinymce',
-              suffix: '.min',
-              plugins: 'lists link table code help wordcount',
-              toolbar:
-                'undo redo | blocks | bold italic | numlist bullist | alignleft aligncenter alignright alignjustify | outdent indent',
-              promotion: false,
-              skin: themeService.darkMode() ? 'oxide-dark' : undefined,
-              content_css: themeService.darkMode() ? 'dark' : undefined,
-            }"
-          />
+          <mas-rich-text-editor formControlName="body" minHeight="220px" />
           @if ((emailForm.get('body')?.touched || form.submitted) && emailForm.get('body')?.errors?.['required']) {
             <mat-error>Body is required.</mat-error>
           }
@@ -74,7 +59,6 @@ import { EmailBlastStore } from './email-blast.store';
 })
 export default class EmailBlastComponent {
   private fb = inject(FormBuilder);
-  themeService = inject(ThemeService);
   emailBlastStore = inject(EmailBlastStore);
 
   readonly discussionBaseUrl = 'https://brpatl.com/discussion';

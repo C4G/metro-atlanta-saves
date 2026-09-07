@@ -50,7 +50,7 @@ import { FooterComponent, HeroComponent } from '@mas/frontend-shared-layout';
         />
         @if (descriptionStore.description(); as description) {
           <h2 class="text-lg font-semibold mt-4 text-center">{{ description.title }}</h2>
-          <div class="wysiwyg" [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"></div>
+          <div class="rich-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"></div>
           <div class="text-center mt-12">
             @if (description.buttonLink && description.buttonText) {
               <a mat-raised-button color="primary" [href]="description.buttonLink" class="mr-auto">
@@ -68,7 +68,7 @@ import { FooterComponent, HeroComponent } from '@mas/frontend-shared-layout';
           @for (learning of visibleLearnings(); track learning.id) {
             <mat-card class="shadow-md rounded-lg overflow-hidden p-4">
               <h3 class="text-2xl font-semibold mb-4 text-center lg:text-center">{{ learning.title }}</h3>
-              <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(learning.body)" class="wysiwyg"></div>
+              <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(learning.body)" class="rich-content"></div>
             </mat-card>
           }
         </div>
