@@ -9,7 +9,7 @@ import { ThemeService } from '@mas/frontend-shared-data-access';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <footer class="border-t border-slate-200 bg-white px-5 py-7 sm:px-8">
-      <div class="mx-auto flex max-w-7xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <div class="mx-auto flex max-w-7xl flex-col gap-5 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-6">
         <div class="flex items-center justify-center gap-3 sm:justify-start">
           <span class="brand-logo-frame flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50">
             <img
@@ -25,15 +25,28 @@ import { ThemeService } from '@mas/frontend-shared-data-access';
             <p class="mt-0.5 text-[11px] text-slate-500">Financial wellbeing for stronger communities</p>
           </div>
         </div>
-        <div class="flex flex-col items-center gap-1 text-center">
-          <a
-            class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-teal-700 transition-colors hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-600"
-            routerLink="/team"
-          >
-            <mat-icon class="!h-4 !w-4 !text-base !leading-4">groups</mat-icon>
-            C4G Team
-          </a>
-          <p class="text-xs text-slate-500">© {{ currentYear() }} Building Resilient Professionals</p>
+        <p class="order-3 text-center text-xs text-slate-500 sm:order-none sm:justify-self-center">
+          © {{ currentYear() }} Building Resilient Professionals
+        </p>
+        <div
+          class="order-2 flex flex-col items-center gap-2 text-center sm:order-none sm:justify-self-end sm:items-end sm:text-right"
+        >
+          <div class="flex items-center justify-center gap-1 sm:justify-end">
+            <a
+              class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-teal-700 transition-colors hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-600"
+              routerLink="/about-us"
+            >
+              <mat-icon class="!h-4 !w-4 !text-base !leading-4">info</mat-icon>
+              About us
+            </a>
+            <a
+              class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-teal-700 transition-colors hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-600"
+              routerLink="/team"
+            >
+              <mat-icon class="!h-4 !w-4 !text-base !leading-4">groups</mat-icon>
+              C4G Team
+            </a>
+          </div>
         </div>
       </div>
     </footer>

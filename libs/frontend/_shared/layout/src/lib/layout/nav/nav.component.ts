@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output, PLATFORM_ID, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -19,15 +19,6 @@ import { PushNotificationService } from '../../services/push-notification.servic
       aria-label="Application navigation"
     >
       <div class="mx-auto flex h-full max-w-[100rem] items-center gap-3 px-3 sm:gap-4 sm:px-5">
-        <button
-          type="button"
-          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"
-          aria-label="Open navigation menu"
-          (click)="openNav.emit()"
-          data-testid="navigation-menu"
-        >
-          <mat-icon>menu</mat-icon>
-        </button>
         <a
           [routerLink]="authStore.user() ? '/dashboard' : '/'"
           class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
@@ -50,12 +41,21 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </span>
         </a>
         <div class="ml-auto flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 lg:hidden"
+            aria-label="Open navigation menu"
+            [matMenuTriggerFor]="mobileNavMenu"
+            data-testid="navigation-menu"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
           @if (authStore.user()) {
             <a
               routerLink="/dashboard"
               routerLinkActive="nav-page-link--active"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 md:inline-flex"
+              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 lg:inline-flex"
             >
               <mat-icon class="!h-4 !w-4 !text-base !leading-4">space_dashboard</mat-icon>
               Dashboard
@@ -83,7 +83,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           }
           <button
             type="button"
-            class="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 sm:flex"
+            class="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 lg:flex"
             aria-label="Toggle dark mode"
             (click)="themeService.toggleDarkMode()"
           >
@@ -125,6 +125,30 @@ import { PushNotificationService } from '../../services/push-notification.servic
         </div>
       </div>
     </nav>
+    <mat-menu #mobileNavMenu="matMenu" class="brand-account-menu brand-mobile-nav-menu">
+      @if (authStore.user()) {
+        <a mat-menu-item routerLink="/dashboard">
+          <mat-icon>space_dashboard</mat-icon>
+          <span>Dashboard</span>
+        </a>
+      }
+      @if (authStore.isStaff()) {
+        <a mat-menu-item routerLink="/partner-staff/programs">
+          <mat-icon>folder_managed</mat-icon>
+          <span>Programs</span>
+        </a>
+      }
+      @if (authStore.isAdmin()) {
+        <a mat-menu-item routerLink="/admin">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>Admin settings</span>
+        </a>
+      }
+      <button mat-menu-item (click)="themeService.toggleDarkMode()">
+        <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span>{{ themeService.darkMode() ? 'Light mode' : 'Dark mode' }}</span>
+      </button>
+    </mat-menu>
     <mat-menu #userMenu="matMenu" class="brand-account-menu">
       <div class="account-menu__header">
         <span class="account-menu__avatar">{{ authStore.initials() }}</span>
@@ -400,8 +424,6 @@ export class NavComponent {
   themeService = inject(ThemeService);
   private push = inject(PushNotificationService);
   private platformId = inject(PLATFORM_ID);
-  @Output() openNav = new EventEmitter<void>();
-
   notificationsEnabled = signal(false);
   notificationsSupported = isPlatformBrowser(this.platformId);
   notificationModal = signal<null | 'not-supported' | 'already-enabled'>(null);

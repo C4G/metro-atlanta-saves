@@ -133,6 +133,107 @@ const PROGRAM_URL_REGEX = /\/partner-staff\/programs\/[\da-f]{8}-[\da-f]{4}-[\da
         border: 1px solid #e2e8f0;
         border-radius: 1rem;
       }
+      :host ::ng-deep .program-content .program-record-list {
+        display: grid;
+        gap: 0.625rem;
+        margin-top: 1.5rem;
+      }
+      :host ::ng-deep .program-content .program-record {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        min-height: 5.5rem;
+        padding: 0.875rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        background: #ffffff;
+      }
+      :host ::ng-deep .program-content .program-record-index,
+      :host ::ng-deep .program-content .program-person-avatar {
+        display: flex;
+        width: 2.5rem;
+        height: 2.5rem;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+        background: #ccfbf1;
+        color: #115e59;
+        font-size: 0.8125rem;
+        font-weight: 800;
+      }
+      :host ::ng-deep .program-content .program-record-title {
+        color: #0f172a;
+        font-size: 0.875rem;
+        font-weight: 700;
+      }
+      :host ::ng-deep .program-content .program-record-meta {
+        margin-top: 0.25rem;
+        color: #64748b;
+        font-size: 0.75rem;
+      }
+      :host ::ng-deep .program-content .program-record-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-top: 0.375rem;
+        color: #0f766e;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      :host ::ng-deep .program-content .program-record-link .mat-icon {
+        width: 1rem;
+        height: 1rem;
+        font-size: 1rem;
+      }
+      :host ::ng-deep .program-content .program-record-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.125rem;
+        margin-left: auto;
+      }
+      :host ::ng-deep .program-content .program-record-detail {
+        display: grid;
+        gap: 0.2rem;
+        min-width: 5.5rem;
+        color: #64748b;
+        font-size: 0.6875rem;
+        text-align: right;
+      }
+      :host ::ng-deep .program-content .program-record-detail strong {
+        color: #334155;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      :host ::ng-deep .program-content .program-record-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        margin-top: 0.5rem;
+      }
+      :host ::ng-deep .program-content .program-record-tags span {
+        border-radius: 999px;
+        background: #f0fdfa;
+        color: #115e59;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+      }
+      :host ::ng-deep .program-content .program-record-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.625rem;
+        padding: 2.75rem 1.5rem;
+        border: 1px dashed #cbd5e1;
+        border-radius: 1rem;
+        color: #64748b;
+        font-size: 0.8125rem;
+        text-align: center;
+      }
+      :host ::ng-deep .program-content .program-record-empty .mat-icon {
+        color: #0f766e;
+      }
       :host ::ng-deep .program-content .program-list-secondary.mat-mdc-raised-button {
         background: #f0fdfa !important;
         color: #115e59 !important;
@@ -192,6 +293,31 @@ const PROGRAM_URL_REGEX = /\/partner-staff\/programs\/[\da-f]{8}-[\da-f]{4}-[\da
       :host(.program-workspace--dark) ::ng-deep .program-content .program-list-grid {
         border-color: rgba(148, 163, 184, 0.16);
       }
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record {
+        border-color: rgba(148, 163, 184, 0.16);
+        background: #111a2c;
+      }
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-index,
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-person-avatar {
+        background: rgba(45, 212, 191, 0.14);
+        color: #99f6e4;
+      }
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-title,
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-detail strong {
+        color: #f1f5f9;
+      }
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-meta,
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-detail,
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-empty {
+        color: #94a3b8;
+      }
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-tags span {
+        background: rgba(45, 212, 191, 0.12);
+        color: #99f6e4;
+      }
+      :host(.program-workspace--dark) ::ng-deep .program-content .program-record-empty {
+        border-color: rgba(148, 163, 184, 0.25);
+      }
       :host(.program-workspace--dark) ::ng-deep .program-content .program-list-secondary.mat-mdc-raised-button {
         background: rgba(45, 212, 191, 0.12) !important;
         color: #99f6e4 !important;
@@ -224,7 +350,7 @@ export default class ProgramComponent {
 
     const nav = [
       { routerLink: './', name: 'Requirements' },
-      { routerLink: './users', name: 'Users' },
+      { routerLink: './users', name: 'Participants' },
       { routerLink: './allies', name: 'Allies' },
       ...(enrollments ? [enrollments] : []),
       { routerLink: './document-management', name: 'Document Management' },

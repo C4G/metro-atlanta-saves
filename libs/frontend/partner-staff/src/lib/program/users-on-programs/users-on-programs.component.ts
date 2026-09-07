@@ -1,194 +1,119 @@
 import { formatCurrency } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, input, untracked } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { AgGridComponent } from '@mas/frontend-shared-components';
+import { MatMenuModule } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
+import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { UsersOnProgramsStore } from '@mas/frontend-shared-data-access';
-import { dateStringToNoTimezone, showOnlyDate } from '@mas/frontend-shared-util';
-import { type ColDef } from 'ag-grid-community';
+import { UsersOnProgramsWithName } from '@mas/models';
 import { AddUsersOnProgramsComponent } from './ui/add-users-on-programs/add-users-on-programs.component';
-import { RequirementBadgeComponent } from './ui/requirement-badge/requirement-badge.component';
-import { UsersOnProgramsActionsComponent } from './ui/users-on-programs-actions/users-on-programs-actions.component';
 
 @Component({
   selector: 'mas-users-on-programs',
-  imports: [AgGridComponent, MatButton, MatIcon, MatDialogModule],
+  imports: [MatButtonModule, MatIcon, MatDialogModule, MatMenuModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="program-list-panel">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p class="program-list-kicker">Participant management</p>
-          <h2 class="program-list-title">Users</h2>
-          <p class="program-list-description">Manage enrolled participants, progress, and program details.</p>
+          <h2 class="program-list-title">Participants</h2>
+          <p class="program-list-description">
+            See each person’s progress at a glance, then open their details when you need them.
+          </p>
         </div>
         <div class="flex flex-wrap gap-2">
-          <button
-            matPrefix
-            mat-raised-button
-            class="program-list-secondary"
-            aria-label="Export users"
-            (click)="usersOnProgramsStore.downloadExcel()"
-          >
+          <button mat-raised-button class="program-list-secondary" (click)="usersOnProgramsStore.downloadExcel()">
             <mat-icon>download</mat-icon>
             Export
           </button>
-          <button matPrefix mat-raised-button aria-label="Add user" (click)="openModal()">
-            <mat-icon>add</mat-icon>
-            Add user
+          <button mat-raised-button (click)="openModal()">
+            <mat-icon>person_add</mat-icon>
+            Add participant
           </button>
         </div>
       </div>
-      <div class="program-list-grid">
-        <mas-ag-grid class="h-[calc(100dvh-25rem)]" [rowData]="usersOnProgramsStore.users()" [columnDefs]="colDefs" />
+      <div class="program-record-list program-people-list" aria-label="Program participants">
+        @for (participant of usersOnProgramsStore.users(); track participant.userId) {
+          <article class="program-record program-participant-record">
+            <span class="program-person-avatar">{{ initials(participant.firstName, participant.lastName) }}</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="program-record-title">{{ participant.firstName }} {{ participant.lastName }}</h3>
+              <p class="program-record-meta">{{ participant.email }}</p>
+              <div class="program-record-tags">
+                <span>{{ completedRequirements(participant) }} requirements complete</span>
+                <span>{{ savings(participant.totalAmountSaved) }} saved</span>
+              </div>
+            </div>
+            <button mat-icon-button aria-label="Participant actions" [matMenuTriggerFor]="participantActions">
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #participantActions="matMenu" class="brand-account-menu">
+              <a mat-menu-item class="account-menu__item" [routerLink]="['./', participant.userId]">
+                <mat-icon>checklist</mat-icon>
+                <span>View progress</span>
+              </a>
+              <button mat-menu-item class="account-menu__item" (click)="openEdit(participant)">
+                <mat-icon>edit</mat-icon>
+                <span>Edit participant</span>
+              </button>
+              <button
+                mat-menu-item
+                class="account-menu__item account-menu__logout"
+                (click)="confirmDelete(participant)"
+              >
+                <mat-icon>delete_outline</mat-icon>
+                <span>Remove participant</span>
+              </button>
+            </mat-menu>
+          </article>
+        } @empty {
+          <div class="program-record-empty">
+            <mat-icon>group</mat-icon>
+            <p>No participants yet. Add someone to begin tracking their program progress.</p>
+          </div>
+        }
       </div>
     </section>
   `,
-  host: {
-    class: 'block',
-  },
+  host: { class: 'block' },
 })
 export default class UsersOnProgramsComponent {
   id = input.required<string>();
   private dialog = inject(MatDialog);
   usersOnProgramsStore = inject(UsersOnProgramsStore);
-
-  colDefs: ColDef[] = [
-    {
-      field: 'email',
-      filter: true,
-    },
-    {
-      field: 'firstName',
-      filter: true,
-    },
-    {
-      field: 'lastName',
-      filter: true,
-    },
-    {
-      field: 'lastLogin',
-      filter: true,
-      valueFormatter: (params) => (params.value ? new Date(params.value).toLocaleString() : ''),
-    },
-    {
-      field: 'totalAmountSaved',
-      filter: true,
-      valueFormatter: (params) => formatCurrency(params.value ?? 0, 'en-us', '$', '1.2'),
-    },
-    {
-      field: 'requirementStatus',
-      width: 390,
-      filter: true,
-      cellRenderer: RequirementBadgeComponent,
-      filterValueGetter: (params) => params.data.checkpoints?.join(' ') ?? '',
-    },
-    {
-      field: 'married',
-      filter: true,
-    },
-    {
-      field: 'educationStatus',
-      filter: true,
-    },
-    {
-      field: 'militaryStatus',
-      filter: true,
-    },
-    {
-      field: 'placeOfEmployment',
-      filter: true,
-    },
-    {
-      field: 'jobTitle',
-      filter: true,
-    },
-    {
-      field: 'annualIncome',
-      filter: true,
-      valueFormatter: (params) => formatCurrency(params.value, 'en-us', '$', '1.2'),
-    },
-    {
-      field: 'address',
-      filter: true,
-    },
-    {
-      field: 'start',
-      filter: true,
-      valueFormatter: (params) => (params.value ? showOnlyDate(dateStringToNoTimezone(params.value)) : ''),
-    },
-    {
-      field: 'end',
-      filter: true,
-      valueFormatter: (params) => (params.value ? showOnlyDate(dateStringToNoTimezone(params.value)) : ''),
-    },
-    {
-      field: 'birthdate',
-      filter: true,
-      valueFormatter: (params) => (params.value ? showOnlyDate(dateStringToNoTimezone(params.value)) : ''),
-    },
-    {
-      field: 'phone',
-      filter: true,
-    },
-    {
-      field: 'gender',
-      filter: true,
-    },
-    {
-      field: 'race',
-      filter: true,
-    },
-    {
-      field: 'creditScoreIncentive',
-      filter: true,
-    },
-    {
-      field: 'totalAmountPaidOut',
-      filter: true,
-      valueFormatter: (params) => formatCurrency(params.value, 'en-us', '$', '1.2'),
-    },
-    {
-      field: 'paidDate',
-      filter: true,
-      valueFormatter: (params) => (params.value ? showOnlyDate(dateStringToNoTimezone(params.value)) : ''),
-    },
-    {
-      field: 'graduated',
-      filter: true,
-    },
-    {
-      field: 'inactive',
-      filter: true,
-    },
-    {
-      field: 'createdAt',
-      filter: true,
-      valueFormatter: (params) => new Date(params.value).toLocaleString(),
-    },
-    { field: 'updatedAt', filter: true, valueFormatter: (params) => new Date(params.value).toLocaleString() },
-    {
-      field: 'actions',
-      resizable: false,
-      filter: false,
-      sortable: false,
-      pinned: 'right',
-      width: 100,
-      cellRenderer: UsersOnProgramsActionsComponent,
-    },
-  ];
-
   userOnProgramsEffect = effect(() => {
     const id = this.id();
-
     untracked(() => {
       this.usersOnProgramsStore.setProgramId(id);
       this.usersOnProgramsStore.getUsers();
     });
   });
-
+  initials(firstName: string, lastName: string) {
+    return `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase();
+  }
+  completedRequirements(participant: UsersOnProgramsWithName) {
+    return participant.requirementStatus?.length ?? 0;
+  }
+  savings(value?: number) {
+    return formatCurrency(value ?? 0, 'en-US', '$', '1.0-0');
+  }
   openModal() {
     this.dialog.open(AddUsersOnProgramsComponent, { panelClass: 'w-full' });
+  }
+  openEdit(participant: UsersOnProgramsWithName) {
+    this.dialog.open(AddUsersOnProgramsComponent, { data: participant, panelClass: 'w-full' });
+  }
+  confirmDelete(participant: UsersOnProgramsWithName) {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Remove participant',
+        content: `Remove ${participant.firstName} ${participant.lastName} from this program?`,
+        color: 'warn',
+        onYesClick: () => this.usersOnProgramsStore.deleteUser(participant.userId),
+      },
+    });
   }
 }

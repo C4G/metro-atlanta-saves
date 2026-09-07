@@ -1,16 +1,15 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, untracked } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { AgGridComponent } from '@mas/frontend-shared-components';
-import { type ColDef } from 'ag-grid-community';
+import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
+import { type Requirement } from '@mas/prisma-client/browser';
 import { RequirementsStore } from './requirements.store';
 import { AddRequirementComponent } from './ui/add-requirement/add-requirement.component';
-import { RequirementActionsComponent } from './ui/requirement-actions/requirement-actions.component';
 
 @Component({
   selector: 'mas-requirements',
-  imports: [AgGridComponent, MatButton, MatIcon, MatDialogModule],
+  imports: [MatButtonModule, MatIcon, MatDialogModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="program-list-panel">
@@ -18,75 +17,73 @@ import { RequirementActionsComponent } from './ui/requirement-actions/requiremen
         <div>
           <p class="program-list-kicker">Program setup</p>
           <h2 class="program-list-title">Requirements</h2>
-          <p class="program-list-description">Define the steps participants need to complete.</p>
+          <p class="program-list-description">
+            A simple checklist of the steps participants complete during the program.
+          </p>
         </div>
-        <button matPrefix mat-raised-button aria-label="Add requirement" (click)="openModal()">
+        <button mat-raised-button aria-label="Add requirement" (click)="openModal()">
           <mat-icon>add</mat-icon>
           Add requirement
         </button>
       </div>
-      <div class="program-list-grid">
-        <mas-ag-grid
-          class="h-[calc(100dvh-25rem)]"
-          [rowData]="requirementsStore.requirements()"
-          [columnDefs]="colDefs"
-        />
+      <div class="program-record-list" aria-label="Program requirements">
+        @for (requirement of requirementsStore.requirements(); track requirement.id; let index = $index) {
+          <article class="program-record program-requirement-record">
+            <span class="program-record-index">{{ index + 1 }}</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="program-record-title">{{ requirement.name }}</h3>
+              @if (requirement.EducationalContent; as content) {
+                <a class="program-record-link" [href]="content.link" target="_blank" rel="noopener noreferrer">
+                  <mat-icon>menu_book</mat-icon>
+                  {{ content.title }}
+                </a>
+              } @else {
+                <p class="program-record-meta">No educational resource connected yet</p>
+              }
+            </div>
+            <div class="program-record-actions">
+              <button mat-button (click)="openEdit(requirement)">Edit</button>
+              <button mat-icon-button aria-label="Delete requirement" (click)="confirmDelete(requirement)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </article>
+        } @empty {
+          <div class="program-record-empty">
+            <mat-icon>checklist</mat-icon>
+            <p>No requirements yet. Add the first step participants need to complete.</p>
+          </div>
+        }
       </div>
     </section>
   `,
-  host: {
-    class: 'block',
-  },
+  host: { class: 'block' },
 })
 export default class RequirementsComponent {
   id = input.required<string>();
   private dialog = inject(MatDialog);
   requirementsStore = inject(RequirementsStore);
-
-  colDefs: ColDef[] = [
-    {
-      field: 'name',
-      filter: true,
-    },
-    {
-      headerName: 'Educational Content',
-      cellRenderer: (params: any) => {
-        const { EducationalContent } = params.data;
-
-        if (!EducationalContent) {
-          return null;
-        }
-
-        return `<a class="underline" href="${EducationalContent.link}" target="_blank">${EducationalContent.title}</a>`;
-      },
-    },
-    {
-      field: 'createdAt',
-      filter: true,
-      valueFormatter: (params) => new Date(params.value).toLocaleString(),
-    },
-    { field: 'updatedAt', filter: true, valueFormatter: (params) => new Date(params.value).toLocaleString() },
-    {
-      field: 'actions',
-      resizable: false,
-      filter: false,
-      sortable: false,
-      pinned: 'right',
-      width: 100,
-      cellRenderer: RequirementActionsComponent,
-    },
-  ];
-
   requirementsEffect = effect(() => {
     const id = this.id();
-
     untracked(() => {
       this.requirementsStore.setProgramId(id);
       this.requirementsStore.getRequirements();
     });
   });
-
   openModal() {
     this.dialog.open(AddRequirementComponent, { panelClass: 'w-full' });
+  }
+  openEdit(requirement: Requirement) {
+    this.dialog.open(AddRequirementComponent, { data: requirement, panelClass: 'w-full' });
+  }
+  confirmDelete(requirement: Requirement) {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete requirement',
+        content: `Are you sure you want to delete ${requirement.name}?`,
+        color: 'warn',
+        onYesClick: () => this.requirementsStore.deleteRequirement(requirement.id),
+      },
+    });
   }
 }

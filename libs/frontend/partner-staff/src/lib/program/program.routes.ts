@@ -36,8 +36,8 @@ export const programRoutes: Route[] = [
         resolve: [seoResolver],
         data: {
           seo: {
-            title: `Users ${TITLE_SUFFIX}`,
-            description: 'Manage the users associated with this program',
+            title: `Participants ${TITLE_SUFFIX}`,
+            description: 'Manage the participants associated with this program',
           },
         },
       },

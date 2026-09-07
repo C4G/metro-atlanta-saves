@@ -35,7 +35,7 @@ import { UsersForProgramsStore } from './users-for-programs.store';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h2 mat-dialog-title>{{ data ? 'Edit User' : 'Add User' }}</h2>
+    <h2 mat-dialog-title>{{ data ? 'Edit Participant' : 'Add Participant' }}</h2>
     <form #form="ngForm" [formGroup]="usersOnProgramsForm" (ngSubmit)="submitForm()">
       <mat-dialog-content>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 content-center">
@@ -43,15 +43,15 @@ import { UsersForProgramsStore } from './users-for-programs.store';
             <mas-searchable-dropdown
               formControlName="userId"
               [items]="this.usersForProgramStore.usersAsLabelValues()"
-              label="User"
-              createButtonText="Create New User"
+              label="Participant"
+              createButtonText="Create New Participant"
               (create)="createUser()"
             />
             @if (
               (usersOnProgramsForm.get('userId')?.touched || form.submitted) &&
               usersOnProgramsForm.get('userId')?.errors?.['required']
             ) {
-              <mat-error>User is required.</mat-error>
+              <mat-error>Participant is required.</mat-error>
             }
           </div>
           <mat-form-field>

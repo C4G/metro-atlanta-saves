@@ -10,12 +10,56 @@
 @include mat.elevation-classes();
 @include mat.app-background();
 
-// Define a dark theme
+$brand-teal-palette: (
+  50: #f0fdfa,
+  100: #ccfbf1,
+  200: #99f6e4,
+  300: #5eead4,
+  400: #2dd4bf,
+  500: #14b8a6,
+  600: #0d9488,
+  700: #0f766e,
+  800: #115e59,
+  900: #134e4a,
+  A100: #ccfbf1,
+  A200: #5eead4,
+  A400: #2dd4bf,
+  A700: #0f766e,
+  contrast: (
+    50: #102a2c,
+    100: #102a2c,
+    200: #102a2c,
+    300: #102a2c,
+    400: #102a2c,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #102a2c,
+    A200: #102a2c,
+    A400: #102a2c,
+    A700: #ffffff,
+  ),
+);
+
+:root {
+  --mas-canvas: #f6faf9;
+  --mas-surface: #ffffff;
+  --mas-ink: #102a2c;
+  --mas-muted: #52666a;
+  --mas-brand: #0f766e;
+  --mas-brand-hover: #115e59;
+  --mas-focus: #2dd4bf;
+  color-scheme: light;
+}
+
+// Material components inherit the same teal palette as the redesigned application.
 $dark-theme: mat.m2-define-dark-theme(
   (
     color: (
-      primary: mat.m2-define-palette(mat.$m2-yellow-palette),
-      accent: mat.m2-define-palette(mat.$m2-blue-grey-palette),
+      primary: mat.m2-define-palette($brand-teal-palette, 300, 100, 700),
+      accent: mat.m2-define-palette($brand-teal-palette, 400, 200, 700),
     ),
     typography: mat.m2-define-typography-config(),
     density: 0,
@@ -26,8 +70,8 @@ $dark-theme: mat.m2-define-dark-theme(
 $light-theme: mat.m2-define-light-theme(
   (
     color: (
-      primary: mat.m2-define-palette(mat.$m2-yellow-palette),
-      accent: mat.m2-define-palette(mat.$m2-blue-grey-palette),
+      primary: mat.m2-define-palette($brand-teal-palette, 700, 100, 900),
+      accent: mat.m2-define-palette($brand-teal-palette, 600, 200, 800),
     ),
   )
 );
@@ -40,9 +84,9 @@ body {
 }
 
 .mat-mdc-snack-bar-container.update-snackbar {
-  --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 700)};
-  --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 50)};
-  --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 100)};
+  --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 800)};
+  --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 50)};
+  --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 200)};
 
   .mat-mdc-snack-bar-label {
     font-weight: 500;
@@ -56,35 +100,38 @@ body {
 .dark-theme {
   @include mat.all-component-colors($dark-theme);
 
-  html,
-  body {
-    background-color: #303030;
-    color: rgba(255, 255, 255, 0.87);
-  }
+  --mas-canvas: #0b1323;
+  --mas-surface: #151b2e;
+  --mas-ink: #f1f5f9;
+  --mas-muted: #a8b7c8;
+  --mas-brand: #5eead4;
+  --mas-brand-hover: #99f6e4;
+  --mas-focus: #5eead4;
+  color-scheme: dark;
 
-  // Force light mode for Discussion Board pages so Tailwind styles are unaffected
+  // Discussion boards retain their established light treatment until their dedicated dark design is ready.
   mas-discussion-boards-dashboard,
   mas-discussion-board-forum {
-    color: #111827;
-    background-color: #ffffff;
+    color: #102a2c;
+    background: #ffffff;
+    color-scheme: light;
   }
 
-  // Override the entire page shell (body + mat-sidenav-container) on discussion routes
   &:has(mas-discussion-boards-dashboard),
   &:has(mas-discussion-board-forum) {
-    background-color: #ffffff;
-    color: #111827;
+    background: #ffffff;
+    color: #102a2c;
 
     .mat-drawer-container {
-      background-color: #ffffff;
-      color: #111827;
+      background: #ffffff;
+      color: #102a2c;
     }
   }
 
   .mat-mdc-snack-bar-container.update-snackbar {
-    --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 300)};
-    --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 900)};
-    --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette(mat.$m2-blue-grey-palette, 700)};
+    --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 300)};
+    --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 900)};
+    --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 800)};
   }
 }
 
@@ -181,11 +228,105 @@ body {
   color: #fecaca;
 }
 
+.brand-mobile-nav-menu .mat-mdc-menu-item {
+  min-height: 2.75rem;
+  margin: 0.125rem 0;
+  border-radius: 0.75rem;
+  color: #334155;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.brand-mobile-nav-menu .mat-mdc-menu-item:hover {
+  background: #f0fdfa;
+  color: #115e59;
+}
+
+.dark-theme .brand-mobile-nav-menu .mat-mdc-menu-item {
+  color: #cbd5e1;
+}
+
+.dark-theme .brand-mobile-nav-menu .mat-mdc-menu-item:hover {
+  background: #1b2940;
+  color: #99f6e4;
+}
+
 /* You can add global styles to this file, and also import other style files */
 
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--mas-canvas);
+  color: var(--mas-ink);
+}
+
+body.dark-theme {
+  background: var(--mas-canvas);
+  color: var(--mas-ink);
+}
+
+/* Shared dialog surface: forms read as one deliberate card rather than a default Material window. */
+.cdk-overlay-pane .mat-mdc-dialog-surface {
+  border: 1px solid #dbe7e4;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.22);
+}
+
+.mat-mdc-dialog-title {
+  padding: 1.5rem 1.5rem 0.625rem !important;
+  color: #102a2c !important;
+  font-size: 1.125rem !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.02em;
+}
+
+.mat-mdc-dialog-content {
+  padding: 1rem 1.5rem 1.5rem !important;
+}
+
+.mat-mdc-dialog-actions {
+  min-height: 4.5rem !important;
+  padding: 0.875rem 1.5rem !important;
+  border-top: 1px solid #e2e8f0;
+}
+
+.mat-mdc-dialog-actions .mat-mdc-raised-button {
+  border-radius: 0.75rem;
+  background: #0f766e !important;
+  color: #ecfeff !important;
+  font-weight: 700;
+}
+
+.mat-mdc-dialog-actions .mat-mdc-button {
+  border-radius: 0.75rem;
+  color: #52666a !important;
+  font-weight: 700;
+}
+
+.dark-theme .cdk-overlay-pane .mat-mdc-dialog-surface {
+  border-color: rgba(148, 163, 184, 0.2);
+  background: #151b2e;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.42);
+}
+
+.dark-theme .mat-mdc-dialog-title {
+  color: #f1f5f9 !important;
+}
+.dark-theme .mat-mdc-dialog-actions {
+  border-color: rgba(148, 163, 184, 0.16);
+}
+.dark-theme .mat-mdc-dialog-actions .mat-mdc-raised-button {
+  background: #2dd4bf !important;
+  color: #082f2e !important;
+}
+.dark-theme .mat-mdc-dialog-actions .mat-mdc-button {
+  color: #cbd5e1 !important;
+}
+
+/* Route components historically rendered their own footer. The shared layout now owns one global footer. */
+.app-main mas-footer {
+  display: none;
 }
 
 .skip-link {
@@ -209,8 +350,8 @@ body {
 
 .mat-mdc-snack-bar-container {
   &.success {
-    --mat-snackbar-container-color: #4caf50;
-    --mat-snackbar-supporting-text-color: black;
+    --mat-snackbar-container-color: #0f766e;
+    --mat-snackbar-supporting-text-color: #ecfeff;
   }
 
   &.error {

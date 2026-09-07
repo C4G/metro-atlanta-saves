@@ -9,10 +9,13 @@ import { type Requirement } from '@mas/prisma-client/browser';
 import { MatDialog } from '@angular/material/dialog';
 
 export type AddRequirement = Omit<Requirement, 'id' | 'createdAt' | 'updatedAt' | 'programId'>;
+type RequirementWithContent = Requirement & {
+  EducationalContent?: { link: string; title: string } | null;
+};
 
 type RequirementsState = {
   programId: string | null;
-  requirements: Requirement[];
+  requirements: RequirementWithContent[];
 };
 
 const initialState: RequirementsState = {
@@ -45,7 +48,7 @@ export const RequirementsStore = signalStore(
     getRequirements: rxMethod<void>(
       pipe(
         switchMap(() =>
-          http.get<Requirement[]>(`${BASE_URL}${'/program/' + store.programId()}`).pipe(
+          http.get<RequirementWithContent[]>(`${BASE_URL}${'/program/' + store.programId()}`).pipe(
             tapResponse({
               next: (requirements) => {
                 patchState(store, (state) => ({ ...state, requirements }));
