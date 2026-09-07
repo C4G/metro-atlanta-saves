@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { UsersStore } from '@mas/frontend-shared-data-access';
+import { ThemeService, UsersStore } from '@mas/frontend-shared-data-access';
 import { FooterComponent } from '@mas/frontend-shared-layout';
 
-type AdminCategory = 'Access' | 'Content' | 'Operations' | 'Engagement';
+type AdminCategory = 'Access' | 'Content' | 'Operations' | 'Engagement' | 'C4G';
 
 type AdminSection = {
   title: string;
@@ -31,15 +31,9 @@ type AdminGroup = {
   imports: [RouterLink, NgClass, MatIcon, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex min-h-dvh flex-col bg-[#f8fafc]">
+    <div class="admin-settings-page flex min-h-dvh flex-col bg-[#f8fafc]">
       <section class="flex-1 w-full px-4 py-6 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-7xl">
-          <nav class="mb-5 flex items-center gap-2 text-xs font-medium text-gray-400" aria-label="Breadcrumb">
-            <span>Platform</span>
-            <span aria-hidden="true">/</span>
-            <span class="text-gray-600">Admin Settings</span>
-          </nav>
-
           <header class="mb-7">
             <p class="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-600">Platform operations</p>
             <h1 class="text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">Admin Settings</h1>
@@ -71,7 +65,7 @@ type AdminGroup = {
                   ></div>
                   <div class="relative">
                     <div
-                      class="mb-6 flex h-11 w-11 items-center justify-center rounded-xl shadow-sm"
+                      class="admin-tool-icon mb-6 flex h-11 w-11 items-center justify-center rounded-xl shadow-sm"
                       [ngClass]="section.iconColor"
                     >
                       <mat-icon class="!h-5 !w-5 !text-xl !leading-5">{{ section.icon }}</mat-icon>
@@ -96,9 +90,9 @@ type AdminGroup = {
           </section>
 
           <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            <div class="border-b border-gray-100 bg-gray-50/60 px-5 py-5 sm:px-6">
-              <h2 class="text-base font-bold text-gray-950">Find a setting</h2>
-              <p class="mt-1 text-sm text-gray-500">Search by name or choose an area below.</p>
+            <div class="settings-browser-header border-b border-gray-100 bg-gray-50/60 px-5 py-5 sm:px-6">
+              <h2 class="text-base font-bold text-gray-950">Choose what you want to manage</h2>
+              <p class="mt-1 text-sm text-gray-500">Start with an area, then select the task you need.</p>
               <label class="relative mt-4 block">
                 <mat-icon
                   class="pointer-events-none absolute left-3.5 top-1/2 !h-5 !w-5 -translate-y-1/2 !text-xl !leading-5 text-gray-400"
@@ -113,10 +107,10 @@ type AdminGroup = {
                   (input)="setSearchQuery($event)"
                 />
               </label>
-              <div class="mt-4 flex gap-2 overflow-x-auto pb-0.5" aria-label="Setting categories">
+              <div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5" aria-label="Setting categories">
                 <button
                   type="button"
-                  class="inline-flex min-w-max items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  class="settings-category-button flex min-w-0 items-center gap-2 rounded-xl border px-3 py-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
                   [class.border-gray-950]="activeCategory() === 'All'"
                   [class.bg-gray-950]="activeCategory() === 'All'"
                   [class.text-white]="activeCategory() === 'All'"
@@ -125,13 +119,16 @@ type AdminGroup = {
                   [class.text-gray-600]="activeCategory() !== 'All'"
                   (click)="setActiveCategory('All')"
                 >
-                  <mat-icon class="!h-4 !w-4 !text-base !leading-4">grid_view</mat-icon>
-                  All
+                  <mat-icon class="!h-5 !w-5 !text-xl !leading-5">grid_view</mat-icon>
+                  <span class="min-w-0">
+                    <span class="block text-xs font-bold">All tools</span>
+                    <span class="mt-0.5 block text-[10px] opacity-70">Browse everything</span>
+                  </span>
                 </button>
                 @for (group of groups; track group.id) {
                   <button
                     type="button"
-                    class="inline-flex min-w-max items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    class="settings-category-button flex min-w-0 items-center gap-2 rounded-xl border px-3 py-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
                     [class.border-gray-950]="activeCategory() === group.id"
                     [class.bg-gray-950]="activeCategory() === group.id"
                     [class.text-white]="activeCategory() === group.id"
@@ -140,7 +137,11 @@ type AdminGroup = {
                     [class.text-gray-600]="activeCategory() !== group.id"
                     (click)="setActiveCategory(group.id)"
                   >
-                    {{ group.label }}
+                    <mat-icon class="!h-5 !w-5 !text-xl !leading-5">{{ group.icon }}</mat-icon>
+                    <span class="min-w-0">
+                      <span class="block text-xs font-bold">{{ group.label }}</span>
+                      <span class="mt-0.5 block truncate text-[10px] opacity-70">{{ group.description }}</span>
+                    </span>
                   </button>
                 }
               </div>
@@ -155,9 +156,9 @@ type AdminGroup = {
                   <p class="mt-1 text-sm text-gray-500">Try another search term or management area.</p>
                 </div>
               } @else {
-                <div class="divide-y divide-gray-100">
+                <div class="divide-y divide-gray-100 p-5 sm:p-6">
                   @for (group of groupedSections(); track group.id) {
-                    <section class="px-5 py-5">
+                    <section class="py-8 first:pt-0 last:pb-0">
                       <div class="mb-3 flex items-center gap-2">
                         <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
                           <mat-icon class="!h-4 !w-4 !text-base !leading-4">{{ group.icon }}</mat-icon>
@@ -167,27 +168,29 @@ type AdminGroup = {
                           <p class="text-[11px] text-gray-500">{{ group.description }}</p>
                         </div>
                       </div>
-                      <div class="divide-y divide-gray-100 rounded-xl border border-gray-100">
+                      <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         @for (section of group.sections; track section.title) {
                           <a
-                            class="group flex items-center gap-3 px-3 py-3 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-400"
+                            class="group flex min-h-40 flex-col rounded-xl border border-gray-200 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
                             [routerLink]="section.route"
                           >
-                            <div
-                              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                              [ngClass]="section.iconColor"
-                            >
-                              <mat-icon class="!h-4 !w-4 !text-base !leading-4">{{ section.icon }}</mat-icon>
+                            <div class="flex items-start justify-between gap-3">
+                              <div
+                                class="admin-tool-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                                [ngClass]="section.iconColor"
+                              >
+                                <mat-icon class="!h-5 !w-5 !text-xl !leading-5">{{ section.icon }}</mat-icon>
+                              </div>
+                              <mat-icon
+                                class="!h-5 !w-5 !text-xl !leading-5 text-gray-300 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-emerald-600"
+                              >
+                                arrow_forward
+                              </mat-icon>
                             </div>
-                            <div class="min-w-0 flex-1">
-                              <p class="text-[13px] font-bold text-gray-900">{{ section.title }}</p>
-                              <p class="mt-0.5 truncate text-xs text-gray-500">{{ section.description }}</p>
+                            <div class="mt-4">
+                              <p class="text-sm font-bold text-gray-900">{{ section.title }}</p>
+                              <p class="mt-1 text-xs leading-5 text-gray-500">{{ section.description }}</p>
                             </div>
-                            <mat-icon
-                              class="!h-4 !w-4 !text-base !leading-4 text-gray-300 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-emerald-600"
-                            >
-                              arrow_forward
-                            </mat-icon>
                           </a>
                         }
                       </div>
@@ -306,9 +309,125 @@ type AdminGroup = {
       <mas-footer />
     </div>
   `,
+  styles: [
+    `
+      :host(.admin-settings--dark) .admin-settings-page {
+        background: #0c1222;
+      }
+      :host(.admin-settings--dark) .settings-browser-header {
+        background: #10182a !important;
+      }
+      :host(.admin-settings--dark) .settings-category-button:not(.bg-gray-950):hover {
+        background-color: #1b2940 !important;
+      }
+      :host(.admin-settings--dark) .settings-category-button:not(.bg-gray-950) mat-icon {
+        color: #5eead4;
+      }
+      :host(.admin-settings--dark) .settings-category-button:not(.bg-gray-950):hover mat-icon {
+        color: #5eead4;
+      }
+      :host(.admin-settings--dark) ::ng-deep .admin-icon-mint {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+        color: #5eead4 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .bg-white {
+        background-color: #151b2e !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .bg-gray-50 {
+        background-color: #10182a !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .bg-gray-100 {
+        background-color: #202b3d !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .border-gray-200,
+      :host(.admin-settings--dark) ::ng-deep .border-gray-100 {
+        border-color: rgba(148, 163, 184, 0.16) !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+        border-color: rgba(148, 163, 184, 0.16) !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .text-gray-950,
+      :host(.admin-settings--dark) ::ng-deep .text-gray-900 {
+        color: #f1f5f9 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .text-gray-800,
+      :host(.admin-settings--dark) ::ng-deep .text-gray-700,
+      :host(.admin-settings--dark) ::ng-deep .text-gray-600 {
+        color: #cbd5e1 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .text-gray-500,
+      :host(.admin-settings--dark) ::ng-deep .text-gray-400 {
+        color: #94a3b8 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .text-gray-300 {
+        color: #64748b !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .hover\\:bg-gray-50:hover {
+        background-color: #1b2940 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .hover\\:bg-emerald-50:hover {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .bg-emerald-50 {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .text-emerald-700,
+      :host(.admin-settings--dark) ::ng-deep .text-emerald-600 {
+        color: #5eead4 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .hover\\:text-emerald-700:hover,
+      :host(.admin-settings--dark) ::ng-deep .group-hover\\:text-emerald-600 {
+        color: #99f6e4 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .bg-gray-950 {
+        background-color: #2dd4bf !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .bg-gray-950,
+      :host(.admin-settings--dark) ::ng-deep .bg-gray-950 * {
+        color: #082f2e !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .bg-blue-50,
+      :host(.admin-settings--dark) ::ng-deep .bg-sky-50,
+      :host(.admin-settings--dark) ::ng-deep .bg-violet-50,
+      :host(.admin-settings--dark) ::ng-deep .bg-indigo-50,
+      :host(.admin-settings--dark) ::ng-deep .bg-orange-50,
+      :host(.admin-settings--dark) ::ng-deep .bg-amber-50,
+      :host(.admin-settings--dark) ::ng-deep .bg-rose-50,
+      :host(.admin-settings--dark) ::ng-deep .bg-red-50 {
+        background-color: rgba(96, 165, 250, 0.14) !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .text-blue-600,
+      :host(.admin-settings--dark) ::ng-deep .text-sky-600,
+      :host(.admin-settings--dark) ::ng-deep .text-violet-600,
+      :host(.admin-settings--dark) ::ng-deep .text-indigo-600,
+      :host(.admin-settings--dark) ::ng-deep .text-orange-600,
+      :host(.admin-settings--dark) ::ng-deep .text-amber-600,
+      :host(.admin-settings--dark) ::ng-deep .text-rose-600,
+      :host(.admin-settings--dark) ::ng-deep .text-red-600 {
+        color: #93c5fd !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .admin-tool-icon {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+        color: #5eead4 !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep input {
+        background-color: #0f172a !important;
+        color: #e2e8f0 !important;
+        border-color: rgba(148, 163, 184, 0.24) !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep input::placeholder {
+        color: #64748b !important;
+      }
+      :host(.admin-settings--dark) ::ng-deep .shadow-sm {
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2) !important;
+      }
+    `,
+  ],
+  host: { class: 'block', '[class.admin-settings--dark]': 'themeService.darkMode()' },
 })
 export default class AdminSettingsComponent {
   readonly usersStore = inject(UsersStore);
+  readonly themeService = inject(ThemeService);
   readonly showUsersModal = signal(false);
   readonly searchQuery = signal('');
   readonly activeCategory = signal<AdminCategory | 'All'>('All');
@@ -317,6 +436,7 @@ export default class AdminSettingsComponent {
     { id: 'Operations', label: 'Operations', description: 'Programs and partners', icon: 'settings_suggest' },
     { id: 'Content', label: 'Content & guidance', description: 'Pages, learning, and guides', icon: 'menu_book' },
     { id: 'Engagement', label: 'Engagement', description: 'Outreach and campaigns', icon: 'campaign' },
+    { id: 'C4G', label: 'C4G Team Only', description: 'Internal team tools', icon: 'groups' },
   ];
   readonly sortedUsers = computed(() =>
     [...this.usersStore.users()].sort((a, b) =>
@@ -388,7 +508,7 @@ export default class AdminSettingsComponent {
       description: 'Add, edit, and manage partner organizations linked to savings programs.',
       route: '/admin/partners',
       category: 'Operations',
-      iconColor: 'bg-emerald-50 text-emerald-600',
+      iconColor: 'admin-icon-mint bg-emerald-50 text-emerald-600',
       icon: 'handshake',
     },
     {
@@ -444,14 +564,14 @@ export default class AdminSettingsComponent {
       description: 'Send targeted email campaigns to all enrolled program participants.',
       route: '/admin/email-blast',
       category: 'Engagement',
-      iconColor: 'bg-teal-50 text-teal-600',
+      iconColor: 'admin-icon-mint bg-teal-50 text-teal-600',
       icon: 'campaign',
     },
     {
       title: 'Peer Evaluation Guide',
       description: 'Manage peer evaluation guides used in program assessments and reviews.',
       route: '/admin/peer-evaluation-guide',
-      category: 'Content',
+      category: 'C4G',
       iconColor: 'bg-red-50 text-red-600',
       icon: 'fact_check',
     },

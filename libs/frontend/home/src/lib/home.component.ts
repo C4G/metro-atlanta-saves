@@ -6,6 +6,7 @@ import {
   IntroductionStore,
   LearningsStore,
   StoriesStore,
+  ThemeService,
   WhatWeAreStore,
 } from '@mas/frontend-shared-data-access';
 import { FooterComponent } from '@mas/frontend-shared-layout';
@@ -22,7 +23,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
       <section class="relative isolate overflow-hidden bg-gray-950 text-white">
         @if (!intro.imageHidden) {
           <img
-            class="absolute inset-0 -z-20 h-full w-full object-cover"
+            class="landing-hero-image absolute inset-0 -z-20 h-full w-full object-cover"
             [src]="intro.imageUrl"
             [alt]="
               intro.imageText ||
@@ -35,9 +36,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
           class="mx-auto flex min-h-[34rem] max-w-7xl items-end px-5 py-14 sm:px-8 sm:py-20 lg:min-h-[38rem] lg:px-12"
         >
           <div class="max-w-3xl">
-            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-amber-200">
-              Building financial resilience
-            </p>
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-teal-200">Building financial resilience</p>
             <h1 class="max-w-3xl font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
               {{ intro.title }}
             </h1>
@@ -45,7 +44,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
               Tools, guidance, and a community designed to help you build a stronger financial future.
             </p>
             <a
-              class="mt-8 inline-flex items-center gap-2 rounded-xl bg-amber-300 px-5 py-3 text-sm font-bold text-slate-950 transition-transform hover:-translate-y-0.5 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-950"
+              class="landing-hero-cta mt-8 inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:ring-offset-2 focus:ring-offset-gray-950"
               href="#start"
             >
               Explore the program
@@ -58,15 +57,17 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
 
     @if (descriptionStore.description(); as description) {
       @if (!description.hidden) {
-        <section id="start" class="bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+        <section id="start" class="landing-introduction bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
           <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
             <div class="flex justify-center lg:justify-start">
-              <div class="flex aspect-square w-48 items-center justify-center rounded-3xl bg-amber-50 p-6 sm:w-56">
+              <div
+                class="brand-logo-frame flex aspect-square w-48 items-center justify-center rounded-3xl bg-amber-50 p-6 sm:w-56"
+              >
                 <img
-                  [src]="description.logoUrl || 'assets/Logo/BRP_Logo.webp'"
-                  class="max-h-full max-w-full object-contain"
-                  width="406"
-                  height="219"
+                  src="assets/Logo/brp-logo-community-no-arrow.png?v=1"
+                  class="brand-logo h-full w-full object-contain"
+                  width="224"
+                  height="224"
                   alt="Building Resilient Professionals logo"
                 />
               </div>
@@ -81,13 +82,15 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
                 [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"
               ></div>
               @if (description.buttonLink && description.buttonText) {
-                <a
-                  class="mt-8 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2"
-                  [href]="description.buttonLink"
-                >
-                  {{ description.buttonText }}
-                  <mat-icon class="!h-4 !w-4 !text-base !leading-4">arrow_forward</mat-icon>
-                </a>
+                <div class="mt-8 flex justify-end">
+                  <a
+                    class="landing-enroll-cta inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
+                    [href]="description.buttonLink"
+                  >
+                    {{ description.buttonText }}
+                    <mat-icon class="!h-4 !w-4 !text-base !leading-4">arrow_forward</mat-icon>
+                  </a>
+                </div>
               }
             </div>
           </div>
@@ -96,7 +99,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
     }
 
     @if (visibleLearnings().length) {
-      <section class="bg-[#f3f8f5] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <section class="landing-learning bg-[#f3f8f5] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
         <div class="mx-auto max-w-5xl">
           <div class="max-w-2xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Build your knowledge</p>
@@ -173,7 +176,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
     }
 
     @if (visibleStories().length) {
-      <section class="bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <section class="landing-stories bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
         <div class="mx-auto max-w-5xl">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -187,7 +190,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
           @let story = activeStory();
           @if (story) {
             <article
-              class="mt-10 overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl md:grid md:grid-cols-[0.85fr_1.15fr]"
+              class="landing-story-card mt-10 overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl md:grid md:grid-cols-[0.85fr_1.15fr]"
             >
               <img
                 [src]="story.imageUrl"
@@ -216,7 +219,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
                     </button>
                     <button
                       type="button"
-                      class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-300 text-slate-950 transition-colors hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-400 text-slate-950 transition-colors hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-200"
                       aria-label="Next story"
                       (click)="nextStory()"
                     >
@@ -247,7 +250,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
 
     @let wwa = whatWeAreStore.whatWeAre();
     @if (wwa && !wwa.hidden) {
-      <section class="bg-gray-950 px-5 py-16 text-white sm:px-8 lg:px-12 lg:py-24">
+      <section class="landing-alliance bg-gray-950 px-5 py-16 text-white sm:px-8 lg:px-12 lg:py-24">
         <div class="mx-auto max-w-7xl">
           <div class="max-w-2xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">The alliance</p>
@@ -281,6 +284,120 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
   `,
   styles: [
     `
+      .landing-hero-cta {
+        background-color: #0f766e;
+        color: #ecfeff;
+      }
+      .landing-hero-cta:hover {
+        background-color: #115e59;
+        color: #ecfeff;
+      }
+      .landing-enroll-cta {
+        background-color: #ccfbf1;
+        color: #134e4a;
+      }
+      .landing-enroll-cta:hover {
+        background-color: #99f6e4;
+        color: #134e4a;
+      }
+      :host(.landing-page--dark) {
+        display: block;
+        background: #0c1222;
+      }
+      :host(.landing-page--dark) ::ng-deep .landing-hero-image {
+        filter: brightness(0.62) saturate(0.82);
+      }
+      :host(.landing-page--dark) ::ng-deep .landing-introduction {
+        background: #0c1222 !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .bg-white {
+        background-color: #151b2e !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .landing-learning {
+        background-color: #090f1d !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .landing-stories {
+        background-color: #0b1324 !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .bg-slate-900 {
+        background-color: #1a1f3a !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .landing-alliance {
+        background-color: #090f1d !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .landing-alliance article {
+        background-color: #151b2e !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .border-gray-200,
+      :host(.landing-page--dark) ::ng-deep .border-slate-100,
+      :host(.landing-page--dark) ::ng-deep .border-teal-100 {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .text-slate-900,
+      :host(.landing-page--dark) ::ng-deep .text-slate-950 {
+        color: #f1f5f9 !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .text-slate-700,
+      :host(.landing-page--dark) ::ng-deep .text-slate-600 {
+        color: #cbd5e1 !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .text-slate-500 {
+        color: #94a3b8 !important;
+      }
+      :host(.landing-page--dark) .landing-hero-cta,
+      :host(.landing-page--dark) .landing-enroll-cta {
+        background-color: #2dd4bf !important;
+        color: #082f2e !important;
+      }
+      :host(.landing-page--dark) .landing-hero-cta:hover,
+      :host(.landing-page--dark) .landing-enroll-cta:hover {
+        background-color: #99f6e4 !important;
+        color: #082f2e !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .bg-amber-50 {
+        background-color: rgba(251, 191, 36, 0.12) !important;
+      }
+      :host(.landing-page--dark) .brand-logo-frame {
+        background: linear-gradient(145deg, #12334a, #0f766e) !important;
+        box-shadow: 0 18px 42px rgba(3, 15, 29, 0.35);
+      }
+      :host(.landing-page--dark) .brand-logo {
+        filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg) brightness(101%)
+          contrast(96%);
+      }
+      :host(.landing-page--dark) ::ng-deep .bg-amber-100 {
+        background-color: rgba(251, 191, 36, 0.16) !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .text-amber-800 {
+        color: #fde68a !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .bg-slate-300 {
+        background-color: #475569 !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .shadow-sm,
+      :host(.landing-page--dark) ::ng-deep .shadow-xl {
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28) !important;
+      }
+      :host(.landing-page--dark) ::ng-deep .home-rich-text ol > li {
+        border-color: rgba(45, 212, 191, 0.2);
+        background: #1a2739;
+        color: #dbeafe;
+      }
+      :host(.landing-page--dark) ::ng-deep .learning-rich-text ul > li {
+        color: #cbd5e1;
+      }
+      :host(.landing-page--dark) ::ng-deep .home-rich-text a {
+        color: #5eead4;
+      }
+      :host(.landing-page--dark) ::ng-deep mas-footer footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background: #090f1d;
+        color: #94a3b8;
+      }
+      :host(.landing-page--dark) ::ng-deep mas-footer a {
+        color: #99f6e4;
+      }
       :host ::ng-deep .home-rich-text ol {
         counter-reset: home-step;
         display: grid;
@@ -342,7 +459,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
       }
     `,
   ],
-  host: { class: 'block' },
+  host: { class: 'block landing-page', '[class.landing-page--dark]': 'themeService.darkMode()' },
 })
 export class HomeComponent {
   readonly descriptionStore = inject(DescriptionStore);
@@ -350,6 +467,7 @@ export class HomeComponent {
   readonly introductionStore = inject(IntroductionStore);
   readonly learningsStore = inject(LearningsStore);
   readonly whatWeAreStore = inject(WhatWeAreStore);
+  readonly themeService = inject(ThemeService);
   readonly sanitizer = inject(DomSanitizer);
   readonly visibleLearnings = computed(() =>
     this.learningsStore.sectionHidden() ? [] : this.learningsStore.learnings().filter((learning) => !learning.hidden),

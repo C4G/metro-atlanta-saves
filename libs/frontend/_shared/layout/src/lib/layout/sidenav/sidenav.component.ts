@@ -112,12 +112,7 @@ export class SidenavComponent {
   navItems = signal<Nav[]>([
     { name: 'Home', routerLink: '/' },
     { name: 'About Us', routerLink: '/about-us' },
-    { name: 'Blogs', routerLink: '/blogs' },
-    { name: 'Educational Resources', routerLink: '/educational-resources' },
-    { name: 'Savings Calculator', routerLink: '/savings-calculator' },
-    { name: 'User Guide', routerLink: '/user-guide' },
     { name: 'Discussion Boards', routerLink: '/discussion-boards' },
-    { name: 'Peer Evaluation Guide', routerLink: '/peer-evaluation-guide' },
   ]);
 
   partnerStaffItems = signal<Nav[]>([{ name: 'Programs', routerLink: 'partner-staff/programs' }]);

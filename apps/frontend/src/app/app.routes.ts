@@ -1,10 +1,11 @@
 import { Route } from '@angular/router';
-import { adminGuard, authGuard, partnerStaffGuard } from '@mas/frontend-shared-auth';
+import { adminGuard, authGuard, guestGuard, partnerStaffGuard } from '@mas/frontend-shared-auth';
 import { seoResolver } from '@mas/frontend-shared-util';
 
 export const appRoutes: Route[] = [
   {
     path: '',
+    canActivate: [guestGuard],
     resolve: [seoResolver],
     loadComponent: () => import('@mas/frontend-home').then((m) => m.HomeComponent),
     data: {

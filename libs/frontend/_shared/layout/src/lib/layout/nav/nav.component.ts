@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { MatAnchor, MatIconButton } from '@angular/material/button';
-import { MatToolbar } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthStore } from '@mas/frontend-shared-auth';
@@ -13,42 +11,111 @@ import { PushNotificationService } from '../../services/push-notification.servic
 
 @Component({
   selector: 'mas-nav',
-  imports: [MatToolbar, MatIcon, MatIconButton, MatAnchor, RouterLink, MatMenuModule],
+  imports: [MatIcon, RouterLink, RouterLinkActive, MatMenuModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-toolbar color="accent">
-      <button
-        class="mr-4"
-        mat-icon-button
-        aria-label="Navigation menu"
-        (click)="openNav.emit()"
-        data-testid="navigation-menu"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
-      <a routerLink="/" aria-label="Building Resilient Professionals home">
-        <img src="assets/Logo/BRP_Logo.webp" height="36" width="66" class="h-9 w-auto" alt="" />
-      </a>
-      <div class="ml-auto flex items-center gap-4">
-        @if (!authStore.user()) {
-          <a mat-raised-button routerLink="/login" color="primary">Sign Up or Login</a>
-        } @else {
-          <div
-            role="button"
-            [class]="authStore.realUser() ? 'border-2 border-red-500' : ''"
-            class="w-10 h-10 rounded-full flex justify-center items-center bg-slate-800 cursor-pointer"
-            [matMenuTriggerFor]="userMenu"
+    <nav
+      class="h-14 border-b border-slate-200/80 bg-white/95 text-slate-900 shadow-sm backdrop-blur sm:h-16"
+      aria-label="Application navigation"
+    >
+      <div class="mx-auto flex h-full max-w-[100rem] items-center gap-3 px-3 sm:gap-4 sm:px-5">
+        <button
+          type="button"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"
+          aria-label="Open navigation menu"
+          (click)="openNav.emit()"
+          data-testid="navigation-menu"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+        <a
+          [routerLink]="authStore.user() ? '/dashboard' : '/'"
+          class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+          aria-label="Building Resilient Professionals home"
+        >
+          <span
+            class="brand-logo-frame flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-amber-50"
           >
-            <span class="uppercase">{{ authStore.initials() }}</span>
-          </div>
-        }
-        <div class="hidden sm:flex">
-          <button mat-icon-button aria-label="Toggle dark mode" (click)="themeService.toggleDarkMode()">
-            <mat-icon>{{ themeService.darkMode() ? 'wb_sunny' : 'nights_stay' }}</mat-icon>
+            <img
+              src="assets/Logo/brp-logo-community-no-arrow.png"
+              height="36"
+              width="36"
+              class="brand-logo h-8 w-8 object-contain"
+              alt=""
+            />
+          </span>
+          <span class="hidden min-w-0 sm:block">
+            <span class="block truncate text-sm font-bold tracking-tight text-slate-950">Building Resilient</span>
+            <span class="block text-[10px] font-bold uppercase tracking-[0.15em] text-teal-700">Professionals</span>
+          </span>
+        </a>
+        <div class="ml-auto flex items-center gap-2 sm:gap-3">
+          @if (authStore.user()) {
+            <a
+              routerLink="/dashboard"
+              routerLinkActive="nav-page-link--active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 md:inline-flex"
+            >
+              <mat-icon class="!h-4 !w-4 !text-base !leading-4">space_dashboard</mat-icon>
+              Dashboard
+            </a>
+          }
+          @if (authStore.isAdmin()) {
+            <a
+              routerLink="/admin"
+              routerLinkActive="nav-page-link--active"
+              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 lg:inline-flex"
+            >
+              <mat-icon class="!h-4 !w-4 !text-base !leading-4">admin_panel_settings</mat-icon>
+              Admin
+            </a>
+          }
+          <button
+            type="button"
+            class="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 sm:flex"
+            aria-label="Toggle dark mode"
+            (click)="themeService.toggleDarkMode()"
+          >
+            <mat-icon class="!h-5 !w-5 !text-xl !leading-5">
+              {{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}
+            </mat-icon>
           </button>
+          @if (!authStore.user()) {
+            <a
+              routerLink="/login"
+              class="inline-flex items-center gap-1.5 rounded-xl bg-slate-950 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 sm:px-4 sm:text-sm"
+            >
+              <mat-icon class="!h-4 !w-4 !text-base !leading-4">login</mat-icon>
+              <span class="hidden sm:inline">Sign in</span>
+              <span class="sm:hidden">Sign in</span>
+            </a>
+          } @else {
+            <button
+              type="button"
+              class="flex items-center gap-2 rounded-xl p-1 pr-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600"
+              [class.ring-2]="authStore.realUser()"
+              [class.ring-red-500]="authStore.realUser()"
+              [matMenuTriggerFor]="userMenu"
+              aria-label="Open account menu"
+            >
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-700 text-xs font-bold text-white"
+              >
+                {{ authStore.initials() }}
+              </span>
+              <span class="hidden max-w-28 text-left sm:block">
+                <span class="block truncate text-xs font-bold text-slate-900">
+                  {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
+                </span>
+                <span class="block text-[10px] font-medium text-slate-500">Account</span>
+              </span>
+              <mat-icon class="hidden !h-4 !w-4 !text-base !leading-4 text-slate-400 sm:block">expand_more</mat-icon>
+            </button>
+          }
         </div>
       </div>
-    </mat-toolbar>
+    </nav>
     <mat-menu #userMenu="matMenu">
       <button mat-menu-item (click)="openEditProfileModal()">
         <span class="flex items-center gap-2">
@@ -247,8 +314,66 @@ import { PushNotificationService } from '../../services/push-notification.servic
       </div>
     }
   `,
+  styles: [
+    `
+      .nav-page-link--active {
+        background-color: #f0fdfa;
+        color: #115e59;
+      }
+      :host(.nav--dark) nav {
+        border-color: rgba(255, 255, 255, 0.1);
+        background: rgba(12, 18, 34, 0.94);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      }
+      :host(.nav--dark) ::ng-deep .text-slate-900,
+      :host(.nav--dark) ::ng-deep .text-slate-950 {
+        color: #f1f5f9 !important;
+      }
+      :host(.nav--dark) ::ng-deep .text-slate-600,
+      :host(.nav--dark) ::ng-deep .text-slate-500,
+      :host(.nav--dark) ::ng-deep .text-slate-400 {
+        color: #94a3b8 !important;
+      }
+      :host(.nav--dark) ::ng-deep .hover\\:bg-slate-100:hover {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+      }
+      :host(.nav--dark) ::ng-deep .hover\\:bg-teal-50:hover {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+      }
+      :host(.nav--dark) .nav-page-link--active {
+        background-color: rgba(45, 212, 191, 0.14);
+        color: #99f6e4;
+      }
+      :host(.nav--dark) .admin-nav-link {
+        background-color: rgba(45, 212, 191, 0.14) !important;
+        color: #99f6e4 !important;
+      }
+      :host(.nav--dark) .admin-nav-link:hover {
+        background-color: rgba(45, 212, 191, 0.22) !important;
+        color: #ccfbf1 !important;
+      }
+      :host(.nav--dark) ::ng-deep .bg-amber-50 {
+        background-color: rgba(251, 191, 36, 0.14) !important;
+      }
+      :host(.nav--dark) .brand-logo-frame {
+        background: linear-gradient(145deg, #12334a, #0f766e) !important;
+      }
+      :host(.nav--dark) .brand-logo {
+        filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg) brightness(101%)
+          contrast(96%);
+      }
+      :host(.nav--dark) ::ng-deep .bg-slate-950 {
+        background-color: #2dd4bf !important;
+        color: #082f2e !important;
+      }
+      :host(.nav--dark) ::ng-deep .bg-teal-700 {
+        background-color: #0f766e !important;
+      }
+    `,
+  ],
   host: {
     class: 'block fixed top-0 left-0 right-0 z-50',
+    '[class.nav--dark]': 'themeService.darkMode()',
   },
 })
 export class NavComponent {

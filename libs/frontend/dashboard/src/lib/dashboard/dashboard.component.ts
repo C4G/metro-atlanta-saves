@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { ProgramsStore } from '@mas/frontend-shared-data-access';
+import { ProgramsStore, ThemeService } from '@mas/frontend-shared-data-access';
 import { FooterComponent } from '@mas/frontend-shared-layout';
 
 type DiscussionBoard = { id: string; name: string; description: string | null; memberCount: number; postCount: number };
@@ -15,9 +15,11 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
   imports: [DatePipe, MatIcon, RouterLink, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="min-h-dvh bg-[#f8fafc] px-4 py-6 sm:px-6 lg:px-8">
+    <main class="dashboard-page min-h-dvh bg-[#f8fafc] px-4 py-6 sm:px-6 lg:px-8">
       <section class="mx-auto max-w-7xl">
-        <header class="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-9 text-white sm:px-10 sm:py-12">
+        <header
+          class="dashboard-hero relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-9 text-white sm:px-10 sm:py-12"
+        >
           <div class="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-teal-500/20 blur-2xl"></div>
           <div class="relative max-w-2xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Your dashboard</p>
@@ -188,16 +190,151 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
             </div>
           }
         </section>
+
+        <section class="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <div class="border-b border-gray-100 px-5 py-4">
+            <h2 class="text-base font-bold text-slate-950">Tools and resources</h2>
+            <p class="mt-0.5 text-xs text-gray-500">Helpful places to learn, plan, and find support.</p>
+          </div>
+          <div class="grid gap-px bg-gray-100 sm:grid-cols-2 xl:grid-cols-4">
+            <a
+              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              routerLink="/savings-calculator"
+            >
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                <mat-icon>calculate</mat-icon>
+              </div>
+              <h3 class="mt-5 text-sm font-bold text-slate-900">Savings calculator</h3>
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                Plan a savings goal and see how regular contributions can add up.
+              </p>
+              <span class="mt-auto pt-5 text-xs font-bold text-teal-700">
+                Open calculator
+                <span aria-hidden="true">→</span>
+              </span>
+            </a>
+            <a
+              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              routerLink="/educational-resources"
+            >
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                <mat-icon>menu_book</mat-icon>
+              </div>
+              <h3 class="mt-5 text-sm font-bold text-slate-900">Educational resources</h3>
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                Browse practical guidance to support your financial wellbeing.
+              </p>
+              <span class="mt-auto pt-5 text-xs font-bold text-teal-700">
+                Browse resources
+                <span aria-hidden="true">→</span>
+              </span>
+            </a>
+            <a
+              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              routerLink="/blogs"
+            >
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                <mat-icon>article</mat-icon>
+              </div>
+              <h3 class="mt-5 text-sm font-bold text-slate-900">Blogs</h3>
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                Read stories, tips, and updates from the BRP community.
+              </p>
+              <span class="mt-auto pt-5 text-xs font-bold text-teal-700">
+                Read blogs
+                <span aria-hidden="true">→</span>
+              </span>
+            </a>
+            <a
+              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              routerLink="/user-guide"
+            >
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                <mat-icon>help_outline</mat-icon>
+              </div>
+              <h3 class="mt-5 text-sm font-bold text-slate-900">User guide</h3>
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                Find a quick answer when you need help using the platform.
+              </p>
+              <span class="mt-auto pt-5 text-xs font-bold text-teal-700">
+                Open guide
+                <span aria-hidden="true">→</span>
+              </span>
+            </a>
+          </div>
+        </section>
       </section>
     </main>
     <mas-footer />
   `,
-  host: { class: 'block' },
+  styles: [
+    `
+      :host(.dashboard--dark) .dashboard-page {
+        background: #0c1222;
+      }
+      :host(.dashboard--dark) .dashboard-hero {
+        background: #0d1b2f;
+        box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.1);
+      }
+      :host(.dashboard--dark) ::ng-deep .bg-white {
+        background-color: #151b2e !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .border-gray-200,
+      :host(.dashboard--dark) ::ng-deep .border-gray-100 {
+        border-color: rgba(148, 163, 184, 0.16) !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+        border-color: rgba(148, 163, 184, 0.16) !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .bg-gray-100 {
+        background-color: #202b3d !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .text-slate-950,
+      :host(.dashboard--dark) ::ng-deep .text-slate-900 {
+        color: #f1f5f9 !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .text-slate-500,
+      :host(.dashboard--dark) ::ng-deep .text-gray-500 {
+        color: #94a3b8 !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .text-gray-300,
+      :host(.dashboard--dark) ::ng-deep .text-gray-400 {
+        color: #64748b !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .hover\\:bg-slate-50:hover {
+        background-color: #1b2940 !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .hover\\:bg-teal-50:hover {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .bg-teal-50 {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .text-teal-700 {
+        color: #5eead4 !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .text-sky-700 {
+        color: #7dd3fc !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .bg-amber-50 {
+        background-color: rgba(45, 212, 191, 0.12) !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .text-amber-800,
+      :host(.dashboard--dark) ::ng-deep .text-amber-600 {
+        color: #99f6e4 !important;
+      }
+      :host(.dashboard--dark) ::ng-deep .shadow-sm {
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2) !important;
+      }
+    `,
+  ],
+  host: { class: 'block', '[class.dashboard--dark]': 'themeService.darkMode()' },
 })
 export class DashboardComponent {
   private readonly http = inject(HttpClient);
   readonly authStore = inject(AuthStore);
   readonly programsStore = inject(ProgramsStore);
+  readonly themeService = inject(ThemeService);
   readonly sanitizer = inject(DomSanitizer);
   readonly boards = signal<DiscussionBoard[]>([]);
   readonly availablePrograms = computed(() =>
