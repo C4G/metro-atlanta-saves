@@ -67,7 +67,7 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
               <div class="divide-y divide-gray-100">
                 @for (program of programsStore.usersPrograms(); track program.id) {
                   <a
-                    class="group flex items-center gap-4 px-5 py-5 transition-colors hover:bg-slate-50"
+                    class="group flex items-center gap-4 px-5 py-5 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-400"
                     [routerLink]="['/program-profiles', program.id]"
                   >
                     <div
@@ -110,7 +110,7 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
               <div class="divide-y divide-gray-100">
                 @for (board of boards().slice(0, 3); track board.id) {
                   <a
-                    class="group block px-5 py-4 transition-colors hover:bg-slate-50"
+                    class="group block px-5 py-4 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-400"
                     [routerLink]="['/discussion', board.id]"
                   >
                     <div class="flex items-start justify-between gap-3">
@@ -158,7 +158,9 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
           @if (availablePrograms().length) {
             <div class="grid gap-px bg-gray-100 md:grid-cols-2 xl:grid-cols-3">
               @for (program of availablePrograms(); track program.id) {
-                <article class="flex min-h-56 flex-col bg-white p-5">
+                <article
+                  class="dashboard-interactive-card flex min-h-56 flex-col rounded-2xl border border-transparent bg-white p-5 transition-all duration-200 hover:-translate-y-0.5"
+                >
                   <div class="flex items-center justify-between gap-3">
                     <span
                       class="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-800"
@@ -196,9 +198,9 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
             <h2 class="text-base font-bold text-slate-950">Tools and resources</h2>
             <p class="mt-0.5 text-xs text-gray-500">Helpful places to learn, plan, and find support.</p>
           </div>
-          <div class="grid gap-px bg-gray-100 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="grid gap-4 p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-4">
             <a
-              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              class="dashboard-interactive-card group flex min-h-48 flex-col rounded-2xl border border-gray-200 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-400"
               routerLink="/savings-calculator"
             >
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
@@ -214,7 +216,7 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
               </span>
             </a>
             <a
-              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              class="dashboard-interactive-card group flex min-h-48 flex-col rounded-2xl border border-gray-200 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-400"
               routerLink="/educational-resources"
             >
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
@@ -230,7 +232,7 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
               </span>
             </a>
             <a
-              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              class="dashboard-interactive-card group flex min-h-48 flex-col rounded-2xl border border-gray-200 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-400"
               routerLink="/blogs"
             >
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
@@ -246,7 +248,7 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
               </span>
             </a>
             <a
-              class="group flex min-h-48 flex-col bg-white p-5 transition-colors hover:bg-slate-50"
+              class="dashboard-interactive-card group flex min-h-48 flex-col rounded-2xl border border-gray-200 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-400"
               routerLink="/user-guide"
             >
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
@@ -269,6 +271,10 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
   `,
   styles: [
     `
+      .dashboard-interactive-card:hover {
+        border-color: #99f6e4;
+        box-shadow: 0 4px 8px rgba(15, 23, 42, 0.08);
+      }
       :host(.dashboard--dark) .dashboard-page {
         background: #0c1222;
       }
@@ -306,6 +312,11 @@ type DiscussionBoard = { id: string; name: string; description: string | null; m
       }
       :host(.dashboard--dark) ::ng-deep .hover\\:bg-teal-50:hover {
         background-color: rgba(45, 212, 191, 0.12) !important;
+      }
+      :host(.dashboard--dark) .dashboard-interactive-card:hover {
+        border-color: rgba(45, 212, 191, 0.4) !important;
+        background: #16243a !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
       :host(.dashboard--dark) ::ng-deep .bg-teal-50 {
         background-color: rgba(45, 212, 191, 0.12) !important;

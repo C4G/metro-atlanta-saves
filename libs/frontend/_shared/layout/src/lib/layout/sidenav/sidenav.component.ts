@@ -16,39 +16,6 @@ import { AuthStore } from '@mas/frontend-shared-auth';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav aria-label="Primary" class="flex flex-col gap-4">
-      @if (authStore.user()?.role === 'Administrator') {
-        <div class="flex flex-col">
-          <a
-            class="nav-item p-2"
-            routerLinkActive="active"
-            [routerLink]="'/admin'"
-            [routerLinkActiveOptions]="{ exact: false }"
-          >
-            Admin Settings
-          </a>
-        </div>
-      }
-      @if (authStore.isStaff()) {
-        <mat-accordion>
-          <mat-expansion-panel [expanded]="authStore.user()?.role === 'Partner_Staff'">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Partner Staff</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="flex flex-col">
-              @for (item of partnerStaffItems(); track item.name) {
-                <a
-                  class="nav-item p-2 pl-6"
-                  routerLinkActive="active"
-                  [routerLink]="item.routerLink"
-                  [routerLinkActiveOptions]="{ exact: true }"
-                >
-                  {{ item.name }}
-                </a>
-              }
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
-      }
       @if (authStore.user()) {
         <div class="flex flex-col gap-1">
           @for (item of basicItems(); track item.name) {
@@ -114,8 +81,6 @@ export class SidenavComponent {
     { name: 'About Us', routerLink: '/about-us' },
     { name: 'Discussion Boards', routerLink: '/discussion-boards' },
   ]);
-
-  partnerStaffItems = signal<Nav[]>([{ name: 'Programs', routerLink: 'partner-staff/programs' }]);
 
   nonTemplatePrograms = computed(() => this.programsStore.usersPrograms().filter((p) => !p.isTemplate));
 

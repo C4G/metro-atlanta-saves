@@ -13,16 +13,26 @@ import { RequirementActionsComponent } from './ui/requirement-actions/requiremen
   imports: [AgGridComponent, MatButton, MatIcon, MatDialogModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col p-6">
-      <div class="flex justify-between align-middle">
-        <h2 class="text-2xl font-bold mb-3">Requirements</h2>
-        <button matPrefix mat-raised-button aria-label="add" color="primary" (click)="openModal()">
+    <section class="program-list-panel">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="program-list-kicker">Program setup</p>
+          <h2 class="program-list-title">Requirements</h2>
+          <p class="program-list-description">Define the steps participants need to complete.</p>
+        </div>
+        <button matPrefix mat-raised-button aria-label="Add requirement" (click)="openModal()">
           <mat-icon>add</mat-icon>
-          New
+          Add requirement
         </button>
       </div>
-      <mas-ag-grid class="h-[calc(100dvh-23rem)]" [rowData]="requirementsStore.requirements()" [columnDefs]="colDefs" />
-    </div>
+      <div class="program-list-grid">
+        <mas-ag-grid
+          class="h-[calc(100dvh-25rem)]"
+          [rowData]="requirementsStore.requirements()"
+          [columnDefs]="colDefs"
+        />
+      </div>
+    </section>
   `,
   host: {
     class: 'block',

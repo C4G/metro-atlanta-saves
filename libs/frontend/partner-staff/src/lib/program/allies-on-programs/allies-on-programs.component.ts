@@ -13,18 +13,24 @@ import { AlliesOnProgramsActionsComponent } from './ui/allies-on-programs-action
   imports: [AgGridComponent, MatButton, MatIcon, MatDialogModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col p-6">
-      <div class="flex justify-between align-middle">
-        <h2 class="text-2xl font-bold mb-3">Allies</h2>
-        <div class="flex gap-4">
-          <button matPrefix mat-raised-button aria-label="add" color="primary" (click)="openModal()">
+    <section class="program-list-panel">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="program-list-kicker">Support network</p>
+          <h2 class="program-list-title">Allies</h2>
+          <p class="program-list-description">Connect staff and partners who support this program.</p>
+        </div>
+        <div class="flex gap-2">
+          <button matPrefix mat-raised-button aria-label="Add ally" (click)="openModal()">
             <mat-icon>add</mat-icon>
-            New
+            Add ally
           </button>
         </div>
       </div>
-      <mas-ag-grid class="h-[calc(100dvh-23rem)]" [rowData]="alliesStore.allies()" [columnDefs]="colDefs" />
-    </div>
+      <div class="program-list-grid">
+        <mas-ag-grid class="h-[calc(100dvh-25rem)]" [rowData]="alliesStore.allies()" [columnDefs]="colDefs" />
+      </div>
+    </section>
   `,
   host: {
     class: 'block',

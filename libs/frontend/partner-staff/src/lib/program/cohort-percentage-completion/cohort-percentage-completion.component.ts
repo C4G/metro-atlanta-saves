@@ -27,16 +27,26 @@ type ChartType = 'total-program-progress' | 'total-amount-saved' | 'individual-p
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col p-6">
-      <div class="flex justify-between align-middle">
-        <h2 class="text-2xl font-bold mb-3">Cohort Summary Page</h2>
+    <section class="program-list-panel">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <button matPrefix mat-raised-button aria-label="download" (click)="usersOnProgramsStore.downloadExcel()">
+          <p class="program-list-kicker">Program insights</p>
+          <h2 class="program-list-title">Cohort summary</h2>
+          <p class="program-list-description">Understand program progress and savings outcomes across the cohort.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            matPrefix
+            mat-raised-button
+            class="program-list-secondary"
+            aria-label="Export cohort data"
+            (click)="usersOnProgramsStore.downloadExcel()"
+          >
             <mat-icon>download</mat-icon>
             Export
           </button>
-          <span style="margin-left: 16px;"></span>
-          <mat-form-field class="w-64 mt-4">
+          <mat-form-field appearance="outline" class="program-summary-select w-64">
+            <mat-label>Summary view</mat-label>
             <mat-select [(ngModel)]="selectedChartType" (selectionChange)="onChartTypeChange($event.value)">
               <mat-option value="total-amount-saved">Total Amount Saved</mat-option>
               <mat-option value="total-program-progress">Total Program Progress</mat-option>
@@ -45,9 +55,8 @@ type ChartType = 'total-program-progress' | 'total-amount-saved' | 'individual-p
           </mat-form-field>
         </div>
       </div>
-      <!-- Chart Wrapper -->
-      <div class="w-full flex justify-center">
-        <div class="w-full max-w-4xl bg-white rounded-2xl shadow-md p-6 mt-10 ml-10">
+      <div class="program-list-grid p-5 sm:p-6">
+        <div class="w-full">
           @switch (selectedChartType()) {
             @case ('total-program-progress') {
               <div class="chart-container">
@@ -67,7 +76,7 @@ type ChartType = 'total-program-progress' | 'total-amount-saved' | 'individual-p
           }
         </div>
       </div>
-    </div>
+    </section>
   `,
   host: {
     class: 'block',

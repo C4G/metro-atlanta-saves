@@ -57,7 +57,7 @@ type AdminGroup = {
             <div class="grid gap-3 md:grid-cols-3">
               @for (section of featuredSections(); track section.title) {
                 <article
-                  class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md"
+                  class="admin-management-card group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm"
                 >
                   <div
                     class="absolute right-0 top-0 h-20 w-20 -translate-y-6 translate-x-6 rounded-full opacity-60"
@@ -171,7 +171,7 @@ type AdminGroup = {
                       <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         @for (section of group.sections; track section.title) {
                           <a
-                            class="group flex min-h-40 flex-col rounded-xl border border-gray-200 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                            class="admin-management-card group flex min-h-40 flex-col rounded-xl border border-gray-200 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
                             [routerLink]="section.route"
                           >
                             <div class="flex items-start justify-between gap-3">
@@ -181,11 +181,6 @@ type AdminGroup = {
                               >
                                 <mat-icon class="!h-5 !w-5 !text-xl !leading-5">{{ section.icon }}</mat-icon>
                               </div>
-                              <mat-icon
-                                class="!h-5 !w-5 !text-xl !leading-5 text-gray-300 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-emerald-600"
-                              >
-                                arrow_forward
-                              </mat-icon>
                             </div>
                             <div class="mt-4">
                               <p class="text-sm font-bold text-gray-900">{{ section.title }}</p>
@@ -325,6 +320,13 @@ type AdminGroup = {
       }
       :host(.admin-settings--dark) .settings-category-button:not(.bg-gray-950):hover mat-icon {
         color: #5eead4;
+      }
+      .admin-management-card:hover {
+        border-color: #99f6e4;
+      }
+      :host(.admin-settings--dark) .admin-management-card:hover {
+        border-color: rgba(45, 212, 191, 0.4) !important;
+        background: #16243a !important;
       }
       :host(.admin-settings--dark) ::ng-deep .admin-icon-mint {
         background-color: rgba(45, 212, 191, 0.12) !important;

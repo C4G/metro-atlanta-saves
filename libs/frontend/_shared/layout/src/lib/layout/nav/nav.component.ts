@@ -61,6 +61,16 @@ import { PushNotificationService } from '../../services/push-notification.servic
               Dashboard
             </a>
           }
+          @if (authStore.isStaff()) {
+            <a
+              routerLink="/partner-staff/programs"
+              routerLinkActive="nav-page-link--active"
+              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 lg:inline-flex"
+            >
+              <mat-icon class="!h-4 !w-4 !text-base !leading-4">folder_managed</mat-icon>
+              Programs
+            </a>
+          }
           @if (authStore.isAdmin()) {
             <a
               routerLink="/admin"
@@ -110,14 +120,22 @@ import { PushNotificationService } from '../../services/push-notification.servic
                 </span>
                 <span class="block text-[10px] font-medium text-slate-500">Account</span>
               </span>
-              <mat-icon class="hidden !h-4 !w-4 !text-base !leading-4 text-slate-400 sm:block">expand_more</mat-icon>
             </button>
           }
         </div>
       </div>
     </nav>
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item (click)="openEditProfileModal()">
+    <mat-menu #userMenu="matMenu" class="brand-account-menu">
+      <div class="account-menu__header">
+        <span class="account-menu__avatar">{{ authStore.initials() }}</span>
+        <span class="min-w-0">
+          <span class="block truncate text-sm font-bold">
+            {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
+          </span>
+          <span class="mt-0.5 block truncate text-[11px]">{{ authStore.user()?.email }}</span>
+        </span>
+      </div>
+      <button mat-menu-item class="account-menu__item" (click)="openEditProfileModal()">
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -137,7 +155,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
         </span>
       </button>
       @if (notificationsSupported) {
-        <button mat-menu-item (click)="toggleNotifications()">
+        <button mat-menu-item class="account-menu__item" (click)="toggleNotifications()">
           <span class="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -157,7 +175,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </span>
         </button>
       }
-      <button mat-menu-item (click)="authStore.logout()">
+      <button mat-menu-item class="account-menu__item account-menu__logout" (click)="authStore.logout()">
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +197,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
       </button>
       @if (authStore.isStaff() || authStore.realUser()) {
         @if (!authStore.realUser()) {
-          <button mat-menu-item (click)="openMimicUserModal()">
+          <button mat-menu-item class="account-menu__item" (click)="openMimicUserModal()">
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -199,7 +217,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
             </span>
           </button>
         } @else {
-          <button mat-menu-item (click)="authStore.stopMimickingUser()">
+          <button mat-menu-item class="account-menu__item" (click)="authStore.stopMimickingUser()">
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

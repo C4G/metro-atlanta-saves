@@ -11,12 +11,16 @@ import { EnrollmentsActionsComponent } from './ui/enrollments-actions/enrollment
   imports: [AgGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col p-6">
-      <div class="flex justify-between align-middle">
-        <h2 class="text-2xl font-bold mb-3">Enrollments</h2>
+    <section class="program-list-panel">
+      <div>
+        <p class="program-list-kicker">Participant intake</p>
+        <h2 class="program-list-title">Enrollments</h2>
+        <p class="program-list-description">Review and respond to pending program enrollment requests.</p>
       </div>
-      <mas-ag-grid class="h-[calc(100dvh-23rem)]" [rowData]="programsStore.enrollments()" [columnDefs]="colDefs" />
-    </div>
+      <div class="program-list-grid">
+        <mas-ag-grid class="h-[calc(100dvh-25rem)]" [rowData]="programsStore.enrollments()" [columnDefs]="colDefs" />
+      </div>
+    </section>
   `,
   host: {
     class: 'block',

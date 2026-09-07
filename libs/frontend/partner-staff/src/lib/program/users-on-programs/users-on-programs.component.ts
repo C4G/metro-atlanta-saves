@@ -16,22 +16,34 @@ import { UsersOnProgramsActionsComponent } from './ui/users-on-programs-actions/
   imports: [AgGridComponent, MatButton, MatIcon, MatDialogModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col p-6">
-      <div class="flex justify-between align-middle">
-        <h2 class="text-2xl font-bold mb-3">Users</h2>
-        <div class="flex gap-4">
-          <button matPrefix mat-raised-button aria-label="download" (click)="usersOnProgramsStore.downloadExcel()">
+    <section class="program-list-panel">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="program-list-kicker">Participant management</p>
+          <h2 class="program-list-title">Users</h2>
+          <p class="program-list-description">Manage enrolled participants, progress, and program details.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            matPrefix
+            mat-raised-button
+            class="program-list-secondary"
+            aria-label="Export users"
+            (click)="usersOnProgramsStore.downloadExcel()"
+          >
             <mat-icon>download</mat-icon>
             Export
           </button>
-          <button matPrefix mat-raised-button aria-label="add" color="primary" (click)="openModal()">
+          <button matPrefix mat-raised-button aria-label="Add user" (click)="openModal()">
             <mat-icon>add</mat-icon>
-            New
+            Add user
           </button>
         </div>
       </div>
-      <mas-ag-grid class="h-[calc(100dvh-23rem)]" [rowData]="usersOnProgramsStore.users()" [columnDefs]="colDefs" />
-    </div>
+      <div class="program-list-grid">
+        <mas-ag-grid class="h-[calc(100dvh-25rem)]" [rowData]="usersOnProgramsStore.users()" [columnDefs]="colDefs" />
+      </div>
+    </section>
   `,
   host: {
     class: 'block',
