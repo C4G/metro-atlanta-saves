@@ -27,7 +27,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
             </div>
             <div class="h-96 overflow-y-auto">
               <div
-                class="mb-4 wysiwyg"
+                class="mb-4 rich-content"
                 [innerHTML]="sanitizer.bypassSecurityTrustHtml(program.description ?? '')"
               ></div>
             </div>

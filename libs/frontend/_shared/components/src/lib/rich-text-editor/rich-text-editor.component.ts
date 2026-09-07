@@ -2,20 +2,22 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   ElementRef,
-  EventEmitter,
+  forwardRef,
   inject,
-  Input,
-  OnChanges,
+  input,
+  model,
   OnDestroy,
-  Output,
   signal,
-  SimpleChanges,
-  ViewChild,
+  untracked,
+  viewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Editor } from '@tiptap/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Editor, Extension } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -26,22 +28,101 @@ import Link from '@tiptap/extension-link';
 import Heading from '@tiptap/extension-heading';
 import Image from '@tiptap/extension-image';
 import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list';
+import Color from '@tiptap/extension-color';
+import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
+import TextAlign from '@tiptap/extension-text-align';
+import { TextStyle } from '@tiptap/extension-text-style';
 import { Placeholder, UndoRedo } from '@tiptap/extensions';
+import { ThemeService } from '@mas/frontend-shared-data-access';
+
+const Indent = Extension.create({
+  name: 'indent',
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['paragraph', 'heading'],
+        attributes: {
+          indent: {
+            default: 0,
+            parseHTML: (element: HTMLElement) => Number(element.getAttribute('data-indent')) || 0,
+            renderHTML: (attributes: { indent?: number }) => {
+              const indent = Math.max(0, Math.min(6, attributes.indent ?? 0));
+              return indent ? { 'data-indent': indent, style: `margin-left: ${indent * 2}em` } : {};
+            },
+          },
+        },
+      },
+    ];
+  },
+});
+
+const SUPPORTED_SOURCE_TAGS = new Set([
+  'a',
+  'br',
+  'div',
+  'em',
+  'h1',
+  'h2',
+  'h3',
+  'i',
+  'img',
+  'li',
+  'ol',
+  'p',
+  'span',
+  'strong',
+  'table',
+  'tbody',
+  'td',
+  'th',
+  'thead',
+  'tr',
+  'u',
+  'ul',
+]);
 
 @Component({
   selector: 'mas-rich-text-editor',
   standalone: true,
   imports: [],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RichTextEditorComponent),
+      multi: true,
+    },
+  ],
   encapsulation: ViewEncapsulation.None,
+  host: {
+    '[class.rte-dark-theme]': 'themeService.darkMode()',
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [
     `
+      mas-rich-text-editor {
+        --rte-surface: #ffffff;
+        --rte-toolbar: rgba(249, 250, 251, 0.8);
+        --rte-border: #e5e7eb;
+        --rte-text: #111827;
+        --rte-muted: #9ca3af;
+        --rte-link: #2563eb;
+        --rte-cell: #f3f4f6;
+      }
+      mas-rich-text-editor.rte-dark-theme {
+        --rte-surface: #1f2937;
+        --rte-toolbar: rgba(17, 24, 39, 0.8);
+        --rte-border: #4b5563;
+        --rte-text: #f3f4f6;
+        --rte-muted: #9ca3af;
+        --rte-link: #93c5fd;
+        --rte-cell: #374151;
+      }
       mas-rich-text-editor .rte-editor-host .ProseMirror {
         outline: none;
         padding: 10px 12px;
         font-size: 14px;
         line-height: 1.65;
-        color: #111827;
+        color: var(--rte-text);
         min-height: inherit;
         caret-color: #2563eb;
       }
@@ -53,7 +134,7 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
       }
       mas-rich-text-editor .rte-editor-host .ProseMirror p.is-editor-empty:first-child::before {
         content: attr(data-placeholder);
-        color: #9ca3af;
+        color: var(--rte-muted);
         pointer-events: none;
         float: left;
         height: 0;
@@ -72,7 +153,7 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
         margin: 0.15em 0;
       }
       mas-rich-text-editor .rte-editor-host .ProseMirror a {
-        color: #2563eb;
+        color: var(--rte-link);
         text-decoration: underline;
         text-underline-offset: 2px;
       }
@@ -91,21 +172,21 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
         font-weight: 700;
         line-height: 1.3;
         margin: 0.6em 0 0.2em;
-        color: #111827;
+        color: var(--rte-text);
       }
       mas-rich-text-editor .rte-editor-host .ProseMirror h2 {
         font-size: 1.25em;
         font-weight: 700;
         line-height: 1.35;
         margin: 0.5em 0 0.2em;
-        color: #111827;
+        color: var(--rte-text);
       }
       mas-rich-text-editor .rte-editor-host .ProseMirror h3 {
         font-size: 1.1em;
         font-weight: 600;
         line-height: 1.4;
         margin: 0.4em 0 0.15em;
-        color: #111827;
+        color: var(--rte-text);
       }
       mas-rich-text-editor .rte-editor-host .ProseMirror img {
         max-width: 100%;
@@ -119,19 +200,85 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
         outline: 2px solid #2563eb;
         outline-offset: 2px;
       }
+      mas-rich-text-editor .rte-editor-host .ProseMirror table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+        overflow: hidden;
+      }
+      mas-rich-text-editor .rte-editor-host .ProseMirror td,
+      mas-rich-text-editor .rte-editor-host .ProseMirror th {
+        border: 1px solid var(--rte-border);
+        min-width: 1em;
+        padding: 4px 6px;
+        vertical-align: top;
+      }
+      mas-rich-text-editor .rte-editor-host .ProseMirror th {
+        background: var(--rte-cell);
+        font-weight: 600;
+      }
+      mas-rich-text-editor .rte-source-editor {
+        min-height: inherit;
+        resize: vertical;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
       mas-rich-text-editor .rte-uploading-spinner {
         pointer-events: none;
+      }
+      mas-rich-text-editor.rte-dark-theme > div:first-child {
+        background-color: var(--rte-surface);
+        color: var(--rte-text);
+        border-color: var(--rte-border);
+      }
+      mas-rich-text-editor.rte-dark-theme > div:first-child > div:first-child {
+        background-color: var(--rte-toolbar);
+        border-color: var(--rte-border);
+      }
+      mas-rich-text-editor.rte-dark-theme > div:first-child > div:first-child button {
+        color: #d1d5db !important;
+      }
+      mas-rich-text-editor.rte-dark-theme > div:first-child > div:first-child button:hover {
+        color: #ffffff !important;
+        background-color: #374151;
+      }
+      mas-rich-text-editor.rte-dark-theme select,
+      mas-rich-text-editor.rte-dark-theme input[type='color'],
+      mas-rich-text-editor.rte-dark-theme .rte-source-editor {
+        background-color: var(--rte-surface);
+        color: var(--rte-text);
+        border-color: var(--rte-border);
+      }
+      mas-rich-text-editor.rte-dark-theme .rte-source-editor {
+        caret-color: #93c5fd;
+      }
+      mas-rich-text-editor.rte-dark-theme > div:first-child > div:last-child {
+        color: var(--rte-muted);
+        border-color: var(--rte-border);
+      }
+      mas-rich-text-editor.rte-dark-theme p[role='alert'] {
+        background-color: #451a1a;
+        color: #fecaca;
+      }
+      mas-rich-text-editor.rte-dark-theme .rte-link-popover {
+        background-color: #1f2937;
+        border-color: var(--rte-border);
+        color: var(--rte-text);
+      }
+      mas-rich-text-editor.rte-dark-theme .rte-link-input {
+        background-color: #111827;
+        border-color: var(--rte-border);
+        color: var(--rte-text);
       }
     `,
   ],
   template: `
     <div
       class="bg-white overflow-hidden"
-      [class.rounded-lg]="!noBorder"
-      [class.border]="!noBorder"
-      [class.border-gray-200]="!noBorder"
-      [class.opacity-50]="disabled"
-      [class.pointer-events-none]="disabled"
+      [class.rounded-lg]="!noBorder()"
+      [class.border]="!noBorder()"
+      [class.border-gray-200]="!noBorder()"
+      [class.opacity-50]="isDisabled()"
+      [class.pointer-events-none]="isDisabled()"
     >
       <!-- ── Toolbar ── -->
       <div class="flex items-center gap-0.5 px-2 py-1.5 border-b border-gray-100 bg-gray-50/80 select-none flex-wrap">
@@ -307,6 +454,117 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
 
         <div class="w-px h-4 bg-gray-200 mx-1 shrink-0"></div>
 
+        <button
+          type="button"
+          title="Align left"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          [class.bg-gray-200]="isTextAlign('left')"
+          (mousedown)="$event.preventDefault(); setTextAlign('left')"
+        >
+          Left
+        </button>
+        <button
+          type="button"
+          title="Align center"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          [class.bg-gray-200]="isTextAlign('center')"
+          (mousedown)="$event.preventDefault(); setTextAlign('center')"
+        >
+          Center
+        </button>
+        <button
+          type="button"
+          title="Align right"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          [class.bg-gray-200]="isTextAlign('right')"
+          (mousedown)="$event.preventDefault(); setTextAlign('right')"
+        >
+          Right
+        </button>
+        <button
+          type="button"
+          title="Justify"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          [class.bg-gray-200]="isTextAlign('justify')"
+          (mousedown)="$event.preventDefault(); setTextAlign('justify')"
+        >
+          Justify
+        </button>
+        <button
+          type="button"
+          title="Decrease indent"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          (mousedown)="$event.preventDefault(); changeIndent(-1)"
+        >
+          Outdent
+        </button>
+        <button
+          type="button"
+          title="Increase indent"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          (mousedown)="$event.preventDefault(); changeIndent(1)"
+        >
+          Indent
+        </button>
+
+        <div class="w-px h-4 bg-gray-200 mx-1 shrink-0"></div>
+
+        <button
+          type="button"
+          title="Insert table"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          (mousedown)="$event.preventDefault(); insertTable()"
+        >
+          Table
+        </button>
+        <button
+          type="button"
+          title="Add table row"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          (mousedown)="$event.preventDefault(); addTableRow()"
+        >
+          + Row
+        </button>
+        <button
+          type="button"
+          title="Add table column"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          (mousedown)="$event.preventDefault(); addTableColumn()"
+        >
+          + Col
+        </button>
+        <button
+          type="button"
+          title="Delete table"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-red-600 transition-colors"
+          (mousedown)="$event.preventDefault(); deleteTable()"
+        >
+          Delete table
+        </button>
+
+        <label class="flex items-center gap-1 px-1 text-xs text-gray-500" title="Text color">
+          <span aria-hidden="true">A</span>
+          <input type="color" class="w-5 h-5 cursor-pointer" value="#111827" (input)="setColor($event)" />
+        </label>
+
+        <div class="w-px h-4 bg-gray-200 mx-1 shrink-0"></div>
+        <button
+          type="button"
+          title="Undo"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          (mousedown)="$event.preventDefault(); undo()"
+        >
+          Undo
+        </button>
+        <button
+          type="button"
+          title="Redo"
+          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          (mousedown)="$event.preventDefault(); redo()"
+        >
+          Redo
+        </button>
+
         <!-- Image upload -->
         <input #imageFileInput type="file" accept="image/*" class="hidden" (change)="handleImageUpload($event)" />
         <button
@@ -350,7 +608,33 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
         </button>
       </div>
       <!-- ── Editor mount ── -->
-      <div #editorHost class="rte-editor-host" [style.minHeight]="minHeight"></div>
+      <div #editorHost class="rte-editor-host" [class.hidden]="sourceMode()" [style.minHeight]="minHeight()"></div>
+      @if (sourceMode()) {
+        <textarea
+          class="rte-source-editor block w-full border-0 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-0"
+          [style.minHeight]="minHeight()"
+          aria-label="HTML source"
+          [value]="sourceHtml()"
+          (input)="setSourceHtml($event)"
+        ></textarea>
+      }
+      @if (uploadError()) {
+        <p class="px-3 py-1.5 text-xs text-red-600 bg-red-50" role="alert">{{ uploadError() }}</p>
+      }
+      @if (sourceError()) {
+        <p class="px-3 py-1.5 text-xs text-red-600 bg-red-50" role="alert">{{ sourceError() }}</p>
+      }
+      <div class="flex items-center justify-between px-3 py-1 text-[11px] text-gray-400 border-t border-gray-100">
+        <span>{{ wordCount() }} words</span>
+        <button
+          type="button"
+          class="text-blue-600 hover:underline"
+          [disabled]="isDisabled()"
+          (mousedown)="$event.preventDefault(); toggleSourceMode()"
+        >
+          {{ sourceMode() ? 'Apply HTML' : 'Edit HTML' }}
+        </button>
+      </div>
     </div>
 
     <!-- ── Link popover ── -->
@@ -469,17 +753,18 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions';
     }
   `,
 })
-export class RichTextEditorComponent implements OnChanges, OnDestroy {
+export class RichTextEditorComponent implements ControlValueAccessor, OnDestroy {
   private readonly http = inject(HttpClient);
+  readonly themeService = inject(ThemeService);
 
-  @ViewChild('editorHost') editorHostRef!: ElementRef<HTMLElement>;
+  readonly editorHostRef = viewChild.required<ElementRef<HTMLElement>>('editorHost');
 
-  @Input() value = '';
-  @Output() valueChange = new EventEmitter<string>();
-  @Input() placeholder = '';
-  @Input() disabled = false;
-  @Input() minHeight = '80px';
-  @Input() noBorder = false;
+  readonly value = model('');
+  readonly placeholder = input('');
+  readonly disabled = input(false);
+  readonly minHeight = input('80px');
+  readonly noBorder = input(false);
+  readonly uploadEndpoint = input('/api/rich-text-images/upload');
 
   readonly isBold = signal(false);
   readonly isItalic = signal(false);
@@ -487,22 +772,56 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
   readonly isLink = signal(false);
   readonly isBulletList = signal(false);
   readonly isOrderedList = signal(false);
+  readonly activeTextAlign = signal('left');
   readonly currentHeadingLevel = signal<0 | 1 | 2 | 3>(0);
   readonly uploadingImage = signal(false);
+  readonly uploadError = signal('');
+  readonly sourceMode = signal(false);
+  readonly sourceHtml = signal('');
+  readonly sourceError = signal('');
+  readonly wordCount = signal(0);
   readonly linkMode = signal<'none' | 'preview' | 'editing'>('none');
   readonly linkPopoverPos = signal({ x: 0, y: 0 });
   readonly existingLinkHref = signal('');
   readonly pendingLinkUrl = signal('');
+  readonly isDisabled = computed(() => this.disabled() || this.formDisabled());
 
   private editor: Editor | null = null;
+  private readonly formDisabled = signal(false);
+  private readonly editorContent = computed(() => this.value());
+  private onChange: (value: string) => void = () => undefined;
+  private onTouched: () => void = () => undefined;
 
   constructor() {
+    effect(() => {
+      const value = this.editorContent();
+      const disabled = this.isDisabled();
+      untracked(() => {
+        if (!this.editor) return;
+
+        if (this.editor.isEditable !== !disabled) {
+          this.editor.setEditable(!disabled);
+        }
+        this.setEditorContent(value);
+      });
+    });
     afterNextRender(() => this.initEditor());
+  }
+
+  private setEditorContent(newValue: string): void {
+    if (!this.editor) return;
+
+    const current = this.editor.getHTML();
+    const normalizedCurrent = current === '<p></p>' ? '' : current;
+    if (normalizedCurrent !== newValue) {
+      this.editor.commands.setContent(newValue, { emitUpdate: false });
+      this.refreshEditorState();
+    }
   }
 
   private initEditor(): void {
     this.editor = new Editor({
-      element: this.editorHostRef.nativeElement,
+      element: this.editorHostRef().nativeElement,
       extensions: [
         Document,
         Paragraph,
@@ -512,6 +831,8 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
         Underline,
         Heading.configure({ levels: [1, 2, 3] }),
         Image.configure({ inline: false, allowBase64: false }),
+        TextStyle,
+        Color,
         Link.configure({
           openOnClick: false,
           HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' },
@@ -519,11 +840,17 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
         BulletList,
         OrderedList,
         ListItem,
+        Table.configure({ resizable: true }),
+        TableRow,
+        TableHeader,
+        TableCell,
+        TextAlign.configure({ types: ['heading', 'paragraph'], alignments: ['left', 'center', 'right', 'justify'] }),
+        Indent,
         UndoRedo,
-        Placeholder.configure({ placeholder: this.placeholder }),
+        Placeholder.configure({ placeholder: this.placeholder() }),
       ],
-      content: this.value || '',
-      editable: !this.disabled,
+      content: this.editorContent(),
+      editable: !this.isDisabled(),
       onTransaction: () => {
         if (!this.editor) return;
         this.isBold.set(this.editor.isActive('bold'));
@@ -532,10 +859,16 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
         this.isLink.set(this.editor.isActive('link'));
         this.isBulletList.set(this.editor.isActive('bulletList'));
         this.isOrderedList.set(this.editor.isActive('orderedList'));
+        this.activeTextAlign.set(
+          this.editor.getAttributes('paragraph')['textAlign'] ||
+            this.editor.getAttributes('heading')['textAlign'] ||
+            'left',
+        );
         if (this.editor.isActive('heading', { level: 1 })) this.currentHeadingLevel.set(1);
         else if (this.editor.isActive('heading', { level: 2 })) this.currentHeadingLevel.set(2);
         else if (this.editor.isActive('heading', { level: 3 })) this.currentHeadingLevel.set(3);
         else this.currentHeadingLevel.set(0);
+        this.wordCount.set(this.editor.state.doc.textContent.trim().split(/\s+/).filter(Boolean).length);
       },
       onSelectionUpdate: ({ editor }) => {
         if (this.linkMode() === 'editing') return;
@@ -550,29 +883,63 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
           this.linkMode.set('none');
         }
       },
-      onUpdate: ({ editor }) => {
-        const html = editor.getHTML();
-        this.valueChange.emit(html === '<p></p>' ? '' : html);
+      onUpdate: () => {
+        this.emitValue();
       },
+      onBlur: () => this.onTouched(),
     });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['value'] && this.editor) {
-      const newVal = changes['value'].currentValue || '';
-      const current = this.editor.getHTML();
-      const normalizedCurrent = current === '<p></p>' ? '' : current;
-      if (normalizedCurrent !== newVal) {
-        this.editor.commands.setContent(newVal, { emitUpdate: false });
-      }
-    }
-    if (changes['disabled'] && this.editor) {
-      this.editor.setEditable(!this.disabled);
-    }
+    this.refreshEditorState();
   }
 
   ngOnDestroy(): void {
     this.editor?.destroy();
+  }
+
+  writeValue(value: string | null): void {
+    const normalizedValue = value ?? '';
+    this.value.set(normalizedValue);
+    this.setEditorContent(normalizedValue);
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.formDisabled.set(isDisabled);
+    this.editor?.setEditable(!this.isDisabled());
+  }
+
+  private emitValue(): void {
+    if (!this.editor) return;
+    const html = this.editor.getHTML();
+    const value = html === '<p></p>' ? '' : html;
+    this.value.set(value);
+    this.onChange(value);
+  }
+
+  private refreshEditorState(): void {
+    if (!this.editor) return;
+    this.isBold.set(this.editor.isActive('bold'));
+    this.isItalic.set(this.editor.isActive('italic'));
+    this.isUnderline.set(this.editor.isActive('underline'));
+    this.isLink.set(this.editor.isActive('link'));
+    this.isBulletList.set(this.editor.isActive('bulletList'));
+    this.isOrderedList.set(this.editor.isActive('orderedList'));
+    this.activeTextAlign.set(
+      this.editor.getAttributes('paragraph')['textAlign'] ||
+        this.editor.getAttributes('heading')['textAlign'] ||
+        'left',
+    );
+    if (this.editor.isActive('heading', { level: 1 })) this.currentHeadingLevel.set(1);
+    else if (this.editor.isActive('heading', { level: 2 })) this.currentHeadingLevel.set(2);
+    else if (this.editor.isActive('heading', { level: 3 })) this.currentHeadingLevel.set(3);
+    else this.currentHeadingLevel.set(0);
+    this.wordCount.set(this.editor.state.doc.textContent.trim().split(/\s+/).filter(Boolean).length);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -599,6 +966,90 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
         this.chain.toggleOrderedList().run();
         break;
     }
+  }
+
+  isTextAlign(alignment: string): boolean {
+    return this.activeTextAlign() === alignment;
+  }
+
+  setTextAlign(alignment: 'left' | 'center' | 'right' | 'justify'): void {
+    this.editor?.chain().focus().setTextAlign(alignment).run();
+  }
+
+  changeIndent(delta: number): void {
+    if (!this.editor) return;
+    const current = Number(
+      this.editor.getAttributes('paragraph')['indent'] ?? this.editor.getAttributes('heading')['indent'] ?? 0,
+    );
+    const indent = Math.max(0, Math.min(6, current + delta));
+    this.editor
+      .chain()
+      .focus()
+      .updateAttributes(this.editor.isActive('heading') ? 'heading' : 'paragraph', { indent })
+      .run();
+  }
+
+  insertTable(): void {
+    this.editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  }
+
+  addTableRow(): void {
+    this.editor?.chain().focus().addRowAfter().run();
+  }
+
+  addTableColumn(): void {
+    this.editor?.chain().focus().addColumnAfter().run();
+  }
+
+  deleteTable(): void {
+    this.editor?.chain().focus().deleteTable().run();
+  }
+
+  undo(): void {
+    this.editor?.chain().focus().undo().run();
+  }
+
+  redo(): void {
+    this.editor?.chain().focus().redo().run();
+  }
+
+  setColor(event: Event): void {
+    const color = (event.target as HTMLInputElement).value;
+    this.editor?.chain().focus().setColor(color).run();
+  }
+
+  toggleSourceMode(): void {
+    if (!this.editor) return;
+    if (!this.sourceMode()) {
+      this.sourceError.set('');
+      this.sourceHtml.set(this.editor.getHTML());
+      this.sourceMode.set(true);
+      return;
+    }
+
+    const source = this.sourceHtml();
+    const unsupportedTag = source.match(/<\/?([a-z][a-z0-9-]*)\b[^>]*>/gi)?.find((tag) => {
+      const name = tag.match(/<\/?([a-z][a-z0-9-]*)/i)?.[1]?.toLowerCase();
+      return !!name && !SUPPORTED_SOURCE_TAGS.has(name);
+    });
+    if (unsupportedTag) {
+      this.sourceError.set(`Unsupported HTML element: ${unsupportedTag}`);
+      return;
+    }
+
+    try {
+      this.editor.commands.setContent(source, { emitUpdate: false });
+      this.sourceError.set('');
+      this.sourceMode.set(false);
+      this.refreshEditorState();
+      this.emitValue();
+    } catch {
+      this.sourceError.set('That HTML could not be applied. Your previous content was kept.');
+    }
+  }
+
+  setSourceHtml(event: Event): void {
+    this.sourceHtml.set((event.target as HTMLTextAreaElement).value);
   }
 
   toggleLink(): void {
@@ -667,16 +1118,18 @@ export class RichTextEditorComponent implements OnChanges, OnDestroy {
     input.value = '';
     if (!file) return;
 
+    this.uploadError.set('');
     this.uploadingImage.set(true);
     const formData = new FormData();
     formData.append('image', file);
-    this.http.post<{ url: string }>('/api/discussion-posts/upload-image', formData).subscribe({
+    this.http.post<{ url: string }>(this.uploadEndpoint(), formData).subscribe({
       next: ({ url }) => {
         this.editor?.chain().focus().setImage({ src: url }).run();
         this.uploadingImage.set(false);
       },
       error: () => {
         this.uploadingImage.set(false);
+        this.uploadError.set('The image could not be uploaded. Please try again.');
       },
     });
   }

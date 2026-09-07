@@ -36,6 +36,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   app.useStaticAssets(assetDir('introduction'), { prefix: '/assets/introduction' });
+  // The production frontend serves public uploads from its shared assets
+  // volume. Expose the same path from the API for local Angular development,
+  // where the dev server proxies /assets/rich-text to this process.
+  app.useStaticAssets(assetDir('rich-text'), { prefix: '/assets/rich-text' });
 
   const port = process.env['API_PORT'] ?? 3000;
   await app.listen(port);
