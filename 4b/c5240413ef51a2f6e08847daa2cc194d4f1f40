@@ -1,0 +1,161 @@
+libs/frontend/user-guide/src/lib/user-guide/user-guide.component.ts
+  s_341e673e7fe150::t_a742dbe03dd55b 14
+libs/frontend/dashboard/src/lib/dashboard/dashboard.component.ts
+  s_341e673e7fe150::t_a742dbe03dd55b 30
+docker-compose.yaml
+  s_341e673e7fe150::t_8a28963e7655e9 53
+libs/backend/discussion/src/lib/discussion.controller.ts
+  s_341e673e7fe150::t_ff625e1d8c8baf 75-79
+  s_341e673e7fe150::t_e212c68ff83435 110
+  s_341e673e7fe150::t_a8ab3184278c1a 19-20,32-39,45-48,55-61,81-89,92-108
+  s_341e673e7fe150::t_d393a1b19eb479 21
+libs/frontend/blogs/src/lib/blogs.component.ts
+  s_341e673e7fe150::t_a742dbe03dd55b 43
+libs/frontend/blogs/src/lib/blog/blog.component.ts
+  s_341e673e7fe150::t_a742dbe03dd55b 62
+libs/frontend/program-profiles/src/lib/description/description.component.ts
+  s_341e673e7fe150::t_a742dbe03dd55b 13
+libs/backend/mail/src/lib/mail.service.spec.ts
+  s_341e673e7fe150::t_1ca4e2eb6745f9 48-49,59
+  s_341e673e7fe150::t_d3f588d26c4ac2 46-47,50-58,60-67
+  s_341e673e7fe150::t_8a28963e7655e9 1-45,87
+  s_341e673e7fe150::t_970a9236852858 68-86
+libs/backend/images/src/lib/images.module.ts
+  s_341e673e7fe150::t_20ba72b1315429 7,10
+libs/frontend/_shared/components/src/lib/rich-text-editor/rich-text-editor.component.ts
+  s_341e673e7fe150::t_1bef0e524497a3 36,102-119,125,137,156,175,182,189,211,217,228-270
+  s_341e673e7fe150::t_0deae65a6b5e59 971-980,984,990-1005,1014-1054,1121,1132
+  s_341e673e7fe150::t_ededc7a472857a 88-94,203-210,212-216,218,220-224,457-485,495-507,511-543,545-548,567,612-614,616-617,619,623-631,633-637
+  s_341e673e7fe150::t_24e2ca1802f241 486-494,549-566,1006-1013
+  s_341e673e7fe150::t_8b8fc749a21880 96-98,758
+  s_341e673e7fe150::t_a0d791aee09373 14,799-800,805-806
+  s_341e673e7fe150::t_d13d78fb74cac0 5
+  s_341e673e7fe150::t_355af090645ea8 10,15,280-281,632
+  s_341e673e7fe150::t_ae5ee6f8e64af4 277-279,611,615
+  s_341e673e7fe150::t_3846580f4e34ce 756,796-798,801,807
+  s_341e673e7fe150::t_6ae89225e3a797 863-865,934-936,985-989
+  s_341e673e7fe150::t_fe332a8f072c39 34,862,866,981-983
+  s_341e673e7fe150::t_a688da229a877d 775,778-782,792-793,834-835,843-848,871,887,889,891,898,902-912,915-920,922-933,937-942
+  s_341e673e7fe150::t_e2b7679b4bb208 19-20,31-33,37-82,219,271,508-510,544,820-821,943-944
+  s_341e673e7fe150::t_8e2a299fb67956 802-804
+  s_341e673e7fe150::t_95f650a024de79 811,817,899,901,914
+  s_341e673e7fe150::t_e6334dc52857c5 8,886
+  s_341e673e7fe150::t_af0822c1415a43 11,762,791,900,921
+  s_341e673e7fe150::t_acbe890abafda2 6
+  s_341e673e7fe150::t_8453b357feff09 618,620-622
+  s_341e673e7fe150::t_b011539aeedfab 760,763-767,787,790,812-816,818-819,824,850,852-853,913,1125
+libs/frontend/_shared/components/src/lib/rich-text-editor/index.ts
+  s_341e673e7fe150::t_ffb9277435a7d3 1
+libs/frontend/admin/src/lib/email-blast/email-blast.component.ts
+  s_341e673e7fe150::t_e2700eb7036434 6,11,39
+libs/backend/mail/src/lib/mail.service.ts
+  s_341e673e7fe150::t_8a28963e7655e9 4,8-11,80,83-85,87
+  s_341e673e7fe150::t_d3f588d26c4ac2 86,89-96,107-131,171
+  s_341e673e7fe150::t_8549a5447229af 132
+  s_341e673e7fe150::t_970a9236852858 88,97-106,133-170,172
+  s_341e673e7fe150::t_2e18eaf40a7f61 173-182
+apps/frontend/src/styles.scss
+  s_341e673e7fe150::t_a742dbe03dd55b 129,222,226-265
+libs/backend/images/src/index.ts
+  s_341e673e7fe150::t_20ba72b1315429 4
+apps/frontend/src/app/discussion-board-forum.component.ts
+  s_341e673e7fe150::t_0a97eca079ce54 601,1008,1077,1201,1397
+  s_341e673e7fe150::t_8309da3a744585 700
+  s_341e673e7fe150::t_c0c4df51c880f1 2083-2088
+  s_341e673e7fe150::t_ffb9277435a7d3 18
+  s_341e673e7fe150::t_8cea651d5bde5a 599-600,1007,1076,1200,1396
+libs/frontend/admin/src/lib/home-management/learnings/ui/add-learning/add-learning.component.ts
+  s_341e673e7fe150::t_a08f8e7f1ff9d8 6-7,20,49
+libs/frontend/home/src/lib/home.component.ts
+  s_341e673e7fe150::t_a742dbe03dd55b 53,71
+openspec/specs/rich-text-editing/spec.md
+  s_341e673e7fe150::t_3f951edaf9c270 1-126
+libs/frontend/partner-staff/src/lib/programs/ui/add-program/add-program.component.ts
+  s_341e673e7fe150::t_d769310c6d91d7 11-12,38,112
+libs/frontend/_shared/components/src/lib/index.ts
+  s_341e673e7fe150::t_ffb9277435a7d3 11
+apps/frontend/proxy.conf.json
+  s_341e673e7fe150::t_431c5bdea68de5 4-5,9-10,12
+  s_341e673e7fe150::t_0bb8fdab32875c 6-8
+scripts/start-local.sh
+  s_341e673e7fe150::t_0bb8fdab32875c 44
+libs/backend/images/src/lib/rich-text-images.controller.spec.ts
+  s_341e673e7fe150::t_1d0d40528edd85 8,10-15,17-27,29-32
+  s_341e673e7fe150::t_eeb8dbcd64381b 1-7
+  s_341e673e7fe150::t_e9b9f72fc54e76 9,16,28
+docs/rich-text-editor.md
+  s_341e673e7fe150::t_f2c7eb7ae49830 1-23,40-47
+  s_341e673e7fe150::t_0bb8fdab32875c 24-25
+  s_341e673e7fe150::t_d3f588d26c4ac2 29
+  s_341e673e7fe150::t_e212c68ff83435 26,34-39
+  s_341e673e7fe150::t_22b67488579a60 27-28,33
+  s_341e673e7fe150::t_970a9236852858 30-32
+libs/frontend/_shared/components/src/lib/rich-text-editor/rich-text-editor.component.spec.ts
+  s_341e673e7fe150::t_b953a12b529daf 85,90,116,121
+  s_341e673e7fe150::t_db0ea3867d7238 3,26-27,30-33,99-101,107-109,136,144
+  s_341e673e7fe150::t_eeb8dbcd64381b 89,91-92,120
+  s_341e673e7fe150::t_1d0d40528edd85 1-2,5-25,28-29,34-41,43-49,64-65,80-84,86-87,93-98,102-106,110-115,117-119,122-135,137-143,145-150
+  s_341e673e7fe150::t_09eb17008a7e47 42
+  s_341e673e7fe150::t_eef0c3eafc5948 88
+  s_341e673e7fe150::t_f0717253aae861 4,50-63
+  s_341e673e7fe150::t_fb957d5b539336 66-79
+.env.example
+  s_341e673e7fe150::t_8a28963e7655e9 15-17
+package.json
+  s_341e673e7fe150::t_d9fc1e4c773a51 51,59,61-62
+libs/backend/images/src/lib/rich-text-images.controller.ts
+  s_341e673e7fe150::t_20ba72b1315429 1-59
+apps/backend/src/main.ts
+  s_341e673e7fe150::t_0bb8fdab32875c 39-42
+apps/frontend/generate-proxy.js
+  s_341e673e7fe150::t_0bb8fdab32875c 14-18
+apps/frontend/project.json
+  s_341e673e7fe150::t_c39af89fff5b90 24
+libs/frontend/peer-evaluation-guide/src/lib/peer-evaluation-guide/peer-evaluation-guide.component.ts
+  s_341e673e7fe150::t_a742dbe03dd55b 14
+libs/frontend/admin/src/lib/user-guide/user-guide.component.ts
+  s_341e673e7fe150::t_e2700eb7036434 6-7,11,19
+libs/frontend/admin/src/lib/blogs/ui/add-blog/add-blog.component.ts
+  s_341e673e7fe150::t_a08f8e7f1ff9d8 6-7,20,45
+libs/backend/discussion/src/lib/discussion.controller.spec.ts
+  s_341e673e7fe150::t_9a637257aaecd9 1-7
+  s_341e673e7fe150::t_054fe4753a1ecf 8-24,29-37,42-53
+  s_341e673e7fe150::t_ff625e1d8c8baf 25-28,38-41
+libs/frontend/admin/src/lib/peer-evaluation-guide/peer-evaluation-guide.component.ts
+  s_341e673e7fe150::t_e2700eb7036434 6-7,11,19
+libs/frontend/admin/src/lib/home-management/description/description.component.ts
+  s_341e673e7fe150::t_d769310c6d91d7 8-9,15,75
+openspec/changes/archive/2026-09-06-migrate-tinymce-to-tiptap/.openspec.yaml
+  s_341e673e7fe150::t_4618f82a854367 1-2
+pnpm-lock.yaml
+  s_341e673e7fe150::t_c8d0f967e531c9 101-103,125-127,131-136,4307-4311,4349-4364,15377-15380,15412-15424,18821
+openspec/changes/archive/2026-09-06-migrate-tinymce-to-tiptap/design.md
+  s_341e673e7fe150::t_1ad96c6da21a52 1-86
+openspec/changes/archive/2026-09-06-migrate-tinymce-to-tiptap/proposal.md
+  s_341e673e7fe150::t_359e3f45925802 1-30
+openspec/changes/archive/2026-09-06-migrate-tinymce-to-tiptap/specs/rich-text-editing/spec.md
+  s_341e673e7fe150::t_6bb06479b5b977 1-124
+openspec/changes/archive/2026-09-06-migrate-tinymce-to-tiptap/tasks.md
+  s_341e673e7fe150::t_e350eb11658886 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "4bc5240413ef51a2f6e08847daa2cc194d4f1f40",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_341e673e7fe150": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07906-b7d6-7220-8468-fd48508229ef",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
