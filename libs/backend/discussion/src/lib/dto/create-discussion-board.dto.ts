@@ -36,12 +36,13 @@ export class CreateDiscussionBoardDto {
   })
   cohortId?: string;
 
-  @IsUUID(undefined, { each: true })
   @IsArray()
   @IsOptional()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
   @ApiPropertyOptional({
     type: [String],
-    example: ['user-uuid-1', 'user-uuid-2'],
+    example: ['better-auth-user-id-1', 'better-auth-user-id-2'],
   })
   memberIds?: string[];
 }

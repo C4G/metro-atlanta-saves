@@ -1,6 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
@@ -10,94 +8,238 @@ import {
   StoriesStore,
   WhatWeAreStore,
 } from '@mas/frontend-shared-data-access';
-import { FooterComponent, HeroComponent } from '@mas/frontend-shared-layout';
+import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-home',
-  imports: [MatButtonModule, HeroComponent, MatCardModule, MatIconModule, FooterComponent],
+  imports: [MatIconModule, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let intro = introductionStore.introduction();
     @if (intro.hidden) {
       <h1 class="sr-only">{{ intro.title }}</h1>
     } @else {
-      @if (intro.imageHidden) {
-        <section class="flex items-center justify-center h-48 bg-gray-900 text-white">
-          <h1 class="text-4xl font-bold text-center px-4">{{ intro.title }}</h1>
-        </section>
-      } @else {
-        <mas-hero
-          [data]="{
-            heading: intro.title,
-            imgSrc: intro.imageUrl,
-            imgAlt:
+      <section class="relative isolate overflow-hidden bg-gray-950 text-white">
+        @if (!intro.imageHidden) {
+          <img
+            class="absolute inset-0 -z-20 h-full w-full object-cover"
+            [src]="intro.imageUrl"
+            [alt]="
               intro.imageText ||
-              'Financial Wellbeing Alliance participants pose together in front of graduation decorations',
-            imgSrcset: '640w, 828w, 1080w, 1920w',
-            imgSizes: '100vw',
-          }"
-        />
-      }
-    }
-    @if (!descriptionStore.description()?.hidden) {
-      <section class="px-8 py-10 md:px-16 md:py-10 lg:px-32 lg:py-16">
-        <img
-          [src]="descriptionStore.description()?.logoUrl || 'assets/Logo/BRP_Logo.webp'"
-          class="mx-auto"
-          width="406"
-          height="219"
-          alt="Building Resilient Professionals Logo"
-        />
-        @if (descriptionStore.description(); as description) {
-          <h2 class="text-lg font-semibold mt-4 text-center">{{ description.title }}</h2>
-          <div class="wysiwyg" [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"></div>
-          <div class="text-center mt-12">
-            @if (description.buttonLink && description.buttonText) {
-              <a mat-raised-button color="primary" [href]="description.buttonLink" class="mr-auto">
-                {{ description.buttonText }}
-              </a>
-            }
-          </div>
+              'Financial Wellbeing Alliance participants pose together in front of graduation decorations'
+            "
+          />
         }
+        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-gray-950 via-gray-950/75 to-gray-950/25"></div>
+        <div
+          class="mx-auto flex min-h-[34rem] max-w-7xl items-end px-5 py-14 sm:px-8 sm:py-20 lg:min-h-[38rem] lg:px-12"
+        >
+          <div class="max-w-3xl">
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-amber-200">
+              Building financial resilience
+            </p>
+            <h1 class="max-w-3xl font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+              {{ intro.title }}
+            </h1>
+            <p class="mt-6 max-w-xl text-base leading-7 text-slate-200 sm:text-lg">
+              Tools, guidance, and a community designed to help you build a stronger financial future.
+            </p>
+            <a
+              class="mt-8 inline-flex items-center gap-2 rounded-xl bg-amber-300 px-5 py-3 text-sm font-bold text-slate-950 transition-transform hover:-translate-y-0.5 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-950"
+              href="#start"
+            >
+              Explore the program
+              <mat-icon class="!h-4 !w-4 !text-base !leading-4">arrow_downward</mat-icon>
+            </a>
+          </div>
+        </div>
       </section>
     }
+
+    @if (descriptionStore.description(); as description) {
+      @if (!description.hidden) {
+        <section id="start" class="bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+            <div class="flex justify-center lg:justify-start">
+              <div class="flex aspect-square w-48 items-center justify-center rounded-3xl bg-amber-50 p-6 sm:w-56">
+                <img
+                  [src]="description.logoUrl || 'assets/Logo/BRP_Logo.webp'"
+                  class="max-h-full max-w-full object-contain"
+                  width="406"
+                  height="219"
+                  alt="Building Resilient Professionals logo"
+                />
+              </div>
+            </div>
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">A practical path forward</p>
+              <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                {{ description.title }}
+              </h2>
+              <div
+                class="home-rich-text wysiwyg mt-6 max-w-2xl text-base leading-7 text-slate-600"
+                [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"
+              ></div>
+              @if (description.buttonLink && description.buttonText) {
+                <a
+                  class="mt-8 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2"
+                  [href]="description.buttonLink"
+                >
+                  {{ description.buttonText }}
+                  <mat-icon class="!h-4 !w-4 !text-base !leading-4">arrow_forward</mat-icon>
+                </a>
+              }
+            </div>
+          </div>
+        </section>
+      }
+    }
+
     @if (visibleLearnings().length) {
-      <section class="bg-gray-800 py-10">
-        <h2 class="text-4xl font-bold text-center mb-16 text-white">Learn more</h2>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 gap-8">
-          @for (learning of visibleLearnings(); track learning.id) {
-            <mat-card class="shadow-md rounded-lg overflow-hidden p-4">
-              <h3 class="text-2xl font-semibold mb-4 text-center lg:text-center">{{ learning.title }}</h3>
-              <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(learning.body)" class="wysiwyg"></div>
-            </mat-card>
+      <section class="bg-[#f3f8f5] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+        <div class="mx-auto max-w-5xl">
+          <div class="max-w-2xl">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Build your knowledge</p>
+            <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              What the program is built for
+            </h2>
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              Explore the reason behind the program, what it aims to change, and what participants receive.
+            </p>
+          </div>
+          @let learning = activeLearning();
+          @if (learning) {
+            <article class="mt-10 overflow-hidden rounded-3xl border border-teal-100 bg-white shadow-sm">
+              <div class="border-b border-teal-100 bg-teal-700 px-7 py-6 text-white sm:px-10">
+                <div class="flex items-center justify-between gap-5">
+                  <div class="flex items-center gap-4">
+                    <span
+                      class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-300 text-sm font-bold text-slate-950"
+                    >
+                      0{{ learningIndex() + 1 }}
+                    </span>
+                    <div>
+                      <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-teal-100">
+                        Building resilient professionals
+                      </p>
+                      <h3 class="mt-1 font-serif text-3xl font-semibold">{{ learning.title }}</h3>
+                    </div>
+                  </div>
+                  <mat-icon class="text-amber-200">{{ learningIcon() }}</mat-icon>
+                </div>
+              </div>
+              <div class="p-7 sm:p-10">
+                <div
+                  class="learning-rich-text wysiwyg max-w-3xl text-base leading-8 text-slate-700"
+                  [innerHTML]="sanitizer.bypassSecurityTrustHtml(learning.body)"
+                ></div>
+                <div class="mt-10 flex items-center justify-between gap-4 border-t border-slate-100 pt-6">
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 text-sm font-bold text-slate-700 transition-colors hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    (click)="previousLearning()"
+                  >
+                    <mat-icon>arrow_back</mat-icon>
+                    Previous
+                  </button>
+                  <div class="flex gap-2" aria-label="Program topic selection">
+                    @for (item of visibleLearnings(); track item.id; let index = $index) {
+                      <button
+                        type="button"
+                        class="h-2 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-teal-600"
+                        [class.w-7]="learningIndex() === index"
+                        [class.bg-teal-700]="learningIndex() === index"
+                        [class.w-2]="learningIndex() !== index"
+                        [class.bg-slate-300]="learningIndex() !== index"
+                        [attr.aria-label]="'Show ' + item.title"
+                        (click)="showLearning(index)"
+                      ></button>
+                    }
+                  </div>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 text-sm font-bold text-slate-700 transition-colors hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    (click)="nextLearning()"
+                  >
+                    Next
+                    <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </article>
           }
         </div>
       </section>
     }
 
     @if (visibleStories().length) {
-      <section class="bg-gray-800 py-10">
-        <h2 class="text-4xl font-bold text-center mb-16 text-white">Stories</h2>
-        <h3 class="text-2xl font-bold text-center mb-6 text-white">Hear from participants!</h3>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 gap-8">
-          @for (story of visibleStories(); track story.name) {
-            <mat-card class="lg:!grid lg:!grid-cols-2" appearance="outlined">
+      <section class="bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+        <div class="mx-auto max-w-5xl">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Community stories</p>
+              <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                Progress looks different for everyone
+              </h2>
+            </div>
+            <p class="max-w-sm text-sm leading-6 text-slate-500">Hear from people putting their goals into action.</p>
+          </div>
+          @let story = activeStory();
+          @if (story) {
+            <article
+              class="mt-10 overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl md:grid md:grid-cols-[0.85fr_1.15fr]"
+            >
               <img
-                mat-card-image
                 [src]="story.imageUrl"
-                width="300"
-                height="100%"
-                alt="Testimonial Image"
-                class="object-cover w-full lg:h-full h-96"
+                width="600"
+                height="500"
+                alt="{{ story.name }}'s story"
+                class="h-72 w-full object-cover md:h-full"
                 loading="lazy"
               />
-              <div class="p-6">
-                <h3 class="text-xl font-semibold mb-4 text-center lg:text-left">
-                  {{ story.name }}
-                </h3>
-                <p>{{ story.description }}</p>
+              <div class="flex min-h-80 flex-col p-7 sm:p-10">
+                <span class="font-serif text-6xl leading-none text-amber-300">“</span>
+                <p class="mt-5 max-w-xl text-lg leading-8 text-slate-200">{{ story.description }}</p>
+                <div class="mt-auto flex items-end justify-between gap-5 pt-10">
+                  <div>
+                    <h3 class="font-serif text-xl font-semibold">{{ story.name }}</h3>
+                    <p class="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-teal-300">Participant story</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button
+                      type="button"
+                      class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:bg-white hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      aria-label="Previous story"
+                      (click)="previousStory()"
+                    >
+                      <mat-icon>arrow_back</mat-icon>
+                    </button>
+                    <button
+                      type="button"
+                      class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-300 text-slate-950 transition-colors hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      aria-label="Next story"
+                      (click)="nextStory()"
+                    >
+                      <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </mat-card>
+            </article>
+            <div class="mt-5 flex justify-center gap-2" aria-label="Story selection">
+              @for (item of visibleStories(); track item.id; let index = $index) {
+                <button
+                  type="button"
+                  class="h-2 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  [class.w-7]="storyIndex() === index"
+                  [class.bg-teal-700]="storyIndex() === index"
+                  [class.w-2]="storyIndex() !== index"
+                  [class.bg-slate-300]="storyIndex() !== index"
+                  [attr.aria-label]="'Show story ' + (index + 1)"
+                  (click)="showStory(index)"
+                ></button>
+              }
+            </div>
           }
         </div>
       </section>
@@ -105,65 +247,156 @@ import { FooterComponent, HeroComponent } from '@mas/frontend-shared-layout';
 
     @let wwa = whatWeAreStore.whatWeAre();
     @if (wwa && !wwa.hidden) {
-      <section class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="sr-only">About the Financial Wellbeing Alliance</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-16">
-            <div class="flex flex-col">
-              <div class="h-full flex flex-col">
-                <div class="p-6 flex-grow">
-                  <h3 class="text-xl font-semibold mb-4">Who we are</h3>
-                  <p>{{ wwa.whoWeAreDescription }}</p>
-                </div>
-                <div class="text-center mt-auto">
-                  <a mat-raised-button color="primary" href="/about-us" class="mt-4">About Us</a>
-                </div>
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <div class="h-full flex flex-col">
-                <div class="p-6 flex-grow">
-                  <h3 class="text-xl font-semibold mb-4">What we do</h3>
-                  <p>{{ wwa.whatWeDoDescription }}</p>
-                </div>
-                <div class="text-center mt-auto">
-                  <a mat-raised-button color="primary" href="/about-us" class="mt-4">About Us</a>
-                </div>
-              </div>
-            </div>
+      <section class="bg-gray-950 px-5 py-16 text-white sm:px-8 lg:px-12 lg:py-24">
+        <div class="mx-auto max-w-7xl">
+          <div class="max-w-2xl">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">The alliance</p>
+            <h2 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Support that meets you where you are</h2>
           </div>
+          <div class="mt-10 grid gap-4 md:grid-cols-2">
+            <article class="rounded-2xl border border-white/10 bg-white/5 p-7">
+              <mat-icon class="text-emerald-300">groups</mat-icon>
+              <h3 class="mt-5 text-xl font-bold">Who we are</h3>
+              <p class="mt-3 leading-7 text-gray-300">{{ wwa.whoWeAreDescription }}</p>
+            </article>
+            <article class="rounded-2xl border border-white/10 bg-white/5 p-7">
+              <mat-icon class="text-emerald-300">trending_up</mat-icon>
+              <h3 class="mt-5 text-xl font-bold">What we do</h3>
+              <p class="mt-3 leading-7 text-gray-300">{{ wwa.whatWeDoDescription }}</p>
+            </article>
+          </div>
+          <a
+            class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-emerald-300 transition-colors hover:text-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+            href="/about-us"
+          >
+            Learn more about us
+            <mat-icon class="!h-4 !w-4 !text-base !leading-4">arrow_forward</mat-icon>
+          </a>
         </div>
       </section>
     }
-
     @if (learningsStore.learnings() && descriptionStore.description()) {
       <mas-footer />
     }
   `,
-  host: {
-    class: 'block',
-  },
+  styles: [
+    `
+      :host ::ng-deep .home-rich-text ol {
+        counter-reset: home-step;
+        display: grid;
+        gap: 0.75rem;
+        margin: 2rem 0;
+        padding: 0;
+        list-style: none;
+      }
+      :host ::ng-deep .home-rich-text ol > li {
+        position: relative;
+        min-height: 4.5rem;
+        padding: 1.1rem 1.25rem 1.1rem 4.5rem;
+        border: 1px solid #dbe7e4;
+        border-radius: 1rem;
+        background: #f7faf9;
+        color: #334155;
+        counter-increment: home-step;
+      }
+      :host ::ng-deep .home-rich-text ol > li::before {
+        content: counter(home-step);
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        display: grid;
+        width: 2.25rem;
+        height: 2.25rem;
+        place-items: center;
+        border-radius: 9999px;
+        background: #0f766e;
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      :host ::ng-deep .learning-rich-text ul {
+        display: grid;
+        gap: 0.75rem;
+        margin: 1.4rem 0;
+        padding: 0;
+        list-style: none;
+      }
+      :host ::ng-deep .learning-rich-text ul > li {
+        position: relative;
+        padding-left: 1.4rem;
+        color: #334155;
+      }
+      :host ::ng-deep .learning-rich-text ul > li::before {
+        content: '';
+        position: absolute;
+        top: 0.58rem;
+        left: 0;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+        background: #0f766e;
+      }
+      :host ::ng-deep .home-rich-text a {
+        color: #0f766e;
+        font-weight: 600;
+      }
+    `,
+  ],
+  host: { class: 'block' },
 })
 export class HomeComponent {
-  descriptionStore = inject(DescriptionStore);
-  storiesStore = inject(StoriesStore);
-  introductionStore = inject(IntroductionStore);
-  learningsStore = inject(LearningsStore);
-  whatWeAreStore = inject(WhatWeAreStore);
-  sanitizer = inject(DomSanitizer);
-
-  visibleLearnings = computed(() =>
-    this.learningsStore.sectionHidden() ? [] : this.learningsStore.learnings().filter((l) => !l.hidden),
+  readonly descriptionStore = inject(DescriptionStore);
+  readonly storiesStore = inject(StoriesStore);
+  readonly introductionStore = inject(IntroductionStore);
+  readonly learningsStore = inject(LearningsStore);
+  readonly whatWeAreStore = inject(WhatWeAreStore);
+  readonly sanitizer = inject(DomSanitizer);
+  readonly visibleLearnings = computed(() =>
+    this.learningsStore.sectionHidden() ? [] : this.learningsStore.learnings().filter((learning) => !learning.hidden),
   );
-  visibleStories = computed(() =>
-    this.storiesStore.sectionHidden() ? [] : this.storiesStore.stories().filter((s) => !s.hidden),
+  readonly visibleStories = computed(() =>
+    this.storiesStore.sectionHidden() ? [] : this.storiesStore.stories().filter((story) => !story.hidden),
   );
-
+  readonly learningIndex = signal(0);
+  readonly activeLearning = computed(() => {
+    const learnings = this.visibleLearnings();
+    return learnings[this.learningIndex() % learnings.length];
+  });
+  readonly storyIndex = signal(0);
+  readonly activeStory = computed(() => {
+    const stories = this.visibleStories();
+    return stories[this.storyIndex() % stories.length];
+  });
   constructor() {
     this.descriptionStore.getDescription();
     this.introductionStore.getIntroduction();
     this.storiesStore.getStories();
     this.learningsStore.getLearnings();
     this.whatWeAreStore.getWhatWeAre();
+  }
+  showStory(index: number): void {
+    this.storyIndex.set(index);
+  }
+  showLearning(index: number): void {
+    this.learningIndex.set(index);
+  }
+  previousLearning(): void {
+    const length = this.visibleLearnings().length;
+    if (length) this.learningIndex.update((index) => (index - 1 + length) % length);
+  }
+  nextLearning(): void {
+    const length = this.visibleLearnings().length;
+    if (length) this.learningIndex.update((index) => (index + 1) % length);
+  }
+  learningIcon(): string {
+    return ['lightbulb', 'flag', 'school'][this.learningIndex() % 3];
+  }
+  previousStory(): void {
+    const length = this.visibleStories().length;
+    if (length) this.storyIndex.update((index) => (index - 1 + length) % length);
+  }
+  nextStory(): void {
+    const length = this.visibleStories().length;
+    if (length) this.storyIndex.update((index) => (index + 1) % length);
   }
 }

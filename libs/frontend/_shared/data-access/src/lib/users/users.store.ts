@@ -2,7 +2,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap } from 'rxjs';
+import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserFull } from '@mas/models';
@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 type UsersState = {
   user: UserFull | null;
   users: UserFull[];
+  usersLoading: boolean;
 };
 
 type AddUser = Pick<UserFull, 'firstName' | 'lastName' | 'email'>;
@@ -18,6 +19,7 @@ type AddUser = Pick<UserFull, 'firstName' | 'lastName' | 'email'>;
 const initialState: UsersState = {
   user: null,
   users: [],
+  usersLoading: false,
 };
 
 const BASE_URL = '/api/users';
@@ -63,13 +65,15 @@ export const UsersStore = signalStore(
     ),
     getUsers: rxMethod<void>(
       pipe(
+        tap(() => patchState(store, (state) => ({ ...state, usersLoading: true }))),
         switchMap(() =>
           http.get<UserFull[]>(BASE_URL).pipe(
             tapResponse({
               next: (users) => {
-                patchState(store, (state) => ({ ...state, users }));
+                patchState(store, (state) => ({ ...state, users, usersLoading: false }));
               },
               error: () => {
+                patchState(store, (state) => ({ ...state, usersLoading: false }));
                 snackBar.open('There was an error retreiving users', undefined, {
                   panelClass: 'error',
                   duration: 5000,

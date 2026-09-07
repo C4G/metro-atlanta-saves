@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class AddBoardMemberDto {
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    example: 'user-uuid',
+    example: 'better-auth-user-id',
   })
   userId!: string;
 }

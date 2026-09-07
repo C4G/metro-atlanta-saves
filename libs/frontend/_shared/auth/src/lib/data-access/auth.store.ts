@@ -140,8 +140,7 @@ export const AuthStore = signalStore(
                 next: (user) => {
                   update({ user });
                   snackBar.open('You have been signed in!', undefined, { panelClass: 'success', duration: 5000 });
-                  const route = user.firstProgramId ? `program-profiles/${user.firstProgramId}/savings` : '/';
-                  router.navigate([route]);
+                  router.navigate(['/dashboard']);
                 },
                 error: () => {
                   snackBar.open(
