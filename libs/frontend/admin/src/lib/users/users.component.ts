@@ -13,7 +13,7 @@ type UserRoleFilter = 'All' | 'Administrator' | 'Partner_Staff' | 'Participant';
   imports: [MatDialogModule, MatIcon, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="min-h-dvh bg-[#f8fafc] px-4 py-6 sm:px-6 lg:px-8">
+    <main class="admin-directory min-h-dvh bg-[#f8fafc] px-4 py-6 sm:px-6 lg:px-8">
       <section class="mx-auto max-w-7xl">
         <nav class="mb-5 flex items-center gap-2 text-xs font-medium text-gray-400" aria-label="Breadcrumb">
           <a

@@ -324,6 +324,95 @@ body.dark-theme {
   color: #cbd5e1 !important;
 }
 
+/* Admin directories share the platform's deep-navy canvas and mint interaction language. */
+.dark-theme .admin-directory {
+  background: #0c1222 !important;
+}
+.dark-theme .admin-directory .bg-white {
+  background: #151b2e !important;
+}
+.dark-theme .admin-directory .bg-gray-50 {
+  background: #111a2c !important;
+}
+.dark-theme .admin-directory .bg-gray-100 {
+  background: #1b2940 !important;
+}
+.dark-theme .admin-directory .border-gray-100,
+.dark-theme .admin-directory .border-gray-200 {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+.dark-theme .admin-directory .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+.dark-theme .admin-directory .text-gray-950,
+.dark-theme .admin-directory .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+.dark-theme .admin-directory .text-gray-700,
+.dark-theme .admin-directory .text-gray-600,
+.dark-theme .admin-directory .text-gray-500 {
+  color: #a8b7c8 !important;
+}
+.dark-theme .admin-directory .text-gray-400 {
+  color: #7f92a8 !important;
+}
+.dark-theme .admin-directory .hover\\:bg-gray-50:hover,
+.dark-theme .admin-directory .hover\\:bg-white:hover {
+  background: #1b2940 !important;
+}
+.dark-theme .admin-directory .checkpoint-row:hover {
+  z-index: 1;
+  background: #16243a !important;
+  box-shadow:
+    0 0 0 1px rgba(45, 212, 191, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.18) !important;
+}
+.dark-theme .admin-directory .hover\\:text-gray-900:hover {
+  color: #f1f5f9 !important;
+}
+.dark-theme .admin-directory .bg-gray-950 {
+  background: #2dd4bf !important;
+}
+.dark-theme .admin-directory .bg-gray-950,
+.dark-theme .admin-directory .hover\\:bg-gray-800:hover {
+  color: #082f2e !important;
+}
+.dark-theme .admin-directory .hover\\:bg-gray-800:hover {
+  background: #5eead4 !important;
+}
+.dark-theme .admin-directory .hover\\:bg-red-50:hover {
+  background: rgba(248, 113, 113, 0.14) !important;
+}
+.dark-theme .admin-directory .hover\\:text-red-600:hover {
+  color: #fca5a5 !important;
+}
+.dark-theme .admin-directory .bg-blue-50,
+.dark-theme .admin-directory .bg-amber-50,
+.dark-theme .admin-directory .bg-emerald-50,
+.dark-theme .admin-directory .bg-violet-50 {
+  background: rgba(45, 212, 191, 0.12) !important;
+}
+.dark-theme .admin-directory .text-blue-600,
+.dark-theme .admin-directory .text-amber-600,
+.dark-theme .admin-directory .text-emerald-600,
+.dark-theme .admin-directory .text-violet-600,
+.dark-theme .admin-directory .text-emerald-700,
+.dark-theme .admin-directory .text-violet-700 {
+  color: #99f6e4 !important;
+}
+.dark-theme .admin-directory input {
+  color: #e2e8f0 !important;
+}
+.dark-theme .admin-directory input::placeholder {
+  color: #718198 !important;
+}
+.dark-theme .admin-directory .focus\\:bg-white:focus {
+  background: #151b2e !important;
+}
+.dark-theme .admin-directory .focus\\:ring-emerald-50:focus {
+  --tw-ring-color: rgba(45, 212, 191, 0.16) !important;
+}
+
 /* Route components historically rendered their own footer. The shared layout now owns one global footer. */
 .app-main mas-footer {
   display: none;

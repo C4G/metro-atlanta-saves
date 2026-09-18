@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ThemeService } from '@mas/frontend-shared-data-access';
-import { EditProfileComponent, MimicUserModalComponent } from '@mas/frontend-shared-components';
+import { MimicUserModalComponent } from '@mas/frontend-shared-components';
 import { PushNotificationService } from '../../services/push-notification.service';
 
 @Component({
@@ -159,7 +159,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           <span class="mt-0.5 block truncate text-[11px]">{{ authStore.user()?.email }}</span>
         </span>
       </div>
-      <button mat-menu-item class="account-menu__item" (click)="openEditProfileModal()">
+      <a mat-menu-item class="account-menu__item" routerLink="/profile">
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -177,7 +177,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </svg>
           <span>Edit Profile</span>
         </span>
-      </button>
+      </a>
       @if (notificationsSupported) {
         <button mat-menu-item class="account-menu__item" (click)="toggleNotifications()">
           <span class="flex items-center gap-2">
@@ -433,13 +433,6 @@ export class NavComponent {
     if (this.notificationsSupported && 'Notification' in window) {
       this.notificationsEnabled.set(Notification.permission === 'granted');
     }
-  }
-
-  openEditProfileModal() {
-    this.dialog.open(EditProfileComponent, {
-      data: this.authStore.user(),
-      panelClass: 'w-full',
-    });
   }
 
   async toggleNotifications() {
