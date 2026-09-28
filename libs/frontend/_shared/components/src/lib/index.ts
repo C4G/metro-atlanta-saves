@@ -8,3 +8,4 @@ export * from './mimic-user-modal/mimic-user-modal.component';
 export * from './view-dynamic-image';
 export * from './searchable-dropdown';
 export * from './document-dropzone';
+export * from './rich-text-editor';

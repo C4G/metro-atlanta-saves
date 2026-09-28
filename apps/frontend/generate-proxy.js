@@ -11,6 +11,11 @@ const proxyConfig = {
     secure: false,
     logLevel: 'debug',
   },
+  '/assets/rich-text': {
+    target: `http://localhost:${apiPort}`,
+    secure: false,
+    logLevel: 'debug',
+  },
 };
 
 // Write the configuration to the proxy.conf.json file

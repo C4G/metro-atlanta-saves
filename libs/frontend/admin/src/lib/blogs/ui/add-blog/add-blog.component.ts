@@ -3,9 +3,9 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
-import { BlogsStore, ThemeService } from '@mas/frontend-shared-data-access';
+import { BlogsStore } from '@mas/frontend-shared-data-access';
+import { RichTextEditorComponent } from '@mas/frontend-shared-components';
 import type { Blog } from '@mas/prisma-client/browser';
-import { EditorComponent, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 @Component({
   selector: 'mas-add-blog',
@@ -17,10 +17,9 @@ import { EditorComponent, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
     MatLabel,
     ReactiveFormsModule,
     MatError,
-    EditorComponent,
+    RichTextEditorComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{ provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }],
   template: `
     <h2 mat-dialog-title>{{ data ? 'Edit' : 'Add' }} Blog</h2>
     <form #form="ngForm" [formGroup]="blogForm" (ngSubmit)="submitForm()">
@@ -43,21 +42,7 @@ import { EditorComponent, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
           </mat-form-field>
           <div class="sm:col-span-2">
             <mat-label>Body</mat-label>
-            <editor
-              apiKey="goqs3emxc9qfnlk1vk4gq4a1ciccd4vlpl7e02cruoew0y9v"
-              formControlName="body"
-              [init]="{
-                license_key: 'gpl',
-                base_url: '/tinymce',
-                suffix: '.min',
-                plugins: 'lists link table code help wordcount',
-                toolbar:
-                  'undo redo | blocks | bold italic | numlist bullist | alignleft aligncenter alignright alignjustify | outdent indent',
-                promotion: false,
-                skin: themeService.darkMode() ? 'oxide-dark' : undefined,
-                content_css: themeService.darkMode() ? 'dark' : undefined,
-              }"
-            />
+            <mas-rich-text-editor formControlName="body" minHeight="220px" />
             @if ((blogForm.get('body')?.touched || form.submitted) && blogForm.get('body')?.errors?.['required']) {
               <mat-error>Body is required.</mat-error>
             }
@@ -79,8 +64,6 @@ export class AddBlogComponent {
   private blogsStore = inject(BlogsStore);
 
   data = inject<Blog | null>(MAT_DIALOG_DATA);
-  themeService = inject(ThemeService);
-
   blogForm = this.fb.group({
     title: [this.data?.title ?? '', [Validators.required]],
     body: [this.data?.body ?? '', [Validators.required]],

@@ -40,7 +40,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
               <h3 class="text-xl truncate font-bold" [title]="blog.title">{{ blog.title }}</h3>
               <h3 class="text-l truncate" [title]="blog.subTitle">{{ blog.subTitle }}</h3>
               <div
-                class="opacity-80 h-24 overflow-hidden whitespace-normal mb-4 wysiwyg"
+                class="opacity-80 h-24 overflow-hidden whitespace-normal mb-4 rich-content"
                 [innerHTML]="sanitizer.bypassSecurityTrustHtml(blog.body)"
               ></div>
               <a mat-raised-button color="primary" [routerLink]="'/blogs/' + blog.slug" class="mt-auto">Read More</a>

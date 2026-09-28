@@ -16,8 +16,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { basename, extname } from 'path';
-import { Response } from 'express';
+import { basename, extname, join } from 'path';
+import { unlink } from 'fs/promises';
+import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { DiscussionService } from './discussion.service';
 import { CreateDiscussionPostDto } from './dto/create-discussion-post.dto';
@@ -28,19 +29,36 @@ import { UpdateDiscussionCommentDto } from './dto/update-discussion-comment.dto'
 import { DISCUSSION_IMAGES_DIR, ManagedSessionGuard, privateDir, RoleGuard, Roles } from '@mas/backend-shared';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserFull } from '@mas/models';
+import { DiscussionBoardService } from './discussion-board.service';
+
+const BOARD_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
+const getBoardId = (request: Request): string | null => {
+  const boardId = request.query?.['boardId'];
+  return typeof boardId === 'string' && BOARD_ID_PATTERN.test(boardId) ? boardId : null;
+};
 
 @Controller('discussion-posts')
 @ApiBearerAuth()
 @ApiTags('discussion-posts')
 export class DiscussionController {
-  constructor(private readonly discussionService: DiscussionService) {}
+  constructor(
+    private readonly discussionService: DiscussionService,
+    private readonly discussionBoardService: DiscussionBoardService,
+  ) {}
 
   @Post('upload-image')
   @UseGuards(ManagedSessionGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: (req, file, cb) => cb(null, privateDir(DISCUSSION_IMAGES_DIR)),
+        destination: (req, file, cb) => {
+          const boardId = getBoardId(req);
+          if (!boardId) {
+            return cb(new BadRequestException('A valid board ID is required'), '');
+          }
+          cb(null, privateDir(join(DISCUSSION_IMAGES_DIR, boardId)));
+        },
         filename: (req, file, cb) => {
           cb(null, `${uuidv4()}${extname(file.originalname)}`);
         },
@@ -54,12 +72,42 @@ export class DiscussionController {
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadImage(
+    @Req() req: Request & { user: UserFull },
+    @Query('boardId') boardId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     if (!file) throw new BadRequestException('No file uploaded');
-    return { url: `/api/discussion-posts/images/${file.filename}` };
+
+    try {
+      await this.discussionBoardService.getBoardById(req.user.id, boardId);
+    } catch (error) {
+      await unlink(file.path).catch(() => undefined);
+      throw error;
+    }
+
+    return { url: `/api/discussion-posts/images/${boardId}/${file.filename}` };
   }
 
+  @Get('images/:boardId/:filename')
+  @UseGuards(ManagedSessionGuard)
+  async serveBoardImage(
+    @Req() req: Request & { user: UserFull },
+    @Param('boardId') boardId: string,
+    @Param('filename') filename: string,
+    @Res() res: Response,
+  ) {
+    if (!BOARD_ID_PATTERN.test(boardId)) {
+      throw new BadRequestException('Invalid board ID');
+    }
+
+    await this.discussionBoardService.getBoardById(req.user.id, boardId);
+    return res.sendFile(basename(filename), { root: privateDir(join(DISCUSSION_IMAGES_DIR, boardId)) });
+  }
+
+  // Kept for existing discussion HTML that references the original root-level image URL.
   @Get('images/:filename')
+  @UseGuards(ManagedSessionGuard)
   serveImage(@Param('filename') filename: string, @Res() res: Response) {
     return res.sendFile(basename(filename), { root: privateDir(DISCUSSION_IMAGES_DIR) });
   }

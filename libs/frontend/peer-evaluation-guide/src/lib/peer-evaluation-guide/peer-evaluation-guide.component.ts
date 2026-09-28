@@ -11,7 +11,7 @@ import { PeerEvaluationGuideStore } from '@mas/frontend-shared-data-access';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (peerEvaluationGuideStore.peerEvaluationGuide(); as guide) {
-      <div class="wysiwyg" [innerHTML]="sanitizer.bypassSecurityTrustHtml(guide.body)"></div>
+      <div class="rich-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(guide.body)"></div>
     }
   `,
 })

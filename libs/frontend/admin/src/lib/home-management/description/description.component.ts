@@ -5,14 +5,14 @@ import { MatError } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { DescriptionStore, ThemeService } from '@mas/frontend-shared-data-access';
+import { DescriptionStore } from '@mas/frontend-shared-data-access';
+import { RichTextEditorComponent } from '@mas/frontend-shared-components';
 import { URL_REGEX } from '@mas/frontend-shared-util';
-import { EditorComponent } from '@tinymce/tinymce-angular';
 
 @Component({
   selector: 'mas-description',
   imports: [
-    EditorComponent,
+    RichTextEditorComponent,
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
@@ -72,21 +72,7 @@ import { EditorComponent } from '@tinymce/tinymce-angular';
           </mat-form-field>
           <div class="sm:col-span-2">
             <mat-label>Body</mat-label>
-            <editor
-              apiKey="goqs3emxc9qfnlk1vk4gq4a1ciccd4vlpl7e02cruoew0y9v"
-              formControlName="body"
-              [init]="{
-                license_key: 'gpl',
-                base_url: '/tinymce',
-                suffix: '.min',
-                plugins: 'lists link table code help wordcount',
-                toolbar:
-                  'undo redo | blocks | bold italic | numlist bullist | alignleft aligncenter alignright alignjustify | outdent indent',
-                promotion: false,
-                skin: themeService.darkMode() ? 'oxide-dark' : undefined,
-                content_css: themeService.darkMode() ? 'dark' : undefined,
-              }"
-            />
+            <mas-rich-text-editor formControlName="body" minHeight="220px" />
             @if (
               (descriptionForm.get('body')?.touched || form.submitted) &&
               descriptionForm.get('body')?.errors?.['required']
@@ -122,8 +108,6 @@ import { EditorComponent } from '@tinymce/tinymce-angular';
 export default class DescriptionComponent {
   private fb = inject(FormBuilder);
   descriptionStore = inject(DescriptionStore);
-  themeService = inject(ThemeService);
-
   selectedFile = signal<File | null>(null);
   selectedFileName = signal('');
   selectedFileError = signal('');

@@ -21,12 +21,7 @@
           "apps/frontend/src/robots.txt",
           "apps/frontend/src/assets",
           "apps/frontend/src/manifest.json",
-          "apps/frontend/src/sw.js",
-          {
-            "glob": "**/*",
-            "input": "node_modules/tinymce",
-            "output": "/tinymce/"
-          }
+          "apps/frontend/src/sw.js"
         ],
         "styles": ["apps/frontend/src/styles.scss"],
         "scripts": [],

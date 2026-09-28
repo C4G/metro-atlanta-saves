@@ -10,7 +10,7 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
   template: `
     <div class="py-6">
       <div
-        class="mb-4 wysiwyg"
+        class="mb-4 rich-content"
         [innerHTML]="sanitizer.bypassSecurityTrustHtml(programsStore.program()?.description ?? '')"
       ></div>
     </div>

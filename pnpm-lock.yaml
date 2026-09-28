@@ -92,15 +92,15 @@ importers:
       '@thallesp/nestjs-better-auth':
         specifier: ^2.7.0
         version: 2.7.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.6)(better-auth@1.7.2(@prisma/client@7.9.1(prisma@7.9.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(typescript@5.9.3))(mysql2@3.15.3)(pg@8.23.0)(prisma@7.9.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(express@4.21.2)(qs@6.14.1)(typescript@5.9.3)
-      '@tinymce/tinymce-angular':
-        specifier: 8.0.1
-        version: 8.0.1(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(@angular/forms@21.0.8(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(@angular/platform-browser@21.0.8(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0)))(rxjs@7.8.1))(rxjs@7.8.1)
       '@tiptap/core':
         specifier: ^3.21.0
         version: 3.21.0(@tiptap/pm@3.21.0)
       '@tiptap/extension-bold':
         specifier: ^3.21.0
         version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))
+      '@tiptap/extension-color':
+        specifier: 3.21.0
+        version: 3.21.0(@tiptap/extension-text-style@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0)))
       '@tiptap/extension-document':
         specifier: ^3.21.0
         version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))
@@ -122,8 +122,17 @@ importers:
       '@tiptap/extension-paragraph':
         specifier: ^3.21.0
         version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))
+      '@tiptap/extension-table':
+        specifier: 3.21.0
+        version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))(@tiptap/pm@3.21.0)
       '@tiptap/extension-text':
         specifier: ^3.21.0
+        version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))
+      '@tiptap/extension-text-align':
+        specifier: 3.21.0
+        version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))
+      '@tiptap/extension-text-style':
+        specifier: 3.21.0
         version: 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))
       '@tiptap/extension-underline':
         specifier: ^3.21.0
@@ -200,9 +209,6 @@ importers:
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
-      tinymce:
-        specifier: 7.3.0
-        version: 7.3.0
       tslib:
         specifier: 2.7.0
         version: 2.7.0
@@ -4288,14 +4294,6 @@ packages:
       qs:
         optional: true
 
-  '@tinymce/tinymce-angular@8.0.1':
-    resolution: {integrity: sha512-m0/ne5nL00YeZ7wCyhBVwKUbvS8fQZ+S+T5pinqTIqTUKpcfIC2+BIKqzUpS+niiRCowFoZl5eVlI5zdFN9/0A==}
-    peerDependencies:
-      '@angular/common': '>=16.0.0'
-      '@angular/core': '>=16.0.0'
-      '@angular/forms': '>=16.0.0'
-      rxjs: ^7.4.0
-
   '@tiptap/core@3.21.0':
     resolution: {integrity: sha512-IfnQiuEeabDSPr1C/zHFTbnvlTf5z0DE/d/xz4C6bkL4ZBDJ3rr99h2qsaV0l8F+kbNswZMlQdM8rxNlMy95fQ==}
     peerDependencies:
@@ -4305,6 +4303,11 @@ packages:
     resolution: {integrity: sha512-iyEJRzG7XTCPlHwEDzUw3HnuYYCfL7lNpcCHmxcpYMrIUA8rv7EUxerIwApT6xY8hQ/07ljuJKgOyPvnJOOzuA==}
     peerDependencies:
       '@tiptap/core': ^3.21.0
+
+  '@tiptap/extension-color@3.21.0':
+    resolution: {integrity: sha512-LbzMcUPz148A+4g42GQ3FqkwI4+p8w+9W0s5HAo6aVMjsOaMSL12CqNhG4Kj/6zOq32WkVSa3FxpDNkuMn0jzA==}
+    peerDependencies:
+      '@tiptap/extension-text-style': ^3.21.0
 
   '@tiptap/extension-document@3.21.0':
     resolution: {integrity: sha512-7oCyzXI9ChvJQUlr23AURdfVar4OIsrYUvqdhEwo3bjcI/Q/j0KJiXfuh6ZzL5eVaINSailH53sZaGg4THQtUg==}
@@ -4340,6 +4343,22 @@ packages:
 
   '@tiptap/extension-paragraph@3.21.0':
     resolution: {integrity: sha512-cMPG/jCoZ9NmLZ5ctFziILaxJGfDtMTb5OLBhifMFZeMVwF1pEJIygDEfnX/HSruv507weZSQG4pERO2tRszMg==}
+    peerDependencies:
+      '@tiptap/core': ^3.21.0
+
+  '@tiptap/extension-table@3.21.0':
+    resolution: {integrity: sha512-/iPVM/5TtRy7wGrLW/uL+qjMHsor26P/nH2nHasgPr/EIwliLGhHp9Gwjhix3OTyM2UK+VNcuhH6X50UbcByTQ==}
+    peerDependencies:
+      '@tiptap/core': ^3.21.0
+      '@tiptap/pm': ^3.21.0
+
+  '@tiptap/extension-text-align@3.21.0':
+    resolution: {integrity: sha512-XaoUaq45nai9LLoUStumMItHhhCnmXirPR8mTjEDKZ2QD0Kg/YHEr6guJYc6qKB7YA+Wa1EgBIrZOv1+d2Pdag==}
+    peerDependencies:
+      '@tiptap/core': ^3.21.0
+
+  '@tiptap/extension-text-style@3.21.0':
+    resolution: {integrity: sha512-MI/3X75D45Wa/+0Fp8nYfNJq5makkjtG7B2/lIzNUe0kEKJ56RVQoV1GQSXxAiFNyAYRfKFq8dJslhesW3EkWA==}
     peerDependencies:
       '@tiptap/core': ^3.21.0
 
@@ -10346,9 +10365,6 @@ packages:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
 
-  tinymce@7.3.0:
-    resolution: {integrity: sha512-Ls4PgYlpk73XAxBSBqbVmSl8Mb3DuNfgF01GZ0lY6/MOEVRl3IL+VxC1Oe6165e8WqbqVsxO3Qj/PmoYNvQKGQ==}
-
   tinyrainbow@3.1.0:
     resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
     engines: {node: '>=14.0.0'}
@@ -15350,15 +15366,6 @@ snapshots:
       express: 4.21.2
       qs: 6.14.1
 
-  '@tinymce/tinymce-angular@8.0.1(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(@angular/forms@21.0.8(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(@angular/platform-browser@21.0.8(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0)))(rxjs@7.8.1))(rxjs@7.8.1)':
-    dependencies:
-      '@angular/common': 21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1)
-      '@angular/core': 21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0)
-      '@angular/forms': 21.0.8(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(@angular/platform-browser@21.0.8(@angular/common@21.0.8(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0))(rxjs@7.8.1))(@angular/core@21.0.8(@angular/compiler@21.0.8)(rxjs@7.8.1)(zone.js@0.16.0)))(rxjs@7.8.1)
-      rxjs: 7.8.1
-      tinymce: 7.3.0
-      tslib: 2.8.1
-
   '@tiptap/core@3.21.0(@tiptap/pm@3.21.0)':
     dependencies:
       '@tiptap/pm': 3.21.0
@@ -15366,6 +15373,10 @@ snapshots:
   '@tiptap/extension-bold@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))':
     dependencies:
       '@tiptap/core': 3.21.0(@tiptap/pm@3.21.0)
+
+  '@tiptap/extension-color@3.21.0(@tiptap/extension-text-style@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0)))':
+    dependencies:
+      '@tiptap/extension-text-style': 3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))
 
   '@tiptap/extension-document@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))':
     dependencies:
@@ -15395,6 +15406,19 @@ snapshots:
       '@tiptap/pm': 3.21.0
 
   '@tiptap/extension-paragraph@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))':
+    dependencies:
+      '@tiptap/core': 3.21.0(@tiptap/pm@3.21.0)
+
+  '@tiptap/extension-table@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))(@tiptap/pm@3.21.0)':
+    dependencies:
+      '@tiptap/core': 3.21.0(@tiptap/pm@3.21.0)
+      '@tiptap/pm': 3.21.0
+
+  '@tiptap/extension-text-align@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))':
+    dependencies:
+      '@tiptap/core': 3.21.0(@tiptap/pm@3.21.0)
+
+  '@tiptap/extension-text-style@3.21.0(@tiptap/core@3.21.0(@tiptap/pm@3.21.0))':
     dependencies:
       '@tiptap/core': 3.21.0(@tiptap/pm@3.21.0)
 
@@ -18794,7 +18818,7 @@ snapshots:
       call-bound: 1.0.4
       gopd: 1.2.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.2
+      hasown: 2.0.4
     optional: true
 
   is-stream@1.1.0:
@@ -22586,8 +22610,6 @@ snapshots:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
-
-  tinymce@7.3.0: {}
 
   tinyrainbow@3.1.0: {}
 
