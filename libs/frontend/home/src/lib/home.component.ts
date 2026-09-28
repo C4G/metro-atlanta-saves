@@ -81,17 +81,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
                 class="home-rich-text wysiwyg mt-6 max-w-2xl text-base leading-7 text-slate-600"
                 [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"
               ></div>
-              @if (description.buttonLink && description.buttonText) {
-                <div class="mt-8 flex justify-end">
-                  <a
-                    class="landing-enroll-cta inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
-                    [href]="description.buttonLink"
-                  >
-                    {{ description.buttonText }}
-                    <mat-icon class="!h-4 !w-4 !text-base !leading-4">arrow_forward</mat-icon>
-                  </a>
-                </div>
-              }
             </div>
           </div>
         </section>
@@ -292,14 +281,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         background-color: #115e59;
         color: #ecfeff;
       }
-      .landing-enroll-cta {
-        background-color: #ccfbf1;
-        color: #134e4a;
-      }
-      .landing-enroll-cta:hover {
-        background-color: #99f6e4;
-        color: #134e4a;
-      }
       :host(.landing-page--dark) {
         display: block;
         background: #0c1222;
@@ -345,13 +326,11 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
       :host(.landing-page--dark) ::ng-deep .text-slate-500 {
         color: #94a3b8 !important;
       }
-      :host(.landing-page--dark) .landing-hero-cta,
-      :host(.landing-page--dark) .landing-enroll-cta {
+      :host(.landing-page--dark) .landing-hero-cta {
         background-color: #2dd4bf !important;
         color: #082f2e !important;
       }
-      :host(.landing-page--dark) .landing-hero-cta:hover,
-      :host(.landing-page--dark) .landing-enroll-cta:hover {
+      :host(.landing-page--dark) .landing-hero-cta:hover {
         background-color: #99f6e4 !important;
         color: #082f2e !important;
       }

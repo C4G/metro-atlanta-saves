@@ -618,3 +618,90 @@ body.dark-theme {
     animation: modal-scale-in 0.22s ease-out;
   }
 }
+
+/* Content & guidance workspaces: unify legacy editors, forms, tabs, and data grids with the current platform theme. */
+.admin-content-shell {
+  min-height: 100%;
+  background: #f6faf9;
+  color: #102a2c;
+}
+
+.admin-content-shell form {
+  max-width: 60rem;
+  padding: 1.5rem;
+  border: 1px solid #dbe7e4;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.admin-content-shell .mat-mdc-tab-link {
+  color: #52666a;
+  font-weight: 700;
+}
+
+.admin-content-shell .mat-mdc-tab-link.mdc-tab--active {
+  color: #0f766e;
+}
+
+.admin-content-shell .mat-mdc-raised-button {
+  border-radius: 0.75rem;
+  font-weight: 700;
+}
+
+.dark-theme .admin-content-shell {
+  background: #0c1222;
+  color: #f1f5f9;
+}
+
+.dark-theme .admin-content-shell .text-3xl,
+.dark-theme .admin-content-shell .text-2xl,
+.dark-theme .admin-content-shell .text-xl,
+.dark-theme .admin-content-shell .font-medium {
+  color: #f1f5f9;
+}
+
+.dark-theme .admin-content-shell .text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+.dark-theme .admin-content-shell form {
+  border-color: rgba(148, 163, 184, 0.16);
+  background: #151b2e;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.dark-theme .admin-content-shell .bg-gray-50 {
+  background: #111a2c !important;
+}
+
+.dark-theme .admin-content-shell .border {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+.dark-theme .admin-content-shell .mat-mdc-tab-link {
+  color: #94a3b8;
+}
+
+.dark-theme .admin-content-shell .mat-mdc-tab-link.mdc-tab--active {
+  color: #99f6e4;
+}
+
+.dark-theme .admin-content-shell .mdc-tab-indicator__content--underline {
+  border-color: #2dd4bf !important;
+}
+
+.dark-theme .admin-content-shell .mat-mdc-raised-button {
+  background: #2dd4bf !important;
+  color: #082f2e !important;
+}
+
+.dark-theme .admin-content-shell .mat-mdc-slide-toggle .mdc-label {
+  color: #cbd5e1;
+}
+
+.dark-theme .admin-content-shell .tox .tox-editor-header,
+.dark-theme .admin-content-shell .tox .tox-menubar,
+.dark-theme .admin-content-shell .tox .tox-toolbar-overlord {
+  background: #151b2e !important;
+}
