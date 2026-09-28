@@ -1,0 +1,99 @@
+apps/backend/src/app/auth-bootstrap.spec.ts
+  s_fabcd40edd42ee::t_afb189ff4c2551 107
+  s_fabcd40edd42ee::t_e5150caa33ffc1 106,108-110
+libs/backend/auth/src/lib/auth.service.ts
+  s_fabcd40edd42ee::t_4583496bbdd6c5 1,6,8,18,29
+apps/e2e/src/authentication.spec.ts
+  s_fabcd40edd42ee::t_3d68876c90ba7f 1-28,30,32-36
+  s_fabcd40edd42ee::t_951258de3a30e6 29,31
+apps/e2e/playwright.config.ts
+  s_fabcd40edd42ee::t_0f60db6a2d583c 29
+  s_fabcd40edd42ee::t_fa4905aa6710b4 28
+  s_fabcd40edd42ee::t_799d27a3463f1c 30,32
+  s_fabcd40edd42ee::t_75e04e67d22c6a 6,38-41
+apps/e2e/start-production.mjs
+  s_fabcd40edd42ee::t_5664f50318d875 13-14,16-24,26-33,42,94
+  s_fabcd40edd42ee::t_0f60db6a2d583c 1-12,15,34-39,41,43-93,95-96,98-99,101-138
+  s_fabcd40edd42ee::t_5d8f3a055b7ef6 25
+  s_fabcd40edd42ee::t_fa4905aa6710b4 97,100
+  s_fabcd40edd42ee::t_8ad71ee36b29e1 40
+README.md
+  s_fabcd40edd42ee::t_358eb7a8564d1d 303
+openspec/changes/archive/2026-09-27-migrate-to-better-auth/proposal.md
+  s_fabcd40edd42ee::t_e1aa0d28a619c8 1-38
+libs/backend/auth/src/lib/auth.controller.ts
+  s_fabcd40edd42ee::t_0579f3f791414c 1
+apps/e2e/setup-postgres.sh
+  s_fabcd40edd42ee::t_5d8f3a055b7ef6 1-12
+apps/backend/prisma/seed/data/users.ts
+  s_fabcd40edd42ee::t_2225008471fd61 10-52,54-57
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.spec.ts
+  s_fabcd40edd42ee::t_a6c342847de3fe 133
+  s_fabcd40edd42ee::t_be9399392b49cd 8
+libs/backend/users/src/lib/users.service.ts
+  s_fabcd40edd42ee::t_40981a50a385c9 8-9,16-17,86,88-108,110
+openspec/changes/archive/2026-09-27-migrate-to-better-auth/.openspec.yaml
+  s_fabcd40edd42ee::t_e1aa0d28a619c8 1-2
+apps/backend/prisma/migrations/20260927000000_remove_legacy_auth/migration.sql
+  s_fabcd40edd42ee::t_7d24a40bd4450b 1-19
+libs/backend/shared/src/lib/util/decorator/get-user.decorator.ts
+  s_fabcd40edd42ee::t_94cdeca397804b 2-3,6
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.ts
+  s_fabcd40edd42ee::t_afe69717ab4612 1-2
+  s_fabcd40edd42ee::t_be9399392b49cd 327
+libs/models/src/lib/user-full.ts
+  s_fabcd40edd42ee::t_0579f3f791414c 3
+libs/backend/auth/src/lib/auth.module.ts
+  s_fabcd40edd42ee::t_0579f3f791414c 9-10
+.nx/ci-config.yaml
+  s_fabcd40edd42ee::t_8ad71ee36b29e1 1,7-13
+  s_fabcd40edd42ee::t_5d8f3a055b7ef6 2-6,14-23
+openspec/changes/archive/2026-09-27-migrate-to-better-auth/tasks.md
+  s_fabcd40edd42ee::t_e1aa0d28a619c8 46-49
+.nx/workflows/agents.yaml
+  s_fabcd40edd42ee::t_5d8f3a055b7ef6 1-13
+libs/backend/shared/src/lib/util/map-user.ts
+  s_fabcd40edd42ee::t_0579f3f791414c 5
+docs/data-migration.md
+  s_fabcd40edd42ee::t_358eb7a8564d1d 19-20
+  s_fabcd40edd42ee::t_c786a9f6616f4c 28
+  s_fabcd40edd42ee::t_5f56d4153809c8 149-153,156
+  s_fabcd40edd42ee::t_758218ea55e0e9 31-33,232,234,276
+apps/backend/src/app/users-service.spec.ts
+  s_fabcd40edd42ee::t_5f56d4153809c8 70-72
+  s_fabcd40edd42ee::t_34effe90a0c75b 6,16,27,35
+  s_fabcd40edd42ee::t_94cdeca397804b 21
+  s_fabcd40edd42ee::t_358eb7a8564d1d 28-31
+  s_fabcd40edd42ee::t_c786a9f6616f4c 7-12,17,19-20,32-34,36-65
+openspec/specs/authentication/better-auth/spec.md
+  s_fabcd40edd42ee::t_b2570a146c0e7e 1-129
+openspec/changes/archive/2026-09-27-migrate-to-better-auth/design.md
+  s_fabcd40edd42ee::t_e1aa0d28a619c8 1-73
+.github/workflows/ci.yml
+  s_fabcd40edd42ee::t_fa4905aa6710b4 26-29
+  s_fabcd40edd42ee::t_8ad71ee36b29e1 53-56
+  s_fabcd40edd42ee::t_5d8f3a055b7ef6 22,24-25,60-63,65-67,69-70
+openspec/changes/archive/2026-09-27-migrate-to-better-auth/specs/authentication/better-auth/spec.md
+  s_fabcd40edd42ee::t_e1aa0d28a619c8 1-127
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1ba2928bd74ab8d6c8e9d38f906160d4a6c7536f",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_fabcd40edd42ee": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e55f-a347-7641-98d6-1a15f6a270f5",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
