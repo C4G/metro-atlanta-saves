@@ -23,7 +23,8 @@ test.describe('authentication', () => {
     await page.getByRole('menuitem', { name: 'Logout' }).click();
     await expect(page.getByRole('link', { name: 'Sign Up or Login' })).toBeVisible();
 
-    await page.goto('/login');
+    await page.getByRole('link', { name: 'Sign Up or Login' }).click();
+    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
     const signInResponse = page.waitForResponse((response) => response.url().includes('/api/auth/sign-in/email'));
