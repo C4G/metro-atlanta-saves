@@ -2,12 +2,6 @@ import { PrismaClient, Role } from '@mas/prisma-client';
 import * as argon from 'argon2';
 
 export const seedUsers = async (prisma: PrismaClient) => {
-  const hasData = await prisma.user.count();
-  if (hasData) {
-    console.log('No users seeded');
-    return;
-  }
-
   const password = await argon.hash('P@ssw0rd123!');
   const users = [
     {
@@ -40,19 +34,33 @@ export const seedUsers = async (prisma: PrismaClient) => {
   ];
 
   for (const data of users) {
-    const user = await prisma.user.create({
-      data: { ...data, name: `${data.firstName} ${data.lastName}`, emailVerified: true },
+    const userData = {
+      ...data,
+      name: `${data.firstName} ${data.lastName}`,
+      emailVerified: true,
+    };
+    const user = await prisma.user.upsert({
+      where: { email: data.email },
+      create: userData,
+      update: userData,
     });
-    await prisma.account.create({
-      data: {
+    await prisma.account.upsert({
+      where: {
+        account_issuer_accountId_uidx: {
+          issuer: 'local:credential',
+          accountId: user.id,
+        },
+      },
+      create: {
         issuer: 'local:credential',
         accountId: user.id,
         providerId: 'credential',
         userId: user.id,
         password,
       },
+      update: { providerId: 'credential', userId: user.id, password },
     });
   }
 
-  console.log('Users added: ', { count: users.length });
+  console.log('Users ensured: ', { count: users.length });
 };
