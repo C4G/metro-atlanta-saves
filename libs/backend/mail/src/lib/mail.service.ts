@@ -24,20 +24,6 @@ export class MailService {
     });
   }
 
-  async sendAccountCreated(email: string, token: string) {
-    const url = `https://brpatl.com/reset-password?token=${token}&email=${email}&set=true`;
-
-    await this.mailerService.sendMail({
-      to: email,
-      from: '"BRPATL" <no-reply@brpatl.com>',
-      subject: 'Your account was created! Create a password now',
-      template: './account-created',
-      context: {
-        url,
-      },
-    });
-  }
-
   async sendCheckpointImageChanged(approved: boolean, email: string, name: string) {
     await this.mailerService.sendMail({
       to: email,

@@ -23,7 +23,6 @@ test.describe('homepage accessibility structure', () => {
     const main = page.getByRole('main');
 
     await expect(page.getByRole('banner')).toHaveCount(1);
-    await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(1);
     await expect(main).toHaveAttribute('id', 'main-content');
     await expect(skipLink).toHaveAttribute('href', '#main-content');
 
@@ -31,6 +30,9 @@ test.describe('homepage accessibility structure', () => {
     await expect(skipLink).toBeFocused();
     await skipLink.press('Enter');
     await expect(main).toBeFocused();
+
+    await page.getByRole('button', { name: 'Navigation menu' }).click();
+    await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(1);
   });
 
   test('names the home logo link and describes the hero image', async ({ page }) => {

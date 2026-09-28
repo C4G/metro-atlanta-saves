@@ -9,8 +9,6 @@ model User {
   name                    String                  @default("")
   emailVerified           Boolean                 @default(false)
   image                   String?
-  forgot                  String?
-  hash                    String                  @default("")
   role                    Role?
   partner                 Partner?                @relation(fields: [partnerId], references: [id])
   partnerId               String?

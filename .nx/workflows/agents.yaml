@@ -1,0 +1,13 @@
+launch-templates:
+  linux-medium-e2e:
+    resource-class: 'docker_linux_amd64/medium'
+    image: 'ubuntu22.04-node24.14-v1'
+    init-steps:
+      - name: Checkout
+        uses: 'nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml'
+      - name: Install Node Modules
+        uses: 'nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml'
+      - name: Install Playwright browsers
+        script: pnpm exec playwright install --with-deps
+      - name: Setup PostgreSQL
+        script: bash apps/e2e/setup-postgres.sh

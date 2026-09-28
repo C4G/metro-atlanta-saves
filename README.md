@@ -300,7 +300,7 @@ It will show tasks that you can run with Nx.
 - Angular v17
 - Prisma v5
 - TinyMCE v7
-- Authentication nestjs and argon password hash
+- Better Auth sessions and Argon2 credential passwords
 - [Coolify](https://coolify.io/docs) (deployment, Traefik ingress, TLS)
 - docker + docker compose
 

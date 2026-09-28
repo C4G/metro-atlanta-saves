@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { AuthStore, clearLegacyAuthCookies } from './auth.store';
+import { AuthStore } from './auth.store';
 
 describe('AuthStore managed sessions', () => {
   const user = {
@@ -130,24 +130,7 @@ describe('AuthStore managed sessions', () => {
     expect(store.realUser()).toBeNull();
   });
 
-  it('expires only the legacy auth cookies during cutover', () => {
-    const writes: string[] = [];
-    const document = {
-      set cookie(value: string) {
-        writes.push(value);
-      },
-    } as unknown as Document;
-
-    clearLegacyAuthCookies(document);
-
-    expect(writes).toEqual([
-      'accessToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;',
-      'originalToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;',
-    ]);
-    expect(writes.join(';')).not.toContain('unrelated');
-  });
-
-  it('does not attempt to write legacy cookies during SSR initialization', () => {
+  it('loads the managed session during SSR initialization', () => {
     TestBed.overrideProvider(PLATFORM_ID, { useValue: 'server' });
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);
