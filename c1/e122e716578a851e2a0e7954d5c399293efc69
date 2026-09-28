@@ -1,0 +1,24 @@
+apps/e2e/start-production.mjs
+  s_fabcd40edd42ee::t_0d88913f6ac8fc 11-17,103-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c1e122e716578a851e2a0e7954d5c399293efc69",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_fabcd40edd42ee": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e55f-a347-7641-98d6-1a15f6a270f5",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
