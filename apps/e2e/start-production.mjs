@@ -2,11 +2,10 @@ import { spawn, spawnSync } from 'node:child_process';
 import http from 'node:http';
 import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
+import { resolveE2ePorts } from './e2e-ports.mjs';
 
 const workspaceRoot = process.cwd();
-const apiPort = Number(process.env['API_PORT'] || 3000);
-const publicPort = Number(process.env['FE_PORT'] || 4200);
-const frontendPort = Number(process.env['E2E_FRONTEND_SERVER_PORT'] || publicPort + 1);
+const { apiPort, gatewayPort: publicPort, frontendPort } = resolveE2ePorts();
 const nxCli = `${workspaceRoot}/node_modules/nx/bin/nx.js`;
 const children = [];
 

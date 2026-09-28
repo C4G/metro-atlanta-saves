@@ -1,8 +1,10 @@
 import { workspaceRoot } from '@nx/devkit';
 import { nxE2EPreset } from '@nx/playwright/preset';
 import { defineConfig, devices } from '@playwright/test';
+import { resolveE2ePorts } from './e2e-ports.mjs';
 // For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = `http://localhost:${process.env['FE_PORT'] || 4200}`;
+const { gatewayPort } = resolveE2ePorts();
+const baseURL = `http://localhost:${gatewayPort}`;
 const chromiumExecutable = process.env['PLAYWRIGHT_CHROMIUM_EXECUTABLE'];
 
 /**
@@ -26,7 +28,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'node --env-file-if-exists=.env apps/e2e/start-production.mjs',
-      url: `http://localhost:${process.env['FE_PORT'] || 4200}/health`,
+      url: `${baseURL}/health`,
       reuseExistingServer: false,
       cwd: workspaceRoot,
       timeout: 180000,
