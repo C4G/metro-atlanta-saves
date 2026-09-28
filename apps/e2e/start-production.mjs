@@ -8,6 +8,13 @@ const workspaceRoot = process.cwd();
 const { apiPort, gatewayPort: publicPort, frontendPort } = resolveE2ePorts();
 const nxCli = `${workspaceRoot}/node_modules/nx/bin/nx.js`;
 const children = [];
+const corsOrigins = new Set(
+  (process.env['CORS_ORIGIN'] || 'http://localhost:4200,http://localhost:3000')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+);
+corsOrigins.add(`http://localhost:${publicPort}`);
 
 function runNx(args, label) {
   const result = spawnSync(
@@ -93,7 +100,11 @@ async function start() {
   prepareCiDatabase();
   buildProductionApps();
 
-  startNode('NestJS backend', ['--env-file-if-exists=.env', 'dist/apps/backend/main.js'], { API_PORT: String(apiPort) });
+  startNode('NestJS backend', ['--env-file-if-exists=.env', 'dist/apps/backend/main.js'], {
+    API_PORT: String(apiPort),
+    BETTER_AUTH_URL: `http://localhost:${apiPort}`,
+    CORS_ORIGIN: [...corsOrigins].join(','),
+  });
   await waitForHealth(`http://127.0.0.1:${apiPort}/api/health`, 'NestJS backend');
 
   startNode('Angular SSR frontend', ['--env-file-if-exists=.env', 'dist/apps/frontend/server/server.mjs'], {
