@@ -5,13 +5,16 @@ import { PatchUserDto } from './dto/patch-user.dto';
 import { UserFull, UsersNamesOnly } from '@mas/models';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as argon from 'argon2';
+import { ConfigService } from '@nestjs/config';
+import { AuthService as BetterAuthService } from '@thallesp/nestjs-better-auth';
 import { MailService } from '@mas/backend-mail';
-import { v4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
   constructor(
     private prisma: PrismaService,
+    private betterAuth: BetterAuthService,
+    private config: ConfigService,
     private mailService: MailService,
   ) {}
 
@@ -80,19 +83,31 @@ export class UsersService {
     if (emailCheck) {
       throw new BadRequestException(['That email is already taken']);
     }
-    const passHash = await argon.hash(randomPassword());
-    const token = v4();
+    const password = await argon.hash(randomPassword());
     try {
-      const createdUser = await this.prisma.user.create({
-        data: {
-          ...createUser,
-          hash: passHash,
-          forgot: token,
-        },
+      const createdUser = await this.prisma.$transaction(async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            ...createUser,
+            name: `${createUser.firstName} ${createUser.lastName}`.trim(),
+          },
+        });
+        await tx.account.create({
+          data: {
+            issuer: 'local:credential',
+            accountId: user.id,
+            providerId: 'credential',
+            userId: user.id,
+            password,
+          },
+        });
+        return user;
       });
-      const { hash, forgot, ...user } = createdUser;
-      await this.mailService.sendAccountCreated(user.email, token);
-      return user;
+      const publicAppUrl = (this.config.get<string>('PUBLIC_APP_URL') ?? 'https://brpatl.com').replace(/\/+$/, '');
+      await this.betterAuth.api.requestPasswordReset({
+        body: { email: createdUser.email, redirectTo: `${publicAppUrl}/reset-password` },
+      });
+      return mapUser(createdUser);
     } catch {
       throw new BadRequestException(['There was an error creating the user']);
     }

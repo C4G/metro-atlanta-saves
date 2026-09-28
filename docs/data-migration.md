@@ -16,7 +16,8 @@ enough.
 ## Before you start
 
 **If the destination is staging, this puts real user data on a public URL.**
-The dump contains user emails, argon2 password hashes, and uploaded documents,
+The dump contains user emails, Better Auth credential password hashes, and
+uploaded documents,
 and `metro-atlanta-saves.c4g.dev` is reachable by anyone. That is fine for a
 faithful staging environment, but it is a deliberate choice rather than a side
 effect. If it is not what you want, seed a redacted subset instead.
@@ -24,15 +25,12 @@ effect. If it is not what you want, seed a redacted subset instead.
 **On staging, leave the `MAIL_*` variables empty.** `MailModule` builds its
 transport lazily, so an unset `MAIL_HOST` does not stop the app booting — it
 makes sends fail instead. Filling them in means a staging action can email a
-real user, and every link in `mail.service.ts` is hardcoded to
-`https://brpatl.com`, so those emails would point at production. Keep mail
+real user, and reset links may reach real users. Keep mail
 broken there on purpose. Production, of course, needs the real values.
 
-**`JWT_SECRET` rules differ by destination.** Production must keep its existing
-value — tokens are signed with `expiresIn: '1y'`, so a new secret logs out every
-user. Staging must use a *fresh* one: copying production's would let a staging
-token authenticate against production. Passwords work either way, because the
-argon2 hashes travel in the dump.
+Authentication sessions are stored in the database. Users will need to sign in
+again after restoring a database copy. Credential passwords remain available
+through the Better Auth account records.
 
 The same applies to the `VAPID_*` trio. Push subscriptions are bound to the
 application server key, so production must keep its pair or every existing
@@ -148,13 +146,14 @@ Then read it back. Row counts must match `row-counts.csv` exactly, and:
 
 ```sh
 docker exec restore-test psql -U testuser -d testdb -tAF, -c "
-  SELECT count(*), 
-         count(*) FILTER (WHERE hash LIKE '\$argon2id\$v=19\$m=65536%'),
-         min(length(hash)), max(length(hash))
-  FROM users"
+  SELECT count(DISTINCT u.id),
+         count(*) FILTER (WHERE a.password LIKE '\$argon2id\$v=19\$m=65536%'),
+         min(length(a.password)), max(length(a.password))
+  FROM users u
+  LEFT JOIN accounts a ON a.userId = u.id AND a.providerId = 'credential'"
 ```
 
-Every hash must be well-formed and `min(length) = max(length) = 97`. A
+Every account password must be well-formed and `min(length) = max(length) = 97`. A
 truncating restore still yields the right *number* of users and still looks
 fine — until nobody can log in.
 
@@ -230,9 +229,9 @@ Each of these has a distinct failure mode, so check all of them.
 |---|---|---|
 | API is up | `curl -s https://<domain>/api/health` → `{"status":"ok"}` | see the Routing section in the README |
 | Every image row has a file | compare `image-paths.txt` against `find images -type f` on `mas-private` — the difference must be empty | `UPLOAD_DIR` join is wrong, or files went to the wrong volume |
-| Real login works | sign in as a known production user | argon2 hashes did not restore, or `JWT_SECRET` changed |
+| Real login works | sign in as a known production user | Better Auth credential accounts or their passwords did not restore |
 | Private files are not public | `GET /images/<uuid>.jpg` with no token — check the **content type**, not the status | see below |
-| Guarded API needs auth | `GET /api/images/1` with no token → **401** | the `JwtGuard` is not applied |
+| Guarded API needs auth | `GET /api/images/1` without a session → **401** | the managed-session guard is not applied |
 | Cross-user access refused | request another user's image id as a non-admin → **403** | the ownership check on `GET /api/images/:id` is not active |
 | Public assets render | `GET /assets/logo/<file>` → `image/*` | `mas-assets` not mounted, or restored to the wrong root |
 | sharp variants exist | `GET /api/description/logo/<name>-406w.webp` and `-812w` → 200, and **three different sizes** | resize outputs were not in the copied tree |
@@ -274,7 +273,7 @@ an `image/*` content type, the file is genuinely exposed.
 
 ## What does not come across
 
-- **Sessions**, when `JWT_SECRET` differs by design (staging). Users log in again.
+- **Sessions.** Users log in again after restoring a database copy.
 - **Mail**, on staging. Deliberately non-functional; see the top of this document.
 - **Most discussion images.** The pre-container deploy step ran
   `find /var/www/brpatl/backend -mindepth 1 -not -path ".../images*" -delete`,

@@ -28,8 +28,6 @@ describe('managed session protection', () => {
         lastName: 'User',
         role: null,
         partnerId: null,
-        hash: 'legacy-hash',
-        forgot: null,
       })),
     },
   };

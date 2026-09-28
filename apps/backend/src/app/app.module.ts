@@ -16,7 +16,6 @@ import { PartnersModule } from '@mas/backend-partners';
 import { PrismaModule } from '@mas/backend-prisma';
 import { ProgramsModule } from '@mas/backend-programs';
 import { RequirementsModule } from '@mas/backend-requirements';
-import { JwtStrategy } from '@mas/backend-shared';
 import { StoriesModule } from '@mas/backend-stories';
 import { PeerEvaluationGuideModule } from '@mas/backend-peer-evaluation-guide';
 import { UserGuideModule } from '@mas/backend-user-guide';
@@ -26,7 +25,6 @@ import { WhatWeAreModule } from '@mas/backend-what-we-are';
 import { AuthModule as BetterAuthModule } from '@thallesp/nestjs-better-auth';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { HealthController } from './health.controller';
 import { createBetterAuth } from '@mas/backend-auth';
 import { PrismaService } from '@mas/backend-prisma';
@@ -44,10 +42,6 @@ import { PrismaService } from '@mas/backend-prisma';
       useFactory: (config: ConfigService, prisma: PrismaService, mailService: MailService) => ({
         auth: createBetterAuth(prisma, config, mailService),
       }),
-    }),
-    JwtModule.register({
-      global: true,
-      signOptions: { expiresIn: '1y' },
     }),
     AlliesOnProgramsModule,
     AuthModule,
@@ -75,6 +69,5 @@ import { PrismaService } from '@mas/backend-prisma';
     WhatWeAreModule,
   ],
   controllers: [HealthController],
-  providers: [JwtStrategy],
 })
 export class AppModule {}
