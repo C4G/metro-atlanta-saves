@@ -27,12 +27,26 @@ function runNx(args, label) {
   if (result.status !== 0) throw new Error(`${label} exited with status ${result.status}`);
 }
 
+function runPrisma(args, label) {
+  const result = spawnSync('pnpm', ['exec', 'prisma', ...args, '--schema=apps/backend/prisma'], {
+    cwd: workspaceRoot,
+    env: process.env,
+    stdio: 'inherit',
+  });
+
+  if (result.error) throw result.error;
+  if (result.status !== 0) throw new Error(`${label} exited with status ${result.status}`);
+}
+
 function prepareCiDatabase() {
   if (process.env['E2E_SETUP_DATABASE'] !== 'true') return;
 
-  runNx(['run', 'backend:prisma-generate', '--no-agents'], 'Prisma generate');
-  runNx(['run', 'backend:prisma-migrate', '--no-agents'], 'Prisma migrate');
-  runNx(['run', 'backend:prisma-seed', '--no-agents'], 'Prisma seed');
+  // These commands must always execute against the fresh CI database. Using
+  // Nx targets here can restore a cached task result without applying schema
+  // migrations or seed data, leaving the Better Auth tables unavailable.
+  runPrisma(['generate'], 'Prisma generate');
+  runPrisma(['migrate', 'deploy'], 'Prisma migrate deploy');
+  runPrisma(['db', 'seed'], 'Prisma seed');
 }
 
 function buildProductionApps() {

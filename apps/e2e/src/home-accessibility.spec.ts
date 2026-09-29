@@ -19,6 +19,10 @@ test.describe('homepage accessibility structure', () => {
   });
 
   test('provides landmarks and a working skip link', async ({ page }) => {
+    // The redesigned navigation only shows its menu control below the large
+    // breakpoint. Exercise that responsive experience explicitly.
+    await page.setViewportSize({ width: 768, height: 900 });
+
     const skipLink = page.getByRole('link', { name: 'Skip to main content' });
     const main = page.getByRole('main');
 
@@ -31,7 +35,7 @@ test.describe('homepage accessibility structure', () => {
     await skipLink.press('Enter');
     await expect(main).toBeFocused();
 
-    await page.getByRole('button', { name: 'Navigation menu' }).click();
+    await page.getByRole('button', { name: 'Open navigation menu' }).click();
     await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(1);
   });
 
