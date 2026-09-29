@@ -1,0 +1,21 @@
+apps/frontend/server.ts
+  s_c99f221b0f1724::t_171543ab161788 2-3,46-47,53,55-58
+libs/frontend/_shared/auth/src/lib/data-access/auth-server.interceptor.ts
+  s_c99f221b0f1724::t_f81b0a99538004 11-12,14-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6c504c8b8aceb4c35d130d6e8f4451db444ff1dc",
+  "prompts": {},
+  "sessions": {
+    "s_c99f221b0f1724": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ebdd-12ba-7851-b2b8-20ceffe55a35",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
