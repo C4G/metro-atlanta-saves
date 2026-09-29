@@ -21,8 +21,6 @@ describe('ManagedSessionGuard', () => {
       lastName: 'User',
       role: 'Partner_Staff',
       partnerId: 'partner-1',
-      hash: 'legacy-hash',
-      forgot: null,
     } as any;
     const prisma = {
       user: { findUnique: jest.fn().mockResolvedValue(user) },

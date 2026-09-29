@@ -8,7 +8,6 @@ export * from './is-user-partner-staff';
 export * from './map-user';
 export * from './max-image-size-in-bytes';
 export * from './random-password';
-export * from './strategy';
 export * from './upload-paths';
 export * from './validate-image-file-type';
 export * from './validate-user-any-role';

@@ -1,6 +1,5 @@
-import { BadRequestException, Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto, ForgotPasswordDto, ResetPasswordDto, SignUpDto } from './dto';
 import { ManagedSessionGuard } from '@mas/backend-shared';
 import { UserFull } from '@mas/models';
 import { PatchUserDto } from '@mas/backend-users';
@@ -19,26 +18,6 @@ export class AuthController {
       throw new BadRequestException(['No user details provided']);
     }
     return this.authService.getUser(request.user.email);
-  }
-
-  @Post('signup')
-  signup(@Body() dto: SignUpDto) {
-    return this.authService.signup(dto);
-  }
-
-  @Post('signin')
-  signin(@Body() dto: AuthDto) {
-    return this.authService.signin(dto);
-  }
-
-  @Post('forgot-password')
-  forgotPassword(@Body() dto: ForgotPasswordDto) {
-    return this.authService.forgotPassword(dto);
-  }
-
-  @Post('reset-password')
-  resetPassword(@Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(dto);
   }
 
   @Patch()

@@ -1,5 +1,5 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { computed, inject, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 
 import { HttpClient } from '@angular/common/http';
@@ -47,14 +47,7 @@ const initialState: AuthState = {
 };
 
 const BASE_URL = '/api/auth';
-const LEGACY_AUTH_COOKIES = ['accessToken', 'originalToken'];
 type ManagedSessionResponse = { session: unknown; user: unknown } | null;
-
-export const clearLegacyAuthCookies = (document: Document): void => {
-  for (const name of LEGACY_AUTH_COOKIES) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-  }
-};
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -77,7 +70,6 @@ export const AuthStore = signalStore(
       http = inject(HttpClient),
       dialogRef = inject(MatDialog),
       document = inject(DOCUMENT),
-      platformId = inject(PLATFORM_ID),
     ) => {
       const update = (data: { user?: AuthState['user']; realUser?: AuthState['realUser'] }): void => {
         patchState(store, { user: data.user, realUser: data.realUser });
@@ -262,9 +254,6 @@ export const AuthStore = signalStore(
 
       const logout = async (): Promise<void> => {
         await firstValueFrom(http.post(`${BASE_URL}/sign-out`, {}, { withCredentials: true }));
-        if (isPlatformBrowser(platformId)) {
-          clearLegacyAuthCookies(document);
-        }
         update({ user: null, realUser: null });
         snackBar.open('You have been logged out!', undefined, {
           panelClass: 'success',
@@ -334,10 +323,7 @@ export const AuthStore = signalStore(
     },
   ),
   withHooks({
-    onInit(store, http = inject(HttpClient), document = inject(DOCUMENT), platformId = inject(PLATFORM_ID)) {
-      if (isPlatformBrowser(platformId)) {
-        clearLegacyAuthCookies(document);
-      }
+    onInit(store, http = inject(HttpClient)) {
       http
         .get<ManagedSessionResponse>(`${BASE_URL}/get-session`, { withCredentials: true })
         .pipe(

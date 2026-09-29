@@ -4,10 +4,8 @@ import request from 'supertest';
 import { AuthModule as BetterAuthModule } from '@thallesp/nestjs-better-auth';
 import { betterAuth } from 'better-auth';
 import { memoryAdapter } from 'better-auth/adapters/memory';
-import { createBetterAuth } from '@mas/backend-auth';
 import { AppModule } from './app.module';
 import { PrismaService } from '@mas/backend-prisma';
-import { ConfigService } from '@nestjs/config';
 
 describe('Better Auth bootstrap', () => {
   let app: NestExpressApplication;
@@ -17,7 +15,6 @@ describe('Better Auth bootstrap', () => {
   beforeAll(async () => {
     process.env['BETTER_AUTH_SECRET'] = 'test-secret-that-is-long-enough-for-better-auth';
     process.env['BETTER_AUTH_URL'] = 'http://localhost:3000';
-    process.env['JWT_SECRET'] = 'legacy-test-secret';
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -106,16 +103,11 @@ describe('Better Auth bootstrap', () => {
     }
   });
 
-  it('uses the Better Auth secret separately from the rollback JWT secret', () => {
-    const auth = createBetterAuth(
-      {} as PrismaService,
-      new ConfigService({
-        BETTER_AUTH_SECRET: 'new-session-secret',
-        JWT_SECRET: 'legacy-signing-secret',
-      }),
-    );
-
-    expect(auth.options.secret).toBe('new-session-secret');
+  it('does not expose the retired custom JWT auth endpoints', async () => {
+    for (const path of ['/api/auth/signup', '/api/auth/signin', '/api/auth/forgot-password']) {
+      const response = await request(app.getHttpServer()).post(path).send({});
+      expect(response.status).toBe(404);
+    }
   });
 
   it('uses a credentialed HttpOnly session cookie across sign-in, lookup, and sign-out', async () => {

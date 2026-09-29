@@ -1,0 +1,23 @@
+dte:
+  distribute-on: 2 linux-medium-js, 1 linux-medium-e2e
+  assignment-rules:
+    - targets: ['e2e-ci*']
+      run-on:
+        - agent: linux-medium-e2e
+
+lifecycle:
+  stop-after:
+    - lint
+    - build
+    - test
+    - e2e-ci
+
+nx-agents:
+  with-env-vars:
+    - CI
+    - E2E_SETUP_DATABASE
+    - DATABASE_URL
+    - BETTER_AUTH_SECRET
+    - BETTER_AUTH_URL
+    - API_PORT
+    - FE_PORT

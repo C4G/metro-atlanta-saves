@@ -2,62 +2,64 @@ import { PrismaClient, Role } from '@mas/prisma-client';
 import * as argon from 'argon2';
 
 export const seedUsers = async (prisma: PrismaClient) => {
-  const hasData = await prisma.user.count();
-  if (hasData) {
-    console.log('No users seeded');
-    return;
-  }
-  const hashedPassword = await argon.hash('P@ssw0rd123!');
-  const data = await prisma.user.createMany({
-    data: [
-      {
-        firstName: 'Admin',
-        lastName: 'Test',
-        email: 'admin@test.com',
-        hash: hashedPassword,
-        role: Role.Administrator,
-        bio: 'I am an administrator!',
-      },
-      {
-        firstName: 'Org',
-        lastName: 'Test',
-        email: 'org@test.com',
-        hash: hashedPassword,
-        role: Role.Administrator,
-        bio: 'I am an administrator!',
-      },
-      {
-        firstName: 'Partner',
-        lastName: 'Test',
-        email: 'partner@test.com',
-        hash: hashedPassword,
-        role: Role.Partner_Staff,
-        bio: 'I am a partner staff member!',
-      },
-      {
-        firstName: 'Basic',
-        lastName: 'Test',
-        email: 'basic@test.com',
-        hash: hashedPassword,
-        bio: 'I am a basic user with no role!',
-      },
-    ],
-  });
-  console.log('Users added: ', { data });
+  const password = await argon.hash('P@ssw0rd123!');
+  const users = [
+    {
+      firstName: 'Admin',
+      lastName: 'Test',
+      email: 'admin@test.com',
+      role: Role.Administrator,
+      bio: 'I am an administrator!',
+    },
+    {
+      firstName: 'Org',
+      lastName: 'Test',
+      email: 'org@test.com',
+      role: Role.Administrator,
+      bio: 'I am an administrator!',
+    },
+    {
+      firstName: 'Partner',
+      lastName: 'Test',
+      email: 'partner@test.com',
+      role: Role.Partner_Staff,
+      bio: 'I am a partner staff member!',
+    },
+    {
+      firstName: 'Basic',
+      lastName: 'Test',
+      email: 'basic@test.com',
+      bio: 'I am a basic user with no role!',
+    },
+  ];
 
-  // Create Better Auth Account records so credentials work via /api/auth/sign-in/email.
-  // Better Auth stores passwords in the `accounts` table, not the `users` table.
-  const users = await prisma.user.findMany({ select: { id: true, email: true } });
-  for (const user of users) {
-    await prisma.account.create({
-      data: {
-        userId: user.id,
+  for (const data of users) {
+    const userData = {
+      ...data,
+      name: `${data.firstName} ${data.lastName}`,
+      emailVerified: true,
+    };
+    const user = await prisma.user.upsert({
+      where: { email: data.email },
+      create: userData,
+      update: userData,
+    });
+    await prisma.account.upsert({
+      where: {
+        account_issuer_accountId_uidx: {
+          issuer: 'local:credential',
+          accountId: user.id,
+        },
+      },
+      create: {
+        issuer: 'local:credential',
         accountId: user.id,
         providerId: 'credential',
-        issuer: 'credential',
-        password: hashedPassword,
+        userId: user.id,
+        password,
       },
+      update: { providerId: 'credential', userId: user.id, password },
     });
   }
-  console.log('Better Auth accounts created for seeded users.');
+  console.log('Users ensured: ', { count: users.length });
 };
