@@ -17,13 +17,16 @@ test.describe('authentication', () => {
     await page.getByRole('button', { name: 'Register' }).click();
 
     await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByRole('button', { name: initials })).toBeVisible();
+    const accountMenu = page.getByRole('button', { name: 'Open account menu' });
+    await expect(accountMenu).toBeVisible();
+    await expect(accountMenu).toContainText(initials);
 
-    await page.getByRole('button', { name: initials }).click();
+    await accountMenu.click();
     await page.getByRole('menuitem', { name: 'Logout' }).click();
-    await expect(page.getByRole('link', { name: 'Sign Up or Login' })).toBeVisible();
+    const signInLink = page.getByRole('link', { name: 'Sign in' });
+    await expect(signInLink).toBeVisible();
 
-    await page.getByRole('link', { name: 'Sign Up or Login' }).click();
+    await signInLink.click();
     await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
@@ -31,7 +34,7 @@ test.describe('authentication', () => {
     await page.getByRole('button', { name: 'Login' }).click();
     expect((await signInResponse).status()).toBe(200);
 
-    await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByRole('button', { name: initials })).toBeVisible();
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page.getByRole('button', { name: 'Open account menu' })).toContainText(initials);
   });
 });
