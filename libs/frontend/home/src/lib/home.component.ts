@@ -136,9 +136,7 @@ import { FooterComponent, HeroComponent } from '@mas/frontend-shared-layout';
       </section>
     }
 
-    @if (learningsStore.learnings() && descriptionStore.description()) {
-      <mas-footer />
-    }
+    <mas-footer />
   `,
   host: {
     class: 'block',

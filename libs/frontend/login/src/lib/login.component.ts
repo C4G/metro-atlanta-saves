@@ -54,6 +54,11 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
           <button mat-raised-button color="primary" type="submit">Login</button>
         </div>
       </form>
+      @if (authStore.googleClientId()) {
+        <div class="flex justify-center mt-4">
+          <button mat-stroked-button type="button" (click)="signInWithGoogle()">Continue with Google</button>
+        </div>
+      }
       <a routerLink="/register" class="underline underline-offset-4 text-center cursor-pointer mt-4 mb-4">
         Don't have an account? Sign Up
       </a>
@@ -68,13 +73,21 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
   },
 })
 export class LoginComponent {
-  private authStore = inject(AuthStore);
+  readonly authStore = inject(AuthStore);
   private fb = inject(FormBuilder);
 
   loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
+
+  constructor() {
+    void this.authStore.initializeGoogle('login');
+  }
+
+  signInWithGoogle(): void {
+    void this.authStore.signInWithGoogle('login');
+  }
 
   submitForm() {
     if (this.loginForm.invalid) {
