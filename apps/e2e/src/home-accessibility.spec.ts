@@ -36,7 +36,9 @@ test.describe('homepage accessibility structure', () => {
     await expect(main).toBeFocused();
 
     await page.getByRole('button', { name: 'Open navigation menu' }).click();
-    await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(1);
+    const navigationMenu = page.getByRole('menu');
+    await expect(navigationMenu).toBeVisible();
+    await expect(navigationMenu.getByRole('menuitem', { name: 'Dark mode' })).toBeVisible();
   });
 
   test('names the home logo link and describes the hero image', async ({ page }) => {
