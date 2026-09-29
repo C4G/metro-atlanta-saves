@@ -50,20 +50,16 @@ jobs:
           node-version: 24
           cache: 'pnpm'
 
-      - name: Start Nx Agents
-        if: env.NX_CLOUD_ACCESS_TOKEN != ''
-        run: pnpm dlx nx-cloud start-nx-agents
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Forked PRs do not receive Nx Cloud secrets, so run their E2E setup locally.
-      - name: Install local fallback PostgreSQL
-        if: env.NX_CLOUD_ACCESS_TOKEN == ''
+      # Keep E2E prerequisites on the same runner that executes the affected
+      # targets.  Delegating tasks to ephemeral Nx agents made this workflow
+      # depend on agent image state and caused non-code CI failures.
+      - name: Install PostgreSQL for E2E
         run: bash apps/e2e/setup-postgres.sh
 
-      - name: Install local fallback Playwright browsers
-        if: env.NX_CLOUD_ACCESS_TOKEN == ''
+      - name: Install Playwright browsers for E2E
         run: pnpm exec playwright install --with-deps
 
       - name: Affected lint, build, unit tests, and E2E
