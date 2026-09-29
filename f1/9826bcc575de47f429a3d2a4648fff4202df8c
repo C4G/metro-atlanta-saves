@@ -1,0 +1,19 @@
+openspec/specs/authentication/google-identity/spec.md
+  s_1b31a19147cba3::t_eabafba8b4dd1a 1-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "f19826bcc575de47f429a3d2a4648fff4202df8c",
+  "prompts": {},
+  "sessions": {
+    "s_1b31a19147cba3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0eb16-1c5d-7833-9da9-54624b98d091",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
