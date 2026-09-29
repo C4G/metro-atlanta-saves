@@ -59,5 +59,8 @@ jobs:
       - name: Install Playwright browsers for E2E
         run: pnpm exec playwright install --with-deps
 
+      # `e2e-ci` is an Nx-Agent-only, atomized target. This workflow runs on a
+      # single GitHub runner, so use the non-atomized target to execute the
+      # same Playwright suite locally.
       - name: Affected lint, build, unit tests, and E2E
-        run: pnpm exec nx affected -t lint,build,test,e2e-ci --base=origin/main --head=HEAD --configuration=production
+        run: pnpm exec nx affected -t lint,build,test,e2e --base=origin/main --head=HEAD --configuration=production
