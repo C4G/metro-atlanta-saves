@@ -71,6 +71,13 @@ describe('Better Auth bootstrap', () => {
     expect(response.body).toBeNull();
   });
 
+  it('serves only the public Google client configuration', async () => {
+    const response = await request(app.getHttpServer()).get('/api/google-auth/config');
+    expect(response.status).toBe(200);
+    expect(Object.keys(response.body)).toEqual(['clientId']);
+    expect(response.body).not.toHaveProperty('clientSecret');
+  });
+
   it('allows credentialed local auth requests', async () => {
     const response = await request(app.getHttpServer())
       .get('/api/auth/get-session')

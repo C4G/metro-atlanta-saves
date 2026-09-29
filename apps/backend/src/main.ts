@@ -15,9 +15,12 @@ async function bootstrap() {
     bodyParser: false,
   });
 
-  // Enable CORS for development
+  const configuredOrigins = process.env['CORS_ORIGIN']
+    ?.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
   app.enableCors({
-    origin: process.env['CORS_ORIGIN'] || ['http://localhost:4200', 'http://localhost:3000'],
+    origin: configuredOrigins?.length ? configuredOrigins : ['http://localhost:4200', 'http://localhost:3000'],
     credentials: true,
   });
 

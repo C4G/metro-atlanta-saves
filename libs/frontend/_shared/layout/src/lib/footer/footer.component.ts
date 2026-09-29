@@ -13,6 +13,8 @@ import { RouterLink } from '@angular/router';
         {{ currentYear() }} Building Resilient Professionals
       </p>
 
+      <a class="self-center underline" routerLink="/privacy-policy">Privacy Policy</a>
+
       <a mat-icon-anchor class="flex justify-center align-center gap-2 ml-0 sm:ml-auto" routerLink="/team">
         <mat-icon>groups</mat-icon>
         <span>C4G Team</span>

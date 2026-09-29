@@ -37,6 +37,7 @@ type AuthState = {
   loading: boolean;
   user: null | UserFull;
   realUser: null | UserFull;
+  googleClientId: string | null;
 };
 
 const initialState: AuthState = {
@@ -44,6 +45,7 @@ const initialState: AuthState = {
   loading: true, // Start as true to prevent guards from running before auth is checked
   user: null,
   realUser: null,
+  googleClientId: null,
 };
 
 const BASE_URL = '/api/auth';
@@ -76,6 +78,117 @@ export const AuthStore = signalStore(
       };
 
       const currentUser = () => http.get<UserFull>('/api/users/me', { withCredentials: true });
+
+      const finishGoogleAuth = async (page: 'login' | 'register'): Promise<void> => {
+        try {
+          const user = await firstValueFrom(currentUser());
+          update({ user, realUser: null });
+          patchState(store, { authRefreshed: true, loading: false });
+          snackBar.open(page === 'register' ? 'You have signed up, welcome!' : 'You have been signed in!', undefined, {
+            panelClass: 'success',
+            duration: 5000,
+          });
+          const route =
+            page === 'register'
+              ? '/dashboard'
+              : user.firstProgramId
+                ? `/program-profiles/${user.firstProgramId}/savings`
+                : '/';
+          await router.navigateByUrl(route);
+        } catch {
+          snackBar.open('Google sign-in did not complete. Please try again.', undefined, {
+            panelClass: 'error',
+            duration: 5000,
+          });
+        }
+      };
+
+      const initializeGoogle = async (page: 'login' | 'register'): Promise<void> => {
+        const browser = document.defaultView;
+        if (!browser) return;
+
+        const query = new URL(browser.location.href).searchParams;
+        const previousGoogleError = query.has('error');
+        if (previousGoogleError) {
+          const message =
+            query.get('error') === 'google_name_required'
+              ? 'Your Google account needs a first and last name. Please register with email instead.'
+              : 'Google sign-in was cancelled or could not be completed. Please try again.';
+          snackBar.open(message, undefined, { panelClass: 'error', duration: 7000 });
+        }
+        if (query.get('google') === 'success') {
+          await finishGoogleAuth(page);
+          return;
+        }
+
+        let clientId: string | null;
+        try {
+          ({ clientId } = await firstValueFrom(http.get<{ clientId: string | null }>('/api/google-auth/config')));
+        } catch {
+          return;
+        }
+        patchState(store, { googleClientId: clientId });
+        if (!clientId || previousGoogleError) return;
+
+        try {
+          const [{ createAuthClient }, { oneTapClient }] = await Promise.all([
+            import('better-auth/client'),
+            import('better-auth/client/plugins'),
+          ]);
+          const authClient = createAuthClient({
+            baseURL: browser.location.origin,
+            basePath: BASE_URL,
+            plugins: [oneTapClient({ clientId, promptOptions: { maxAttempts: 1 } })],
+          });
+          await authClient.oneTap({
+            context: page === 'register' ? 'signup' : 'signin',
+            fetchOptions: {
+              onSuccess: () => {
+                void finishGoogleAuth(page);
+              },
+              onError: () => {
+                snackBar.open(
+                  'Google One Tap could not sign you in. You can use the form or Google button.',
+                  undefined,
+                  {
+                    panelClass: 'error',
+                    duration: 7000,
+                  },
+                );
+              },
+            },
+          });
+        } catch {
+          // The browser may block One Tap. Other sign-in options remain visible.
+        }
+      };
+
+      const signInWithGoogle = async (page: 'login' | 'register'): Promise<void> => {
+        const browser = document.defaultView;
+        if (!browser) return;
+        const returnUrl = `${browser.location.origin}/${page}`;
+        try {
+          const { url } = await firstValueFrom(
+            http.post<{ url: string }>(
+              `${BASE_URL}/sign-in/social`,
+              {
+                provider: 'google',
+                callbackURL: `${returnUrl}?google=success`,
+                errorCallbackURL: returnUrl,
+                disableRedirect: true,
+              },
+              { withCredentials: true },
+            ),
+          );
+          if (!url) throw new Error('Google did not provide a sign-in URL');
+          browser.location.assign(url);
+        } catch {
+          snackBar.open('Google sign-in could not start. Please try again.', undefined, {
+            panelClass: 'error',
+            duration: 7000,
+          });
+        }
+      };
 
       const navigateAfterAuthChange = async (): Promise<void> => {
         const currentUrl = router.url;
@@ -312,6 +425,8 @@ export const AuthStore = signalStore(
 
       return {
         update,
+        initializeGoogle,
+        signInWithGoogle,
         stopMimickingUser,
         mimicUser,
         login,
@@ -331,8 +446,14 @@ export const AuthStore = signalStore(
           switchMap((session) => (session ? http.get<UserFull>('/api/users/me', { withCredentials: true }) : of(null))),
         )
         .subscribe({
-          next: (user) => patchState(store, { user, realUser: null, loading: false, authRefreshed: true }),
-          error: () => patchState(store, { user: null, realUser: null, loading: false, authRefreshed: true }),
+          next: (user) => {
+            if (!store.authRefreshed())
+              patchState(store, { user, realUser: null, loading: false, authRefreshed: true });
+          },
+          error: () => {
+            if (!store.authRefreshed())
+              patchState(store, { user: null, realUser: null, loading: false, authRefreshed: true });
+          },
         });
     },
   }),

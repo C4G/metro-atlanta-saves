@@ -301,6 +301,7 @@ It will show tasks that you can run with Nx.
 - Prisma v5
 - TinyMCE v7
 - Better Auth sessions and Argon2 credential passwords
+- Optional Google sign-in and One Tap (see [Google authentication setup](./docs/google-auth.md))
 - [Coolify](https://coolify.io/docs) (deployment, Traefik ingress, TLS)
 - docker + docker compose
 
