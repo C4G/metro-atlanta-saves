@@ -27,9 +27,6 @@ env:
   BETTER_AUTH_URL: http://localhost:3000
   API_PORT: 3000
   FE_PORT: 4200
-  # Authenticates against the workspace in nx.json's nxCloudId, enabling remote
-  # caching. Runs from forks get an empty value and fall back to local caching.
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_DAEMON: 'false'
 
 jobs:
