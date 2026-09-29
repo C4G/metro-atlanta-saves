@@ -1,0 +1,87 @@
+apps/backend/src/app/auth-bootstrap.spec.ts
+  s_1b31a19147cba3::t_19253081f47924 74-80
+libs/backend/auth/src/lib/auth.module.ts
+  s_1b31a19147cba3::t_19253081f47924 5,9
+libs/backend/auth/tsconfig.lib.json
+  s_1b31a19147cba3::t_19253081f47924 6
+libs/frontend/_shared/layout/src/lib/footer/footer.component.ts
+  s_1b31a19147cba3::t_19253081f47924 16-17
+apps/backend/src/main.ts
+  s_1b31a19147cba3::t_19253081f47924 18-21,23
+libs/backend/auth/src/index.ts
+  s_1b31a19147cba3::t_19253081f47924 3
+openspec/changes/archive/2026-09-29-add-google-sso-and-one-tap/proposal.md
+  s_1b31a19147cba3::t_19253081f47924 1-28
+apps/backend/src/app/google-auth.spec.ts
+  s_1b31a19147cba3::t_19253081f47924 1-306
+apps/frontend/src/app/app.routes.ts
+  s_1b31a19147cba3::t_19253081f47924 31-40
+  s_1b31a19147cba3::t_edcbfa32aaad4c 30
+openspec/changes/archive/2026-09-29-add-google-sso-and-one-tap/specs/authentication/google-identity/spec.md
+  s_1b31a19147cba3::t_19253081f47924 1-53
+apps/frontend/src/app/privacy-policy.component.ts
+  s_1b31a19147cba3::t_19253081f47924 1-103
+tsconfig.nest-base.json
+  s_1b31a19147cba3::t_19253081f47924 8
+libs/frontend/login/src/lib/login.component.ts
+  s_1b31a19147cba3::t_19253081f47924 57-61,76,84-90
+  s_1b31a19147cba3::t_f03d4b718fb39a 91
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.spec.ts
+  s_1b31a19147cba3::t_19253081f47924 3,11-14,25,149-271
+libs/frontend/home/src/lib/home.component.ts
+  s_1b31a19147cba3::t_19253081f47924 139
+docker-compose.yaml
+  s_1b31a19147cba3::t_19253081f47924 51-53
+openspec/changes/archive/2026-09-29-add-google-sso-and-one-tap/.openspec.yaml
+  s_1b31a19147cba3::t_19253081f47924 1-2
+openspec/changes/archive/2026-09-29-add-google-sso-and-one-tap/design.md
+  s_1b31a19147cba3::t_19253081f47924 1-56
+libs/backend/auth/src/lib/better-auth.ts
+  s_1b31a19147cba3::t_19253081f47924 6-8,21-61,65,69-113,131-147,151,156,174-175
+libs/backend/auth/src/lib/google-auth-config.controller.ts
+  s_1b31a19147cba3::t_19253081f47924 1-13
+docs/google-auth.md
+  s_1b31a19147cba3::t_19253081f47924 1-39
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.ts
+  s_1b31a19147cba3::t_19253081f47924 40,48,82-192,428-429,449-456
+.env.example
+  s_1b31a19147cba3::t_19253081f47924 12,25-29
+libs/frontend/register/src/lib/register.component.ts
+  s_1b31a19147cba3::t_19253081f47924 81-85,97,106-113
+openspec/changes/archive/2026-09-29-add-google-sso-and-one-tap/tasks.md
+  s_1b31a19147cba3::t_19253081f47924 1-20
+README.md
+  s_1b31a19147cba3::t_19253081f47924 304
+apps/backend/prisma/migrations/20260929051310_dev/migration.sql
+  s_1b31a19147cba3::t_19253081f47924 1-2
+openspec/specs/authentication/google-identity/spec.md
+  s_1b31a19147cba3::t_eabafba8b4dd1a 1-52
+apps/frontend/server.ts
+  s_c99f221b0f1724::t_171543ab161788 2-3,46-47,53,55-58
+libs/frontend/_shared/auth/src/lib/data-access/auth-server.interceptor.ts
+  s_c99f221b0f1724::t_f81b0a99538004 11-12,14-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fbdf69f357111c920ab7f5838ccf731efbc6834c",
+  "prompts": {},
+  "sessions": {
+    "s_1b31a19147cba3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0eb16-1c5d-7833-9da9-54624b98d091",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    },
+    "s_c99f221b0f1724": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ebdd-12ba-7851-b2b8-20ceffe55a35",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
