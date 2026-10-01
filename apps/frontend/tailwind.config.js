@@ -3,7 +3,11 @@ const { join } = require('path');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [join(__dirname, '../../(libs|apps)/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
+  darkMode: ['selector', '.dark-theme'],
+  content: [
+    join(__dirname, '../../(libs|apps)/**/!(*.stories|*.spec).{ts,html}'),
+    ...createGlobPatternsForDependencies(__dirname),
+  ],
   theme: {
     extend: {},
   },

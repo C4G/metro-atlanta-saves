@@ -30,7 +30,6 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'savings-calculator',
-    canActivate: [authGuard],
     resolve: [seoResolver],
     loadComponent: () => import('@mas/frontend-savings-calculator').then((m) => m.SavingsCalculatorComponent),
     data: {
@@ -43,12 +42,10 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'blogs',
-    canActivate: [authGuard],
     loadChildren: () => import('@mas/frontend-blogs').then((m) => m.blogRoutes),
   },
   {
     path: 'educational-resources',
-    canActivate: [authGuard],
     resolve: [seoResolver],
     loadComponent: () => import('@mas/frontend-educational-resources').then((m) => m.EducationalResourcesComponent),
     data: {

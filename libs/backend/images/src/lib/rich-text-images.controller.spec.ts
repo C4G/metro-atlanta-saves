@@ -6,14 +6,15 @@ jest.mock('better-auth/node', () => ({
 }));
 
 import { RichTextImagesController } from './rich-text-images.controller';
-import { UPLOAD_DIR } from '@mas/backend-shared';
+import { assetDir } from '@mas/backend-shared';
+import { join } from 'path';
 
 describe('RichTextImagesController', () => {
   it('returns a public rich-text asset URL for an accepted image', () => {
     const controller = new RichTextImagesController();
     const result = controller.upload({
       mimetype: 'image/png',
-      path: `${UPLOAD_DIR}/assets/rich-text/photo.png`,
+      path: join(assetDir('rich-text'), 'photo.png'),
     } as Express.Multer.File);
 
     expect(result).toEqual({ url: '/assets/rich-text/photo.png' });
@@ -25,7 +26,7 @@ describe('RichTextImagesController', () => {
     expect(() =>
       controller.upload({
         mimetype: 'application/pdf',
-        path: `${UPLOAD_DIR}/assets/rich-text/file.pdf`,
+        path: join(assetDir('rich-text'), 'file.pdf'),
       } as Express.Multer.File),
     ).toThrow();
   });

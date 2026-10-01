@@ -135,122 +135,6 @@ body {
   }
 }
 
-.brand-account-menu.mat-mdc-menu-panel {
-  min-width: 15.5rem;
-  padding: 0.5rem;
-  border: 1px solid #dbe7e4;
-  border-radius: 1rem;
-  background: #ffffff;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
-}
-
-.brand-account-menu .account-menu__header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0.125rem 0.25rem 0.5rem;
-  padding: 0.375rem 0.375rem 0.875rem;
-  border-bottom: 1px solid #e2e8f0;
-  color: #0f172a;
-}
-
-.brand-account-menu .account-menu__avatar {
-  display: flex;
-  height: 2.25rem;
-  width: 2.25rem;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.625rem;
-  background: #0f766e;
-  color: #ecfeff;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.brand-account-menu .account-menu__item.mat-mdc-menu-item {
-  min-height: 2.75rem;
-  margin: 0.125rem 0;
-  border-radius: 0.75rem;
-  color: #334155;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.brand-account-menu .account-menu__item.mat-mdc-menu-item:hover {
-  background: #f0fdfa;
-  color: #115e59;
-}
-
-.brand-account-menu .account-menu__item.mat-mdc-menu-item:focus-visible {
-  outline: 2px solid #2dd4bf;
-  outline-offset: -2px;
-}
-
-.brand-account-menu .account-menu__logout.mat-mdc-menu-item {
-  color: #b91c1c;
-}
-
-.brand-account-menu .account-menu__logout.mat-mdc-menu-item:hover,
-.brand-account-menu .account-menu__logout.mat-mdc-menu-item:focus {
-  background: #fef2f2;
-  color: #991b1b;
-}
-
-.dark-theme .brand-account-menu.mat-mdc-menu-panel {
-  border-color: rgba(148, 163, 184, 0.2);
-  background: #151b2e;
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.35);
-}
-
-.dark-theme .brand-account-menu .account-menu__header {
-  border-color: rgba(148, 163, 184, 0.18);
-  background: transparent;
-  color: #f1f5f9;
-}
-
-.dark-theme .brand-account-menu .account-menu__item.mat-mdc-menu-item {
-  color: #cbd5e1;
-}
-
-.dark-theme .brand-account-menu .account-menu__item.mat-mdc-menu-item:hover {
-  background: #1b2940;
-  color: #99f6e4;
-}
-
-.dark-theme .brand-account-menu .account-menu__logout.mat-mdc-menu-item {
-  color: #fca5a5;
-}
-
-.dark-theme .brand-account-menu .account-menu__logout.mat-mdc-menu-item:hover,
-.dark-theme .brand-account-menu .account-menu__logout.mat-mdc-menu-item:focus {
-  background: rgba(248, 113, 113, 0.12);
-  color: #fecaca;
-}
-
-.brand-mobile-nav-menu .mat-mdc-menu-item {
-  min-height: 2.75rem;
-  margin: 0.125rem 0;
-  border-radius: 0.75rem;
-  color: #334155;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.brand-mobile-nav-menu .mat-mdc-menu-item:hover {
-  background: #f0fdfa;
-  color: #115e59;
-}
-
-.dark-theme .brand-mobile-nav-menu .mat-mdc-menu-item {
-  color: #cbd5e1;
-}
-
-.dark-theme .brand-mobile-nav-menu .mat-mdc-menu-item:hover {
-  background: #1b2940;
-  color: #99f6e4;
-}
-
 /* You can add global styles to this file, and also import other style files */
 
 body {
@@ -356,8 +240,8 @@ body.dark-theme {
 .dark-theme .admin-directory .text-gray-400 {
   color: #7f92a8 !important;
 }
-.dark-theme .admin-directory .hover\\:bg-gray-50:hover,
-.dark-theme .admin-directory .hover\\:bg-white:hover {
+.dark-theme .admin-directory .hover\:bg-gray-50:hover,
+.dark-theme .admin-directory .hover\:bg-white:hover {
   background: #1b2940 !important;
 }
 .dark-theme .admin-directory .checkpoint-row:hover {
@@ -367,23 +251,23 @@ body.dark-theme {
     0 0 0 1px rgba(45, 212, 191, 0.4),
     0 6px 16px rgba(0, 0, 0, 0.18) !important;
 }
-.dark-theme .admin-directory .hover\\:text-gray-900:hover {
+.dark-theme .admin-directory .hover\:text-gray-900:hover {
   color: #f1f5f9 !important;
 }
 .dark-theme .admin-directory .bg-gray-950 {
   background: #2dd4bf !important;
 }
 .dark-theme .admin-directory .bg-gray-950,
-.dark-theme .admin-directory .hover\\:bg-gray-800:hover {
+.dark-theme .admin-directory .hover\:bg-gray-800:hover {
   color: #082f2e !important;
 }
-.dark-theme .admin-directory .hover\\:bg-gray-800:hover {
+.dark-theme .admin-directory .hover\:bg-gray-800:hover {
   background: #5eead4 !important;
 }
-.dark-theme .admin-directory .hover\\:bg-red-50:hover {
+.dark-theme .admin-directory .hover\:bg-red-50:hover {
   background: rgba(248, 113, 113, 0.14) !important;
 }
-.dark-theme .admin-directory .hover\\:text-red-600:hover {
+.dark-theme .admin-directory .hover\:text-red-600:hover {
   color: #fca5a5 !important;
 }
 .dark-theme .admin-directory .bg-blue-50,
@@ -406,35 +290,16 @@ body.dark-theme {
 .dark-theme .admin-directory input::placeholder {
   color: #718198 !important;
 }
-.dark-theme .admin-directory .focus\\:bg-white:focus {
+.dark-theme .admin-directory .focus\:bg-white:focus {
   background: #151b2e !important;
 }
-.dark-theme .admin-directory .focus\\:ring-emerald-50:focus {
+.dark-theme .admin-directory .focus\:ring-emerald-50:focus {
   --tw-ring-color: rgba(45, 212, 191, 0.16) !important;
 }
 
 /* Route components historically rendered their own footer. The shared layout now owns one global footer. */
 .app-main mas-footer {
   display: none;
-}
-
-.skip-link {
-  position: fixed;
-  top: 0.5rem;
-  left: 0.5rem;
-  z-index: 100;
-  padding: 0.75rem 1rem;
-  border: 2px solid currentColor;
-  border-radius: 0.25rem;
-  background: white;
-  color: black;
-  font-weight: 500;
-  transform: translateY(-150%);
-  transition: transform 150ms ease-in-out;
-}
-
-.skip-link:focus {
-  transform: translateY(0);
 }
 
 .mat-mdc-snack-bar-container {

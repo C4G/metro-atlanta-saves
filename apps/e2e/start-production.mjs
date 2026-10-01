@@ -17,18 +17,7 @@ const corsOrigins = new Set(
 corsOrigins.add(`http://localhost:${publicPort}`);
 
 function runNx(args, label) {
-  const result = spawnSync(
-    process.execPath,
-    [nxCli, ...args],
-    { cwd: workspaceRoot, env: process.env, stdio: 'inherit' },
-  );
-
-  if (result.error) throw result.error;
-  if (result.status !== 0) throw new Error(`${label} exited with status ${result.status}`);
-}
-
-function runPrisma(args, label) {
-  const result = spawnSync('pnpm', ['exec', 'prisma', ...args, '--schema=apps/backend/prisma'], {
+  const result = spawnSync(process.execPath, [nxCli, ...args], {
     cwd: workspaceRoot,
     env: process.env,
     stdio: 'inherit',
@@ -38,30 +27,12 @@ function runPrisma(args, label) {
   if (result.status !== 0) throw new Error(`${label} exited with status ${result.status}`);
 }
 
-function runSeed() {
-  const result = spawnSync(
-    'pnpm',
-    ['exec', 'tsx', '--tsconfig', 'apps/backend/prisma/tsconfig.json', 'apps/backend/prisma/seed/seed.ts'],
-    {
-      cwd: workspaceRoot,
-      env: process.env,
-      stdio: 'inherit',
-    },
-  );
-
-  if (result.error) throw result.error;
-  if (result.status !== 0) throw new Error(`Prisma seed exited with status ${result.status}`);
-}
-
 function prepareCiDatabase() {
   if (process.env['E2E_SETUP_DATABASE'] !== 'true') return;
 
-  // These commands must always execute against the fresh CI database. Using
-  // Nx targets here can restore a cached task result without applying schema
-  // migrations or seed data, leaving the Better Auth tables unavailable.
-  runPrisma(['generate'], 'Prisma generate');
-  runPrisma(['migrate', 'deploy'], 'Prisma migrate deploy');
-  runSeed();
+  runNx(['run', 'backend:prisma-generate', '--no-agents'], 'Prisma generate');
+  runNx(['run', 'backend:prisma-migrate', '--no-agents'], 'Prisma migrate');
+  runNx(['run', 'backend:prisma-seed', '--no-agents'], 'Prisma seed');
 }
 
 function buildProductionApps() {
@@ -142,9 +113,8 @@ async function start() {
   await waitForHealth(`http://127.0.0.1:${frontendPort}/health`, 'Angular SSR frontend');
 
   gateway = http.createServer((request, response) => {
-    const targetPort = request.url?.startsWith('/api') || request.url?.startsWith('/assets/rich-text')
-      ? apiPort
-      : frontendPort;
+    const targetPort =
+      request.url?.startsWith('/api') || request.url?.startsWith('/assets/rich-text') ? apiPort : frontendPort;
     const proxy = http.request(
       {
         hostname: '127.0.0.1',

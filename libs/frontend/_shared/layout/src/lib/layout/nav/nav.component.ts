@@ -125,7 +125,10 @@ import { PushNotificationService } from '../../services/push-notification.servic
         </div>
       </div>
     </nav>
-    <mat-menu #mobileNavMenu="matMenu" class="brand-account-menu brand-mobile-nav-menu">
+    <mat-menu
+      #mobileNavMenu="matMenu"
+      class="!min-w-60 !rounded-2xl !border !border-[#dbe7e4] !bg-white !p-2 !shadow-xl [&_.mat-mdc-menu-item]:!my-0.5 [&_.mat-mdc-menu-item]:!min-h-11 [&_.mat-mdc-menu-item]:!rounded-xl [&_.mat-mdc-menu-item]:!text-[0.8125rem] [&_.mat-mdc-menu-item]:!font-semibold [&_.mat-mdc-menu-item]:!text-slate-700 [&_.mat-mdc-menu-item:hover]:!bg-teal-50 [&_.mat-mdc-menu-item:hover]:!text-teal-800 dark:!border-slate-400/20 dark:!bg-[#151b2e] dark:[&_.mat-mdc-menu-item]:!text-slate-300 dark:[&_.mat-mdc-menu-item:hover]:!bg-[#1b2940] dark:[&_.mat-mdc-menu-item:hover]:!text-teal-200"
+    >
       @if (authStore.user()) {
         <a mat-menu-item routerLink="/dashboard">
           <mat-icon>space_dashboard</mat-icon>
@@ -149,9 +152,18 @@ import { PushNotificationService } from '../../services/push-notification.servic
         <span>{{ themeService.darkMode() ? 'Light mode' : 'Dark mode' }}</span>
       </button>
     </mat-menu>
-    <mat-menu #userMenu="matMenu" class="brand-account-menu">
-      <div class="account-menu__header">
-        <span class="account-menu__avatar">{{ authStore.initials() }}</span>
+    <mat-menu
+      #userMenu="matMenu"
+      class="!min-w-60 !rounded-2xl !border !border-[#dbe7e4] !bg-white !p-2 !shadow-xl dark:!border-slate-400/20 dark:!bg-[#151b2e]"
+    >
+      <div
+        class="mx-1 mb-2 mt-0.5 flex items-center gap-3 border-b border-slate-200 px-1.5 pb-3.5 pt-1.5 text-slate-900 dark:border-slate-400/20 dark:text-slate-100"
+      >
+        <span
+          class="flex size-9 flex-none items-center justify-center rounded-[0.625rem] bg-teal-700 text-xs font-bold text-cyan-50"
+        >
+          {{ authStore.initials() }}
+        </span>
         <span class="min-w-0">
           <span class="block truncate text-sm font-bold">
             {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
@@ -159,7 +171,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
           <span class="mt-0.5 block truncate text-[11px]">{{ authStore.user()?.email }}</span>
         </span>
       </div>
-      <a mat-menu-item class="account-menu__item" routerLink="/profile">
+      <a
+        mat-menu-item
+        class="!my-0.5 !min-h-11 !rounded-xl !text-[0.8125rem] !font-semibold !text-slate-700 hover:!bg-teal-50 hover:!text-teal-800 dark:!text-slate-300 dark:hover:!bg-[#1b2940] dark:hover:!text-teal-200"
+        routerLink="/profile"
+      >
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +195,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
         </span>
       </a>
       @if (notificationsSupported) {
-        <button mat-menu-item class="account-menu__item" (click)="toggleNotifications()">
+        <button
+          mat-menu-item
+          class="!my-0.5 !min-h-11 !rounded-xl !text-[0.8125rem] !font-semibold !text-slate-700 hover:!bg-teal-50 hover:!text-teal-800 dark:!text-slate-300 dark:hover:!bg-[#1b2940] dark:hover:!text-teal-200"
+          (click)="toggleNotifications()"
+        >
           <span class="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -199,7 +219,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </span>
         </button>
       }
-      <button mat-menu-item class="account-menu__item account-menu__logout" (click)="authStore.logout()">
+      <button
+        mat-menu-item
+        class="!my-0.5 !min-h-11 !rounded-xl !text-[0.8125rem] !font-semibold !text-red-700 hover:!bg-red-50 hover:!text-red-800 dark:!text-red-300 dark:hover:!bg-red-400/10 dark:hover:!text-red-200"
+        (click)="authStore.logout()"
+      >
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -221,7 +245,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
       </button>
       @if (authStore.isStaff() || authStore.realUser()) {
         @if (!authStore.realUser()) {
-          <button mat-menu-item class="account-menu__item" (click)="openMimicUserModal()">
+          <button
+            mat-menu-item
+            class="!my-0.5 !min-h-11 !rounded-xl !text-[0.8125rem] !font-semibold !text-slate-700 hover:!bg-teal-50 hover:!text-teal-800 dark:!text-slate-300 dark:hover:!bg-[#1b2940] dark:hover:!text-teal-200"
+            (click)="openMimicUserModal()"
+          >
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +269,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
             </span>
           </button>
         } @else {
-          <button mat-menu-item class="account-menu__item" (click)="authStore.stopMimickingUser()">
+          <button
+            mat-menu-item
+            class="!my-0.5 !min-h-11 !rounded-xl !text-[0.8125rem] !font-semibold !text-slate-700 hover:!bg-teal-50 hover:!text-teal-800 dark:!text-slate-300 dark:hover:!bg-[#1b2940] dark:hover:!text-teal-200"
+            (click)="authStore.stopMimickingUser()"
+          >
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
