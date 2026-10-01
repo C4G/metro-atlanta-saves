@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["node"],
+    "types": ["node", "multer"],
     "target": "es2022",
     "forceConsistentCasingInFileNames": true,
     "strict": true,

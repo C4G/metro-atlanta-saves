@@ -9,11 +9,10 @@ import {
   ThemeService,
   WhatWeAreStore,
 } from '@mas/frontend-shared-data-access';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-home',
-  imports: [MatIconModule, FooterComponent],
+  imports: [MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let intro = introductionStore.introduction();
@@ -266,9 +265,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
           </a>
         </div>
       </section>
-    }
-    @if (learningsStore.learnings() && descriptionStore.description()) {
-      <mas-footer />
     }
   `,
   styles: [

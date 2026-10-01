@@ -29,6 +29,17 @@ export const appRoutes: Route[] = [
     },
   },
   {
+    path: 'privacy-policy',
+    resolve: [seoResolver],
+    loadComponent: () => import('./privacy-policy.component').then((m) => m.PrivacyPolicyComponent),
+    data: {
+      seo: {
+        title: 'Privacy Policy',
+        description: 'How Building Resilient Professionals collects, uses, and shares information.',
+      },
+    },
+  },
+  {
     path: 'savings-calculator',
     resolve: [seoResolver],
     loadComponent: () => import('@mas/frontend-savings-calculator').then((m) => m.SavingsCalculatorComponent),
