@@ -31,7 +31,9 @@ export class ThemeService {
   }
 
   private readThemeCookie(): 'dark' | 'light' | undefined {
-    const cookieHeader = this.request?.headers.get('cookie') ?? this.document.cookie;
+    const cookieHeader = isPlatformBrowser(this.platformId)
+      ? this.document.cookie
+      : (this.request?.headers.get('cookie') ?? '');
     const value = cookieHeader
       .split(';')
       .map((cookie) => cookie.trim().split('='))
