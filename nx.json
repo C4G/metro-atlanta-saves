@@ -21,6 +21,7 @@
     "test": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
       "cache": true,
+      "dependsOn": [{ "projects": ["backend"], "target": "prisma-generate" }],
       "configurations": {
         "production": { "ci": true, "codeCoverage": false, "outputStyle": "stream", "runInBand": true }
       }
