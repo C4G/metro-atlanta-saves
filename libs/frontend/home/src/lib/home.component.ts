@@ -6,7 +6,6 @@ import {
   IntroductionStore,
   LearningsStore,
   StoriesStore,
-  ThemeService,
   WhatWeAreStore,
 } from '@mas/frontend-shared-data-access';
 
@@ -22,7 +21,7 @@ import {
       <section class="relative isolate overflow-hidden bg-gray-950 text-white">
         @if (!intro.imageHidden) {
           <img
-            class="landing-hero-image absolute inset-0 -z-20 h-full w-full object-cover"
+            class="absolute dark:brightness-[0.62] dark:saturate-[0.82] inset-0 -z-20 h-full w-full object-cover"
             [src]="intro.imageUrl"
             [alt]="
               intro.imageText ||
@@ -43,7 +42,7 @@ import {
               Tools, guidance, and a community designed to help you build a stronger financial future.
             </p>
             <a
-              class="landing-hero-cta mt-8 inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:ring-offset-2 focus:ring-offset-gray-950"
+              class="mt-8 bg-teal-700 text-cyan-50 hover:bg-teal-800 dark:bg-teal-400 dark:text-teal-950 dark:hover:bg-teal-200 inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:ring-offset-2 focus:ring-offset-gray-950"
               href="#start"
             >
               Explore the program
@@ -56,15 +55,15 @@ import {
 
     @if (descriptionStore.description(); as description) {
       @if (!description.hidden) {
-        <section id="start" class="landing-introduction bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+        <section id="start" class="bg-white px-5 py-16 dark:bg-[#0c1222] sm:px-8 lg:px-12 lg:py-24">
           <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
             <div class="flex justify-center lg:justify-start">
               <div
-                class="brand-logo-frame flex aspect-square w-48 items-center justify-center rounded-3xl bg-amber-50 p-6 sm:w-56"
+                class="flex dark:bg-[linear-gradient(145deg,#12334a,#0f766e)] dark:shadow-[0_18px_42px_rgba(3,15,29,0.35)] aspect-square w-48 items-center justify-center rounded-3xl bg-amber-50 p-6 sm:w-56"
               >
                 <img
                   src="assets/Logo/brp-logo-community-no-arrow.png?v=1"
-                  class="brand-logo h-full w-full object-contain"
+                  class="h-full dark:[filter:brightness(0)_saturate(100%)_invert(89%)_sepia(23%)_saturate(731%)_hue-rotate(119deg)_brightness(101%)_contrast(96%)] w-full object-contain"
                   width="224"
                   height="224"
                   alt="Building Resilient Professionals logo"
@@ -73,11 +72,13 @@ import {
             </div>
             <div>
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">A practical path forward</p>
-              <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              <h2
+                class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl"
+              >
                 {{ description.title }}
               </h2>
               <div
-                class="home-rich-text wysiwyg mt-6 max-w-2xl text-base leading-7 text-slate-600"
+                class="wysiwyg mt-6 max-w-2xl text-base leading-7 text-slate-600 [&_a]:font-semibold [&_a]:text-teal-700 [&_ol]:my-8 [&_ol]:grid [&_ol]:list-none [&_ol]:gap-3 [&_ol]:p-0 [&_ol]:[counter-reset:home-step] [&_ol>li]:relative [&_ol>li]:min-h-[4.5rem] [&_ol>li]:rounded-2xl [&_ol>li]:border [&_ol>li]:border-[#dbe7e4] [&_ol>li]:bg-[#f7faf9] [&_ol>li]:py-[1.1rem] [&_ol>li]:pl-[4.5rem] [&_ol>li]:pr-5 [&_ol>li]:text-slate-700 [&_ol>li]:[counter-increment:home-step] [&_ol>li]:before:absolute [&_ol>li]:before:left-4 [&_ol>li]:before:top-4 [&_ol>li]:before:grid [&_ol>li]:before:size-9 [&_ol>li]:before:place-items-center [&_ol>li]:before:rounded-full [&_ol>li]:before:bg-teal-700 [&_ol>li]:before:text-[0.8rem] [&_ol>li]:before:font-bold [&_ol>li]:before:text-white [&_ol>li]:before:content-[counter(home-step)] dark:text-slate-300 dark:[&_a]:text-teal-300 dark:[&_ol>li]:border-teal-400/20 dark:[&_ol>li]:bg-[#1a2739] dark:[&_ol>li]:text-blue-100"
                 [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"
               ></div>
             </div>
@@ -87,25 +88,29 @@ import {
     }
 
     @if (visibleLearnings().length) {
-      <section class="landing-learning bg-[#f3f8f5] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <section class="bg-[#f3f8f5] dark:bg-[#090f1d] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
         <div class="mx-auto max-w-5xl">
           <div class="max-w-2xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Build your knowledge</p>
-            <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            <h2
+              class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl"
+            >
               What the program is built for
             </h2>
-            <p class="mt-4 text-base leading-7 text-slate-600">
+            <p class="mt-4 text-base leading-7 text-slate-600 dark:text-slate-300">
               Explore the reason behind the program, what it aims to change, and what participants receive.
             </p>
           </div>
           @let learning = activeLearning();
           @if (learning) {
-            <article class="mt-10 overflow-hidden rounded-3xl border border-teal-100 bg-white shadow-sm">
-              <div class="border-b border-teal-100 bg-teal-700 px-7 py-6 text-white sm:px-10">
+            <article
+              class="mt-10 overflow-hidden rounded-3xl border border-teal-100 dark:border-white/10 bg-white dark:bg-[#151b2e] shadow-sm dark:shadow-[0_12px_24px_rgba(0,0,0,0.28)]"
+            >
+              <div class="border-b border-teal-100 dark:border-white/10 bg-teal-700 px-7 py-6 text-white sm:px-10">
                 <div class="flex items-center justify-between gap-5">
                   <div class="flex items-center gap-4">
                     <span
-                      class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-300 text-sm font-bold text-slate-950"
+                      class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-300 text-sm font-bold text-slate-950 dark:text-slate-100"
                     >
                       0{{ learningIndex() + 1 }}
                     </span>
@@ -121,13 +126,15 @@ import {
               </div>
               <div class="p-7 sm:p-10">
                 <div
-                  class="learning-rich-text wysiwyg max-w-3xl text-base leading-8 text-slate-700"
+                  class="wysiwyg max-w-3xl text-base leading-8 text-slate-700 [&_ul]:my-[1.4rem] [&_ul]:grid [&_ul]:list-none [&_ul]:gap-3 [&_ul]:p-0 [&_ul>li]:relative [&_ul>li]:pl-[1.4rem] [&_ul>li]:text-slate-700 [&_ul>li]:before:absolute [&_ul>li]:before:left-0 [&_ul>li]:before:top-[0.58rem] [&_ul>li]:before:size-2 [&_ul>li]:before:rounded-full [&_ul>li]:before:bg-teal-700 dark:text-slate-300 dark:[&_ul>li]:text-slate-300"
                   [innerHTML]="sanitizer.bypassSecurityTrustHtml(learning.body)"
                 ></div>
-                <div class="mt-10 flex items-center justify-between gap-4 border-t border-slate-100 pt-6">
+                <div
+                  class="mt-10 flex items-center justify-between gap-4 border-t border-slate-100 dark:border-white/10 pt-6"
+                >
                   <button
                     type="button"
-                    class="inline-flex items-center gap-2 text-sm font-bold text-slate-700 transition-colors hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    class="inline-flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600"
                     (click)="previousLearning()"
                   >
                     <mat-icon>arrow_back</mat-icon>
@@ -137,11 +144,11 @@ import {
                     @for (item of visibleLearnings(); track item.id; let index = $index) {
                       <button
                         type="button"
-                        class="h-2 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-teal-600"
+                        class="h-2 rounded-full transition-all [&.landing-dot-inactive]:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:[&.landing-dot-inactive]:bg-slate-600"
                         [class.w-7]="learningIndex() === index"
                         [class.bg-teal-700]="learningIndex() === index"
                         [class.w-2]="learningIndex() !== index"
-                        [class.bg-slate-300]="learningIndex() !== index"
+                        [class.landing-dot-inactive]="learningIndex() !== index"
                         [attr.aria-label]="'Show ' + item.title"
                         (click)="showLearning(index)"
                       ></button>
@@ -149,7 +156,7 @@ import {
                   </div>
                   <button
                     type="button"
-                    class="inline-flex items-center gap-2 text-sm font-bold text-slate-700 transition-colors hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    class="inline-flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600"
                     (click)="nextLearning()"
                   >
                     Next
@@ -164,21 +171,25 @@ import {
     }
 
     @if (visibleStories().length) {
-      <section class="landing-stories bg-white px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <section class="bg-white px-5 py-16 dark:bg-[#0b1324] sm:px-8 lg:px-12 lg:py-24">
         <div class="mx-auto max-w-5xl">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Community stories</p>
-              <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              <h2
+                class="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl"
+              >
                 Progress looks different for everyone
               </h2>
             </div>
-            <p class="max-w-sm text-sm leading-6 text-slate-500">Hear from people putting their goals into action.</p>
+            <p class="max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
+              Hear from people putting their goals into action.
+            </p>
           </div>
           @let story = activeStory();
           @if (story) {
             <article
-              class="landing-story-card mt-10 overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl md:grid md:grid-cols-[0.85fr_1.15fr]"
+              class="mt-10 dark:bg-[#1a1f3a] overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl dark:shadow-[0_12px_24px_rgba(0,0,0,0.28)] md:grid md:grid-cols-[0.85fr_1.15fr]"
             >
               <img
                 [src]="story.imageUrl"
@@ -207,7 +218,7 @@ import {
                     </button>
                     <button
                       type="button"
-                      class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-400 text-slate-950 transition-colors hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-200"
+                      class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-400 text-slate-950 dark:text-slate-100 transition-colors hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-200"
                       aria-label="Next story"
                       (click)="nextStory()"
                     >
@@ -221,11 +232,11 @@ import {
               @for (item of visibleStories(); track item.id; let index = $index) {
                 <button
                   type="button"
-                  class="h-2 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  class="h-2 rounded-full transition-all [&.landing-dot-inactive]:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:[&.landing-dot-inactive]:bg-slate-600"
                   [class.w-7]="storyIndex() === index"
                   [class.bg-teal-700]="storyIndex() === index"
                   [class.w-2]="storyIndex() !== index"
-                  [class.bg-slate-300]="storyIndex() !== index"
+                  [class.landing-dot-inactive]="storyIndex() !== index"
                   [attr.aria-label]="'Show story ' + (index + 1)"
                   (click)="showStory(index)"
                 ></button>
@@ -238,19 +249,21 @@ import {
 
     @let wwa = whatWeAreStore.whatWeAre();
     @if (wwa && !wwa.hidden) {
-      <section class="landing-alliance bg-gray-950 px-5 py-16 text-white sm:px-8 lg:px-12 lg:py-24">
+      <section
+        class="bg-gray-950 dark:bg-[#090f1d] [&_article]:dark:border-white/10 [&_article]:dark:bg-[#151b2e] px-5 py-16 text-white sm:px-8 lg:px-12 lg:py-24"
+      >
         <div class="mx-auto max-w-7xl">
           <div class="max-w-2xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">The alliance</p>
             <h2 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Support that meets you where you are</h2>
           </div>
           <div class="mt-10 grid gap-4 md:grid-cols-2">
-            <article class="rounded-2xl border border-white/10 bg-white/5 p-7">
+            <article class="rounded-2xl border border-white/10 bg-white/5 p-7 dark:bg-[#151b2e]">
               <mat-icon class="text-emerald-300">groups</mat-icon>
               <h3 class="mt-5 text-xl font-bold">Who we are</h3>
               <p class="mt-3 leading-7 text-gray-300">{{ wwa.whoWeAreDescription }}</p>
             </article>
-            <article class="rounded-2xl border border-white/10 bg-white/5 p-7">
+            <article class="rounded-2xl border border-white/10 bg-white/5 p-7 dark:bg-[#151b2e]">
               <mat-icon class="text-emerald-300">trending_up</mat-icon>
               <h3 class="mt-5 text-xl font-bold">What we do</h3>
               <p class="mt-3 leading-7 text-gray-300">{{ wwa.whatWeDoDescription }}</p>
@@ -267,174 +280,7 @@ import {
       </section>
     }
   `,
-  styles: [
-    `
-      .landing-hero-cta {
-        background-color: #0f766e;
-        color: #ecfeff;
-      }
-      .landing-hero-cta:hover {
-        background-color: #115e59;
-        color: #ecfeff;
-      }
-      :host(.landing-page--dark) {
-        display: block;
-        background: #0c1222;
-      }
-      :host(.landing-page--dark) ::ng-deep .landing-hero-image {
-        filter: brightness(0.62) saturate(0.82);
-      }
-      :host(.landing-page--dark) ::ng-deep .landing-introduction {
-        background: #0c1222 !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .bg-white {
-        background-color: #151b2e !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .landing-learning {
-        background-color: #090f1d !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .landing-stories {
-        background-color: #0b1324 !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .bg-slate-900 {
-        background-color: #1a1f3a !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .landing-alliance {
-        background-color: #090f1d !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .landing-alliance article {
-        background-color: #151b2e !important;
-        border-color: rgba(255, 255, 255, 0.12) !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .border-gray-200,
-      :host(.landing-page--dark) ::ng-deep .border-slate-100,
-      :host(.landing-page--dark) ::ng-deep .border-teal-100 {
-        border-color: rgba(255, 255, 255, 0.12) !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .text-slate-900,
-      :host(.landing-page--dark) ::ng-deep .text-slate-950 {
-        color: #f1f5f9 !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .text-slate-700,
-      :host(.landing-page--dark) ::ng-deep .text-slate-600 {
-        color: #cbd5e1 !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .text-slate-500 {
-        color: #94a3b8 !important;
-      }
-      :host(.landing-page--dark) .landing-hero-cta {
-        background-color: #2dd4bf !important;
-        color: #082f2e !important;
-      }
-      :host(.landing-page--dark) .landing-hero-cta:hover {
-        background-color: #99f6e4 !important;
-        color: #082f2e !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .bg-amber-50 {
-        background-color: rgba(251, 191, 36, 0.12) !important;
-      }
-      :host(.landing-page--dark) .brand-logo-frame {
-        background: linear-gradient(145deg, #12334a, #0f766e) !important;
-        box-shadow: 0 18px 42px rgba(3, 15, 29, 0.35);
-      }
-      :host(.landing-page--dark) .brand-logo {
-        filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg) brightness(101%)
-          contrast(96%);
-      }
-      :host(.landing-page--dark) ::ng-deep .bg-amber-100 {
-        background-color: rgba(251, 191, 36, 0.16) !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .text-amber-800 {
-        color: #fde68a !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .bg-slate-300 {
-        background-color: #475569 !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .shadow-sm,
-      :host(.landing-page--dark) ::ng-deep .shadow-xl {
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28) !important;
-      }
-      :host(.landing-page--dark) ::ng-deep .home-rich-text ol > li {
-        border-color: rgba(45, 212, 191, 0.2);
-        background: #1a2739;
-        color: #dbeafe;
-      }
-      :host(.landing-page--dark) ::ng-deep .learning-rich-text ul > li {
-        color: #cbd5e1;
-      }
-      :host(.landing-page--dark) ::ng-deep .home-rich-text a {
-        color: #5eead4;
-      }
-      :host(.landing-page--dark) ::ng-deep mas-footer footer {
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        background: #090f1d;
-        color: #94a3b8;
-      }
-      :host(.landing-page--dark) ::ng-deep mas-footer a {
-        color: #99f6e4;
-      }
-      :host ::ng-deep .home-rich-text ol {
-        counter-reset: home-step;
-        display: grid;
-        gap: 0.75rem;
-        margin: 2rem 0;
-        padding: 0;
-        list-style: none;
-      }
-      :host ::ng-deep .home-rich-text ol > li {
-        position: relative;
-        min-height: 4.5rem;
-        padding: 1.1rem 1.25rem 1.1rem 4.5rem;
-        border: 1px solid #dbe7e4;
-        border-radius: 1rem;
-        background: #f7faf9;
-        color: #334155;
-        counter-increment: home-step;
-      }
-      :host ::ng-deep .home-rich-text ol > li::before {
-        content: counter(home-step);
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-        display: grid;
-        width: 2.25rem;
-        height: 2.25rem;
-        place-items: center;
-        border-radius: 9999px;
-        background: #0f766e;
-        color: #fff;
-        font-size: 0.8rem;
-        font-weight: 700;
-      }
-      :host ::ng-deep .learning-rich-text ul {
-        display: grid;
-        gap: 0.75rem;
-        margin: 1.4rem 0;
-        padding: 0;
-        list-style: none;
-      }
-      :host ::ng-deep .learning-rich-text ul > li {
-        position: relative;
-        padding-left: 1.4rem;
-        color: #334155;
-      }
-      :host ::ng-deep .learning-rich-text ul > li::before {
-        content: '';
-        position: absolute;
-        top: 0.58rem;
-        left: 0;
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 9999px;
-        background: #0f766e;
-      }
-      :host ::ng-deep .home-rich-text a {
-        color: #0f766e;
-        font-weight: 600;
-      }
-    `,
-  ],
-  host: { class: 'block landing-page', '[class.landing-page--dark]': 'themeService.darkMode()' },
+  host: { class: 'block bg-white dark:bg-[#0c1222]' },
 })
 export class HomeComponent {
   readonly descriptionStore = inject(DescriptionStore);
@@ -442,7 +288,6 @@ export class HomeComponent {
   readonly introductionStore = inject(IntroductionStore);
   readonly learningsStore = inject(LearningsStore);
   readonly whatWeAreStore = inject(WhatWeAreStore);
-  readonly themeService = inject(ThemeService);
   readonly sanitizer = inject(DomSanitizer);
   readonly visibleLearnings = computed(() =>
     this.learningsStore.sectionHidden() ? [] : this.learningsStore.learnings().filter((learning) => !learning.hidden),

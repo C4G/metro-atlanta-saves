@@ -9,7 +9,7 @@ import { MatError, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { RichTextEditorComponent } from '@mas/frontend-shared-components';
-import { CheckpointNamesStore, PartnersStore, ProgramsStore, ThemeService } from '@mas/frontend-shared-data-access';
+import { CheckpointNamesStore, PartnersStore, ProgramsStore } from '@mas/frontend-shared-data-access';
 import { ExtendedProgram } from '@mas/models';
 
 function dateRangeValidator(control: AbstractControl) {
@@ -41,13 +41,15 @@ function dateRangeValidator(control: AbstractControl) {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="program-editor">
-      <header class="program-editor__header">
+    <div
+      class="min-w-[min(100vw-2rem,44rem)] bg-white [--mdc-outlined-text-field-focus-outline-color:#0f766e] [--mdc-outlined-text-field-hover-outline-color:#5eead4] dark:bg-[#151b2e] dark:[--mdc-outlined-text-field-input-text-color:#e2e8f0] dark:[--mdc-outlined-text-field-label-text-color:#94a3b8] dark:[--mdc-outlined-text-field-outline-color:rgba(148,163,184,0.3)] dark:[--mdc-outlined-text-field-focus-outline-color:#2dd4bf]"
+    >
+      <header class="border-b border-slate-200 px-6 pb-5 pt-6 dark:border-slate-400/15">
         <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-teal-700">Program operations</p>
-        <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-950">
+        <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-950 dark:text-slate-100">
           {{ data ? 'Edit program' : 'Create program' }}
         </h2>
-        <p class="mt-2 text-sm leading-6 text-slate-500">
+        <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
           {{
             data
               ? 'Update the details your staff and participants rely on.'
@@ -56,7 +58,7 @@ function dateRangeValidator(control: AbstractControl) {
         </p>
       </header>
       <form #form="ngForm" [formGroup]="programForm" (ngSubmit)="submitForm()">
-        <mat-dialog-content class="program-editor__content">
+        <mat-dialog-content class="!pt-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <mat-form-field appearance="outline">
               <mat-label>Name</mat-label>
@@ -132,99 +134,31 @@ function dateRangeValidator(control: AbstractControl) {
             </div>
           </div>
         </mat-dialog-content>
-        <mat-dialog-actions align="end" class="program-editor__actions">
-          <button mat-button mat-dialog-close class="program-editor__cancel">Cancel</button>
-          <button mat-raised-button type="submit" class="program-editor__submit">
+        <mat-dialog-actions align="end" class="!m-0 !gap-3 !px-6 !pb-6 !pt-4">
+          <button
+            mat-button
+            mat-dialog-close
+            class="!rounded-xl !text-[0.8125rem] !font-bold !text-slate-600 hover:!bg-slate-100 dark:!text-slate-300 dark:hover:!bg-[#1b2940]"
+          >
+            Cancel
+          </button>
+          <button
+            mat-raised-button
+            type="submit"
+            class="!rounded-xl !bg-teal-700 !text-[0.8125rem] !font-bold !text-cyan-50 hover:!bg-teal-800 dark:!bg-teal-400 dark:!text-teal-950 dark:hover:!bg-teal-200"
+          >
             {{ data ? 'Save changes' : 'Create program' }}
           </button>
         </mat-dialog-actions>
       </form>
     </div>
   `,
-  styles: [
-    `
-      .program-editor {
-        min-width: min(100vw - 2rem, 44rem);
-        background: #fff;
-      }
-      .program-editor__header {
-        padding: 1.5rem 1.5rem 1.25rem;
-        border-bottom: 1px solid #e2e8f0;
-      }
-      .program-editor__content {
-        padding-top: 1.5rem;
-      }
-      .program-editor__actions {
-        margin: 0;
-        padding: 1rem 1.5rem 1.5rem;
-        gap: 0.75rem;
-      }
-      .program-editor__cancel,
-      .program-editor__submit {
-        border-radius: 0.75rem !important;
-        font-size: 0.8125rem;
-        font-weight: 700;
-      }
-      .program-editor__cancel {
-        color: #475569 !important;
-      }
-      .program-editor__cancel:hover {
-        background: #f1f5f9 !important;
-      }
-      .program-editor__submit {
-        background: #0f766e !important;
-        color: #ecfeff !important;
-      }
-      .program-editor__submit:hover {
-        background: #115e59 !important;
-      }
-      .program-editor ::ng-deep .mat-mdc-form-field {
-        --mdc-outlined-text-field-focus-outline-color: #0f766e;
-        --mdc-outlined-text-field-hover-outline-color: #5eead4;
-      }
-      :host(.program-editor--dark) .program-editor {
-        background: #151b2e;
-      }
-      :host(.program-editor--dark) .program-editor__header {
-        border-color: rgba(148, 163, 184, 0.16);
-      }
-      :host(.program-editor--dark) ::ng-deep .text-slate-950 {
-        color: #f1f5f9 !important;
-      }
-      :host(.program-editor--dark) ::ng-deep .text-slate-500 {
-        color: #94a3b8 !important;
-      }
-      :host(.program-editor--dark) .program-editor__cancel {
-        color: #cbd5e1 !important;
-      }
-      :host(.program-editor--dark) .program-editor__cancel:hover {
-        background: #1b2940 !important;
-      }
-      :host(.program-editor--dark) .program-editor__submit {
-        background: #2dd4bf !important;
-        color: #082f2e !important;
-      }
-      :host(.program-editor--dark) .program-editor__submit:hover {
-        background: #99f6e4 !important;
-      }
-      :host(.program-editor--dark) .program-editor ::ng-deep .mat-mdc-form-field {
-        --mdc-outlined-text-field-outline-color: rgba(148, 163, 184, 0.3);
-        --mdc-outlined-text-field-focus-outline-color: #2dd4bf;
-        --mdc-outlined-text-field-label-text-color: #94a3b8;
-        --mdc-outlined-text-field-input-text-color: #e2e8f0;
-      }
-    `,
-  ],
-  host: {
-    class: 'block',
-    '[class.program-editor--dark]': 'themeService.darkMode()',
-  },
+  host: { class: 'block' },
 })
 export class AddProgramComponent {
   private fb = inject(NonNullableFormBuilder);
   private programsStore = inject(ProgramsStore);
   private authStore = inject(AuthStore);
-  themeService = inject(ThemeService);
   partnersStore = inject(PartnersStore);
   partnerId = this.authStore.user()?.partnerId;
   data = inject<ExtendedProgram | null>(MAT_DIALOG_DATA);

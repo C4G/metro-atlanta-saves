@@ -27,25 +27,34 @@ type ChartType = 'total-program-progress' | 'total-amount-saved' | 'individual-p
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="program-list-panel">
+    <section class="p-6">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p class="program-list-kicker">Program insights</p>
-          <h2 class="program-list-title">Cohort summary</h2>
-          <p class="program-list-description">Understand program progress and savings outcomes across the cohort.</p>
+          <p class="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-teal-700 dark:text-teal-300">
+            Program insights
+          </p>
+          <h2 class="mt-1.5 text-xl font-bold tracking-[-0.025em] text-slate-900 dark:text-slate-100">
+            Cohort summary
+          </h2>
+          <p class="mt-1.5 text-[0.8125rem] leading-5 text-slate-500 dark:text-slate-400">
+            Understand program progress and savings outcomes across the cohort.
+          </p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button
             matPrefix
             mat-raised-button
-            class="program-list-secondary"
+            class="!rounded-xl !bg-teal-50 !text-[0.8125rem] !font-bold !text-teal-800 dark:!bg-teal-400/10 dark:!text-teal-200"
             aria-label="Export cohort data"
             (click)="usersOnProgramsStore.downloadExcel()"
           >
             <mat-icon>download</mat-icon>
             Export
           </button>
-          <mat-form-field appearance="outline" class="program-summary-select w-64">
+          <mat-form-field
+            appearance="outline"
+            class="w-64 [--mdc-outlined-text-field-focus-outline-color:#0f766e] [--mdc-outlined-text-field-hover-outline-color:#5eead4] dark:[--mdc-outlined-text-field-input-text-color:#e2e8f0] dark:[--mdc-outlined-text-field-label-text-color:#94a3b8] dark:[--mdc-outlined-text-field-outline-color:rgba(148,163,184,0.3)] dark:[--mdc-outlined-text-field-focus-outline-color:#2dd4bf] w-64"
+          >
             <mat-label>Summary view</mat-label>
             <mat-select [(ngModel)]="selectedChartType" (selectionChange)="onChartTypeChange($event.value)">
               <mat-option value="total-amount-saved">Total Amount Saved</mat-option>
@@ -55,7 +64,7 @@ type ChartType = 'total-program-progress' | 'total-amount-saved' | 'individual-p
           </mat-form-field>
         </div>
       </div>
-      <div class="program-list-grid p-5 sm:p-6">
+      <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-400/15 p-5 sm:p-6">
         <div class="w-full">
           @switch (selectedChartType()) {
             @case ('total-program-progress') {

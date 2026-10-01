@@ -11,13 +11,17 @@ import { EnrollmentsActionsComponent } from './ui/enrollments-actions/enrollment
   imports: [AgGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="program-list-panel">
+    <section class="p-6">
       <div>
-        <p class="program-list-kicker">Participant intake</p>
-        <h2 class="program-list-title">Enrollments</h2>
-        <p class="program-list-description">Review and respond to pending program enrollment requests.</p>
+        <p class="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-teal-700 dark:text-teal-300">
+          Participant intake
+        </p>
+        <h2 class="mt-1.5 text-xl font-bold tracking-[-0.025em] text-slate-900 dark:text-slate-100">Enrollments</h2>
+        <p class="mt-1.5 text-[0.8125rem] leading-5 text-slate-500 dark:text-slate-400">
+          Review and respond to pending program enrollment requests.
+        </p>
       </div>
-      <div class="program-list-grid">
+      <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-400/15">
         <mas-ag-grid class="h-[calc(100dvh-25rem)]" [rowData]="programsStore.enrollments()" [columnDefs]="colDefs" />
       </div>
     </section>

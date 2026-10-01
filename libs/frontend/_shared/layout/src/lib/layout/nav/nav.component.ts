@@ -15,7 +15,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav
-      class="h-14 border-b border-slate-200/80 bg-white/95 text-slate-900 shadow-sm backdrop-blur sm:h-16"
+      class="h-14 border-b border-slate-200/80 bg-white/95 text-slate-900 shadow-sm backdrop-blur dark:border-white/10 dark:bg-[#0c1222]/95 dark:text-slate-100 dark:shadow-[0_8px_20px_rgba(0,0,0,0.22)] sm:h-16"
       aria-label="Application navigation"
     >
       <div class="mx-auto flex h-full max-w-[100rem] items-center gap-3 px-3 sm:gap-4 sm:px-5">
@@ -25,25 +25,27 @@ import { PushNotificationService } from '../../services/push-notification.servic
           aria-label="Building Resilient Professionals home"
         >
           <span
-            class="brand-logo-frame flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-amber-50"
+            class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-amber-50 dark:bg-gradient-to-br dark:from-[#12334a] dark:to-teal-700"
           >
             <img
               src="assets/Logo/brp-logo-community-no-arrow.png"
               height="36"
               width="36"
-              class="brand-logo h-8 w-8 object-contain"
+              class="h-8 w-8 object-contain dark:brightness-0 dark:invert dark:sepia dark:saturate-[731%] dark:hue-rotate-[119deg]"
               alt=""
             />
           </span>
           <span class="hidden min-w-0 sm:block">
-            <span class="block truncate text-sm font-bold tracking-tight text-slate-950">Building Resilient</span>
+            <span class="block truncate text-sm font-bold tracking-tight text-slate-950 dark:text-slate-100">
+              Building Resilient
+            </span>
             <span class="block text-[10px] font-bold uppercase tracking-[0.15em] text-teal-700">Professionals</span>
           </span>
         </a>
         <div class="ml-auto flex items-center gap-2 sm:gap-3">
           <button
             type="button"
-            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 lg:hidden"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-100 lg:hidden"
             aria-label="Open navigation menu"
             [matMenuTriggerFor]="mobileNavMenu"
             data-testid="navigation-menu"
@@ -53,9 +55,9 @@ import { PushNotificationService } from '../../services/push-notification.servic
           @if (authStore.user()) {
             <a
               routerLink="/dashboard"
-              routerLinkActive="nav-page-link--active"
+              routerLinkActive="!bg-teal-50 !text-teal-800 dark:!bg-teal-400/15 dark:!text-teal-200"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 lg:inline-flex"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 dark:text-slate-400 dark:hover:bg-teal-400/10 dark:hover:text-teal-200 lg:inline-flex"
             >
               <mat-icon class="!h-4 !w-4 !text-base !leading-4">space_dashboard</mat-icon>
               Dashboard
@@ -64,8 +66,8 @@ import { PushNotificationService } from '../../services/push-notification.servic
           @if (authStore.isStaff()) {
             <a
               routerLink="/partner-staff/programs"
-              routerLinkActive="nav-page-link--active"
-              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 lg:inline-flex"
+              routerLinkActive="!bg-teal-50 !text-teal-800 dark:!bg-teal-400/15 dark:!text-teal-200"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 dark:text-slate-400 dark:hover:bg-teal-400/10 dark:hover:text-teal-200 lg:inline-flex"
             >
               <mat-icon class="!h-4 !w-4 !text-base !leading-4">folder_managed</mat-icon>
               Programs
@@ -74,8 +76,8 @@ import { PushNotificationService } from '../../services/push-notification.servic
           @if (authStore.isAdmin()) {
             <a
               routerLink="/admin"
-              routerLinkActive="nav-page-link--active"
-              class="nav-page-link hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 lg:inline-flex"
+              routerLinkActive="!bg-teal-50 !text-teal-800 dark:!bg-teal-400/15 dark:!text-teal-200"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 dark:text-slate-400 dark:hover:bg-teal-400/10 dark:hover:text-teal-200 lg:inline-flex"
             >
               <mat-icon class="!h-4 !w-4 !text-base !leading-4">admin_panel_settings</mat-icon>
               Admin
@@ -83,7 +85,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           }
           <button
             type="button"
-            class="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 lg:flex"
+            class="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-100 lg:flex"
             aria-label="Toggle dark mode"
             (click)="themeService.toggleDarkMode()"
           >
@@ -103,7 +105,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           } @else {
             <button
               type="button"
-              class="flex items-center gap-2 rounded-xl p-1 pr-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600"
+              class="flex items-center gap-2 rounded-xl p-1 pr-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:hover:bg-white/10"
               [class.ring-2]="authStore.realUser()"
               [class.ring-red-500]="authStore.realUser()"
               [matMenuTriggerFor]="userMenu"
@@ -115,7 +117,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
                 {{ authStore.initials() }}
               </span>
               <span class="hidden max-w-28 text-left sm:block">
-                <span class="block truncate text-xs font-bold text-slate-900">
+                <span class="block truncate text-xs font-bold text-slate-900 dark:text-slate-100">
                   {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
                 </span>
                 <span class="block text-[10px] font-medium text-slate-500">Account</span>
@@ -388,66 +390,8 @@ import { PushNotificationService } from '../../services/push-notification.servic
       </div>
     }
   `,
-  styles: [
-    `
-      .nav-page-link--active {
-        background-color: #f0fdfa;
-        color: #115e59;
-      }
-      :host(.nav--dark) nav {
-        border-color: rgba(255, 255, 255, 0.1);
-        background: rgba(12, 18, 34, 0.94);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-      }
-      :host(.nav--dark) ::ng-deep .text-slate-900,
-      :host(.nav--dark) ::ng-deep .text-slate-950 {
-        color: #f1f5f9 !important;
-      }
-      :host(.nav--dark) ::ng-deep .text-slate-600,
-      :host(.nav--dark) ::ng-deep .text-slate-500,
-      :host(.nav--dark) ::ng-deep .text-slate-400 {
-        color: #94a3b8 !important;
-      }
-      :host(.nav--dark) ::ng-deep .hover\\:bg-slate-100:hover {
-        background-color: rgba(255, 255, 255, 0.08) !important;
-      }
-      :host(.nav--dark) ::ng-deep .hover\\:bg-teal-50:hover {
-        background-color: rgba(45, 212, 191, 0.12) !important;
-      }
-      :host(.nav--dark) .nav-page-link--active {
-        background-color: rgba(45, 212, 191, 0.14);
-        color: #99f6e4;
-      }
-      :host(.nav--dark) .admin-nav-link {
-        background-color: rgba(45, 212, 191, 0.14) !important;
-        color: #99f6e4 !important;
-      }
-      :host(.nav--dark) .admin-nav-link:hover {
-        background-color: rgba(45, 212, 191, 0.22) !important;
-        color: #ccfbf1 !important;
-      }
-      :host(.nav--dark) ::ng-deep .bg-amber-50 {
-        background-color: rgba(251, 191, 36, 0.14) !important;
-      }
-      :host(.nav--dark) .brand-logo-frame {
-        background: linear-gradient(145deg, #12334a, #0f766e) !important;
-      }
-      :host(.nav--dark) .brand-logo {
-        filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg) brightness(101%)
-          contrast(96%);
-      }
-      :host(.nav--dark) ::ng-deep .bg-slate-950 {
-        background-color: #2dd4bf !important;
-        color: #082f2e !important;
-      }
-      :host(.nav--dark) ::ng-deep .bg-teal-700 {
-        background-color: #0f766e !important;
-      }
-    `,
-  ],
   host: {
     class: 'block fixed top-0 left-0 right-0 z-50',
-    '[class.nav--dark]': 'themeService.darkMode()',
   },
 })
 export class NavComponent {

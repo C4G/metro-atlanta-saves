@@ -14,39 +14,64 @@ import { AddCohortComponent } from './ui/add-cohort/add-cohort.component';
   imports: [DatePipe, MatButton, MatIcon, MatIconButton, MatTooltip],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="admin-content-shell about-workspace">
-      <header class="workspace-header">
+    <main
+      class="admin-content-shell min-h-full bg-[#f6faf9] text-[#102a2c] dark:bg-[#0c1222] dark:text-slate-100 [&_.mat-mdc-tab-link]:font-bold [&_.mat-mdc-tab-link]:text-[#52666a] [&_.mat-mdc-tab-link.mdc-tab--active]:text-teal-700 dark:[&_.mat-mdc-tab-link]:text-slate-400 dark:[&_.mat-mdc-tab-link.mdc-tab--active]:text-teal-200 dark:[&_.mdc-tab-indicator__content--underline]:!border-teal-400 [&_.mat-mdc-raised-button]:!rounded-xl [&_.mat-mdc-raised-button]:!font-bold dark:[&_.mat-mdc-raised-button]:!bg-teal-400 dark:[&_.mat-mdc-raised-button]:!text-teal-950 dark:[&_.mat-mdc-slide-toggle_.mdc-label]:text-slate-300 dark:[&_.tox_.tox-editor-header]:!bg-[#151b2e] dark:[&_.tox_.tox-menubar]:!bg-[#151b2e] dark:[&_.tox_.tox-toolbar-overlord]:!bg-[#151b2e] mx-auto max-w-[76rem] p-[clamp(1.25rem,3vw,2.5rem)]"
+    >
+      <header class="mb-8 flex flex-col items-stretch gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p class="eyebrow">Content & guidance</p>
-          <h1>About us</h1>
-          <p>Introduce the people and cohorts behind BRP with clear, welcoming stories that build trust.</p>
+          <p class="mb-2 text-xs font-extrabold uppercase tracking-[0.11em] text-[var(--primary)]">
+            Content & guidance
+          </p>
+          <h1 class="text-[clamp(2rem,4vw,2.75rem)] font-bold tracking-[-0.035em] text-[var(--text-primary)]">
+            About us
+          </h1>
+          <p class="mt-3 max-w-2xl leading-relaxed text-[var(--text-secondary)]">
+            Introduce the people and cohorts behind BRP with clear, welcoming stories that build trust.
+          </p>
         </div>
-        <button mat-raised-button color="primary" class="create-button" (click)="openModal()">
+        <button
+          mat-raised-button
+          color="primary"
+          class="!min-h-[2.85rem] !w-full !rounded-[0.8rem] !whitespace-nowrap sm:!w-auto"
+          (click)="openModal()"
+        >
           <mat-icon>add</mat-icon>
           Add cohort
         </button>
       </header>
 
       @if (cohortsStore.cohorts().length) {
-        <section class="cohort-grid" aria-label="About us cohorts">
+        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="About us cohorts">
           @for (cohort of cohortsStore.cohorts(); track cohort.id) {
-            <article class="cohort-card">
-              <div class="cohort-card__image"><img [src]="cohort.imageUrl" [alt]="cohort.name" /></div>
-              <div class="cohort-card__content">
-                <div class="cohort-card__heading">
-                  <h2>{{ cohort.name }}</h2>
-                  <span>About us</span>
+            <article
+              class="overflow-hidden rounded-[1.1rem] border border-[color-mix(in_srgb,var(--text-primary,currentColor)_12%,transparent)] bg-[var(--surface-card)] transition duration-200 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--primary)_45%,transparent)]"
+            >
+              <div class="aspect-[16/7] overflow-hidden bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]">
+                <img class="size-full object-cover" [src]="cohort.imageUrl" [alt]="cohort.name" />
+              </div>
+              <div class="p-5">
+                <div class="flex items-center justify-between gap-4">
+                  <h2 class="text-xl font-bold tracking-[-0.035em] text-[var(--text-primary)]">{{ cohort.name }}</h2>
+                  <span
+                    class="rounded-full bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] px-2 py-1 text-[0.68rem] font-extrabold uppercase tracking-[0.05em] text-[var(--primary)]"
+                  >
+                    About us
+                  </span>
                 </div>
-                <p>{{ cohort.description }}</p>
-                <footer>
-                  <time [attr.datetime]="cohort.updatedAt | date: 'yyyy-MM-dd'">
+                <p class="my-3 line-clamp-3 leading-relaxed text-[var(--text-secondary)]">{{ cohort.description }}</p>
+                <footer class="flex items-center justify-between gap-4">
+                  <time
+                    class="text-xs text-[var(--text-secondary)]"
+                    [attr.datetime]="cohort.updatedAt | date: 'yyyy-MM-dd'"
+                  >
                     Updated {{ cohort.updatedAt | date: 'MMM d, y' }}
                   </time>
-                  <div class="actions">
+                  <div class="flex gap-0.5">
                     <button
                       mat-icon-button
                       matTooltip="Edit cohort"
                       aria-label="Edit cohort"
+                      class="!text-[var(--text-secondary)]"
                       (click)="openEdit(cohort)"
                     >
                       <mat-icon>edit</mat-icon>
@@ -55,7 +80,7 @@ import { AddCohortComponent } from './ui/add-cohort/add-cohort.component';
                       mat-icon-button
                       matTooltip="Delete cohort"
                       aria-label="Delete cohort"
-                      class="delete-action"
+                      class="!text-[var(--text-secondary)] hover:!bg-red-500/10 hover:!text-red-700 dark:hover:!text-red-300"
                       (click)="openConfirm(cohort)"
                     >
                       <mat-icon>delete</mat-icon>
@@ -67,179 +92,20 @@ import { AddCohortComponent } from './ui/add-cohort/add-cohort.component';
           }
         </section>
       } @else {
-        <section class="empty-state">
-          <mat-icon aria-hidden="true">groups</mat-icon>
-          <h2>Start telling your story.</h2>
-          <p>Add a cohort to introduce the people and purpose behind BRP.</p>
+        <section
+          class="grid min-h-80 place-content-center rounded-2xl border border-dashed border-[color-mix(in_srgb,var(--primary)_38%,transparent)] p-8 text-center"
+        >
+          <mat-icon class="!mx-auto !mb-3 !size-9 !text-4xl !text-[var(--primary)]" aria-hidden="true">groups</mat-icon>
+          <h2 class="text-xl font-bold tracking-[-0.035em] text-[var(--text-primary)]">Start telling your story.</h2>
+          <p class="mx-auto mb-4 mt-2 max-w-md text-[var(--text-secondary)]">
+            Add a cohort to introduce the people and purpose behind BRP.
+          </p>
           <button mat-raised-button color="primary" (click)="openModal()">Add your first cohort</button>
         </section>
       }
     </main>
   `,
-  styles: `
-    :host {
-      display: block;
-    }
-    .about-workspace {
-      max-width: 76rem;
-      margin: 0 auto;
-      padding: clamp(1.25rem, 3vw, 2.5rem);
-    }
-    .workspace-header {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .eyebrow {
-      margin: 0 0 0.5rem;
-      color: var(--primary);
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-    }
-    h1,
-    h2 {
-      color: var(--text-primary, inherit);
-      letter-spacing: -0.035em;
-    }
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 2.75rem);
-      font-weight: 750;
-    }
-    .workspace-header > div > p:last-child {
-      max-width: 40rem;
-      margin: 0.75rem 0 0;
-      color: var(--text-secondary, inherit);
-      line-height: 1.6;
-    }
-    .create-button {
-      min-height: 2.85rem;
-      border-radius: 0.8rem;
-      white-space: nowrap;
-    }
-    .cohort-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-    }
-    .cohort-card {
-      overflow: hidden;
-      border: 1px solid color-mix(in srgb, var(--text-primary, currentColor) 12%, transparent);
-      border-radius: 1.1rem;
-      background: var(--surface-card, transparent);
-      transition:
-        transform 180ms ease,
-        border-color 180ms ease;
-    }
-    .cohort-card:hover {
-      transform: translateY(-3px);
-      border-color: color-mix(in srgb, var(--primary) 45%, transparent);
-    }
-    .cohort-card__image {
-      aspect-ratio: 16 / 7;
-      overflow: hidden;
-      background: color-mix(in srgb, var(--primary) 12%, transparent);
-    }
-    .cohort-card__image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .cohort-card__content {
-      padding: 1.2rem;
-    }
-    .cohort-card__heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .cohort-card h2 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-    .cohort-card__heading span {
-      padding: 0.22rem 0.48rem;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--primary) 14%, transparent);
-      color: var(--primary);
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-    .cohort-card__content > p {
-      display: -webkit-box;
-      margin: 0.65rem 0 1.15rem;
-      overflow: hidden;
-      color: var(--text-secondary, inherit);
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      line-height: 1.55;
-    }
-    .cohort-card footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .cohort-card time {
-      color: var(--text-secondary, inherit);
-      font-size: 0.78rem;
-    }
-    .actions {
-      display: flex;
-      gap: 0.1rem;
-    }
-    .actions button {
-      color: var(--text-secondary, inherit);
-    }
-    .actions .delete-action:hover {
-      color: var(--mat-sys-error, #ba1a1a);
-      background: color-mix(in srgb, var(--mat-sys-error, #ba1a1a) 10%, transparent);
-    }
-    .empty-state {
-      display: grid;
-      min-height: 20rem;
-      place-content: center;
-      padding: 2rem;
-      border: 1px dashed color-mix(in srgb, var(--primary) 38%, transparent);
-      border-radius: 1rem;
-      text-align: center;
-    }
-    .empty-state mat-icon {
-      width: 2.25rem;
-      height: 2.25rem;
-      margin: 0 auto 0.85rem;
-      color: var(--primary);
-      font-size: 2.25rem;
-    }
-    .empty-state h2 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-    .empty-state p {
-      max-width: 25rem;
-      margin: 0.5rem auto 1rem;
-      color: var(--text-secondary, inherit);
-    }
-    @media (max-width: 40rem) {
-      .workspace-header {
-        align-items: stretch;
-        flex-direction: column;
-      }
-      .create-button {
-        width: 100%;
-      }
-      .cohort-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  `,
+  host: { class: 'block' },
 })
 export default class AboutUsManagementComponent {
   private dialog = inject(MatDialog);

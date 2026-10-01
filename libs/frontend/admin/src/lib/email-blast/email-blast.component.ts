@@ -13,29 +13,48 @@ import { EmailBlastStore } from './email-blast.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EmailBlastStore],
   template: `
-    <main class="admin-content-shell campaign-workspace">
-      <header class="workspace-header">
+    <main
+      class="admin-content-shell min-h-full bg-[#f6faf9] text-[#102a2c] dark:bg-[#0c1222] dark:text-slate-100 [&_.mat-mdc-tab-link]:font-bold [&_.mat-mdc-tab-link]:text-[#52666a] [&_.mat-mdc-tab-link.mdc-tab--active]:text-teal-700 dark:[&_.mat-mdc-tab-link]:text-slate-400 dark:[&_.mat-mdc-tab-link.mdc-tab--active]:text-teal-200 dark:[&_.mdc-tab-indicator__content--underline]:!border-teal-400 [&_.mat-mdc-raised-button]:!rounded-xl [&_.mat-mdc-raised-button]:!font-bold dark:[&_.mat-mdc-raised-button]:!bg-teal-400 dark:[&_.mat-mdc-raised-button]:!text-teal-950 dark:[&_.mat-mdc-slide-toggle_.mdc-label]:text-slate-300 dark:[&_.tox_.tox-editor-header]:!bg-[#151b2e] dark:[&_.tox_.tox-menubar]:!bg-[#151b2e] dark:[&_.tox_.tox-toolbar-overlord]:!bg-[#151b2e] mx-auto max-w-[74rem] p-[clamp(1.25rem,3vw,2.5rem)]"
+    >
+      <header class="mb-8 flex flex-col items-stretch gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p class="eyebrow">Member communication</p>
-          <h1>Email campaign</h1>
-          <p>
+          <p class="mb-2 text-xs font-extrabold uppercase tracking-[0.11em] text-[var(--primary)]">
+            Member communication
+          </p>
+          <h1 class="text-[clamp(2rem,4vw,2.75rem)] font-bold tracking-[-0.035em] text-[var(--text-primary)]">
+            Email campaign
+          </h1>
+          <p class="mt-3 max-w-2xl leading-relaxed text-[var(--text-secondary)]">
             Send a thoughtful update to every BRP member. Review the subject and message carefully before publishing.
           </p>
         </div>
-        <div class="audience-note">
-          <mat-icon aria-hidden="true">groups</mat-icon>
+        <div
+          class="flex w-fit shrink-0 items-center gap-2 rounded-xl border border-[color-mix(in_srgb,var(--primary)_24%,transparent)] px-3 py-2.5 text-[0.82rem] font-bold text-[var(--primary)]"
+        >
+          <mat-icon class="!size-[1.1rem] !text-[1.1rem]" aria-hidden="true">groups</mat-icon>
           <span>All registered users</span>
         </div>
       </header>
-      <form #form="ngForm" class="campaign-editor" [formGroup]="emailForm" (ngSubmit)="onSubmit()">
-        <section class="campaign-brief">
-          <div class="campaign-brief__icon"><mat-icon aria-hidden="true">mark_email_unread</mat-icon></div>
+      <form
+        #form="ngForm"
+        class="overflow-hidden rounded-[1.1rem] border border-[color-mix(in_srgb,var(--text-primary,currentColor)_12%,transparent)] bg-[var(--surface-card)]"
+        [formGroup]="emailForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <section
+          class="flex items-center gap-3.5 border-b border-[color-mix(in_srgb,var(--text-primary,currentColor)_10%,transparent)] px-5 py-4"
+        >
+          <div
+            class="grid size-9 place-items-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] text-[var(--primary)]"
+          >
+            <mat-icon class="!size-5 !text-xl" aria-hidden="true">mark_email_unread</mat-icon>
+          </div>
           <div>
-            <h2>Compose your message</h2>
-            <p>This email will be sent to every registered user.</p>
+            <h2 class="font-bold tracking-[-0.035em] text-[var(--text-primary)]">Compose your message</h2>
+            <p class="mt-1 text-sm text-[var(--text-secondary)]">This email will be sent to every registered user.</p>
           </div>
         </section>
-        <div class="campaign-fields">
+        <div class="grid grid-cols-1 gap-4 px-5 pb-2 pt-5 sm:grid-cols-2">
           <mat-form-field>
             <mat-label>Subject</mat-label>
             <input matInput formControlName="subject" cdkFocusInitial />
@@ -51,194 +70,45 @@ import { EmailBlastStore } from './email-blast.store';
             <mat-hint>Adds a direct discussion link to your message.</mat-hint>
           </mat-form-field>
         </div>
-        <section class="message-editor">
-          <div class="message-editor__label">
+        <section class="px-5 pb-5 pt-3">
+          <div class="mb-3 flex items-start justify-between gap-4">
             <div>
-              <h2>Message</h2>
-              <p>Keep the main point near the beginning and use short sections for easy scanning.</p>
+              <h2 class="font-bold tracking-[-0.035em] text-[var(--text-primary)]">Message</h2>
+              <p class="mt-1 text-sm text-[var(--text-secondary)]">
+                Keep the main point near the beginning and use short sections for easy scanning.
+              </p>
             </div>
-            <span>Required</span>
+            <span
+              class="rounded-full bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] px-2 py-1 text-[0.68rem] font-extrabold uppercase tracking-[0.05em] text-[var(--primary)]"
+            >
+              Required
+            </span>
           </div>
           <mas-rich-text-editor formControlName="body" minHeight="220px" />
           @if ((emailForm.get('body')?.touched || form.submitted) && emailForm.get('body')?.errors?.['required']) {
             <mat-error>Body is required.</mat-error>
           }
         </section>
-        <footer class="campaign-actions">
-          <p>
-            <mat-icon aria-hidden="true">info</mat-icon>
+        <footer
+          class="flex flex-col items-stretch gap-4 border-t border-[color-mix(in_srgb,var(--text-primary,currentColor)_10%,transparent)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p class="flex items-center gap-1.5 text-[0.82rem] text-[var(--text-secondary)]">
+            <mat-icon class="!size-4 !text-base" aria-hidden="true">info</mat-icon>
             This action sends the message to all registered users.
           </p>
-          <button mat-raised-button color="primary" type="submit" [disabled]="emailBlastStore.sending()">
+          <button
+            mat-raised-button
+            color="primary"
+            class="!min-h-11 !w-full !rounded-xl sm:!w-auto"
+            type="submit"
+            [disabled]="emailBlastStore.sending()"
+          >
             <mat-icon>{{ emailBlastStore.sending() ? 'progress_activity' : 'send' }}</mat-icon>
             {{ emailBlastStore.sending() ? 'Sending...' : 'Send campaign' }}
           </button>
         </footer>
       </form>
     </main>
-  `,
-  styles: `
-    :host {
-      display: block;
-    }
-    .campaign-workspace {
-      max-width: 74rem;
-      margin: 0 auto;
-      padding: clamp(1.25rem, 3vw, 2.5rem);
-    }
-    .workspace-header {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .eyebrow {
-      margin: 0 0 0.5rem;
-      color: var(--primary);
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-    }
-    h1,
-    h2 {
-      color: var(--text-primary, inherit);
-      letter-spacing: -0.035em;
-    }
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 2.75rem);
-      font-weight: 750;
-    }
-    .workspace-header > div > p:last-child {
-      max-width: 42rem;
-      margin: 0.75rem 0 0;
-      color: var(--text-secondary, inherit);
-      line-height: 1.6;
-    }
-    .audience-note {
-      display: flex;
-      flex: 0 0 auto;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid color-mix(in srgb, var(--primary) 24%, transparent);
-      border-radius: 0.75rem;
-      color: var(--primary);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-    .audience-note mat-icon {
-      width: 1.1rem;
-      height: 1.1rem;
-      font-size: 1.1rem;
-    }
-    .campaign-editor {
-      overflow: hidden;
-      border: 1px solid color-mix(in srgb, var(--text-primary, currentColor) 12%, transparent);
-      border-radius: 1.1rem;
-      background: var(--surface-card, transparent);
-    }
-    .campaign-brief {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      padding: 1.1rem 1.25rem;
-      border-bottom: 1px solid color-mix(in srgb, var(--text-primary, currentColor) 10%, transparent);
-    }
-    .campaign-brief__icon {
-      display: grid;
-      width: 2.25rem;
-      height: 2.25rem;
-      place-items: center;
-      border-radius: 0.7rem;
-      background: color-mix(in srgb, var(--primary) 14%, transparent);
-      color: var(--primary);
-    }
-    .campaign-brief__icon mat-icon {
-      width: 1.2rem;
-      height: 1.2rem;
-      font-size: 1.2rem;
-    }
-    .campaign-brief h2,
-    .message-editor h2 {
-      margin: 0;
-      font-size: 1rem;
-    }
-    .campaign-brief p,
-    .message-editor p {
-      margin: 0.25rem 0 0;
-      color: var(--text-secondary, inherit);
-      font-size: 0.84rem;
-    }
-    .campaign-fields {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-      padding: 1.25rem 1.25rem 0.5rem;
-    }
-    .message-editor {
-      padding: 0.75rem 1.25rem 1.25rem;
-    }
-    .message-editor__label {
-      display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-    }
-    .message-editor__label > span {
-      padding: 0.2rem 0.45rem;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--primary) 14%, transparent);
-      color: var(--primary);
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-    .campaign-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 1rem 1.25rem;
-      border-top: 1px solid color-mix(in srgb, var(--text-primary, currentColor) 10%, transparent);
-    }
-    .campaign-actions p {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin: 0;
-      color: var(--text-secondary, inherit);
-      font-size: 0.82rem;
-    }
-    .campaign-actions p mat-icon {
-      width: 1rem;
-      height: 1rem;
-      font-size: 1rem;
-    }
-    .campaign-actions button {
-      min-height: 2.8rem;
-      border-radius: 0.75rem;
-    }
-    @media (max-width: 40rem) {
-      .workspace-header,
-      .campaign-actions {
-        align-items: stretch;
-        flex-direction: column;
-      }
-      .audience-note {
-        width: fit-content;
-      }
-      .campaign-fields {
-        grid-template-columns: 1fr;
-      }
-      .campaign-actions button {
-        width: 100%;
-      }
-    }
   `,
   host: {
     class: 'block',
