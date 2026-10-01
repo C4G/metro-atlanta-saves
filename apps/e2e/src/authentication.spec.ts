@@ -9,10 +9,12 @@ test.describe('authentication', () => {
     const initials = `${firstName[0]}${lastName[0]}`;
     const password = 'ValidPassword123!';
 
-    // The registration page is server-rendered. Wait for its client bundles to
-    // finish loading so the Angular submit handler is attached before filling
-    // and submitting the form.
-    await page.goto('/register', { waitUntil: 'networkidle' });
+    // The registration page is server-rendered. Its Google auth configuration
+    // request is initiated by the hydrated Angular component, so it is a
+    // deterministic signal that the form's submit handler has been attached.
+    const registrationReady = page.waitForResponse((response) => response.url().includes('/api/google-auth/config'));
+    await page.goto('/register');
+    expect((await registrationReady).status()).toBe(200);
     await page.getByLabel('First Name').fill(firstName);
     await page.getByLabel('Last Name').fill(lastName);
     await page.getByLabel('Email').fill(email);
