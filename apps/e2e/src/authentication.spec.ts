@@ -14,7 +14,9 @@ test.describe('authentication', () => {
     await page.getByLabel('Last Name').fill(lastName);
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
+    const signUpResponse = page.waitForResponse((response) => response.url().includes('/api/auth/sign-up/email'));
     await page.getByRole('button', { name: 'Register' }).click();
+    expect((await signUpResponse).status()).toBe(200);
 
     await expect(page).toHaveURL(/\/dashboard$/);
     const accountMenu = page.getByRole('button', { name: 'Open account menu' });
