@@ -9,7 +9,10 @@ test.describe('authentication', () => {
     const initials = `${firstName[0]}${lastName[0]}`;
     const password = 'ValidPassword123!';
 
-    await page.goto('/register');
+    // The registration page is server-rendered. Wait for its client bundles to
+    // finish loading so the Angular submit handler is attached before filling
+    // and submitting the form.
+    await page.goto('/register', { waitUntil: 'networkidle' });
     await page.getByLabel('First Name').fill(firstName);
     await page.getByLabel('Last Name').fill(lastName);
     await page.getByLabel('Email').fill(email);
