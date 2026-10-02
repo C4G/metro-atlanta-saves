@@ -23,13 +23,12 @@ test.describe('authentication', () => {
     expect((await signUpResponse).status()).toBe(200);
 
     await expect(page).toHaveURL(/\/dashboard$/);
-    const accountMenu = page.getByRole('button', { name: 'Open account menu' });
+    const accountMenu = page.getByRole('button', { name: initials });
     await expect(accountMenu).toBeVisible();
-    await expect(accountMenu).toContainText(initials);
 
     await accountMenu.click();
     await page.getByRole('menuitem', { name: 'Logout' }).click();
-    const signInLink = page.getByRole('link', { name: 'Sign in' });
+    const signInLink = page.getByRole('link', { name: 'Sign Up or Login' });
     await expect(signInLink).toBeVisible();
 
     await signInLink.click();
@@ -41,6 +40,6 @@ test.describe('authentication', () => {
     expect((await signInResponse).status()).toBe(200);
 
     await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByRole('button', { name: 'Open account menu' })).toContainText(initials);
+    await expect(page.getByRole('button', { name: initials })).toBeVisible();
   });
 });
