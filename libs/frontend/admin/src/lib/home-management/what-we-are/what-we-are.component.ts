@@ -12,7 +12,7 @@ import { WhatWeAreStore } from '@mas/frontend-shared-data-access';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6">
-      <div class="flex items-center justify-between mb-6 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+      <div class="mb-6 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
         <div>
           <p class="font-medium">Who We Are / What We Do Section Visibility</p>
           <p class="text-sm text-gray-500">Toggle to show or hide this section on the home page</p>

@@ -22,7 +22,7 @@ import { LearningActionsComponent } from './ui/learning-actions/learning-actions
         </button>
       </div>
       @if (learningsStore.learnings().length > 0) {
-        <div class="flex items-center justify-between mb-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div class="mb-4 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
           <div>
             <p class="font-medium">Learn More Section Visibility</p>
             <p class="text-sm text-gray-500">
