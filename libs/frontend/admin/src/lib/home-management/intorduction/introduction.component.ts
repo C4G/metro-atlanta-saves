@@ -12,7 +12,7 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6">
-      <div class="flex items-center justify-between mb-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+      <div class="mb-4 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
         <div>
           <p class="font-medium">Hero Section Visibility</p>
           <p class="text-sm text-gray-500">Hide the entire hero section (heading + image) from the home page</p>
@@ -25,7 +25,7 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
         </mat-slide-toggle>
       </div>
       @if (!introductionStore.introduction().hidden) {
-        <div class="flex items-center justify-between mb-6 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div class="mb-6 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
           <div>
             <p class="font-medium">Hero Image Visibility</p>
             <p class="text-sm text-gray-500">Hide only the background image — the heading text will still show</p>

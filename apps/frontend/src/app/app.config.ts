@@ -1,4 +1,10 @@
-import { ApplicationConfig, isDevMode, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  isDevMode,
+  provideAppInitializer,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import {
   provideRouter,
   withComponentInputBinding,
@@ -13,6 +19,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { authInterceptor, authServerInterceptor } from '@mas/frontend-shared-auth';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { PROVIDE_PWA_NOTIFICATIONS } from '@mas/frontend-shared-layout';
+import { ThemeService } from '@mas/frontend-shared-data-access';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -43,6 +50,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideNativeDateAdapter(),
     provideZonelessChangeDetection(),
+    provideAppInitializer(() => inject(ThemeService).init()),
     PROVIDE_PWA_NOTIFICATIONS,
   ],
 };

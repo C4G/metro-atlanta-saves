@@ -22,7 +22,7 @@ import { StoryActionsComponent } from './ui/story-actions/story-actions.componen
         </button>
       </div>
       @if (storiesStore.stories().length > 0) {
-        <div class="flex items-center justify-between mb-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div class="mb-4 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
           <div>
             <p class="font-medium">Stories Section Visibility</p>
             <p class="text-sm text-gray-500">

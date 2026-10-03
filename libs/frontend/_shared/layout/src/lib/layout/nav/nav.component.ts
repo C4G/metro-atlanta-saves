@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output, PLATFORM_ID, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { MatAnchor, MatIconButton } from '@angular/material/button';
-import { MatToolbar } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthStore } from '@mas/frontend-shared-auth';
@@ -13,43 +11,151 @@ import { PushNotificationService } from '../../services/push-notification.servic
 
 @Component({
   selector: 'mas-nav',
-  imports: [MatToolbar, MatIcon, MatIconButton, MatAnchor, RouterLink, MatMenuModule],
+  imports: [MatIcon, MatMenuModule, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-toolbar color="accent">
-      <button
-        class="mr-4"
-        mat-icon-button
-        aria-label="Navigation menu"
-        (click)="openNav.emit()"
-        data-testid="navigation-menu"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
-      <a routerLink="/" aria-label="Building Resilient Professionals home">
-        <img src="assets/Logo/BRP_Logo.webp" height="36" width="66" class="h-9 w-auto" alt="" />
-      </a>
-      <div class="ml-auto flex items-center gap-4">
-        @if (!authStore.user()) {
-          <a mat-raised-button routerLink="/login" color="primary">Sign Up or Login</a>
-        } @else {
-          <div
-            role="button"
-            [class]="authStore.realUser() ? 'border-2 border-red-500' : ''"
-            class="w-10 h-10 rounded-full flex justify-center items-center bg-slate-800 cursor-pointer"
-            [matMenuTriggerFor]="userMenu"
+    <nav class="h-14 border-b border-outline bg-surface/95 text-ink backdrop-blur sm:h-16" aria-label="Primary">
+      <div class="mx-auto flex h-full max-w-[100rem] items-center gap-3 px-3 sm:gap-4 sm:px-5">
+        <a
+          [routerLink]="authStore.user() ? '/dashboard' : '/'"
+          class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-label="Building Resilient Professionals home"
+        >
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-soft">
+            <img
+              src="assets/Logo/brp-logo-community-no-arrow.png"
+              height="36"
+              width="36"
+              class="h-8 w-8 object-contain [filter:var(--mas-logo-filter)]"
+              alt=""
+            />
+          </span>
+          <span class="hidden min-w-0 sm:block">
+            <span class="block truncate text-sm font-bold tracking-tight text-ink">Building Resilient</span>
+            <span class="block text-[10px] font-bold uppercase tracking-[0.15em] text-brand">Professionals</span>
+          </span>
+        </a>
+
+        <div class="ml-auto flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            class="nav-icon lg:hidden"
+            aria-label="Open navigation menu"
+            [matMenuTriggerFor]="mobileNavMenu"
+            data-testid="navigation-menu"
           >
-            <span class="uppercase">{{ authStore.initials() }}</span>
-          </div>
-        }
-        <div class="hidden sm:flex">
-          <button mat-icon-button aria-label="Toggle dark mode" (click)="themeService.toggleDarkMode()">
-            <mat-icon>{{ themeService.darkMode() ? 'wb_sunny' : 'nights_stay' }}</mat-icon>
+            <mat-icon>menu</mat-icon>
           </button>
+
+          @if (authStore.user()) {
+            <a
+              routerLink="/dashboard"
+              routerLinkActive="nav-link-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-link hidden lg:inline-flex"
+            >
+              <mat-icon>space_dashboard</mat-icon>
+              Dashboard
+            </a>
+          }
+          @if (authStore.isStaff()) {
+            <a
+              routerLink="/partner-staff/programs"
+              routerLinkActive="nav-link-active"
+              class="nav-link hidden lg:inline-flex"
+            >
+              <mat-icon>folder_managed</mat-icon>
+              Programs
+            </a>
+          }
+          @if (authStore.isAdmin()) {
+            <a routerLink="/admin" routerLinkActive="nav-link-active" class="nav-link hidden lg:inline-flex">
+              <mat-icon>admin_panel_settings</mat-icon>
+              Admin
+            </a>
+          }
+
+          <button
+            type="button"
+            class="nav-icon hidden lg:flex"
+            [attr.aria-label]="themeService.darkMode() ? 'Use light mode' : 'Use dark mode'"
+            (click)="themeService.toggleDarkMode()"
+          >
+            <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+          </button>
+
+          @if (!authStore.user()) {
+            <a
+              routerLink="/login"
+              class="inline-flex items-center rounded-xl bg-brand-strong px-4 py-2 text-sm font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+            >
+              Sign in
+            </a>
+          } @else {
+            <button
+              type="button"
+              class="flex items-center gap-2 rounded-xl p-1 pr-1.5 transition-colors hover:bg-surface-subtle focus:outline-none focus:ring-2 focus:ring-brand"
+              [class.ring-2]="authStore.realUser()"
+              [class.ring-red-500]="authStore.realUser()"
+              [matMenuTriggerFor]="userMenu"
+              aria-label="Open account menu"
+            >
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+              >
+                {{ authStore.initials() }}
+              </span>
+              <span class="hidden max-w-28 text-left sm:block">
+                <span class="block truncate text-xs font-bold text-ink">
+                  {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
+                </span>
+                <span class="block text-[10px] font-medium text-ink-subtle">Account</span>
+              </span>
+            </button>
+          }
         </div>
       </div>
-    </mat-toolbar>
-    <mat-menu #userMenu="matMenu">
+    </nav>
+
+    <mat-menu #mobileNavMenu="matMenu" class="brand-menu">
+      @if (authStore.user()) {
+        <a mat-menu-item routerLink="/dashboard">
+          <mat-icon>space_dashboard</mat-icon>
+          <span>Dashboard</span>
+        </a>
+      }
+      @if (authStore.isStaff()) {
+        <a mat-menu-item routerLink="/partner-staff/programs">
+          <mat-icon>folder_managed</mat-icon>
+          <span>Programs</span>
+        </a>
+      }
+      @if (authStore.isAdmin()) {
+        <a mat-menu-item routerLink="/admin">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>Admin settings</span>
+        </a>
+      }
+      <button mat-menu-item (click)="themeService.toggleDarkMode()">
+        <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span>{{ themeService.darkMode() ? 'Light mode' : 'Dark mode' }}</span>
+      </button>
+    </mat-menu>
+
+    <mat-menu #userMenu="matMenu" class="brand-menu">
+      <div class="mx-3 mb-2 flex items-center gap-3 border-b border-outline px-1 pb-3 pt-1 text-ink">
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+        >
+          {{ authStore.initials() }}
+        </span>
+        <span class="min-w-0">
+          <span class="block truncate text-sm font-bold">
+            {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
+          </span>
+          <span class="block truncate text-xs text-ink-subtle">{{ authStore.user()?.email }}</span>
+        </span>
+      </div>
       <button mat-menu-item (click)="openEditProfileModal()">
         <span class="flex items-center gap-2">
           <svg
@@ -162,22 +268,24 @@ import { PushNotificationService } from '../../services/push-notification.servic
         (click)="notificationModal.set(null)"
       >
         <div
-          class="modal-sheet relative w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl bg-white shadow-2xl flex flex-col"
+          class="modal-sheet relative flex w-full flex-col rounded-t-2xl bg-surface-raised text-ink shadow-2xl sm:max-w-md sm:rounded-2xl"
           (click)="$event.stopPropagation()"
         >
           <!-- Drag handle - mobile only -->
-          <div class="w-10 h-1 rounded-full bg-gray-300 mx-auto mt-3 mb-1 sm:hidden" aria-hidden="true"></div>
+          <div class="mx-auto mb-1 mt-3 h-1 w-10 rounded-full bg-outline sm:hidden" aria-hidden="true"></div>
           <!-- Header -->
-          <div class="flex items-start justify-between px-6 pt-5 pb-4 border-b border-gray-100">
+          <div class="flex items-start justify-between border-b border-outline px-6 pb-4 pt-5">
             <div>
-              <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Push Notifications</p>
-              <h2 class="text-lg font-bold text-gray-900 leading-tight">
+              <p class="mb-0.5 text-[10px] font-semibold uppercase tracking-widest text-ink-subtle">
+                Push Notifications
+              </p>
+              <h2 class="text-lg font-bold leading-tight text-ink">
                 {{ notificationModal() === 'not-supported' ? 'Not Supported' : 'Notifications Enabled' }}
               </h2>
             </div>
             <button
               type="button"
-              class="h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors ml-4 mt-0.5 shrink-0"
+              class="ml-4 mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink"
               (click)="notificationModal.set(null)"
             >
               <svg
@@ -199,10 +307,12 @@ import { PushNotificationService } from '../../services/push-notification.servic
           <!-- Content -->
           <div class="px-6 py-5 space-y-4">
             @if (notificationModal() === 'not-supported') {
-              <p class="text-sm text-gray-600 leading-relaxed">Push notifications are not supported in this browser.</p>
-              <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
-                <p class="text-xs font-semibold uppercase tracking-widest text-amber-700 mb-1.5">iPhone / iPad</p>
-                <p class="text-sm text-amber-900 leading-relaxed">
+              <p class="text-sm leading-relaxed text-ink-muted">
+                Push notifications are not supported in this browser.
+              </p>
+              <div class="rounded-xl border border-outline bg-surface-subtle p-4">
+                <p class="mb-1.5 text-xs font-semibold uppercase tracking-widest text-brand">iPhone / iPad</p>
+                <p class="text-sm leading-relaxed text-ink">
                   Tap the
                   <strong>Share</strong>
                   button and choose
@@ -211,21 +321,21 @@ import { PushNotificationService } from '../../services/push-notification.servic
                 </p>
               </div>
             } @else {
-              <p class="text-sm text-gray-600 leading-relaxed">You are currently receiving push notifications.</p>
-              <p class="text-sm text-gray-600 leading-relaxed">
+              <p class="text-sm leading-relaxed text-ink-muted">You are currently receiving push notifications.</p>
+              <p class="text-sm leading-relaxed text-ink-muted">
                 To turn them off, update your notification permissions in your browser or phone settings:
               </p>
               <div class="space-y-3">
-                <div class="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
-                  <span class="mt-0.5 shrink-0 text-gray-400 text-sm">•</span>
-                  <p class="text-sm text-gray-700 leading-relaxed">
+                <div class="flex items-start gap-3 rounded-xl border border-outline bg-surface-subtle px-4 py-3">
+                  <span class="mt-0.5 shrink-0 text-sm text-ink-subtle">•</span>
+                  <p class="text-sm leading-relaxed text-ink-muted">
                     <span class="font-semibold">Chrome / Edge:</span>
                     Settings → Privacy and Security → Site Settings → Notifications
                   </p>
                 </div>
-                <div class="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
-                  <span class="mt-0.5 shrink-0 text-gray-400 text-sm">•</span>
-                  <p class="text-sm text-gray-700 leading-relaxed">
+                <div class="flex items-start gap-3 rounded-xl border border-outline bg-surface-subtle px-4 py-3">
+                  <span class="mt-0.5 shrink-0 text-sm text-ink-subtle">•</span>
+                  <p class="text-sm leading-relaxed text-ink-muted">
                     <span class="font-semibold">iOS:</span>
                     Settings → Apps → BRPATL → Notifications
                   </p>
@@ -237,7 +347,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           <div class="px-6 pb-6 pt-2 flex justify-end">
             <button
               type="button"
-              class="px-4 py-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+              class="rounded-lg border border-outline bg-surface-raised px-4 py-2 text-sm font-semibold text-ink-muted shadow-sm transition-colors hover:bg-surface-subtle hover:text-ink"
               (click)="notificationModal.set(null)"
             >
               Close
@@ -245,6 +355,50 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </div>
         </div>
       </div>
+    }
+  `,
+  styles: `
+    .nav-link {
+      align-items: center;
+      border-radius: 0.5rem;
+      color: rgb(var(--mas-ink-muted));
+      font-size: 0.75rem;
+      font-weight: 700;
+      gap: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      transition:
+        background-color 150ms ease,
+        color 150ms ease;
+    }
+
+    .nav-link:hover,
+    .nav-link-active {
+      background: rgb(var(--mas-brand-soft) / 0.7);
+      color: rgb(var(--mas-brand-strong));
+    }
+
+    .nav-link mat-icon {
+      font-size: 1rem;
+      height: 1rem;
+      line-height: 1rem;
+      width: 1rem;
+    }
+
+    .nav-icon {
+      align-items: center;
+      border-radius: 0.75rem;
+      color: rgb(var(--mas-ink-muted));
+      height: 2.25rem;
+      justify-content: center;
+      transition:
+        background-color 150ms ease,
+        color 150ms ease;
+      width: 2.25rem;
+    }
+
+    .nav-icon:hover {
+      background: rgb(var(--mas-surface-subtle));
+      color: rgb(var(--mas-ink));
     }
   `,
   host: {
@@ -257,14 +411,11 @@ export class NavComponent {
   themeService = inject(ThemeService);
   private push = inject(PushNotificationService);
   private platformId = inject(PLATFORM_ID);
-  @Output() openNav = new EventEmitter<void>();
-
   notificationsEnabled = signal(false);
   notificationsSupported = isPlatformBrowser(this.platformId);
   notificationModal = signal<null | 'not-supported' | 'already-enabled'>(null);
 
   constructor() {
-    this.themeService.init();
     if (this.notificationsSupported && 'Notification' in window) {
       this.notificationsEnabled.set(Notification.permission === 'granted');
     }

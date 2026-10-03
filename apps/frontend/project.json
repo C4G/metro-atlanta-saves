@@ -5,6 +5,11 @@
   "prefix": "mas",
   "sourceRoot": "apps/frontend/src",
   "tags": [],
+  "cli": {
+    "cache": {
+      "environment": "ci"
+    }
+  },
   "targets": {
     "build": {
       "executor": "@nx/angular:application",

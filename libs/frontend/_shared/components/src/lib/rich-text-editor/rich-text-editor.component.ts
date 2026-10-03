@@ -235,10 +235,10 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         border-color: var(--rte-border);
       }
       mas-rich-text-editor.rte-dark-theme > div:first-child > div:first-child button {
-        color: #d1d5db !important;
+        color: var(--rte-muted);
       }
       mas-rich-text-editor.rte-dark-theme > div:first-child > div:first-child button:hover {
-        color: #ffffff !important;
+        color: var(--rte-text);
         background-color: #374151;
       }
       mas-rich-text-editor.rte-dark-theme select,

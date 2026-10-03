@@ -22,6 +22,8 @@
     },
     "prisma-generate": {
       "executor": "@nx-tools/nx-prisma:generate",
+      "cache": true,
+      "outputs": ["{workspaceRoot}/libs/prisma-client/src/generated/prisma"],
       "options": {
         "schema": "apps/backend/prisma"
       }

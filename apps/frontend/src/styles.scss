@@ -10,24 +10,73 @@
 @include mat.elevation-classes();
 @include mat.app-background();
 
-// Define a dark theme
+$brand-teal-palette: (
+  50: #f0fdfa,
+  100: #ccfbf1,
+  200: #99f6e4,
+  300: #5eead4,
+  400: #2dd4bf,
+  500: #14b8a6,
+  600: #0d9488,
+  700: #0f766e,
+  800: #115e59,
+  900: #134e4a,
+  A100: #ccfbf1,
+  A200: #5eead4,
+  A400: #2dd4bf,
+  A700: #0f766e,
+  contrast: (
+    50: #102a2c,
+    100: #102a2c,
+    200: #102a2c,
+    300: #102a2c,
+    400: #102a2c,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #102a2c,
+    A200: #102a2c,
+    A400: #102a2c,
+    A700: #ffffff,
+  ),
+);
+
+// Semantic tokens are RGB channels so Tailwind opacity modifiers keep working.
+:root {
+  --mas-canvas: 246 250 249;
+  --mas-surface: 255 255 255;
+  --mas-surface-raised: 255 255 255;
+  --mas-surface-subtle: 240 247 245;
+  --mas-ink: 16 42 44;
+  --mas-ink-muted: 82 102 106;
+  --mas-ink-subtle: 100 116 120;
+  --mas-outline: 207 222 219;
+  --mas-brand: 15 118 110;
+  --mas-brand-strong: 17 94 89;
+  --mas-brand-soft: 204 251 241;
+  --mas-on-brand: 255 255 255;
+  --mas-logo-filter: none;
+  color-scheme: light;
+}
+
 $dark-theme: mat.m2-define-dark-theme(
   (
     color: (
-      primary: mat.m2-define-palette(mat.$m2-yellow-palette),
-      accent: mat.m2-define-palette(mat.$m2-blue-grey-palette),
+      primary: mat.m2-define-palette($brand-teal-palette, 300, 100, 700),
+      accent: mat.m2-define-palette($brand-teal-palette, 400, 200, 700),
     ),
     typography: mat.m2-define-typography-config(),
     density: 0,
   )
 );
 
-// Define a light theme
 $light-theme: mat.m2-define-light-theme(
   (
     color: (
-      primary: mat.m2-define-palette(mat.$m2-yellow-palette),
-      accent: mat.m2-define-palette(mat.$m2-blue-grey-palette),
+      primary: mat.m2-define-palette($brand-teal-palette, 700, 100, 900),
+      accent: mat.m2-define-palette($brand-teal-palette, 600, 200, 800),
     ),
   )
 );
@@ -40,9 +89,9 @@ body {
 }
 
 .mat-mdc-snack-bar-container.update-snackbar {
-  --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 700)};
-  --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 50)};
-  --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 100)};
+  --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 800)};
+  --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 50)};
+  --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 200)};
 
   .mat-mdc-snack-bar-label {
     font-weight: 500;
@@ -56,11 +105,21 @@ body {
 .dark-theme {
   @include mat.all-component-colors($dark-theme);
 
-  html,
-  body {
-    background-color: #303030;
-    color: rgba(255, 255, 255, 0.87);
-  }
+  --mas-canvas: 11 19 35;
+  --mas-surface: 21 27 46;
+  --mas-surface-raised: 27 37 58;
+  --mas-surface-subtle: 25 35 54;
+  --mas-ink: 241 245 249;
+  --mas-ink-muted: 184 198 211;
+  --mas-ink-subtle: 148 163 184;
+  --mas-outline: 66 82 105;
+  --mas-brand: 94 234 212;
+  --mas-brand-strong: 153 246 228;
+  --mas-brand-soft: 19 78 74;
+  --mas-on-brand: 8 47 46;
+  --mas-logo-filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg)
+    brightness(101%) contrast(96%);
+  color-scheme: dark;
 
   // Force light mode for Discussion Board pages so Tailwind styles are unaffected
   mas-discussion-boards-dashboard,
@@ -82,9 +141,9 @@ body {
   }
 
   .mat-mdc-snack-bar-container.update-snackbar {
-    --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 300)};
-    --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette(mat.$m2-yellow-palette, 900)};
-    --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette(mat.$m2-blue-grey-palette, 700)};
+    --mdc-snackbar-container-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 300)};
+    --mdc-snackbar-supporting-text-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 900)};
+    --mat-snack-bar-button-color: #{mat.m2-get-color-from-palette($brand-teal-palette, 800)};
   }
 }
 
@@ -93,6 +152,49 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: rgb(var(--mas-canvas));
+  color: rgb(var(--mas-ink));
+}
+
+.mat-drawer-container,
+.mat-drawer,
+.mat-mdc-menu-panel,
+.mat-mdc-dialog-surface {
+  background-color: rgb(var(--mas-surface));
+  color: rgb(var(--mas-ink));
+}
+
+.mat-expansion-panel {
+  --mat-expansion-container-background-color: rgb(var(--mas-surface));
+  --mat-expansion-container-text-color: rgb(var(--mas-ink));
+  --mat-expansion-header-text-color: rgb(var(--mas-ink));
+  --mat-expansion-header-description-color: rgb(var(--mas-ink-muted));
+  --mat-expansion-header-indicator-color: rgb(var(--mas-brand));
+  --mat-expansion-header-hover-state-layer-color: rgb(var(--mas-brand-soft) / 0.55);
+  --mat-expansion-header-focus-state-layer-color: rgb(var(--mas-brand-soft) / 0.7);
+}
+
+.mat-mdc-menu-panel {
+  --mat-menu-container-color: rgb(var(--mas-surface-raised));
+  --mat-menu-item-label-text-color: rgb(var(--mas-ink));
+  --mat-menu-item-icon-color: rgb(var(--mas-ink-muted));
+  --mat-menu-item-hover-state-layer-color: rgb(var(--mas-brand-soft) / 0.55);
+  --mat-menu-item-focus-state-layer-color: rgb(var(--mas-brand-soft) / 0.7);
+}
+
+.brand-menu.mat-mdc-menu-panel {
+  min-width: 15rem;
+  border: 1px solid rgb(var(--mas-outline));
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.brand-menu .mat-mdc-menu-item {
+  min-height: 2.75rem;
+  margin-block: 0.125rem;
+  border-radius: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
 .skip-link {
@@ -103,8 +205,8 @@ body {
   padding: 0.75rem 1rem;
   border: 2px solid currentColor;
   border-radius: 0.25rem;
-  background: white;
-  color: black;
+  background: rgb(var(--mas-surface-raised));
+  color: rgb(var(--mas-ink));
   font-weight: 500;
   transform: translateY(-150%);
   transition: transform 150ms ease-in-out;
@@ -116,8 +218,8 @@ body {
 
 .mat-mdc-snack-bar-container {
   &.success {
-    --mat-snackbar-container-color: #4caf50;
-    --mat-snackbar-supporting-text-color: black;
+    --mat-snackbar-container-color: #0f766e;
+    --mat-snackbar-supporting-text-color: #ecfeff;
   }
 
   &.error {
