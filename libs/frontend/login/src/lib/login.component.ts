@@ -7,12 +7,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-login',
   imports: [
-    FooterComponent,
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
@@ -66,7 +64,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         Forgot your password? Reset Now
       </a>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

@@ -20,7 +20,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { BlogsStore } from '@mas/frontend-shared-data-access';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-blog',
@@ -31,7 +30,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
     MatIconModule,
     MatDividerModule,
     MatTooltipModule,
-    FooterComponent,
     MatMenuModule,
     RouterLink,
   ],
@@ -63,7 +61,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         }
       </div>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

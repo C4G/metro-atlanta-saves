@@ -10,13 +10,11 @@ import { MatSelect } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 // import { YesNoMaybe } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-enroll',
   imports: [
-    FooterComponent,
     MatInput,
     MatAnchor,
     MatButton,
@@ -201,7 +199,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         </div>
       </form>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

@@ -5,11 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-dashboard',
-  imports: [CommonModule, MatCardModule, MatButtonModule, RouterLink, FooterComponent],
+  imports: [CommonModule, MatCardModule, MatButtonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6">
@@ -38,7 +37,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         }
       </div>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-privacy-policy',
-  imports: [FooterComponent],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <article class="mx-auto max-w-4xl px-6 py-12 sm:px-10">
@@ -97,7 +96,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         </p>
       </section>
     </article>
-    <mas-footer />
   `,
 })
 export class PrivacyPolicyComponent {}
