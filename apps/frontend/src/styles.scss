@@ -57,7 +57,6 @@ $brand-teal-palette: (
   --mas-brand-strong: 17 94 89;
   --mas-brand-soft: 204 251 241;
   --mas-on-brand: 255 255 255;
-  --mas-logo-filter: none;
   color-scheme: light;
 }
 
@@ -117,8 +116,6 @@ body {
   --mas-brand-strong: 153 246 228;
   --mas-brand-soft: 19 78 74;
   --mas-on-brand: 8 47 46;
-  --mas-logo-filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg)
-    brightness(101%) contrast(96%);
   color-scheme: dark;
 
   // Force light mode for Discussion Board pages so Tailwind styles are unaffected
@@ -180,21 +177,6 @@ body {
   --mat-menu-item-icon-color: rgb(var(--mas-ink-muted));
   --mat-menu-item-hover-state-layer-color: rgb(var(--mas-brand-soft) / 0.55);
   --mat-menu-item-focus-state-layer-color: rgb(var(--mas-brand-soft) / 0.7);
-}
-
-.brand-menu.mat-mdc-menu-panel {
-  min-width: 15rem;
-  border: 1px solid rgb(var(--mas-outline));
-  border-radius: 1rem;
-  padding: 0.5rem;
-}
-
-.brand-menu .mat-mdc-menu-item {
-  min-height: 2.75rem;
-  margin-block: 0.125rem;
-  border-radius: 0.75rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
 }
 
 .skip-link {

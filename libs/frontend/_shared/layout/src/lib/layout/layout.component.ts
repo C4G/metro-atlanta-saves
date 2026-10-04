@@ -17,7 +17,7 @@ const MOBILE_MEDIA = '(max-width: 600px)';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header>
-      <mas-nav />
+      <mas-nav (openNav)="drawer.toggle()" />
     </header>
     <mat-sidenav-container autosize class="mt-14 sm:mt-16">
       <mat-sidenav

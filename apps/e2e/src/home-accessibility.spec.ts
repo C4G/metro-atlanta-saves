@@ -31,10 +31,8 @@ test.describe('homepage accessibility structure', () => {
     await skipLink.press('Enter');
     await expect(main).toBeFocused();
 
-    await page.setViewportSize({ width: 768, height: 1024 });
-    await page.getByRole('button', { name: 'Open navigation menu' }).click();
+    await page.getByRole('button', { name: 'Navigation menu' }).click();
     await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(1);
-    await expect(page.getByRole('menuitem', { name: 'Dark mode' })).toBeVisible();
   });
 
   test('names the home logo link and describes the hero image', async ({ page }) => {
