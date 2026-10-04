@@ -13,7 +13,7 @@ import {
   withViewTransitions,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay, withHttpTransferCacheOptions } from '@angular/platform-browser';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor, authServerInterceptor } from '@mas/frontend-shared-auth';
@@ -24,6 +24,7 @@ import { ThemeService } from '@mas/frontend-shared-data-access';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(
+      withEventReplay(),
       withHttpTransferCacheOptions({
         includeHeaders: ['Authorization', 'ETag', 'Cache-Control', 'Content-Type'],
         includePostRequests: true,
