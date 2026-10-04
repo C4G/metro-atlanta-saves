@@ -21,11 +21,8 @@ type DiscussionBoard = {
   template: `
     <div class="bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
       <div class="mx-auto max-w-7xl space-y-8">
-        <header
-          class="relative overflow-hidden rounded-3xl border border-outline bg-surface-raised px-6 py-8 sm:px-10 sm:py-10"
-        >
-          <div class="absolute inset-y-0 right-0 w-1/3 bg-brand-soft/40" aria-hidden="true"></div>
-          <div class="relative max-w-2xl">
+        <header class="rounded-3xl border border-outline bg-surface-raised px-6 py-8 sm:px-10 sm:py-10">
+          <div class="max-w-2xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-strong">Your dashboard</p>
             <h1 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
               Welcome back{{ firstName() ? ', ' + firstName() : '' }}.
