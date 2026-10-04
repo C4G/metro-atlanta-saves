@@ -6,19 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-forgot-password',
-  imports: [
-    FooterComponent,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterLink,
-  ],
+  imports: [ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col px-6 max-w-3xl mx-auto p-6">
@@ -48,7 +39,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         Don't have an account? Sign Up
       </a>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

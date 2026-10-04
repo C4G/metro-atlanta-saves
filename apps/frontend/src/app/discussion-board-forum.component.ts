@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { lastValueFrom } from 'rxjs';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { FooterComponent, PushNotificationService } from '@mas/frontend-shared-layout';
+import { PushNotificationService } from '@mas/frontend-shared-layout';
 import { RichTextEditorComponent } from '@mas/frontend-shared-components';
 
 type DiscussionUser = {
@@ -85,7 +85,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
 @Component({
   selector: 'mas-discussion-board-forum',
   standalone: true,
-  imports: [CommonModule, NgClass, NgTemplateOutlet, RouterLink, FooterComponent, RichTextEditorComponent],
+  imports: [CommonModule, NgClass, NgTemplateOutlet, RouterLink, RichTextEditorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
@@ -2067,8 +2067,6 @@ type ManagementTab = 'general' | 'members' | 'tags';
           </div>
         </div>
       }
-
-      <mas-footer />
     </div>
   `,
 })

@@ -8,7 +8,6 @@ import {
   StoriesStore,
   WhatWeAreStore,
 } from '@mas/frontend-shared-data-access';
-
 @Component({
   selector: 'mas-home',
   imports: [MatIconModule],

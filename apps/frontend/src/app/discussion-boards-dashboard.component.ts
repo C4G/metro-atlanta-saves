@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 type BoardInfo = {
   id: string;
@@ -47,7 +46,7 @@ type DiscussionTag = {
 @Component({
   selector: 'mas-discussion-boards-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, FooterComponent],
+  imports: [CommonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
@@ -1006,8 +1005,6 @@ type DiscussionTag = {
           </div>
         </div>
       }
-
-      <mas-footer />
     </div>
   `,
 })

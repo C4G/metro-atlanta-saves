@@ -1,24 +1,41 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'mas-footer',
-  imports: [MatIcon, RouterLink],
+  imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <footer class="flex flex-col sm:flex-row text-center justify-center p-4 gap-4">
-      <p>
-        &copy;
-        {{ currentYear() }} Building Resilient Professionals
-      </p>
+    <footer class="border-t border-outline bg-surface px-5 py-7 text-ink sm:px-8">
+      <div class="mx-auto grid max-w-7xl gap-5 text-center md:grid-cols-[1fr_auto_1fr] md:items-center md:text-left">
+        <div>
+          <p class="text-sm font-bold tracking-tight">Building Resilient Professionals</p>
+          <p class="mt-1 text-xs text-ink-muted">Financial wellbeing for stronger communities</p>
+        </div>
 
-      <a class="self-center underline" routerLink="/privacy-policy">Privacy Policy</a>
+        <p class="text-xs text-ink-muted md:text-center">© {{ currentYear() }} Building Resilient Professionals</p>
 
-      <a mat-icon-anchor class="flex justify-center align-center gap-2 ml-0 sm:ml-auto" routerLink="/team">
-        <mat-icon>groups</mat-icon>
-        <span>C4G Team</span>
-      </a>
+        <nav class="flex flex-wrap items-center justify-center gap-1 md:justify-end" aria-label="Footer">
+          <a
+            class="rounded-lg px-2.5 py-2 text-xs font-bold text-brand-strong transition-colors hover:bg-brand-soft/55 hover:text-brand focus-visible:bg-brand-soft/55 focus-visible:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            routerLink="/privacy-policy"
+          >
+            Privacy policy
+          </a>
+          <a
+            class="rounded-lg px-2.5 py-2 text-xs font-bold text-brand-strong transition-colors hover:bg-brand-soft/55 hover:text-brand focus-visible:bg-brand-soft/55 focus-visible:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            routerLink="/about-us"
+          >
+            About us
+          </a>
+          <a
+            class="rounded-lg px-2.5 py-2 text-xs font-bold text-brand-strong transition-colors hover:bg-brand-soft/55 hover:text-brand focus-visible:bg-brand-soft/55 focus-visible:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            routerLink="/team"
+          >
+            C4G Team
+          </a>
+        </nav>
+      </div>
     </footer>
   `,
   host: {
@@ -26,5 +43,5 @@ import { RouterLink } from '@angular/router';
   },
 })
 export class FooterComponent {
-  currentYear = signal(new Date().getFullYear());
+  readonly currentYear = signal(new Date().getFullYear());
 }

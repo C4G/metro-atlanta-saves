@@ -4,12 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
-import { FooterComponent, HeroComponent } from '@mas/frontend-shared-layout';
+import { HeroComponent } from '@mas/frontend-shared-layout';
 import { CohortsStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-about-us',
-  imports: [HeroComponent, MatButtonModule, MatCardModule, MatIconModule, FooterComponent, NgOptimizedImage],
+  imports: [HeroComponent, MatButtonModule, MatCardModule, MatIconModule, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mas-hero
@@ -72,7 +72,6 @@ import { CohortsStore } from '@mas/frontend-shared-data-access';
           </div>
         </div>
       </section>
-      <mas-footer />
     }
   `,
   host: {
