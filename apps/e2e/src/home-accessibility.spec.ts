@@ -43,4 +43,16 @@ test.describe('homepage accessibility structure', () => {
       page.getByAltText('Financial Wellbeing Alliance participants pose together in front of graduation decorations'),
     ).toHaveCount(1);
   });
+
+  test('provides one global footer across routes', async ({ page }) => {
+    const footer = page.getByRole('contentinfo');
+
+    await expect(footer).toHaveCount(1);
+    await expect(footer.getByRole('navigation', { name: 'Footer' })).toBeVisible();
+    await expect(footer.getByRole('link', { name: 'About us' })).toHaveAttribute('href', '/about-us');
+    await expect(footer.getByRole('link', { name: 'C4G Team' })).toHaveAttribute('href', '/team');
+
+    await page.goto('/login');
+    await expect(page.getByRole('contentinfo')).toHaveCount(1);
+  });
 });
