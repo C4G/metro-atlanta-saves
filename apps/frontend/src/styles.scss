@@ -57,6 +57,7 @@ $brand-teal-palette: (
   --mas-brand-strong: 17 94 89;
   --mas-brand-soft: 204 251 241;
   --mas-on-brand: 255 255 255;
+  --mas-danger: 185 28 28;
   --mas-logo-filter: none;
   color-scheme: light;
 }
@@ -117,6 +118,7 @@ body {
   --mas-brand-strong: 153 246 228;
   --mas-brand-soft: 19 78 74;
   --mas-on-brand: 8 47 46;
+  --mas-danger: 248 113 113;
   --mas-logo-filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg)
     brightness(101%) contrast(96%);
   color-scheme: dark;

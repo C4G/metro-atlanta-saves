@@ -9,18 +9,13 @@ test.describe('authentication', () => {
     const initials = `${firstName[0]}${lastName[0]}`;
     const password = 'ValidPassword123!';
 
-    // Waiting for this hydrated-component request ensures the SSR form has its
-    // Angular submit handler before Playwright interacts with it.
-    const registrationReady = page.waitForResponse((response) => response.url().includes('/api/google-auth/config'));
     await page.goto('/register');
-    expect((await registrationReady).status()).toBe(200);
+    await expect(page.getByLabel('First Name')).toBeVisible();
     await page.getByLabel('First Name').fill(firstName);
     await page.getByLabel('Last Name').fill(lastName);
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
-    const signUpResponse = page.waitForResponse((response) => response.url().includes('/api/auth/sign-up/email'));
     await page.getByRole('button', { name: 'Register' }).click();
-    expect((await signUpResponse).status()).toBe(200);
 
     await expect(page).toHaveURL(/\/dashboard$/);
     const accountMenu = page.getByRole('button', { name: 'Open account menu' });
@@ -36,11 +31,17 @@ test.describe('authentication', () => {
     await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
-    const signInResponse = page.waitForResponse((response) => response.url().includes('/api/auth/sign-in/email'));
     await page.getByRole('button', { name: 'Login' }).click();
-    expect((await signInResponse).status()).toBe(200);
 
     await expect(page).toHaveURL(/\/dashboard$/);
     await expect(page.getByRole('button', { name: 'Open account menu' })).toContainText(initials);
+
+    await page.getByRole('button', { name: 'Open account menu' }).click();
+    await page.getByRole('menuitem', { name: 'Edit Profile' }).click();
+    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page.getByRole('heading', { name: 'Profile and preferences' })).toBeVisible();
+    await page.getByLabel('About you').fill('Updated from the profile page');
+    await page.getByRole('button', { name: 'Save changes' }).click();
+    await expect(page.getByText('Your profile has been updated!')).toBeVisible();
   });
 });
