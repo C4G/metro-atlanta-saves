@@ -52,15 +52,15 @@ describe('RichTextEditorComponent', () => {
   it('follows the shared user theme preference while the editor is open', () => {
     const themeService = TestBed.inject(ThemeService);
 
-    expect(fixture.nativeElement.classList).toContain('rte-dark-theme');
-
-    themeService.toggleDarkMode(false);
-    fixture.detectChanges();
     expect(fixture.nativeElement.classList).not.toContain('rte-dark-theme');
 
     themeService.toggleDarkMode(true);
     fixture.detectChanges();
     expect(fixture.nativeElement.classList).toContain('rte-dark-theme');
+
+    themeService.toggleDarkMode(false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList).not.toContain('rte-dark-theme');
   });
 
   it('responds to signal input changes', () => {

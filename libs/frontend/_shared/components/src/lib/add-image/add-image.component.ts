@@ -21,9 +21,9 @@ import { MatIcon } from '@angular/material/icon';
         (dragleave)="onDragLeave($event)"
         (drop)="onDrop($event)"
       >
-        <mat-icon class="text-6xl text-gray-400 dark:text-gray-300 mb-4">cloud_upload</mat-icon>
-        <p class="text-lg mb-4 text-gray-900 dark:text-white">Drag and drop files here</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">or</p>
+        <mat-icon class="mb-4 text-6xl text-ink-subtle">cloud_upload</mat-icon>
+        <p class="mb-4 text-lg text-ink">Drag and drop files here</p>
+        <p class="mb-4 text-sm text-ink-muted">or</p>
         <button type="button" mat-raised-button color="accent" (click)="fileInput.click()">Choose File(s)</button>
         <input
           hidden
@@ -40,16 +40,16 @@ import { MatIcon } from '@angular/material/icon';
 
       @if (selectedFiles().length > 0) {
         <div class="mt-6">
-          <p class="font-semibold mb-3 text-gray-900 dark:text-white">Selected files:</p>
+          <p class="mb-3 font-semibold text-ink">Selected files:</p>
           <div class="space-y-2">
             @for (file of selectedFiles(); track file.name; let idx = $index) {
-              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg gap-4">
+              <div class="flex items-center justify-between gap-4 rounded-lg bg-surface-subtle p-3">
                 <div class="flex items-center gap-3 min-w-0 flex-1">
-                  <mat-icon class="text-gray-600 dark:text-gray-400 flex-shrink-0">description</mat-icon>
-                  <span class="text-sm text-gray-900 dark:text-white truncate">{{ file.name }}</span>
+                  <mat-icon class="flex-shrink-0 text-ink-muted">description</mat-icon>
+                  <span class="truncate text-sm text-ink">{{ file.name }}</span>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
-                  <span class="text-xs text-gray-500 dark:text-gray-400 leading-none">
+                  <span class="text-xs leading-none text-ink-muted">
                     {{ formatFileSize(file.size) }}
                   </span>
                   <button
