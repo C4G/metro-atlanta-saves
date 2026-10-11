@@ -1,103 +1,76 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatError } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ChangeDetectionStrategy, Component, effect, inject, untracked } from '@angular/core';
+import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { DescriptionStore } from '@mas/frontend-shared-data-access';
-import { RichTextEditorComponent } from '@mas/frontend-shared-components';
-import { URL_REGEX } from '@mas/frontend-shared-util';
 
 @Component({
   selector: 'mas-description',
-  imports: [
-    RichTextEditorComponent,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatError,
-    MatSlideToggleModule,
-  ],
+  imports: [MatButton, MatError, MatFormField, MatInput, MatLabel, MatSlideToggle, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6">
+      <div class="mb-6 max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand">Programs overview</p>
+        <h2 class="mt-2 font-serif text-2xl font-semibold text-ink">Introduce the programs</h2>
+        <p class="mt-2 text-sm leading-6 text-ink-muted">
+          This heading and description appear directly above the program cards on the landing page.
+        </p>
+      </div>
       <div class="mb-6 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
         <div>
-          <p class="font-medium">Description Section Visibility</p>
-          <p class="text-sm text-gray-500">Toggle to show or hide the logo and description section on the home page</p>
+          <p class="font-medium text-ink">Programs section visibility</p>
+          <p class="text-sm text-ink-muted">Show or hide the programs overview and program cards</p>
         </div>
         <mat-slide-toggle [checked]="!descriptionStore.description()?.hidden" (change)="onToggleHidden($event.checked)">
           {{ descriptionStore.description()?.hidden ? 'Hidden' : 'Visible' }}
         </mat-slide-toggle>
       </div>
       <form #form="ngForm" class="flex flex-col gap-4" [formGroup]="descriptionForm" (ngSubmit)="onSubmit()">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <mat-form-field class="sm:col-span-2">
-            <mat-label>Title</mat-label>
+        <div class="grid grid-cols-1 gap-4">
+          <mat-form-field>
+            <mat-label>Eyebrow text</mat-label>
+            <input matInput formControlName="eyebrow" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Section heading</mat-label>
             <input matInput formControlName="title" />
             @if (
               (descriptionForm.get('title')?.touched || form.submitted) &&
               descriptionForm.get('title')?.errors?.['required']
             ) {
-              <mat-error>Please enter a title.</mat-error>
+              <mat-error>Please enter a section heading.</mat-error>
             }
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Button Text</mat-label>
-            <input matInput formControlName="buttonText" />
-            @if (
-              (descriptionForm.get('buttonText')?.touched || form.submitted) &&
-              descriptionForm.get('buttonText')?.errors?.['required']
-            ) {
-              <mat-error>Please enter text for the button.</mat-error>
-            }
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Button Link</mat-label>
-            <input matInput formControlName="buttonLink" />
-            @if (
-              (descriptionForm.get('buttonLink')?.touched || form.submitted) &&
-              descriptionForm.get('buttonLink')?.errors?.['required']
-            ) {
-              <mat-error>Please enter a button link.</mat-error>
-            }
-            @if (
-              (descriptionForm.get('buttonLink')?.touched || form.submitted) &&
-              descriptionForm.get('buttonLink')?.errors?.['pattern']
-            ) {
-              <mat-error>Please enter a valid URL.</mat-error>
-            }
-          </mat-form-field>
-          <div class="sm:col-span-2">
-            <mat-label>Body</mat-label>
-            <mas-rich-text-editor formControlName="body" minHeight="220px" />
+            <mat-label>Section description</mat-label>
+            <textarea matInput formControlName="body" rows="4"></textarea>
             @if (
               (descriptionForm.get('body')?.touched || form.submitted) &&
               descriptionForm.get('body')?.errors?.['required']
             ) {
-              <mat-error>Body is required.</mat-error>
+              <mat-error>Please enter a section description.</mat-error>
             }
-          </div>
-          <div class="sm:col-span-2">
-            <p class="text-sm font-medium mb-2">Logo Image</p>
-            @if (currentLogoUrl()) {
-              <img [src]="currentLogoUrl()" alt="Current logo" class="mb-3 max-h-24 object-contain" />
-            }
-            <div class="flex items-center gap-4 h-10">
-              <button type="button" mat-raised-button color="accent" (click)="fileInput.click()">Choose Logo</button>
-              <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*" />
-              @if (selectedFileName()) {
-                <span class="text-sm">{{ selectedFileName() }}</span>
-              }
-            </div>
-            @if (selectedFileError()) {
-              <mat-error class="mt-1">{{ selectedFileError() }}</mat-error>
+          </mat-form-field>
+          <div formArrayName="programs" class="mt-4 grid gap-4 md:grid-cols-2">
+            @for (program of programs.controls; track $index) {
+              <fieldset class="rounded-2xl border border-outline bg-surface-subtle p-5" [formGroupName]="$index">
+                <legend class="px-2 text-sm font-bold text-ink">Program card {{ $index + 1 }}</legend>
+                <mat-form-field class="w-full">
+                  <mat-label>Program name</mat-label>
+                  <input matInput formControlName="title" />
+                </mat-form-field>
+                <mat-form-field class="w-full">
+                  <mat-label>Program description</mat-label>
+                  <textarea matInput formControlName="description" rows="6"></textarea>
+                </mat-form-field>
+              </fieldset>
             }
           </div>
         </div>
-        <button mat-raised-button color="primary" type="submit" class="w-10 ml-auto">Save</button>
+        <button mat-raised-button color="primary" type="submit" class="ml-auto">Save programs overview</button>
       </form>
     </div>
   `,
@@ -108,46 +81,42 @@ import { URL_REGEX } from '@mas/frontend-shared-util';
 export default class DescriptionComponent {
   private fb = inject(FormBuilder);
   descriptionStore = inject(DescriptionStore);
-  selectedFile = signal<File | null>(null);
-  selectedFileName = signal('');
-  selectedFileError = signal('');
-  currentLogoUrl = signal('');
 
   descriptionForm = this.fb.group({
     id: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     title: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     body: this.fb.control('', { validators: Validators.required, nonNullable: true }),
-    buttonText: [''],
-    buttonLink: ['', Validators.pattern(URL_REGEX)],
+    eyebrow: this.fb.control('', { validators: Validators.required, nonNullable: true }),
+    programs: this.fb.array([]),
   });
+
+  get programs(): FormArray {
+    return this.descriptionForm.controls.programs;
+  }
 
   constructor() {
     this.descriptionStore.getDescription();
     effect(() => {
       const descriptionData = this.descriptionStore.description();
       if (descriptionData) {
-        this.descriptionForm.patchValue(descriptionData);
-        if (descriptionData.logoUrl) {
-          this.currentLogoUrl.set(descriptionData.logoUrl);
-        }
+        untracked(() => {
+          this.descriptionForm.patchValue(descriptionData);
+          if (!this.programs.length) {
+            for (const program of this.parseItems(descriptionData.programsJson)) {
+              this.programs.push(
+                this.fb.group({
+                  title: this.fb.control(program.title, { validators: Validators.required, nonNullable: true }),
+                  description: this.fb.control(program.description, {
+                    validators: Validators.required,
+                    nonNullable: true,
+                  }),
+                }),
+              );
+            }
+          }
+        });
       }
     });
-  }
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) {
-      this.selectedFileError.set('Image is required');
-      return;
-    }
-    if (!/(jpg|jpeg|png|webp)$/.test(file.type)) {
-      this.selectedFileError.set('Only supported types: jpg, jpeg, png, webp');
-      return;
-    }
-    this.selectedFileError.set('');
-    this.selectedFile.set(file);
-    this.selectedFileName.set(file.name);
   }
 
   onToggleHidden(checked: boolean): void {
@@ -162,19 +131,25 @@ export default class DescriptionComponent {
       return;
     }
 
-    const { id, title, body, buttonText, buttonLink } = this.descriptionForm.getRawValue();
-    const formData = new FormData();
-    formData.append('id', id);
-    formData.append('title', title);
-    formData.append('body', body);
-    if (buttonText) formData.append('buttonText', buttonText);
-    if (buttonLink) formData.append('buttonLink', buttonLink);
+    const current = this.descriptionStore.description();
+    if (!current) return;
 
-    const file = this.selectedFile();
-    if (file) {
-      formData.append('file', file);
+    const { body, eyebrow, programs, title } = this.descriptionForm.getRawValue();
+    this.descriptionStore.patchDescription({
+      ...current,
+      body,
+      eyebrow,
+      programsJson: JSON.stringify(programs),
+      title,
+    });
+  }
+
+  private parseItems(value: string): { title: string; description: string }[] {
+    try {
+      const items: unknown = JSON.parse(value);
+      return Array.isArray(items) ? (items as { title: string; description: string }[]) : [];
+    } catch {
+      return [];
     }
-
-    this.descriptionStore.patchDescription(formData);
   }
 }

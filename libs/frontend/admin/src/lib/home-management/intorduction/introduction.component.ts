@@ -1,21 +1,28 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButton } from '@angular/material/button';
+import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { IntroductionStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-introduction',
-  imports: [ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatButtonModule, MatSlideToggleModule],
+  imports: [MatButton, MatError, MatFormField, MatHint, MatInput, MatLabel, MatSlideToggle, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6">
+      <div class="mb-6 max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand">Hero</p>
+        <h2 class="mt-2 font-serif text-2xl font-semibold text-ink">Set the first impression</h2>
+        <p class="mt-2 text-sm leading-6 text-ink-muted">
+          The hero is the first section visitors see. Use a colon in the title to create a heading and subheading.
+        </p>
+      </div>
       <div class="mb-4 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
         <div>
-          <p class="font-medium">Hero Section Visibility</p>
-          <p class="text-sm text-gray-500">Hide the entire hero section (heading + image) from the home page</p>
+          <p class="font-medium text-ink">Hero section visibility</p>
+          <p class="text-sm text-ink-muted">Show or hide the heading and image</p>
         </div>
         <mat-slide-toggle
           [checked]="!introductionStore.introduction().hidden"
@@ -27,8 +34,8 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
       @if (!introductionStore.introduction().hidden) {
         <div class="mb-6 flex items-center justify-between rounded-lg border border-outline bg-surface-subtle p-4">
           <div>
-            <p class="font-medium">Hero Image Visibility</p>
-            <p class="text-sm text-gray-500">Hide only the background image — the heading text will still show</p>
+            <p class="font-medium text-ink">Hero image visibility</p>
+            <p class="text-sm text-ink-muted">Hide the background image while keeping the heading visible</p>
           </div>
           <mat-slide-toggle
             [checked]="!introductionStore.introduction().imageHidden"
@@ -41,9 +48,13 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
       <form #form="ngForm" class="flex flex-col gap-4" [formGroup]="introductionForm" (ngSubmit)="onSubmit()">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <mat-form-field class="sm:col-span-2">
-            <mat-label>Title</mat-label>
+            <mat-label>Eyebrow text</mat-label>
+            <input matInput formControlName="eyebrow" />
+          </mat-form-field>
+          <mat-form-field class="sm:col-span-2">
+            <mat-label>Hero title</mat-label>
             <input matInput formControlName="title" />
-            <mat-hint>Use sentence or title case and describe the page topic.</mat-hint>
+            <mat-hint>Text after the first colon is displayed as the subheading.</mat-hint>
             @if (
               (introductionForm.get('title')?.touched || form.submitted) &&
               introductionForm.get('title')?.errors?.['required']
@@ -52,9 +63,17 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
             }
           </mat-form-field>
           <mat-form-field class="sm:col-span-2">
-            <mat-label>Browser Title Ending</mat-label>
+            <mat-label>Supporting description</mat-label>
+            <textarea matInput formControlName="description" rows="3"></textarea>
+          </mat-form-field>
+          <mat-form-field class="sm:col-span-2">
+            <mat-label>Button text</mat-label>
+            <input matInput formControlName="ctaText" />
+          </mat-form-field>
+          <mat-form-field class="sm:col-span-2">
+            <mat-label>Website title suffix</mat-label>
             <input matInput formControlName="titleEnding" />
-            <mat-hint>Added after every page title, separated by a vertical bar.</mat-hint>
+            <mat-hint>Used after page titles throughout the website.</mat-hint>
             @if (
               (introductionForm.get('titleEnding')?.touched || form.submitted) &&
               introductionForm.get('titleEnding')?.errors?.['required']
@@ -63,7 +82,7 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
             }
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Image Alt Text</mat-label>
+            <mat-label>Image description</mat-label>
             <input matInput formControlName="imageText" />
             <mat-hint>Briefly describe the image's meaningful content.</mat-hint>
             @if (
@@ -74,7 +93,7 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
             }
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Image URL</mat-label>
+            <mat-label>Current image URL</mat-label>
             <input matInput formControlName="imageUrl" />
             @if (
               (introductionForm.get('imageUrl')?.touched || form.submitted) &&
@@ -84,8 +103,8 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
             }
           </mat-form-field>
           <div class="sm:col-span-2 h-16">
-            <button type="button" mat-raised-button color="accent" (click)="fileInput.click()">Choose Image</button>
-            <input hidden (change)="onFileSelected($event)" #fileInput type="file" />
+            <button type="button" mat-raised-button color="accent" (click)="fileInput.click()">Choose image</button>
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*" />
             @if (selectedFileName()) {
               <span class="ml-4">{{ selectedFileName() }}</span>
             }
@@ -94,7 +113,7 @@ import { IntroductionStore } from '@mas/frontend-shared-data-access';
             }
           </div>
         </div>
-        <button mat-raised-button color="primary" type="submit" class="w-10 ml-auto">Save</button>
+        <button mat-raised-button color="primary" type="submit" class="ml-auto">Save hero</button>
       </form>
     </div>
   `,
@@ -115,6 +134,9 @@ export default class IntroductionComponent {
     id: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     title: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     titleEnding: this.fb.control('', { validators: Validators.required, nonNullable: true }),
+    eyebrow: this.fb.control('', { validators: Validators.required, nonNullable: true }),
+    description: this.fb.control('', { validators: Validators.required, nonNullable: true }),
+    ctaText: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     imageText: this.fb.control('', { validators: Validators.required, nonNullable: true }),
     imageUrl: this.fb.control('', { validators: Validators.required, nonNullable: true }),
   });
@@ -167,11 +189,15 @@ export default class IntroductionComponent {
       return;
     }
 
-    const { id, title, titleEnding, imageText, imageUrl } = this.introductionForm.getRawValue();
+    const { ctaText, description, eyebrow, id, imageText, imageUrl, title, titleEnding } =
+      this.introductionForm.getRawValue();
     const formData = new FormData();
     formData.append('id', id);
     formData.append('title', title);
     formData.append('titleEnding', titleEnding);
+    formData.append('eyebrow', eyebrow);
+    formData.append('description', description);
+    formData.append('ctaText', ctaText);
     formData.append('imageText', imageText ?? '');
 
     const file = this.selectedFile();

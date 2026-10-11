@@ -20,6 +20,10 @@ const initialState: IntroductionState = {
     id: '-1',
     title: 'Financial wellbeing programs for Atlanta communities',
     titleEnding: 'Financial Wellbeing Alliance',
+    eyebrow: 'Metro Atlanta Saves',
+    description:
+      'We are dedicated to empowering individuals and families through a range of financial literacy and wellbeing programs that foster economic stability and independence.',
+    ctaText: 'Explore our programs',
     imageUrl: '/assets/background/atlanta-cohort.webp',
     imageText: 'Financial Wellbeing Alliance participants pose together in front of graduation decorations',
     hidden: false,
@@ -43,7 +47,10 @@ export const IntroductionStore = signalStore(
           http.get<IntroductionConfig>(BASE_URL).pipe(
             tapResponse({
               next: (introduction) => {
-                patchState(store, (state) => ({ ...state, introduction }));
+                patchState(store, (state) => ({
+                  ...state,
+                  introduction: { ...state.introduction, ...introduction },
+                }));
               },
               error: () => {
                 snackBar.open('There was an error retreiving the introduction', undefined, {
@@ -64,7 +71,7 @@ export const IntroductionStore = signalStore(
               next: (introduction) => {
                 patchState(store, (state) => ({
                   ...state,
-                  introduction,
+                  introduction: { ...state.introduction, ...introduction },
                 }));
                 snackBar.open(`introduction has been updated`, undefined, {
                   panelClass: 'success',

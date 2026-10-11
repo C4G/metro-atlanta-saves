@@ -1,10 +1,15 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { IntroductionStore } from '@mas/frontend-shared-data-access';
+import { DescriptionStore, IntroductionStore, WhatWeAreStore } from '@mas/frontend-shared-data-access';
 
 const DEFAULT_HERO_IMAGE = '/assets/background/atlanta-cohort.webp';
 const DEFAULT_HERO_ALT = 'Financial Wellbeing Alliance participants pose together in front of graduation decorations';
+const DEFAULT_PROGRAMS_TITLE = 'Explore our financial programs';
+const DEFAULT_PROGRAMS_DESCRIPTION =
+  'Choose a program designed to help you save, learn, connect, and build lasting financial confidence.';
+const DEFAULT_WHO_WE_ARE =
+  'Founded in Atlanta, the Housing and Savings Collaborative is dedicated to providing financial solutions that uplift communities and foster economic stability for those in need. We are a collaborative group of Atlanta nonprofits.';
 
 const PROGRAMS = [
   {
@@ -88,7 +93,7 @@ const PARTNERS = [
   template: `
     @let intro = introductionStore.introduction();
     @if (intro.hidden) {
-      <h1 class="sr-only">1000 save $1000: Empowering financial futures together</h1>
+      <h1 class="sr-only">{{ intro.title }}</h1>
     } @else {
       <section class="relative isolate overflow-hidden bg-gray-950 text-white">
         @if (!intro.imageHidden) {
@@ -129,70 +134,71 @@ const PARTNERS = [
           class="mx-auto flex min-h-[36rem] max-w-7xl items-end px-5 py-14 sm:px-8 sm:py-20 lg:min-h-[40rem] lg:px-12"
         >
           <div class="max-w-3xl">
-            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-teal-200">Metro Atlanta Saves</p>
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-teal-200">{{ intro.eyebrow }}</p>
             <h1 class="max-w-3xl font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-              1000 save $1000
+              {{ heroHeading() }}
             </h1>
-            <p class="mt-4 font-serif text-2xl font-medium text-teal-100 sm:text-3xl">
-              Empowering financial futures together
-            </p>
+            @if (heroSubheading()) {
+              <p class="mt-4 font-serif text-2xl font-medium text-teal-100 sm:text-3xl">
+                {{ heroSubheading() }}
+              </p>
+            }
             <p class="mt-6 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
-              We are dedicated to empowering individuals and families through a range of financial literacy and
-              wellbeing programs that foster economic stability and independence.
+              {{ intro.description }}
             </p>
             <a
-              class="mt-8 inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-bold text-brand-on transition-colors hover:bg-brand-strong focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-gray-950"
+              class="mt-8 inline-flex items-center rounded-xl bg-brand px-5 py-3 text-sm font-bold text-brand-on transition-colors hover:bg-brand-strong focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-gray-950"
               href="#programs"
             >
-              Explore our programs
+              {{ heroCtaText() }}
             </a>
           </div>
         </div>
       </section>
     }
 
-    <section id="programs" class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-      <div class="mx-auto max-w-7xl">
-        <div class="max-w-3xl">
-          <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">What we do</p>
-          <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Explore our financial programs
-          </h2>
-          <p class="mt-4 text-base leading-7 text-ink-muted">
-            Choose a program designed to help you save, learn, connect, and build lasting financial confidence.
-          </p>
-        </div>
+    @if (!descriptionStore.description()?.hidden) {
+      <section id="programs" class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+        <div class="mx-auto max-w-7xl">
+          <div class="max-w-3xl">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ programsEyebrow() }}</p>
+            <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+              {{ programsTitle() }}
+            </h2>
+            <p class="mt-4 text-base leading-7 text-ink-muted">{{ programsDescription() }}</p>
+          </div>
 
-        <div class="mt-10 grid gap-5 md:grid-cols-2">
-          @for (program of programs; track program.title) {
-            <article
-              class="group flex h-full flex-col rounded-3xl border border-outline bg-surface-raised p-7 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:p-8"
-            >
-              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
-                <mat-icon>{{ program.icon }}</mat-icon>
-              </span>
-              <h3 class="mt-6 font-serif text-2xl font-semibold text-ink">{{ program.title }}</h3>
-              <p class="mt-4 text-sm leading-7 text-ink-muted sm:text-base">{{ program.description }}</p>
-            </article>
-          }
+          <div class="mt-10 grid gap-5 md:grid-cols-2">
+            @for (program of programs(); track program.title) {
+              <article
+                class="group flex h-full flex-col rounded-3xl border border-outline bg-surface-raised p-7 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:p-8"
+              >
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
+                  <mat-icon>{{ program.icon }}</mat-icon>
+                </span>
+                <h3 class="mt-6 font-serif text-2xl font-semibold text-ink">{{ program.title }}</h3>
+                <p class="mt-4 text-sm leading-7 text-ink-muted sm:text-base">{{ program.description }}</p>
+              </article>
+            }
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    }
 
     <section class="bg-canvas px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="financial-facts-title">
       <div class="mx-auto max-w-7xl">
         <div class="max-w-3xl">
-          <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">Did you know</p>
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ factsEyebrow() }}</p>
           <h2
             id="financial-facts-title"
             class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
           >
-            Many households are navigating financial uncertainty
+            {{ factsTitle() }}
           </h2>
-          <p class="mt-4 text-sm leading-6 text-ink-subtle">According to the Federal Reserve</p>
+          <p class="mt-4 text-sm leading-6 text-ink-subtle">{{ factsSource() }}</p>
         </div>
         <dl class="mt-10 grid gap-5 md:grid-cols-3">
-          @for (fact of financialFacts; track fact.statistic) {
+          @for (fact of financialFacts(); track fact.statistic) {
             <div class="rounded-3xl border border-outline bg-surface p-7 sm:p-8">
               <dt class="font-serif text-4xl font-semibold tracking-tight text-brand-strong">{{ fact.statistic }}</dt>
               <dd class="mt-4 text-base leading-7 text-ink-muted">{{ fact.description }}</dd>
@@ -202,57 +208,118 @@ const PARTNERS = [
       </div>
     </section>
 
-    <section class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="who-we-are-title">
-      <div class="mx-auto max-w-7xl">
-        <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
-          <div class="max-w-xl">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">Who we are</p>
-            <h2
-              id="who-we-are-title"
-              class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
-            >
-              Atlanta nonprofits working together
-            </h2>
-            <p class="mt-5 text-base leading-7 text-ink-muted">
-              Founded in Atlanta, the Housing and Savings Collaborative is dedicated to providing financial solutions
-              that uplift communities and foster economic stability for those in need. We are a collaborative group of
-              Atlanta nonprofits.
-            </p>
-            <a
-              class="mt-7 inline-flex items-center rounded-xl border border-outline bg-surface-raised px-5 py-3 text-sm font-bold text-ink transition-colors hover:border-brand hover:bg-brand-soft/30 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface"
-              href="/about-us"
-            >
-              Learn more about us
-            </a>
-          </div>
-
-          <div class="grid gap-4 sm:grid-cols-2">
-            @for (partner of partners; track partner.name) {
-              <article
-                class="rounded-2xl border border-outline bg-surface-raised p-6 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:last:col-span-2"
+    @if (!whatWeAreStore.whatWeAre()?.hidden) {
+      <section class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="who-we-are-title">
+        <div class="mx-auto max-w-7xl">
+          <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+            <div class="max-w-xl">
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ whoWeAreEyebrow() }}</p>
+              <h2
+                id="who-we-are-title"
+                class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
               >
-                <p class="text-xs font-bold uppercase tracking-[0.14em] text-brand">{{ partner.shortName }}</p>
-                <h3 class="mt-2 text-lg font-bold text-ink">{{ partner.name }}</h3>
-                <p class="mt-3 text-sm leading-6 text-ink-muted">{{ partner.description }}</p>
-              </article>
-            }
+                {{ whoWeAreTitle() }}
+              </h2>
+              <p class="mt-5 text-base leading-7 text-ink-muted">{{ whoWeAreDescription() }}</p>
+              <a
+                class="mt-7 inline-flex items-center rounded-xl border border-outline bg-surface-raised px-5 py-3 text-sm font-bold text-ink transition-colors hover:border-brand hover:bg-brand-soft/30 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface"
+                [href]="aboutUsLink()"
+              >
+                {{ aboutUsButtonText() }}
+              </a>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              @for (partner of partners(); track partner.name) {
+                <article
+                  class="rounded-2xl border border-outline bg-surface-raised p-6 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:last:col-span-2"
+                >
+                  <p class="text-xs font-bold uppercase tracking-[0.14em] text-brand">{{ partner.shortName }}</p>
+                  <h3 class="mt-2 text-lg font-bold text-ink">{{ partner.name }}</h3>
+                  <p class="mt-3 text-sm leading-6 text-ink-muted">{{ partner.description }}</p>
+                </article>
+              }
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    }
   `,
   host: { class: 'block bg-surface' },
 })
 export class HomeComponent {
+  readonly descriptionStore = inject(DescriptionStore);
   readonly introductionStore = inject(IntroductionStore);
-  readonly programs = PROGRAMS;
-  readonly financialFacts = FINANCIAL_FACTS;
-  readonly partners = PARTNERS;
+  readonly whatWeAreStore = inject(WhatWeAreStore);
+  readonly heroHeading = computed(() => this.splitHeroTitle()[0]);
+  readonly heroSubheading = computed(() => this.splitHeroTitle()[1]);
+  readonly heroCtaText = computed(
+    () => this.introductionStore.introduction().ctaText?.trim() || 'Explore our programs',
+  );
   readonly heroImageUrl = computed(() => this.introductionStore.introduction().imageUrl || DEFAULT_HERO_IMAGE);
   readonly heroImageAlt = computed(() => this.introductionStore.introduction().imageText || DEFAULT_HERO_ALT);
   readonly usesDefaultHeroImage = computed(() => this.heroImageUrl() === DEFAULT_HERO_IMAGE);
+  readonly programsTitle = computed(() => this.descriptionStore.description()?.title || DEFAULT_PROGRAMS_TITLE);
+  readonly programsEyebrow = computed(() => this.descriptionStore.description()?.eyebrow || 'What we do');
+  readonly programsDescription = computed(
+    () => this.toPlainText(this.descriptionStore.description()?.body) || DEFAULT_PROGRAMS_DESCRIPTION,
+  );
+  readonly programs = computed(() => {
+    const content = this.parseJsonItems(this.descriptionStore.description()?.programsJson, PROGRAMS);
+    return content.map((program, index) => ({ ...program, icon: PROGRAMS[index]?.icon ?? 'savings' }));
+  });
+  readonly factsEyebrow = computed(() => this.descriptionStore.description()?.factsEyebrow || 'Did you know');
+  readonly factsTitle = computed(
+    () => this.descriptionStore.description()?.factsTitle || 'Many households are navigating financial uncertainty',
+  );
+  readonly factsSource = computed(
+    () => this.descriptionStore.description()?.factsSource || 'According to the Federal Reserve',
+  );
+  readonly financialFacts = computed(() =>
+    this.parseJsonItems(this.descriptionStore.description()?.factsJson, FINANCIAL_FACTS),
+  );
+  readonly whoWeAreEyebrow = computed(() => this.whatWeAreStore.whatWeAre()?.eyebrow || 'Who we are');
+  readonly whoWeAreTitle = computed(
+    () => this.whatWeAreStore.whatWeAre()?.title || 'Atlanta nonprofits working together',
+  );
+  readonly whoWeAreDescription = computed(
+    () => this.whatWeAreStore.whatWeAre()?.whoWeAreDescription || DEFAULT_WHO_WE_ARE,
+  );
+  readonly aboutUsButtonText = computed(() => this.whatWeAreStore.whatWeAre()?.buttonText || 'Learn more about us');
+  readonly aboutUsLink = computed(() => this.whatWeAreStore.whatWeAre()?.buttonLink || '/about-us');
+  readonly partners = computed(() => this.parseJsonItems(this.whatWeAreStore.whatWeAre()?.partnersJson, PARTNERS));
 
   constructor() {
+    this.descriptionStore.getDescription();
     this.introductionStore.getIntroduction();
+    this.whatWeAreStore.getWhatWeAre();
+  }
+
+  private splitHeroTitle(): readonly [string, string] {
+    const title = this.introductionStore.introduction().title.trim();
+    const separatorIndex = title.indexOf(':');
+    if (separatorIndex === -1) return [title, ''];
+
+    return [title.slice(0, separatorIndex).trim(), title.slice(separatorIndex + 1).trim()];
+  }
+
+  private parseJsonItems<T>(value: string | undefined, fallback: readonly T[]): readonly T[] {
+    if (!value) return fallback;
+
+    try {
+      const parsed: unknown = JSON.parse(value);
+      return Array.isArray(parsed) && parsed.length ? (parsed as T[]) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  private toPlainText(value: string | undefined): string {
+    return (
+      value
+        ?.replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() ?? ''
+    );
   }
 }
