@@ -5,10 +5,21 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { type WhatWeAre } from '@mas/prisma-client/browser';
+
+type WhatWeAreContent = {
+  buttonLink: string;
+  buttonText: string;
+  eyebrow: string;
+  hidden: boolean;
+  id: string;
+  partnersJson: string;
+  title: string;
+  whatWeDoDescription: string;
+  whoWeAreDescription: string;
+};
 
 type WhatWeAreState = {
-  whatWeAre: WhatWeAre | null;
+  whatWeAre: WhatWeAreContent | null;
 };
 
 const initialState: WhatWeAreState = {
@@ -24,7 +35,7 @@ export const WhatWeAreStore = signalStore(
     getWhatWeAre: rxMethod<void>(
       pipe(
         switchMap(() =>
-          http.get<WhatWeAre>(BASE_URL).pipe(
+          http.get<WhatWeAreContent>(BASE_URL).pipe(
             tapResponse({
               next: (whatWeAre) => {
                 patchState(store, (state) => ({ ...state, whatWeAre }));
@@ -40,10 +51,10 @@ export const WhatWeAreStore = signalStore(
         ),
       ),
     ),
-    patchWhatWeAre: rxMethod<WhatWeAre>(
+    patchWhatWeAre: rxMethod<WhatWeAreContent>(
       pipe(
         switchMap((whatWeAre) =>
-          http.patch<WhatWeAre>(BASE_URL, whatWeAre).pipe(
+          http.patch<WhatWeAreContent>(BASE_URL, whatWeAre).pipe(
             tapResponse({
               next: (whatWeAre) => {
                 patchState(store, (state) => ({ ...state, whatWeAre }));

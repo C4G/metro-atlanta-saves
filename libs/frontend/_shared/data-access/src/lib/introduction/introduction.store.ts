@@ -5,9 +5,17 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { filter, pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { type Introduction } from '@mas/prisma-client/browser';
 
-export type IntroductionConfig = Introduction & {
+export type IntroductionConfig = {
+  ctaText: string;
+  description: string;
+  eyebrow: string;
+  hidden: boolean;
+  id: string;
+  imageHidden: boolean;
+  imageText: string | null;
+  imageUrl: string;
+  title: string;
   titleEnding: string;
 };
 
