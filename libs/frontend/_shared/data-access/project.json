@@ -9,6 +9,7 @@
     "build": {
       "executor": "@nx/angular:ng-packagr-lite",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "dependsOn": ["^build", { "projects": "backend", "target": "prisma-generate" }],
       "options": {
         "project": "libs/frontend/_shared/data-access/ng-package.json",
         "tsConfig": "libs/frontend/_shared/data-access/tsconfig.lib.json"
