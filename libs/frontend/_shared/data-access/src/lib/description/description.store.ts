@@ -5,25 +5,10 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-type DescriptionContent = {
-  body: string;
-  buttonLink: string | null;
-  buttonText: string | null;
-  eyebrow: string;
-  factsEyebrow: string;
-  factsJson: string;
-  factsSource: string;
-  factsTitle: string;
-  hidden: boolean;
-  id: string;
-  logoUrl: string | null;
-  programsJson: string;
-  title: string;
-};
+import { type Description } from '@mas/prisma-client/browser';
 
 type DescriptionState = {
-  description: DescriptionContent | null;
+  description: Description | null;
 };
 
 const initialState: DescriptionState = {
@@ -39,7 +24,7 @@ export const DescriptionStore = signalStore(
     getDescription: rxMethod<void>(
       pipe(
         switchMap(() =>
-          http.get<DescriptionContent>(BASE_URL).pipe(
+          http.get<Description>(BASE_URL).pipe(
             tapResponse({
               next: (description) => {
                 patchState(store, (state) => ({ ...state, description }));
@@ -55,10 +40,10 @@ export const DescriptionStore = signalStore(
         ),
       ),
     ),
-    patchDescription: rxMethod<FormData | DescriptionContent>(
+    patchDescription: rxMethod<FormData | Description>(
       pipe(
         switchMap((description) =>
-          http.patch<DescriptionContent>(`${BASE_URL}`, description).pipe(
+          http.patch<Description>(`${BASE_URL}`, description).pipe(
             tapResponse({
               next: (description) => {
                 patchState(store, (state) => ({

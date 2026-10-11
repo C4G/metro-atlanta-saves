@@ -8,6 +8,7 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [{ "projects": "backend", "target": "prisma-generate" }],
+      "inputs": ["default", "{workspaceRoot}/apps/backend/prisma/**/*"],
       "options": {
         "outputPath": "dist/libs/prisma-client",
         "tsConfig": "libs/prisma-client/tsconfig.lib.json",

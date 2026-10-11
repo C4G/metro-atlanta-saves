@@ -2,7 +2,8 @@ import { DOCUMENT, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
-import { type IntroductionConfig, IntroductionStore } from '@mas/frontend-shared-data-access';
+import { IntroductionStore } from '@mas/frontend-shared-data-access';
+import { type Introduction } from '@mas/prisma-client/browser';
 import { catchError, map, of, tap } from 'rxjs';
 
 const DEFAULT_TITLE_ENDING = 'Financial Wellbeing Alliance';
@@ -18,7 +19,7 @@ export const seoResolver: ResolveFn<boolean> = (route: ActivatedRouteSnapshot) =
   const introduction$ =
     cachedIntroduction.id === '-1'
       ? inject(HttpClient)
-          .get<IntroductionConfig>('/api/introduction')
+          .get<Introduction>('/api/introduction')
           .pipe(tap((introduction) => introductionStore.setIntroduction(introduction)))
       : of(cachedIntroduction);
 

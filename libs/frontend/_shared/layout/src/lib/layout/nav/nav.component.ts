@@ -15,7 +15,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="h-14 border-b border-outline bg-surface/95 text-ink backdrop-blur sm:h-16" aria-label="Primary">
-      <div class="mx-auto flex h-full max-w-[100rem] items-center gap-3 px-3 sm:gap-4 sm:px-5">
+      <div class="flex h-full w-full items-center gap-3 px-3 sm:gap-4 sm:px-5">
         <a
           [routerLink]="authStore.user() ? '/dashboard' : '/'"
           class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"

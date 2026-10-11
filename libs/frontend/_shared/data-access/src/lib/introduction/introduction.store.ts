@@ -5,22 +5,10 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { filter, pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-export type IntroductionConfig = {
-  ctaText: string;
-  description: string;
-  eyebrow: string;
-  hidden: boolean;
-  id: string;
-  imageHidden: boolean;
-  imageText: string | null;
-  imageUrl: string;
-  title: string;
-  titleEnding: string;
-};
+import { type Introduction } from '@mas/prisma-client/browser';
 
 type IntroductionState = {
-  introduction: IntroductionConfig;
+  introduction: Introduction;
 };
 
 const initialState: IntroductionState = {
@@ -45,14 +33,14 @@ export const IntroductionStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods((store) => ({
-    setIntroduction: (introduction: IntroductionConfig) => patchState(store, { introduction }),
+    setIntroduction: (introduction: Introduction) => patchState(store, { introduction }),
   })),
   withMethods((store, http = inject(HttpClient), snackBar = inject(MatSnackBar)) => ({
     getIntroduction: rxMethod<void>(
       pipe(
         filter(() => store.introduction().id === '-1'),
         switchMap(() =>
-          http.get<IntroductionConfig>(BASE_URL).pipe(
+          http.get<Introduction>(BASE_URL).pipe(
             tapResponse({
               next: (introduction) => {
                 patchState(store, (state) => ({
@@ -71,10 +59,10 @@ export const IntroductionStore = signalStore(
         ),
       ),
     ),
-    patchIntroduction: rxMethod<FormData | IntroductionConfig>(
+    patchIntroduction: rxMethod<FormData | Introduction>(
       pipe(
         switchMap((introduction) =>
-          http.patch<IntroductionConfig>(`${BASE_URL}`, introduction).pipe(
+          http.patch<Introduction>(`${BASE_URL}`, introduction).pipe(
             tapResponse({
               next: (introduction) => {
                 patchState(store, (state) => ({
