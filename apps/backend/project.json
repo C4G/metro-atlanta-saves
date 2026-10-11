@@ -20,6 +20,9 @@
       },
       "continuous": true
     },
+    "test": {
+      "dependsOn": ["prisma-generate"]
+    },
     "prisma-generate": {
       "executor": "@nx-tools/nx-prisma:generate",
       "cache": true,

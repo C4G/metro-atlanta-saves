@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthStore } from '../data-access/auth.store';
 import { adminGuard } from './admin.guard';
 import { authGuard } from './auth.guard';
+import { guestGuard } from './guest.guard';
 import { partnerStaffGuard } from './partner-staff.guard';
 
 describe('managed-session route guards', () => {
@@ -55,4 +56,12 @@ describe('managed-session route guards', () => {
     tick();
     expect(decision).toBe('/login');
   }));
+
+  it('keeps the landing page for guests and redirects signed-in members', () => {
+    user.set(null);
+    expect(TestBed.runInInjectionContext(() => guestGuard())).toBe(true);
+
+    user.set({ id: 'user-1', role: 'Participant' });
+    expect(TestBed.runInInjectionContext(() => guestGuard())).toBe('/dashboard');
+  });
 });

@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output, PLATFORM_ID, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { MatAnchor, MatIconButton } from '@angular/material/button';
-import { MatToolbar } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
-import { MatMenuModule } from '@angular/material/menu';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ThemeService } from '@mas/frontend-shared-data-access';
@@ -13,44 +11,168 @@ import { PushNotificationService } from '../../services/push-notification.servic
 
 @Component({
   selector: 'mas-nav',
-  imports: [MatToolbar, MatIcon, MatIconButton, MatAnchor, RouterLink, MatMenuModule],
+  imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-toolbar color="accent">
-      <button
-        class="mr-4"
-        mat-icon-button
-        aria-label="Navigation menu"
-        (click)="openNav.emit()"
-        data-testid="navigation-menu"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
-      <a routerLink="/" aria-label="Building Resilient Professionals home">
-        <img src="assets/Logo/BRP_Logo.webp" height="36" width="66" class="h-9 w-auto" alt="" />
-      </a>
-      <div class="ml-auto flex items-center gap-4">
-        @if (!authStore.user()) {
-          <a mat-raised-button routerLink="/login" color="primary">Sign Up or Login</a>
-        } @else {
-          <div
-            role="button"
-            [class]="authStore.realUser() ? 'border-2 border-red-500' : ''"
-            class="w-10 h-10 rounded-full flex justify-center items-center bg-slate-800 cursor-pointer"
-            [matMenuTriggerFor]="userMenu"
+    <nav class="h-14 border-b border-outline bg-surface/95 text-ink backdrop-blur sm:h-16" aria-label="Primary">
+      <div class="flex h-full w-full items-center gap-3 px-3 sm:gap-4 sm:px-5">
+        <a
+          [routerLink]="authStore.user() ? '/dashboard' : '/'"
+          class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-label="Metro Atlanta Saves home"
+        >
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-soft">
+            <img
+              src="assets/Logo/brp-logo-community-no-arrow.png"
+              height="36"
+              width="36"
+              class="h-8 w-8 object-contain [filter:var(--mas-logo-filter)]"
+              alt=""
+            />
+          </span>
+          <span class="hidden min-w-0 sm:block">
+            <span class="block truncate text-sm font-bold tracking-tight text-ink">Metro Atlanta</span>
+            <span class="block text-[10px] font-bold uppercase tracking-[0.15em] text-brand">Saves</span>
+          </span>
+        </a>
+
+        <div class="ml-auto flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:hidden"
+            aria-label="Open navigation menu"
+            [matMenuTriggerFor]="mobileNavMenu"
+            data-testid="navigation-menu"
           >
-            <span class="uppercase">{{ authStore.initials() }}</span>
-          </div>
-        }
-        <div class="hidden sm:flex">
-          <button mat-icon-button aria-label="Toggle dark mode" (click)="themeService.toggleDarkMode()">
-            <mat-icon>{{ themeService.darkMode() ? 'wb_sunny' : 'nights_stay' }}</mat-icon>
+            <mat-icon>menu</mat-icon>
           </button>
+
+          @if (authStore.user()) {
+            <a
+              routerLink="/dashboard"
+              routerLinkActive="bg-brand-soft/70 text-brand-strong"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
+            >
+              <mat-icon>space_dashboard</mat-icon>
+              Dashboard
+            </a>
+          }
+          @if (authStore.isStaff()) {
+            <a
+              routerLink="/partner-staff/programs"
+              routerLinkActive="bg-brand-soft/70 text-brand-strong"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
+            >
+              <mat-icon>folder_managed</mat-icon>
+              Programs
+            </a>
+          }
+          @if (authStore.isAdmin()) {
+            <a
+              routerLink="/admin"
+              routerLinkActive="bg-brand-soft/70 text-brand-strong"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
+            >
+              <mat-icon>admin_panel_settings</mat-icon>
+              Admin
+            </a>
+          }
+
+          <button
+            type="button"
+            class="hidden h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:flex"
+            [attr.aria-label]="themeService.darkMode() ? 'Use light mode' : 'Use dark mode'"
+            (click)="themeService.toggleDarkMode()"
+          >
+            <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+          </button>
+
+          @if (!authStore.user()) {
+            <a
+              routerLink="/login"
+              class="inline-flex items-center rounded-xl bg-brand-strong px-4 py-2 text-sm font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+            >
+              Sign in
+            </a>
+          } @else {
+            <button
+              type="button"
+              class="flex items-center gap-2 rounded-xl p-1 pr-1.5 transition-colors hover:bg-surface-subtle focus:outline-none focus:ring-2 focus:ring-brand"
+              [class.ring-2]="authStore.realUser()"
+              [class.ring-red-500]="authStore.realUser()"
+              [matMenuTriggerFor]="userMenu"
+              aria-label="Open account menu"
+            >
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+              >
+                {{ authStore.initials() }}
+              </span>
+              <span class="hidden max-w-28 text-left sm:block">
+                <span class="block truncate text-xs font-bold text-ink">
+                  {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
+                </span>
+                <span class="block text-[10px] font-medium text-ink-subtle">Account</span>
+              </span>
+            </button>
+          }
         </div>
       </div>
-    </mat-toolbar>
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item (click)="openEditProfileModal()">
+    </nav>
+
+    <mat-menu #mobileNavMenu="matMenu" class="min-w-60 rounded-2xl border border-outline p-2">
+      @if (authStore.user()) {
+        <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/dashboard">
+          <mat-icon>space_dashboard</mat-icon>
+          <span>Dashboard</span>
+        </a>
+      }
+      @if (authStore.isStaff()) {
+        <a
+          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+          mat-menu-item
+          routerLink="/partner-staff/programs"
+        >
+          <mat-icon>folder_managed</mat-icon>
+          <span>Programs</span>
+        </a>
+      }
+      @if (authStore.isAdmin()) {
+        <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/admin">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>Admin settings</span>
+        </a>
+      }
+      <button
+        class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+        mat-menu-item
+        (click)="themeService.toggleDarkMode()"
+      >
+        <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span>{{ themeService.darkMode() ? 'Light mode' : 'Dark mode' }}</span>
+      </button>
+    </mat-menu>
+
+    <mat-menu #userMenu="matMenu" class="min-w-60 rounded-2xl border border-outline p-2">
+      <div class="mx-3 mb-2 flex items-center gap-3 border-b border-outline px-1 pb-3 pt-1 text-ink">
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+        >
+          {{ authStore.initials() }}
+        </span>
+        <span class="min-w-0">
+          <span class="block truncate text-sm font-bold">
+            {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
+          </span>
+          <span class="block truncate text-xs text-ink-subtle">{{ authStore.user()?.email }}</span>
+        </span>
+      </div>
+      <button
+        class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+        mat-menu-item
+        (click)="openEditProfileModal()"
+      >
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +192,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
         </span>
       </button>
       @if (notificationsSupported) {
-        <button mat-menu-item (click)="toggleNotifications()">
+        <button
+          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+          mat-menu-item
+          (click)="toggleNotifications()"
+        >
           <span class="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +216,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </span>
         </button>
       }
-      <button mat-menu-item (click)="authStore.logout()">
+      <button
+        class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+        mat-menu-item
+        (click)="authStore.logout()"
+      >
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +242,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
       </button>
       @if (authStore.isStaff() || authStore.realUser()) {
         @if (!authStore.realUser()) {
-          <button mat-menu-item (click)="openMimicUserModal()">
+          <button
+            class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+            mat-menu-item
+            (click)="openMimicUserModal()"
+          >
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -132,7 +266,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
             </span>
           </button>
         } @else {
-          <button mat-menu-item (click)="authStore.stopMimickingUser()">
+          <button
+            class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+            mat-menu-item
+            (click)="authStore.stopMimickingUser()"
+          >
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -261,14 +399,11 @@ export class NavComponent {
   themeService = inject(ThemeService);
   private push = inject(PushNotificationService);
   private platformId = inject(PLATFORM_ID);
-  @Output() openNav = new EventEmitter<void>();
-
   notificationsEnabled = signal(false);
   notificationsSupported = isPlatformBrowser(this.platformId);
   notificationModal = signal<null | 'not-supported' | 'already-enabled'>(null);
 
   constructor() {
-    this.themeService.init();
     if (this.notificationsSupported && 'Notification' in window) {
       this.notificationsEnabled.set(Notification.permission === 'granted');
     }

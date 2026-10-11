@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -75,7 +75,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
           }
         </mat-form-field>
         <div class="flex justify-center actions">
-          <button mat-raised-button color="primary" type="submit">Register</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!isInteractive()">Register</button>
         </div>
       </form>
       @if (authStore.googleClientId()) {
@@ -95,6 +95,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
 })
 export class RegisterComponent {
   readonly authStore = inject(AuthStore);
+  readonly isInteractive = signal(false);
   private fb = inject(FormBuilder);
 
   registerForm = this.fb.nonNullable.group({
@@ -105,6 +106,7 @@ export class RegisterComponent {
   });
 
   constructor() {
+    afterNextRender(() => this.isInteractive.set(true));
     void this.authStore.initializeGoogle('register');
   }
 

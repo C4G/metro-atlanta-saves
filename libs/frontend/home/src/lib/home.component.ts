@@ -1,167 +1,260 @@
+import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
-import {
-  DescriptionStore,
-  IntroductionStore,
-  LearningsStore,
-  StoriesStore,
-  WhatWeAreStore,
-} from '@mas/frontend-shared-data-access';
-import { FooterComponent, HeroComponent } from '@mas/frontend-shared-layout';
+import { MatIcon } from '@angular/material/icon';
+import { DescriptionStore, IntroductionStore, WhatWeAreStore } from '@mas/frontend-shared-data-access';
+
+type FinancialFact = {
+  description: string;
+  statistic: string;
+};
+
+type PartnerContent = {
+  description: string;
+  name: string;
+  shortName: string;
+};
+
+type ProgramContent = {
+  description: string;
+  title: string;
+};
+
+const DEFAULT_HERO_IMAGE = '/assets/background/atlanta-cohort.webp';
+const DEFAULT_HERO_ALT = 'Financial Wellbeing Alliance participants pose together in front of graduation decorations';
+const PROGRAM_ICONS = ['savings', 'groups', 'storefront', 'trending_up'] as const;
 
 @Component({
   selector: 'mas-home',
-  imports: [MatButtonModule, HeroComponent, MatCardModule, MatIconModule, FooterComponent],
+  imports: [MatIcon, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let intro = introductionStore.introduction();
-    @if (intro.hidden) {
-      <h1 class="sr-only">{{ intro.title }}</h1>
-    } @else {
-      @if (intro.imageHidden) {
-        <section class="flex items-center justify-center h-48 bg-gray-900 text-white">
-          <h1 class="text-4xl font-bold text-center px-4">{{ intro.title }}</h1>
-        </section>
+    @if (intro.id !== '-1') {
+      @if (intro.hidden) {
+        <h1 class="sr-only">{{ intro.title }}</h1>
       } @else {
-        <mas-hero
-          [data]="{
-            heading: intro.title,
-            imgSrc: intro.imageUrl,
-            imgAlt:
-              intro.imageText ||
-              'Financial Wellbeing Alliance participants pose together in front of graduation decorations',
-            imgSrcset: '640w, 828w, 1080w, 1920w',
-            imgSizes: '100vw',
-          }"
-        />
+        <section class="relative isolate overflow-hidden bg-gray-950 text-white">
+          @if (!intro.imageHidden) {
+            @if (usesDefaultHeroImage()) {
+              <picture>
+                <source media="(max-width: 640px)" srcset="/assets/background/atlanta-cohort-640w.webp 640w" />
+                <source
+                  media="(max-width: 1080px)"
+                  srcset="
+                    /assets/background/atlanta-cohort-828w.webp   828w,
+                    /assets/background/atlanta-cohort-1080w.webp 1080w
+                  "
+                  sizes="100vw"
+                />
+                <source srcset="/assets/background/atlanta-cohort-1920w.webp 1920w" />
+                <img
+                  class="absolute inset-0 -z-20 h-full w-full object-cover"
+                  ngSrc="/assets/background/atlanta-cohort.webp"
+                  [alt]="heroImageAlt()"
+                  fill
+                  priority
+                  sizes="100vw"
+                />
+              </picture>
+            } @else {
+              <img
+                class="absolute inset-0 -z-20 h-full w-full object-cover"
+                [ngSrc]="heroImageUrl()"
+                [alt]="heroImageAlt()"
+                fill
+                priority
+                sizes="100vw"
+              />
+            }
+          }
+          <div class="absolute inset-0 -z-10 bg-gradient-to-r from-gray-950 via-gray-950/80 to-gray-950/35"></div>
+          <div
+            class="mx-auto flex min-h-[36rem] max-w-7xl items-end px-5 py-14 sm:px-8 sm:py-20 lg:min-h-[40rem] lg:px-12"
+          >
+            <div class="max-w-3xl">
+              <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-teal-200">{{ intro.eyebrow }}</p>
+              <h1 class="max-w-3xl font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+                {{ heroHeading() }}
+              </h1>
+              @if (heroSubheading()) {
+                <p class="mt-4 font-serif text-2xl font-medium text-teal-100 sm:text-3xl">
+                  {{ heroSubheading() }}
+                </p>
+              }
+              <p class="mt-6 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
+                {{ intro.description }}
+              </p>
+              <a
+                class="mt-8 inline-flex items-center rounded-xl bg-brand px-5 py-3 text-sm font-bold text-brand-on transition-colors hover:bg-brand-strong focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-gray-950"
+                href="#programs"
+              >
+                {{ heroCtaText() }}
+              </a>
+            </div>
+          </div>
+        </section>
       }
     }
-    @if (!descriptionStore.description()?.hidden) {
-      <section class="px-8 py-10 md:px-16 md:py-10 lg:px-32 lg:py-16">
-        <img
-          [src]="descriptionStore.description()?.logoUrl || 'assets/Logo/BRP_Logo.webp'"
-          class="mx-auto"
-          width="406"
-          height="219"
-          alt="Building Resilient Professionals Logo"
-        />
-        @if (descriptionStore.description(); as description) {
-          <h2 class="text-lg font-semibold mt-4 text-center">{{ description.title }}</h2>
-          <div class="rich-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"></div>
-          <div class="text-center mt-12">
-            @if (description.buttonLink && description.buttonText) {
-              <a mat-raised-button color="primary" [href]="description.buttonLink" class="mr-auto">
-                {{ description.buttonText }}
-              </a>
-            }
-          </div>
-        }
-      </section>
-    }
-    @if (visibleLearnings().length) {
-      <section class="bg-gray-800 py-10">
-        <h2 class="text-4xl font-bold text-center mb-16 text-white">Learn more</h2>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 gap-8">
-          @for (learning of visibleLearnings(); track learning.id) {
-            <mat-card class="shadow-md rounded-lg overflow-hidden p-4">
-              <h3 class="text-2xl font-semibold mb-4 text-center lg:text-center">{{ learning.title }}</h3>
-              <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(learning.body)" class="rich-content"></div>
-            </mat-card>
-          }
-        </div>
-      </section>
-    }
 
-    @if (visibleStories().length) {
-      <section class="bg-gray-800 py-10">
-        <h2 class="text-4xl font-bold text-center mb-16 text-white">Stories</h2>
-        <h3 class="text-2xl font-bold text-center mb-6 text-white">Hear from participants!</h3>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 gap-8">
-          @for (story of visibleStories(); track story.name) {
-            <mat-card class="lg:!grid lg:!grid-cols-2" appearance="outlined">
-              <img
-                mat-card-image
-                [src]="story.imageUrl"
-                width="300"
-                height="100%"
-                alt="Testimonial Image"
-                class="object-cover w-full lg:h-full h-96"
-                loading="lazy"
-              />
-              <div class="p-6">
-                <h3 class="text-xl font-semibold mb-4 text-center lg:text-left">
-                  {{ story.name }}
-                </h3>
-                <p>{{ story.description }}</p>
-              </div>
-            </mat-card>
-          }
-        </div>
-      </section>
-    }
-
-    @let wwa = whatWeAreStore.whatWeAre();
-    @if (wwa && !wwa.hidden) {
-      <section class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="sr-only">About the Financial Wellbeing Alliance</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-16">
-            <div class="flex flex-col">
-              <div class="h-full flex flex-col">
-                <div class="p-6 flex-grow">
-                  <h3 class="text-xl font-semibold mb-4">Who we are</h3>
-                  <p>{{ wwa.whoWeAreDescription }}</p>
-                </div>
-                <div class="text-center mt-auto">
-                  <a mat-raised-button color="primary" href="/about-us" class="mt-4">About Us</a>
-                </div>
-              </div>
+    @if (descriptionStore.description(); as description) {
+      @if (!description.hidden) {
+        <section id="programs" class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <div class="mx-auto max-w-7xl">
+            <div class="max-w-3xl">
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ programsEyebrow() }}</p>
+              <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+                {{ programsTitle() }}
+              </h2>
+              <p class="mt-4 text-base leading-7 text-ink-muted">{{ programsDescription() }}</p>
             </div>
-            <div class="flex flex-col">
-              <div class="h-full flex flex-col">
-                <div class="p-6 flex-grow">
-                  <h3 class="text-xl font-semibold mb-4">What we do</h3>
-                  <p>{{ wwa.whatWeDoDescription }}</p>
+
+            <div class="mt-10 grid gap-5 md:grid-cols-2">
+              @for (program of programs(); track program.title) {
+                <article
+                  class="group flex h-full flex-col rounded-3xl border border-outline bg-surface-raised p-7 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:p-8"
+                >
+                  <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
+                    <mat-icon>{{ program.icon }}</mat-icon>
+                  </span>
+                  <h3 class="mt-6 font-serif text-2xl font-semibold text-ink">{{ program.title }}</h3>
+                  <p class="mt-4 text-sm leading-7 text-ink-muted sm:text-base">{{ program.description }}</p>
+                </article>
+              }
+            </div>
+          </div>
+        </section>
+
+        <section class="bg-canvas px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="financial-facts-title">
+          <div class="mx-auto max-w-7xl">
+            <div class="max-w-3xl">
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ factsEyebrow() }}</p>
+              <h2
+                id="financial-facts-title"
+                class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
+              >
+                {{ factsTitle() }}
+              </h2>
+              <p class="mt-4 text-sm leading-6 text-ink-subtle">{{ factsSource() }}</p>
+            </div>
+            <dl class="mt-10 grid gap-5 md:grid-cols-3">
+              @for (fact of financialFacts(); track fact.statistic) {
+                <div class="rounded-3xl border border-outline bg-surface p-7 sm:p-8">
+                  <dt class="font-serif text-4xl font-semibold tracking-tight text-brand-strong">
+                    {{ fact.statistic }}
+                  </dt>
+                  <dd class="mt-4 text-base leading-7 text-ink-muted">{{ fact.description }}</dd>
                 </div>
-                <div class="text-center mt-auto">
-                  <a mat-raised-button color="primary" href="/about-us" class="mt-4">About Us</a>
-                </div>
+              }
+            </dl>
+          </div>
+        </section>
+      }
+    }
+
+    @if (whatWeAreStore.whatWeAre(); as whatWeAre) {
+      @if (!whatWeAre.hidden) {
+        <section class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="who-we-are-title">
+          <div class="mx-auto max-w-7xl">
+            <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+              <div class="max-w-xl">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ whoWeAreEyebrow() }}</p>
+                <h2
+                  id="who-we-are-title"
+                  class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
+                >
+                  {{ whoWeAreTitle() }}
+                </h2>
+                <p class="mt-5 text-base leading-7 text-ink-muted">{{ whoWeAreDescription() }}</p>
+                <a
+                  class="mt-7 inline-flex items-center rounded-xl border border-outline bg-surface-raised px-5 py-3 text-sm font-bold text-ink transition-colors hover:border-brand hover:bg-brand-soft/30 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface"
+                  [href]="aboutUsLink()"
+                >
+                  {{ aboutUsButtonText() }}
+                </a>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                @for (partner of partners(); track partner.name) {
+                  <article
+                    class="rounded-2xl border border-outline bg-surface-raised p-6 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:last:col-span-2"
+                  >
+                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-brand">{{ partner.shortName }}</p>
+                    <h3 class="mt-2 text-lg font-bold text-ink">{{ partner.name }}</h3>
+                    <p class="mt-3 text-sm leading-6 text-ink-muted">{{ partner.description }}</p>
+                  </article>
+                }
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      }
     }
-
-    <mas-footer />
   `,
-  host: {
-    class: 'block',
-  },
+  host: { class: 'block bg-surface' },
 })
 export class HomeComponent {
-  descriptionStore = inject(DescriptionStore);
-  storiesStore = inject(StoriesStore);
-  introductionStore = inject(IntroductionStore);
-  learningsStore = inject(LearningsStore);
-  whatWeAreStore = inject(WhatWeAreStore);
-  sanitizer = inject(DomSanitizer);
-
-  visibleLearnings = computed(() =>
-    this.learningsStore.sectionHidden() ? [] : this.learningsStore.learnings().filter((l) => !l.hidden),
+  readonly descriptionStore = inject(DescriptionStore);
+  readonly introductionStore = inject(IntroductionStore);
+  readonly whatWeAreStore = inject(WhatWeAreStore);
+  readonly heroHeading = computed(() => this.splitHeroTitle()[0]);
+  readonly heroSubheading = computed(() => this.splitHeroTitle()[1]);
+  readonly heroCtaText = computed(() => this.introductionStore.introduction().ctaText.trim());
+  readonly heroImageUrl = computed(() => this.introductionStore.introduction().imageUrl);
+  readonly heroImageAlt = computed(() => this.introductionStore.introduction().imageText || DEFAULT_HERO_ALT);
+  readonly usesDefaultHeroImage = computed(() => this.heroImageUrl() === DEFAULT_HERO_IMAGE);
+  readonly programsTitle = computed(() => this.descriptionStore.description()?.title ?? '');
+  readonly programsEyebrow = computed(() => this.descriptionStore.description()?.eyebrow ?? '');
+  readonly programsDescription = computed(() => this.toPlainText(this.descriptionStore.description()?.body));
+  readonly programs = computed(() => {
+    const content = this.parseJsonItems<ProgramContent>(this.descriptionStore.description()?.programsJson);
+    return content.map((program, index) => ({ ...program, icon: PROGRAM_ICONS[index] ?? 'savings' }));
+  });
+  readonly factsEyebrow = computed(() => this.descriptionStore.description()?.factsEyebrow ?? '');
+  readonly factsTitle = computed(() => this.descriptionStore.description()?.factsTitle ?? '');
+  readonly factsSource = computed(() => this.descriptionStore.description()?.factsSource ?? '');
+  readonly financialFacts = computed(() =>
+    this.parseJsonItems<FinancialFact>(this.descriptionStore.description()?.factsJson),
   );
-  visibleStories = computed(() =>
-    this.storiesStore.sectionHidden() ? [] : this.storiesStore.stories().filter((s) => !s.hidden),
+  readonly whoWeAreEyebrow = computed(() => this.whatWeAreStore.whatWeAre()?.eyebrow ?? '');
+  readonly whoWeAreTitle = computed(() => this.whatWeAreStore.whatWeAre()?.title ?? '');
+  readonly whoWeAreDescription = computed(() => this.whatWeAreStore.whatWeAre()?.whoWeAreDescription ?? '');
+  readonly aboutUsButtonText = computed(() => this.whatWeAreStore.whatWeAre()?.buttonText ?? '');
+  readonly aboutUsLink = computed(() => this.whatWeAreStore.whatWeAre()?.buttonLink ?? '');
+  readonly partners = computed(() =>
+    this.parseJsonItems<PartnerContent>(this.whatWeAreStore.whatWeAre()?.partnersJson),
   );
 
   constructor() {
     this.descriptionStore.getDescription();
     this.introductionStore.getIntroduction();
-    this.storiesStore.getStories();
-    this.learningsStore.getLearnings();
     this.whatWeAreStore.getWhatWeAre();
+  }
+
+  private splitHeroTitle(): readonly [string, string] {
+    const title = this.introductionStore.introduction().title.trim();
+    const separatorIndex = title.indexOf(':');
+    if (separatorIndex === -1) return [title, ''];
+
+    return [title.slice(0, separatorIndex).trim(), title.slice(separatorIndex + 1).trim()];
+  }
+
+  private parseJsonItems<T>(value: string | undefined): readonly T[] {
+    if (!value) return [];
+
+    try {
+      const parsed: unknown = JSON.parse(value);
+      return Array.isArray(parsed) ? (parsed as T[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private toPlainText(value: string | undefined): string {
+    return (
+      value
+        ?.replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() ?? ''
+    );
   }
 }

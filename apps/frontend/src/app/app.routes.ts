@@ -1,17 +1,18 @@
 import { Route } from '@angular/router';
-import { adminGuard, authGuard, partnerStaffGuard } from '@mas/frontend-shared-auth';
+import { adminGuard, authGuard, guestGuard, partnerStaffGuard } from '@mas/frontend-shared-auth';
 import { seoResolver } from '@mas/frontend-shared-util';
 
 export const appRoutes: Route[] = [
   {
     path: '',
+    canActivate: [guestGuard],
     resolve: [seoResolver],
     loadComponent: () => import('@mas/frontend-home').then((m) => m.HomeComponent),
     data: {
       seo: {
-        title: 'Financial Wellbeing Programs',
+        title: 'Metro Atlanta Saves',
         description:
-          'We are here to help you save money! Did you know that having an emergency savings fund increases happiness and decreases stress?',
+          'Financial literacy and wellbeing programs that help Metro Atlanta individuals and families build economic stability and independence.',
       },
     },
   },
