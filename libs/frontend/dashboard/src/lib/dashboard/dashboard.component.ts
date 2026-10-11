@@ -1,18 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { ProgramsStore } from '@mas/frontend-shared-data-access';
-
-type DiscussionBoard = {
-  id: string;
-  name: string;
-  description: string | null;
-  memberCount: number;
-  postCount: number;
-};
+import { DiscussionBoardsStore, ProgramsStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-dashboard',
@@ -56,7 +47,7 @@ type DiscussionBoard = {
                 <mat-icon>forum</mat-icon>
               </span>
             </div>
-            <p class="mt-3 text-2xl font-bold text-ink">{{ boards().length }}</p>
+            <p class="mt-3 text-2xl font-bold text-ink">{{ discussionBoardsStore.boards().length }}</p>
           </article>
           <article class="rounded-2xl border border-outline bg-surface px-5 py-4 shadow-sm">
             <div class="flex items-center justify-between gap-4">
@@ -261,15 +252,14 @@ type DiscussionBoard = {
   host: { class: 'block' },
 })
 export class DashboardComponent {
-  private readonly http = inject(HttpClient);
   readonly authStore = inject(AuthStore);
+  readonly discussionBoardsStore = inject(DiscussionBoardsStore);
   readonly programsStore = inject(ProgramsStore);
-  readonly boards = signal<DiscussionBoard[]>([]);
   readonly welcomeHeading = computed(() => {
     const firstName = this.authStore.user()?.firstName?.trim();
     return firstName ? `Welcome back, ${firstName}.` : 'Welcome back.';
   });
-  readonly topBoards = computed(() => this.boards().slice(0, 3));
+  readonly topBoards = computed(() => this.discussionBoardsStore.boards().slice(0, 3));
   readonly availablePrograms = computed(() => {
     const enrolledProgramIds = new Set(this.programsStore.usersPrograms().map((program) => program.id));
     return this.programsStore.upcomingPrograms().filter((program) => !enrolledProgramIds.has(program.id));
@@ -308,9 +298,6 @@ export class DashboardComponent {
   constructor() {
     this.programsStore.getProgramsForUser();
     this.programsStore.getUpcoming();
-    this.http.get<DiscussionBoard[]>('/api/discussion-boards').subscribe({
-      next: (boards) => this.boards.set(boards),
-      error: () => this.boards.set([]),
-    });
+    this.discussionBoardsStore.getBoards().subscribe({ error: () => undefined });
   }
 }
