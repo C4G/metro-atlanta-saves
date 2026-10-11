@@ -25,7 +25,7 @@ type DiscussionBoard = {
           <div class="max-w-2xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-strong">Your dashboard</p>
             <h1 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              Welcome back{{ firstName() ? ', ' + firstName() : '' }}.
+              {{ welcomeHeading() }}
             </h1>
             <p class="mt-3 max-w-xl text-sm leading-6 text-ink-muted">
               Continue your program, connect with your community, or find practical tools for your next step.
@@ -265,7 +265,10 @@ export class DashboardComponent {
   readonly authStore = inject(AuthStore);
   readonly programsStore = inject(ProgramsStore);
   readonly boards = signal<DiscussionBoard[]>([]);
-  readonly firstName = computed(() => this.authStore.user()?.firstName ?? '');
+  readonly welcomeHeading = computed(() => {
+    const firstName = this.authStore.user()?.firstName?.trim();
+    return firstName ? `Welcome back, ${firstName}.` : 'Welcome back.';
+  });
   readonly topBoards = computed(() => this.boards().slice(0, 3));
   readonly availablePrograms = computed(() => {
     const enrolledProgramIds = new Set(this.programsStore.usersPrograms().map((program) => program.id));

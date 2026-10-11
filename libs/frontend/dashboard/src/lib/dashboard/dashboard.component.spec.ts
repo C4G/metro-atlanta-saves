@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { DashboardComponent } from './dashboard.component';
 
@@ -59,7 +59,7 @@ describe('DashboardComponent', () => {
 
     expect(getProgramsForUser).toHaveBeenCalledTimes(1);
     expect(getUpcoming).toHaveBeenCalledTimes(1);
-    expect(fixture.componentInstance.firstName()).toBe('Jordan');
+    expect(fixture.componentInstance.welcomeHeading()).toBe('Welcome back, Jordan.');
     expect(fixture.componentInstance.boards()).toHaveLength(1);
     expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Welcome back, Jordan.');
   });
@@ -69,5 +69,17 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.availablePrograms().map((program) => program.id)).toEqual(['program-2']);
+  });
+
+  it('shows the empty discussion state when boards cannot be loaded', () => {
+    TestBed.overrideProvider(HttpClient, {
+      useValue: { get: jest.fn(() => throwError(() => new Error('Request failed'))) },
+    });
+
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.boards()).toEqual([]);
+    expect(fixture.nativeElement.textContent).toContain('No discussion boards are available yet.');
   });
 });
