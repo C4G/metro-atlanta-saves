@@ -110,6 +110,13 @@ describe('Better Auth bootstrap', () => {
     }
   });
 
+  it('requires an administrator session to update home-page content', async () => {
+    for (const path of ['/api/description', '/api/introduction', '/api/what-we-are']) {
+      const response = await request(app.getHttpServer()).patch(path).send({});
+      expect(response.status).toBe(401);
+    }
+  });
+
   it('does not expose the retired custom JWT auth endpoints', async () => {
     for (const path of ['/api/auth/signup', '/api/auth/signin', '/api/auth/forgot-password']) {
       const response = await request(app.getHttpServer()).post(path).send({});

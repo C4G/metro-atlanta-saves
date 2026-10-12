@@ -6,11 +6,9 @@ test.describe('homepage accessibility structure', () => {
   });
 
   test('provides a descriptive title and a single page heading', async ({ page }) => {
-    await expect(page).toHaveTitle('Financial Wellbeing Programs | Financial Wellbeing Alliance');
+    await expect(page).toHaveTitle('Metro Atlanta Saves | Financial Wellbeing Alliance');
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Financial wellbeing programs for Atlanta communities',
-    );
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('1000 save $1000');
   });
 
   test('appends the configured title ending on other pages', async ({ page }) => {
@@ -38,7 +36,7 @@ test.describe('homepage accessibility structure', () => {
   });
 
   test('names the home logo link and describes the hero image', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Building Resilient Professionals home' })).toHaveCount(1);
+    await expect(page.getByRole('link', { name: 'Metro Atlanta Saves home' })).toHaveCount(1);
     await expect(
       page.getByAltText('Financial Wellbeing Alliance participants pose together in front of graduation decorations'),
     ).toHaveCount(1);

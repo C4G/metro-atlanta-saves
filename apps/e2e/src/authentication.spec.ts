@@ -10,7 +10,7 @@ test.describe('authentication', () => {
     const password = 'ValidPassword123!';
 
     await page.goto('/register');
-    await expect(page.getByLabel('First Name')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Register' })).toBeEnabled();
     await page.getByLabel('First Name').fill(firstName);
     await page.getByLabel('Last Name').fill(lastName);
     await page.getByLabel('Email').fill(email);
