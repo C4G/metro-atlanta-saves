@@ -11,15 +11,15 @@ export class WhatWeAreService {
   }
 
   update(data: UpdateWhatWeAreDto) {
-    const { id, whoWeAreDescription, whatWeDoDescription, hidden } = data;
+    const { id, ...content } = data;
     if (id) {
       return this.prismaService.whatWeAre.update({
         where: { id },
-        data: { whoWeAreDescription, whatWeDoDescription, ...(hidden !== undefined ? { hidden } : {}) },
+        data: content,
       });
     }
     return this.prismaService.whatWeAre.create({
-      data: { whoWeAreDescription, whatWeDoDescription },
+      data: content,
     });
   }
 }

@@ -148,7 +148,7 @@ export const adminRoutes: Route[] = [
       },
       {
         path: 'home-management',
-        redirectTo: 'home-management/stories',
+        redirectTo: 'home-management/introduction',
       },
       {
         path: 'home-management',
@@ -160,8 +160,8 @@ export const adminRoutes: Route[] = [
             resolve: [seoResolver],
             data: {
               seo: {
-                title: `Stories ${TITLE_SUFFIX}`,
-                description: 'Manage stories on the home page',
+                title: `Community Stories ${TITLE_SUFFIX}`,
+                description: 'Manage participant stories on the landing page',
               },
             },
           },
@@ -171,8 +171,8 @@ export const adminRoutes: Route[] = [
             resolve: [seoResolver],
             data: {
               seo: {
-                title: `Learnings ${TITLE_SUFFIX}`,
-                description: 'Manage learn more information for the home page',
+                title: `Program Highlights ${TITLE_SUFFIX}`,
+                description: 'Manage the practical path forward cards on the landing page',
               },
             },
           },
@@ -182,8 +182,8 @@ export const adminRoutes: Route[] = [
             resolve: [seoResolver],
             data: {
               seo: {
-                title: `Description ${TITLE_SUFFIX}`,
-                description: 'Manage the description section on the home page',
+                title: `Programs Overview ${TITLE_SUFFIX}`,
+                description: 'Manage the programs introduction on the landing page',
               },
             },
           },
@@ -193,8 +193,19 @@ export const adminRoutes: Route[] = [
             resolve: [seoResolver],
             data: {
               seo: {
-                title: `Introduction ${TITLE_SUFFIX}`,
-                description: 'Manage the introduction section on the home page',
+                title: `Hero ${TITLE_SUFFIX}`,
+                description: 'Manage the landing page hero section',
+              },
+            },
+          },
+          {
+            path: 'financial-facts',
+            loadComponent: () => import('./home-management/financial-facts/financial-facts.component'),
+            resolve: [seoResolver],
+            data: {
+              seo: {
+                title: `Financial Facts ${TITLE_SUFFIX}`,
+                description: 'Manage the financial facts on the landing page',
               },
             },
           },
@@ -204,8 +215,8 @@ export const adminRoutes: Route[] = [
             resolve: [seoResolver],
             data: {
               seo: {
-                title: `Who We Are / What We Do ${TITLE_SUFFIX}`,
-                description: 'Manage the Who We Are and What We Do section on the home page',
+                title: `Who We Are ${TITLE_SUFFIX}`,
+                description: 'Manage the organization and program purpose content on the landing page',
               },
             },
           },
@@ -213,8 +224,8 @@ export const adminRoutes: Route[] = [
         resolve: [seoResolver],
         data: {
           seo: {
-            title: `Home Management ${TITLE_SUFFIX}`,
-            description: 'Manage stories, learnings, description, and introduction for users',
+            title: `Landing Page ${TITLE_SUFFIX}`,
+            description: 'Manage each section of the public landing page',
           },
         },
       },

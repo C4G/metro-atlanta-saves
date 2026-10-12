@@ -7,12 +7,8 @@ import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { type Introduction } from '@mas/prisma-client/browser';
 
-export type IntroductionConfig = Introduction & {
-  titleEnding: string;
-};
-
 type IntroductionState = {
-  introduction: IntroductionConfig;
+  introduction: Introduction;
 };
 
 const initialState: IntroductionState = {
@@ -20,6 +16,10 @@ const initialState: IntroductionState = {
     id: '-1',
     title: 'Financial wellbeing programs for Atlanta communities',
     titleEnding: 'Financial Wellbeing Alliance',
+    eyebrow: 'Metro Atlanta Saves',
+    description:
+      'We are dedicated to empowering individuals and families through a range of financial literacy and wellbeing programs that foster economic stability and independence.',
+    ctaText: 'Explore our programs',
     imageUrl: '/assets/background/atlanta-cohort.webp',
     imageText: 'Financial Wellbeing Alliance participants pose together in front of graduation decorations',
     hidden: false,
@@ -33,17 +33,20 @@ export const IntroductionStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods((store) => ({
-    setIntroduction: (introduction: IntroductionConfig) => patchState(store, { introduction }),
+    setIntroduction: (introduction: Introduction) => patchState(store, { introduction }),
   })),
   withMethods((store, http = inject(HttpClient), snackBar = inject(MatSnackBar)) => ({
     getIntroduction: rxMethod<void>(
       pipe(
         filter(() => store.introduction().id === '-1'),
         switchMap(() =>
-          http.get<IntroductionConfig>(BASE_URL).pipe(
+          http.get<Introduction>(BASE_URL).pipe(
             tapResponse({
               next: (introduction) => {
-                patchState(store, (state) => ({ ...state, introduction }));
+                patchState(store, (state) => ({
+                  ...state,
+                  introduction: { ...state.introduction, ...introduction },
+                }));
               },
               error: () => {
                 snackBar.open('There was an error retreiving the introduction', undefined, {
@@ -56,15 +59,15 @@ export const IntroductionStore = signalStore(
         ),
       ),
     ),
-    patchIntroduction: rxMethod<FormData | IntroductionConfig>(
+    patchIntroduction: rxMethod<FormData | Introduction>(
       pipe(
         switchMap((introduction) =>
-          http.patch<IntroductionConfig>(`${BASE_URL}`, introduction).pipe(
+          http.patch<Introduction>(`${BASE_URL}`, introduction).pipe(
             tapResponse({
               next: (introduction) => {
                 patchState(store, (state) => ({
                   ...state,
-                  introduction,
+                  introduction: { ...state.introduction, ...introduction },
                 }));
                 snackBar.open(`introduction has been updated`, undefined, {
                   panelClass: 'success',

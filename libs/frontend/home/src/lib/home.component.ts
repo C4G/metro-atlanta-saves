@@ -1,333 +1,260 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
-import {
-  DescriptionStore,
-  IntroductionStore,
-  LearningsStore,
-  StoriesStore,
-  WhatWeAreStore,
-} from '@mas/frontend-shared-data-access';
+import { NgOptimizedImage } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+import { DescriptionStore, IntroductionStore, WhatWeAreStore } from '@mas/frontend-shared-data-access';
+
+type FinancialFact = {
+  description: string;
+  statistic: string;
+};
+
+type PartnerContent = {
+  description: string;
+  name: string;
+  shortName: string;
+};
+
+type ProgramContent = {
+  description: string;
+  title: string;
+};
+
+const DEFAULT_HERO_IMAGE = '/assets/background/atlanta-cohort.webp';
+const DEFAULT_HERO_ALT = 'Financial Wellbeing Alliance participants pose together in front of graduation decorations';
+const PROGRAM_ICONS = ['savings', 'groups', 'storefront', 'trending_up'] as const;
+
 @Component({
   selector: 'mas-home',
-  imports: [MatIconModule],
+  imports: [MatIcon, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let intro = introductionStore.introduction();
-    @if (intro.hidden) {
-      <h1 class="sr-only">{{ intro.title }}</h1>
-    } @else {
-      <section class="relative isolate overflow-hidden bg-gray-950 text-white">
-        @if (!intro.imageHidden) {
-          <img
-            class="absolute inset-0 -z-20 h-full w-full object-cover"
-            [src]="intro.imageUrl"
-            [alt]="
-              intro.imageText ||
-              'Financial Wellbeing Alliance participants pose together in front of graduation decorations'
-            "
-          />
-        }
-        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-gray-950 via-gray-950/75 to-gray-950/25"></div>
-        <div
-          class="mx-auto flex min-h-[34rem] max-w-7xl items-end px-5 py-14 sm:px-8 sm:py-20 lg:min-h-[38rem] lg:px-12"
-        >
-          <div class="max-w-3xl">
-            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-teal-200">Building financial resilience</p>
-            <h1 class="max-w-3xl font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-              {{ intro.title }}
-            </h1>
-            <p class="mt-6 max-w-xl text-base leading-7 text-slate-200 sm:text-lg">
-              Tools, guidance, and a community designed to help you build a stronger financial future.
-            </p>
-            <a
-              class="mt-8 inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-bold text-brand-on transition-colors hover:bg-brand-strong focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-gray-950"
-              href="#start"
-            >
-              Explore the program
-              <mat-icon class="landing-inline-icon">arrow_downward</mat-icon>
-            </a>
-          </div>
-        </div>
-      </section>
-    }
-
-    @if (descriptionStore.description(); as description) {
-      @if (!description.hidden) {
-        <section id="start" class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-          <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-            <div class="flex justify-center lg:justify-start">
-              <div class="flex aspect-square w-48 items-center justify-center rounded-3xl bg-brand-soft p-6 sm:w-56">
-                <img
-                  src="assets/Logo/brp-logo-community-no-arrow.png?v=1"
-                  class="h-full w-full object-contain [filter:var(--mas-logo-filter)]"
-                  width="224"
-                  height="224"
-                  alt="Building Resilient Professionals logo"
+    @if (intro.id !== '-1') {
+      @if (intro.hidden) {
+        <h1 class="sr-only">{{ intro.title }}</h1>
+      } @else {
+        <section class="relative isolate overflow-hidden bg-gray-950 text-white">
+          @if (!intro.imageHidden) {
+            @if (usesDefaultHeroImage()) {
+              <picture>
+                <source media="(max-width: 640px)" srcset="/assets/background/atlanta-cohort-640w.webp 640w" />
+                <source
+                  media="(max-width: 1080px)"
+                  srcset="
+                    /assets/background/atlanta-cohort-828w.webp   828w,
+                    /assets/background/atlanta-cohort-1080w.webp 1080w
+                  "
+                  sizes="100vw"
                 />
-              </div>
-            </div>
-            <div>
-              <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">A practical path forward</p>
-              <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-                {{ description.title }}
-              </h2>
-              <div
-                class="wysiwyg mt-6 max-w-2xl text-base leading-7 text-ink-muted [&_a]:font-semibold [&_a]:text-brand [&_ol]:my-8 [&_ol]:grid [&_ol]:list-none [&_ol]:gap-3 [&_ol]:p-0 [&_ol]:[counter-reset:home-step] [&_ol>li]:relative [&_ol>li]:min-h-[4.5rem] [&_ol>li]:rounded-2xl [&_ol>li]:border [&_ol>li]:border-outline [&_ol>li]:bg-surface-subtle [&_ol>li]:py-[1.1rem] [&_ol>li]:pl-[4.5rem] [&_ol>li]:pr-5 [&_ol>li]:text-ink-muted [&_ol>li]:[counter-increment:home-step] [&_ol>li]:before:absolute [&_ol>li]:before:left-4 [&_ol>li]:before:top-4 [&_ol>li]:before:grid [&_ol>li]:before:size-9 [&_ol>li]:before:place-items-center [&_ol>li]:before:rounded-full [&_ol>li]:before:bg-brand [&_ol>li]:before:text-[0.8rem] [&_ol>li]:before:font-bold [&_ol>li]:before:text-brand-on [&_ol>li]:before:content-[counter(home-step)]"
-                [innerHTML]="sanitizer.bypassSecurityTrustHtml(description.body)"
-              ></div>
+                <source srcset="/assets/background/atlanta-cohort-1920w.webp 1920w" />
+                <img
+                  class="absolute inset-0 -z-20 h-full w-full object-cover"
+                  ngSrc="/assets/background/atlanta-cohort.webp"
+                  [alt]="heroImageAlt()"
+                  fill
+                  priority
+                  sizes="100vw"
+                />
+              </picture>
+            } @else {
+              <img
+                class="absolute inset-0 -z-20 h-full w-full object-cover"
+                [ngSrc]="heroImageUrl()"
+                [alt]="heroImageAlt()"
+                fill
+                priority
+                sizes="100vw"
+              />
+            }
+          }
+          <div class="absolute inset-0 -z-10 bg-gradient-to-r from-gray-950 via-gray-950/80 to-gray-950/35"></div>
+          <div
+            class="mx-auto flex min-h-[36rem] max-w-7xl items-end px-5 py-14 sm:px-8 sm:py-20 lg:min-h-[40rem] lg:px-12"
+          >
+            <div class="max-w-3xl">
+              <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-teal-200">{{ intro.eyebrow }}</p>
+              <h1 class="max-w-3xl font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+                {{ heroHeading() }}
+              </h1>
+              @if (heroSubheading()) {
+                <p class="mt-4 font-serif text-2xl font-medium text-teal-100 sm:text-3xl">
+                  {{ heroSubheading() }}
+                </p>
+              }
+              <p class="mt-6 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
+                {{ intro.description }}
+              </p>
+              <a
+                class="mt-8 inline-flex items-center rounded-xl bg-brand px-5 py-3 text-sm font-bold text-brand-on transition-colors hover:bg-brand-strong focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-gray-950"
+                href="#programs"
+              >
+                {{ heroCtaText() }}
+              </a>
             </div>
           </div>
         </section>
       }
     }
 
-    @if (visibleLearnings().length) {
-      <section class="bg-canvas px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-        <div class="mx-auto max-w-5xl">
-          <div class="max-w-2xl">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Build your knowledge</p>
-            <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              What the program is built for
-            </h2>
-            <p class="mt-4 text-base leading-7 text-ink-muted">
-              Explore the reason behind the program, what it aims to change, and what participants receive.
-            </p>
-          </div>
-          @let learning = activeLearning();
-          @if (learning) {
-            <article class="mt-10 overflow-hidden rounded-3xl border border-outline bg-surface">
-              <div class="border-b border-outline bg-brand px-7 py-6 text-brand-on sm:px-10">
-                <div class="flex items-center justify-between gap-5">
-                  <div class="flex items-center gap-4">
-                    <span
-                      class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-sm font-bold text-ink"
-                    >
-                      0{{ learningIndex() + 1 }}
-                    </span>
-                    <div>
-                      <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-teal-100">
-                        Building resilient professionals
-                      </p>
-                      <h3 class="mt-1 font-serif text-3xl font-semibold">{{ learning.title }}</h3>
-                    </div>
-                  </div>
-                  <mat-icon class="text-amber-200">{{ learningIcon() }}</mat-icon>
-                </div>
-              </div>
-              <div class="p-7 sm:p-10">
-                <div
-                  class="wysiwyg max-w-3xl text-base leading-8 text-ink-muted [&_ul]:my-[1.4rem] [&_ul]:grid [&_ul]:list-none [&_ul]:gap-3 [&_ul]:p-0 [&_ul>li]:relative [&_ul>li]:pl-[1.4rem] [&_ul>li]:text-ink-muted [&_ul>li]:before:absolute [&_ul>li]:before:left-0 [&_ul>li]:before:top-[0.58rem] [&_ul>li]:before:size-2 [&_ul>li]:before:rounded-full [&_ul>li]:before:bg-brand"
-                  [innerHTML]="sanitizer.bypassSecurityTrustHtml(learning.body)"
-                ></div>
-                <div class="mt-10 flex items-center justify-between gap-4 border-t border-outline pt-6">
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-brand focus:outline-none focus:ring-2 focus:ring-brand"
-                    (click)="previousLearning()"
-                  >
-                    <mat-icon>arrow_back</mat-icon>
-                    Previous
-                  </button>
-                  <div class="flex gap-2" aria-label="Program topic selection">
-                    @for (item of visibleLearnings(); track item.id; let index = $index) {
-                      <button
-                        type="button"
-                        class="h-2 rounded-full transition-all [&.landing-dot-inactive]:bg-outline focus:outline-none focus:ring-2 focus:ring-brand"
-                        [class.w-7]="learningIndex() === index"
-                        [class.bg-teal-700]="learningIndex() === index"
-                        [class.w-2]="learningIndex() !== index"
-                        [class.landing-dot-inactive]="learningIndex() !== index"
-                        [attr.aria-label]="'Show ' + item.title"
-                        (click)="showLearning(index)"
-                      ></button>
-                    }
-                  </div>
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-brand focus:outline-none focus:ring-2 focus:ring-brand"
-                    (click)="nextLearning()"
-                  >
-                    Next
-                    <mat-icon>arrow_forward</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </article>
-          }
-        </div>
-      </section>
-    }
-
-    @if (visibleStories().length) {
-      <section class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-        <div class="mx-auto max-w-5xl">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Community stories</p>
+    @if (descriptionStore.description(); as description) {
+      @if (!description.hidden) {
+        <section id="programs" class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <div class="mx-auto max-w-7xl">
+            <div class="max-w-3xl">
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ programsEyebrow() }}</p>
               <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-                Progress looks different for everyone
+                {{ programsTitle() }}
               </h2>
+              <p class="mt-4 text-base leading-7 text-ink-muted">{{ programsDescription() }}</p>
             </div>
-            <p class="max-w-sm text-sm leading-6 text-ink-subtle">Hear from people putting their goals into action.</p>
-          </div>
-          @let story = activeStory();
-          @if (story) {
-            <article
-              class="mt-10 overflow-hidden rounded-3xl bg-surface-raised text-ink md:grid md:grid-cols-[0.85fr_1.15fr]"
-            >
-              <img
-                [src]="story.imageUrl"
-                width="600"
-                height="500"
-                alt="{{ story.name }}'s story"
-                class="h-72 w-full object-cover md:h-full"
-                loading="lazy"
-              />
-              <div class="flex min-h-80 flex-col p-7 sm:p-10">
-                <span class="font-serif text-6xl leading-none text-amber-300">“</span>
-                <p class="mt-5 max-w-xl text-lg leading-8 text-ink-muted">{{ story.description }}</p>
-                <div class="mt-auto flex items-end justify-between gap-5 pt-10">
-                  <div>
-                    <h3 class="font-serif text-xl font-semibold">{{ story.name }}</h3>
-                    <p class="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-teal-300">Participant story</p>
-                  </div>
-                  <div class="flex gap-2">
-                    <button
-                      type="button"
-                      class="flex h-10 w-10 items-center justify-center rounded-full border border-outline text-ink transition-colors hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
-                      aria-label="Previous story"
-                      (click)="previousStory()"
-                    >
-                      <mat-icon>arrow_back</mat-icon>
-                    </button>
-                    <button
-                      type="button"
-                      class="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-brand-on transition-colors hover:bg-brand-strong focus:outline-none focus:ring-2 focus:ring-brand"
-                      aria-label="Next story"
-                      (click)="nextStory()"
-                    >
-                      <mat-icon>arrow_forward</mat-icon>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </article>
-            <div class="mt-5 flex justify-center gap-2" aria-label="Story selection">
-              @for (item of visibleStories(); track item.id; let index = $index) {
-                <button
-                  type="button"
-                  class="h-2 rounded-full transition-all [&.landing-dot-inactive]:bg-outline focus:outline-none focus:ring-2 focus:ring-brand"
-                  [class.w-7]="storyIndex() === index"
-                  [class.bg-teal-700]="storyIndex() === index"
-                  [class.w-2]="storyIndex() !== index"
-                  [class.landing-dot-inactive]="storyIndex() !== index"
-                  [attr.aria-label]="'Show story ' + (index + 1)"
-                  (click)="showStory(index)"
-                ></button>
+
+            <div class="mt-10 grid gap-5 md:grid-cols-2">
+              @for (program of programs(); track program.title) {
+                <article
+                  class="group flex h-full flex-col rounded-3xl border border-outline bg-surface-raised p-7 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:p-8"
+                >
+                  <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
+                    <mat-icon>{{ program.icon }}</mat-icon>
+                  </span>
+                  <h3 class="mt-6 font-serif text-2xl font-semibold text-ink">{{ program.title }}</h3>
+                  <p class="mt-4 text-sm leading-7 text-ink-muted sm:text-base">{{ program.description }}</p>
+                </article>
               }
             </div>
-          }
-        </div>
-      </section>
+          </div>
+        </section>
+
+        <section class="bg-canvas px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="financial-facts-title">
+          <div class="mx-auto max-w-7xl">
+            <div class="max-w-3xl">
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ factsEyebrow() }}</p>
+              <h2
+                id="financial-facts-title"
+                class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
+              >
+                {{ factsTitle() }}
+              </h2>
+              <p class="mt-4 text-sm leading-6 text-ink-subtle">{{ factsSource() }}</p>
+            </div>
+            <dl class="mt-10 grid gap-5 md:grid-cols-3">
+              @for (fact of financialFacts(); track fact.statistic) {
+                <div class="rounded-3xl border border-outline bg-surface p-7 sm:p-8">
+                  <dt class="font-serif text-4xl font-semibold tracking-tight text-brand-strong">
+                    {{ fact.statistic }}
+                  </dt>
+                  <dd class="mt-4 text-base leading-7 text-ink-muted">{{ fact.description }}</dd>
+                </div>
+              }
+            </dl>
+          </div>
+        </section>
+      }
     }
 
-    @let wwa = whatWeAreStore.whatWeAre();
-    @if (wwa && !wwa.hidden) {
-      <section class="bg-canvas px-5 py-16 text-ink sm:px-8 lg:px-12 lg:py-24">
-        <div class="mx-auto max-w-7xl">
-          <div class="max-w-2xl">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">The alliance</p>
-            <h2 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Support that meets you where you are</h2>
+    @if (whatWeAreStore.whatWeAre(); as whatWeAre) {
+      @if (!whatWeAre.hidden) {
+        <section class="bg-surface px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="who-we-are-title">
+          <div class="mx-auto max-w-7xl">
+            <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+              <div class="max-w-xl">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand">{{ whoWeAreEyebrow() }}</p>
+                <h2
+                  id="who-we-are-title"
+                  class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
+                >
+                  {{ whoWeAreTitle() }}
+                </h2>
+                <p class="mt-5 text-base leading-7 text-ink-muted">{{ whoWeAreDescription() }}</p>
+                <a
+                  class="mt-7 inline-flex items-center rounded-xl border border-outline bg-surface-raised px-5 py-3 text-sm font-bold text-ink transition-colors hover:border-brand hover:bg-brand-soft/30 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface"
+                  [href]="aboutUsLink()"
+                >
+                  {{ aboutUsButtonText() }}
+                </a>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                @for (partner of partners(); track partner.name) {
+                  <article
+                    class="rounded-2xl border border-outline bg-surface-raised p-6 transition-colors hover:border-brand hover:bg-brand-soft/30 sm:last:col-span-2"
+                  >
+                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-brand">{{ partner.shortName }}</p>
+                    <h3 class="mt-2 text-lg font-bold text-ink">{{ partner.name }}</h3>
+                    <p class="mt-3 text-sm leading-6 text-ink-muted">{{ partner.description }}</p>
+                  </article>
+                }
+              </div>
+            </div>
           </div>
-          <div class="mt-10 grid gap-4 md:grid-cols-2">
-            <article class="rounded-2xl border border-outline bg-surface p-7">
-              <mat-icon class="text-emerald-300">groups</mat-icon>
-              <h3 class="mt-5 text-xl font-bold">Who we are</h3>
-              <p class="mt-3 leading-7 text-ink-muted">{{ wwa.whoWeAreDescription }}</p>
-            </article>
-            <article class="rounded-2xl border border-outline bg-surface p-7">
-              <mat-icon class="text-emerald-300">trending_up</mat-icon>
-              <h3 class="mt-5 text-xl font-bold">What we do</h3>
-              <p class="mt-3 leading-7 text-ink-muted">{{ wwa.whatWeDoDescription }}</p>
-            </article>
-          </div>
-          <a
-            class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-emerald-300 transition-colors hover:text-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-            href="/about-us"
-          >
-            Learn more about us
-            <mat-icon class="landing-inline-icon">arrow_forward</mat-icon>
-          </a>
-        </div>
-      </section>
+        </section>
+      }
     }
   `,
-  styles: [
-    `
-      .landing-inline-icon {
-        width: 1rem;
-        height: 1rem;
-        font-size: 1rem;
-        line-height: 1rem;
-      }
-    `,
-  ],
   host: { class: 'block bg-surface' },
 })
 export class HomeComponent {
   readonly descriptionStore = inject(DescriptionStore);
-  readonly storiesStore = inject(StoriesStore);
   readonly introductionStore = inject(IntroductionStore);
-  readonly learningsStore = inject(LearningsStore);
   readonly whatWeAreStore = inject(WhatWeAreStore);
-  readonly sanitizer = inject(DomSanitizer);
-  readonly visibleLearnings = computed(() =>
-    this.learningsStore.sectionHidden() ? [] : this.learningsStore.learnings().filter((learning) => !learning.hidden),
-  );
-  readonly visibleStories = computed(() =>
-    this.storiesStore.sectionHidden() ? [] : this.storiesStore.stories().filter((story) => !story.hidden),
-  );
-  readonly learningIndex = signal(0);
-  readonly activeLearning = computed(() => {
-    const learnings = this.visibleLearnings();
-    return learnings[this.learningIndex() % learnings.length];
+  readonly heroHeading = computed(() => this.splitHeroTitle()[0]);
+  readonly heroSubheading = computed(() => this.splitHeroTitle()[1]);
+  readonly heroCtaText = computed(() => this.introductionStore.introduction().ctaText.trim());
+  readonly heroImageUrl = computed(() => this.introductionStore.introduction().imageUrl);
+  readonly heroImageAlt = computed(() => this.introductionStore.introduction().imageText || DEFAULT_HERO_ALT);
+  readonly usesDefaultHeroImage = computed(() => this.heroImageUrl() === DEFAULT_HERO_IMAGE);
+  readonly programsTitle = computed(() => this.descriptionStore.description()?.title ?? '');
+  readonly programsEyebrow = computed(() => this.descriptionStore.description()?.eyebrow ?? '');
+  readonly programsDescription = computed(() => this.toPlainText(this.descriptionStore.description()?.body));
+  readonly programs = computed(() => {
+    const content = this.parseJsonItems<ProgramContent>(this.descriptionStore.description()?.programsJson);
+    return content.map((program, index) => ({ ...program, icon: PROGRAM_ICONS[index] ?? 'savings' }));
   });
-  readonly storyIndex = signal(0);
-  readonly activeStory = computed(() => {
-    const stories = this.visibleStories();
-    return stories[this.storyIndex() % stories.length];
-  });
+  readonly factsEyebrow = computed(() => this.descriptionStore.description()?.factsEyebrow ?? '');
+  readonly factsTitle = computed(() => this.descriptionStore.description()?.factsTitle ?? '');
+  readonly factsSource = computed(() => this.descriptionStore.description()?.factsSource ?? '');
+  readonly financialFacts = computed(() =>
+    this.parseJsonItems<FinancialFact>(this.descriptionStore.description()?.factsJson),
+  );
+  readonly whoWeAreEyebrow = computed(() => this.whatWeAreStore.whatWeAre()?.eyebrow ?? '');
+  readonly whoWeAreTitle = computed(() => this.whatWeAreStore.whatWeAre()?.title ?? '');
+  readonly whoWeAreDescription = computed(() => this.whatWeAreStore.whatWeAre()?.whoWeAreDescription ?? '');
+  readonly aboutUsButtonText = computed(() => this.whatWeAreStore.whatWeAre()?.buttonText ?? '');
+  readonly aboutUsLink = computed(() => this.whatWeAreStore.whatWeAre()?.buttonLink ?? '');
+  readonly partners = computed(() =>
+    this.parseJsonItems<PartnerContent>(this.whatWeAreStore.whatWeAre()?.partnersJson),
+  );
+
   constructor() {
     this.descriptionStore.getDescription();
     this.introductionStore.getIntroduction();
-    this.storiesStore.getStories();
-    this.learningsStore.getLearnings();
     this.whatWeAreStore.getWhatWeAre();
   }
-  showStory(index: number): void {
-    this.storyIndex.set(index);
+
+  private splitHeroTitle(): readonly [string, string] {
+    const title = this.introductionStore.introduction().title.trim();
+    const separatorIndex = title.indexOf(':');
+    if (separatorIndex === -1) return [title, ''];
+
+    return [title.slice(0, separatorIndex).trim(), title.slice(separatorIndex + 1).trim()];
   }
-  showLearning(index: number): void {
-    this.learningIndex.set(index);
+
+  private parseJsonItems<T>(value: string | undefined): readonly T[] {
+    if (!value) return [];
+
+    try {
+      const parsed: unknown = JSON.parse(value);
+      return Array.isArray(parsed) ? (parsed as T[]) : [];
+    } catch {
+      return [];
+    }
   }
-  previousLearning(): void {
-    const length = this.visibleLearnings().length;
-    if (length) this.learningIndex.update((index) => (index - 1 + length) % length);
-  }
-  nextLearning(): void {
-    const length = this.visibleLearnings().length;
-    if (length) this.learningIndex.update((index) => (index + 1) % length);
-  }
-  learningIcon(): string {
-    return ['lightbulb', 'flag', 'school'][this.learningIndex() % 3];
-  }
-  previousStory(): void {
-    const length = this.visibleStories().length;
-    if (length) this.storyIndex.update((index) => (index - 1 + length) % length);
-  }
-  nextStory(): void {
-    const length = this.visibleStories().length;
-    if (length) this.storyIndex.update((index) => (index + 1) % length);
+
+  private toPlainText(value: string | undefined): string {
+    return (
+      value
+        ?.replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() ?? ''
+    );
   }
 }
