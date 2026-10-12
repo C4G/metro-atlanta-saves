@@ -10,13 +10,11 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatAnchor, MatIconButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { BlogsStore } from '@mas/frontend-shared-data-access';
@@ -25,12 +23,13 @@ import { BlogsStore } from '@mas/frontend-shared-data-access';
   selector: 'mas-blog',
   imports: [
     CommonModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatDividerModule,
-    MatTooltipModule,
-    MatMenuModule,
+    MatAnchor,
+    MatDivider,
+    MatIcon,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     RouterLink,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

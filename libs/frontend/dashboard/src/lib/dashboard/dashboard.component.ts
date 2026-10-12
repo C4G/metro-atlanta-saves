@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatAnchor } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-dashboard',
-  imports: [CommonModule, MatCardModule, MatButtonModule, RouterLink],
+  imports: [CommonModule, MatAnchor, MatCard, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6">

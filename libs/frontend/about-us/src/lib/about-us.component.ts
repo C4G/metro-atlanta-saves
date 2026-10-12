@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
+import { MatCard } from '@angular/material/card';
 
 import { HeroComponent } from '@mas/frontend-shared-layout';
 import { CohortsStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-about-us',
-  imports: [HeroComponent, MatButtonModule, MatCardModule, MatIconModule, NgOptimizedImage],
+  imports: [HeroComponent, MatCard, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mas-hero

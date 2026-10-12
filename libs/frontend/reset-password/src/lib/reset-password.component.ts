@@ -1,16 +1,15 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
 
 @Component({
   selector: 'mas-reset-password',
-  imports: [ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule],
+  imports: [MatButton, MatError, MatFormField, MatInput, MatLabel, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col px-6 max-w-3xl mx-auto p-6">

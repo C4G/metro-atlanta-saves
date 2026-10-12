@@ -1,11 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatAnchor } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
@@ -13,16 +9,7 @@ import { BlogsStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-blogs',
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatDividerModule,
-    MatTooltipModule,
-    MatMenuModule,
-    RouterLink,
-  ],
+  imports: [CommonModule, MatAnchor, MatCard, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col px-6 max-w-5xl mx-auto p-6 color-accent mb-6" color="accent">
