@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angu
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatError, MatFormField, MatHint, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatError, MatHint, MatInput, MatLabel, MatPrefix } from '@angular/material/input';
+import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
@@ -18,7 +18,10 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
     MatInput,
     MatAnchor,
     MatButton,
-    MatFormFieldModule,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatFormField,
     MatLabel,
     ReactiveFormsModule,
     RouterLink,
@@ -28,7 +31,7 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
     MatOption,
     MatSelect,
     MatHint,
-    MatDatepickerModule,
+    MatSuffix,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

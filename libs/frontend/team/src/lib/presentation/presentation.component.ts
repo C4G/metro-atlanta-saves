@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { MatAnchor } from '@angular/material/button';
 
 @Component({
   selector: 'mas-description',
-  imports: [MatButtonModule],
+  imports: [MatAnchor],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col p-5">
