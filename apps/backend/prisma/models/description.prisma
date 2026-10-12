@@ -1,9 +1,15 @@
 model Description {
-  id         String  @id @default(uuid())
-  title      String
-  body       String
-  buttonText String?
-  buttonLink String?
-  logoUrl    String?
-  hidden     Boolean @default(false)
+  id           String  @id @default(uuid())
+  title        String
+  body         String
+  eyebrow      String  @default("What we do")
+  programsJson String  @default("[]")
+  factsEyebrow String  @default("Did you know")
+  factsTitle   String  @default("Many households are navigating financial uncertainty")
+  factsSource  String  @default("According to the Federal Reserve")
+  factsJson    String  @default("[]")
+  buttonText   String?
+  buttonLink   String?
+  logoUrl      String?
+  hidden       Boolean @default(false)
 }

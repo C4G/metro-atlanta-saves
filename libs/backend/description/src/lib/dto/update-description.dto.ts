@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsBoolean, IsJSON, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class UpdateDescriptionDto {
   @IsString()
@@ -25,6 +25,38 @@ export class UpdateDescriptionDto {
     description: 'The description body',
   })
   body!: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, example: 'What we do', required: false })
+  eyebrow?: string;
+
+  @IsOptional()
+  @IsJSON()
+  @IsString()
+  @ApiProperty({ type: String, description: 'JSON-encoded landing page programs', required: false })
+  programsJson?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, example: 'Did you know', required: false })
+  factsEyebrow?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  factsTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  factsSource?: string;
+
+  @IsOptional()
+  @IsJSON()
+  @IsString()
+  @ApiProperty({ type: String, description: 'JSON-encoded landing page facts', required: false })
+  factsJson?: string;
 
   @IsOptional()
   @IsString()

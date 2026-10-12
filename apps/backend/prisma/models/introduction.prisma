@@ -2,6 +2,9 @@ model Introduction {
   id          String  @id @default(uuid())
   title       String
   titleEnding String  @default("Financial Wellbeing Alliance")
+  eyebrow     String  @default("Metro Atlanta Saves")
+  description String  @default("We are dedicated to empowering individuals and families through a range of financial literacy and wellbeing programs that foster economic stability and independence.")
+  ctaText     String  @default("Explore our programs")
   imageText   String?
   imageUrl    String
   hidden      Boolean @default(false)
