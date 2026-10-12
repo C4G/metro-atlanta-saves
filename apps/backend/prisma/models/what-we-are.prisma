@@ -1,6 +1,11 @@
 model WhatWeAre {
   id                  String  @id @default(uuid())
+  eyebrow             String  @default("Who we are")
+  title               String  @default("Atlanta nonprofits working together")
   whoWeAreDescription String
   whatWeDoDescription String
+  buttonText          String  @default("Learn more about us")
+  buttonLink          String  @default("/about-us")
+  partnersJson        String  @default("[]")
   hidden              Boolean @default(false)
 }

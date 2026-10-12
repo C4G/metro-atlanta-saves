@@ -27,6 +27,18 @@ export class UpdateIntroductionDto {
   titleEnding!: string;
 
   @IsString()
+  @ApiProperty({ type: String, example: 'Metro Atlanta Saves', description: 'The hero eyebrow text' })
+  eyebrow!: string;
+
+  @IsString()
+  @ApiProperty({ type: String, description: 'The hero supporting description' })
+  description!: string;
+
+  @IsString()
+  @ApiProperty({ type: String, example: 'Explore our programs', description: 'The hero call-to-action label' })
+  ctaText!: string;
+
+  @IsString()
   @ApiProperty({
     type: String,
     example: 'The Image Text',

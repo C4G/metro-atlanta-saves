@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsJSON, IsOptional, IsString } from 'class-validator';
 
 export class UpdateWhatWeAreDto {
   @IsOptional()
@@ -11,6 +11,14 @@ export class UpdateWhatWeAreDto {
     required: false,
   })
   id?: string;
+
+  @IsString()
+  @ApiProperty({ type: String, example: 'Who we are' })
+  eyebrow!: string;
+
+  @IsString()
+  @ApiProperty({ type: String, example: 'Atlanta nonprofits working together' })
+  title!: string;
 
   @IsString()
   @ApiProperty({
@@ -27,6 +35,19 @@ export class UpdateWhatWeAreDto {
     description: 'The What We Do description',
   })
   whatWeDoDescription!: string;
+
+  @IsString()
+  @ApiProperty({ type: String, example: 'Learn more about us' })
+  buttonText!: string;
+
+  @IsString()
+  @ApiProperty({ type: String, example: '/about-us' })
+  buttonLink!: string;
+
+  @IsJSON()
+  @IsString()
+  @ApiProperty({ type: String, description: 'JSON-encoded partner organizations' })
+  partnersJson!: string;
 
   @IsOptional()
   @IsBoolean()

@@ -10,9 +10,9 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@mas/frontend-home').then((m) => m.HomeComponent),
     data: {
       seo: {
-        title: 'Financial Wellbeing Programs',
+        title: 'Metro Atlanta Saves',
         description:
-          'We are here to help you save money! Did you know that having an emergency savings fund increases happiness and decreases stress?',
+          'Financial literacy and wellbeing programs that help Metro Atlanta individuals and families build economic stability and independence.',
       },
     },
   },

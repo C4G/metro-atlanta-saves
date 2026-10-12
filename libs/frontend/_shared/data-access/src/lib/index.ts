@@ -3,6 +3,7 @@ export * from './checkpoint-names';
 export * from './checkpoints';
 export * from './cohorts';
 export * from './description';
+export * from './discussion-boards';
 export * from './educational-resources';
 export * from './images';
 export * from './introduction';

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID, signal } from 
 import { isPlatformBrowser } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ThemeService } from '@mas/frontend-shared-data-access';
@@ -11,15 +11,15 @@ import { PushNotificationService } from '../../services/push-notification.servic
 
 @Component({
   selector: 'mas-nav',
-  imports: [MatIcon, MatMenuModule, RouterLink, RouterLinkActive],
+  imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="h-14 border-b border-outline bg-surface/95 text-ink backdrop-blur sm:h-16" aria-label="Primary">
-      <div class="mx-auto flex h-full max-w-[100rem] items-center gap-3 px-3 sm:gap-4 sm:px-5">
+      <div class="flex h-full w-full items-center gap-3 px-3 sm:gap-4 sm:px-5">
         <a
           [routerLink]="authStore.user() ? '/dashboard' : '/'"
           class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
-          aria-label="Building Resilient Professionals home"
+          aria-label="Metro Atlanta Saves home"
         >
           <span class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-soft">
             <img
@@ -31,15 +31,15 @@ import { PushNotificationService } from '../../services/push-notification.servic
             />
           </span>
           <span class="hidden min-w-0 sm:block">
-            <span class="block truncate text-sm font-bold tracking-tight text-ink">Building Resilient</span>
-            <span class="block text-[10px] font-bold uppercase tracking-[0.15em] text-brand">Professionals</span>
+            <span class="block truncate text-sm font-bold tracking-tight text-ink">Metro Atlanta</span>
+            <span class="block text-[10px] font-bold uppercase tracking-[0.15em] text-brand">Saves</span>
           </span>
         </a>
 
         <div class="ml-auto flex items-center gap-2 sm:gap-3">
           <button
             type="button"
-            class="nav-icon lg:hidden"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:hidden"
             aria-label="Open navigation menu"
             [matMenuTriggerFor]="mobileNavMenu"
             data-testid="navigation-menu"
@@ -50,9 +50,9 @@ import { PushNotificationService } from '../../services/push-notification.servic
           @if (authStore.user()) {
             <a
               routerLink="/dashboard"
-              routerLinkActive="nav-link-active"
+              routerLinkActive="bg-brand-soft/70 text-brand-strong"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="nav-link hidden lg:inline-flex"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
             >
               <mat-icon>space_dashboard</mat-icon>
               Dashboard
@@ -61,15 +61,19 @@ import { PushNotificationService } from '../../services/push-notification.servic
           @if (authStore.isStaff()) {
             <a
               routerLink="/partner-staff/programs"
-              routerLinkActive="nav-link-active"
-              class="nav-link hidden lg:inline-flex"
+              routerLinkActive="bg-brand-soft/70 text-brand-strong"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
             >
               <mat-icon>folder_managed</mat-icon>
               Programs
             </a>
           }
           @if (authStore.isAdmin()) {
-            <a routerLink="/admin" routerLinkActive="nav-link-active" class="nav-link hidden lg:inline-flex">
+            <a
+              routerLink="/admin"
+              routerLinkActive="bg-brand-soft/70 text-brand-strong"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
+            >
               <mat-icon>admin_panel_settings</mat-icon>
               Admin
             </a>
@@ -77,7 +81,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
 
           <button
             type="button"
-            class="nav-icon hidden lg:flex"
+            class="hidden h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:flex"
             [attr.aria-label]="themeService.darkMode() ? 'Use light mode' : 'Use dark mode'"
             (click)="themeService.toggleDarkMode()"
           >
@@ -117,32 +121,40 @@ import { PushNotificationService } from '../../services/push-notification.servic
       </div>
     </nav>
 
-    <mat-menu #mobileNavMenu="matMenu" class="brand-menu">
+    <mat-menu #mobileNavMenu="matMenu" class="min-w-60 rounded-2xl border border-outline p-2">
       @if (authStore.user()) {
-        <a mat-menu-item routerLink="/dashboard">
+        <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/dashboard">
           <mat-icon>space_dashboard</mat-icon>
           <span>Dashboard</span>
         </a>
       }
       @if (authStore.isStaff()) {
-        <a mat-menu-item routerLink="/partner-staff/programs">
+        <a
+          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+          mat-menu-item
+          routerLink="/partner-staff/programs"
+        >
           <mat-icon>folder_managed</mat-icon>
           <span>Programs</span>
         </a>
       }
       @if (authStore.isAdmin()) {
-        <a mat-menu-item routerLink="/admin">
+        <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/admin">
           <mat-icon>admin_panel_settings</mat-icon>
           <span>Admin settings</span>
         </a>
       }
-      <button mat-menu-item (click)="themeService.toggleDarkMode()">
+      <button
+        class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+        mat-menu-item
+        (click)="themeService.toggleDarkMode()"
+      >
         <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
         <span>{{ themeService.darkMode() ? 'Light mode' : 'Dark mode' }}</span>
       </button>
     </mat-menu>
 
-    <mat-menu #userMenu="matMenu" class="brand-menu">
+    <mat-menu #userMenu="matMenu" class="min-w-60 rounded-2xl border border-outline p-2">
       <div class="mx-3 mb-2 flex items-center gap-3 border-b border-outline px-1 pb-3 pt-1 text-ink">
         <span
           class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
@@ -156,7 +168,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           <span class="block truncate text-xs text-ink-subtle">{{ authStore.user()?.email }}</span>
         </span>
       </div>
-      <a mat-menu-item routerLink="/profile">
+      <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/profile">
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +188,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
         </span>
       </a>
       @if (notificationsSupported) {
-        <button mat-menu-item (click)="toggleNotifications()">
+        <button
+          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+          mat-menu-item
+          (click)="toggleNotifications()"
+        >
           <span class="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +212,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </span>
         </button>
       }
-      <button mat-menu-item (click)="authStore.logout()">
+      <button
+        class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+        mat-menu-item
+        (click)="authStore.logout()"
+      >
         <span class="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -218,7 +238,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
       </button>
       @if (authStore.isStaff() || authStore.realUser()) {
         @if (!authStore.realUser()) {
-          <button mat-menu-item (click)="openMimicUserModal()">
+          <button
+            class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+            mat-menu-item
+            (click)="openMimicUserModal()"
+          >
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -238,7 +262,11 @@ import { PushNotificationService } from '../../services/push-notification.servic
             </span>
           </button>
         } @else {
-          <button mat-menu-item (click)="authStore.stopMimickingUser()">
+          <button
+            class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+            mat-menu-item
+            (click)="authStore.stopMimickingUser()"
+          >
             <span class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -355,50 +383,6 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </div>
         </div>
       </div>
-    }
-  `,
-  styles: `
-    .nav-link {
-      align-items: center;
-      border-radius: 0.5rem;
-      color: rgb(var(--mas-ink-muted));
-      font-size: 0.75rem;
-      font-weight: 700;
-      gap: 0.375rem;
-      padding: 0.5rem 0.75rem;
-      transition:
-        background-color 150ms ease,
-        color 150ms ease;
-    }
-
-    .nav-link:hover,
-    .nav-link-active {
-      background: rgb(var(--mas-brand-soft) / 0.7);
-      color: rgb(var(--mas-brand-strong));
-    }
-
-    .nav-link mat-icon {
-      font-size: 1rem;
-      height: 1rem;
-      line-height: 1rem;
-      width: 1rem;
-    }
-
-    .nav-icon {
-      align-items: center;
-      border-radius: 0.75rem;
-      color: rgb(var(--mas-ink-muted));
-      height: 2.25rem;
-      justify-content: center;
-      transition:
-        background-color 150ms ease,
-        color 150ms ease;
-      width: 2.25rem;
-    }
-
-    .nav-icon:hover {
-      background: rgb(var(--mas-surface-subtle));
-      color: rgb(var(--mas-ink));
     }
   `,
   host: {
