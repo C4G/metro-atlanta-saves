@@ -1,16 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatBadge } from '@angular/material/badge';
 import { MatButton } from '@angular/material/button';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
 
 @Component({
   selector: 'mas-login',
-  imports: [ReactiveFormsModule, MatBadge, MatButton, MatError, MatFormField, MatIcon, MatInput, MatLabel, RouterLink],
+  imports: [ReactiveFormsModule, MatButton, MatError, MatFormField, MatInput, MatLabel, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col px-6 max-w-3xl mx-auto p-6">
