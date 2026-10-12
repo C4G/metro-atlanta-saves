@@ -1,9 +1,9 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, effect, inject, untracked } from '@angular/core';
 import { type AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatError, MatHint, MatInput, MatLabel } from '@angular/material/input';
+import { MatError, MatFormField, MatHint, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { RichTextEditorComponent } from '@mas/frontend-shared-components';
@@ -19,16 +19,19 @@ function dateRangeValidator(control: AbstractControl) {
 @Component({
   selector: 'mas-add-program',
   imports: [
-    MatDatepickerModule,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
     MatDialogClose,
     MatDialogContent,
     MatError,
-    MatFormFieldModule,
+    MatFormField,
     MatHint,
     MatInput,
     MatLabel,
     MatOption,
     MatSelect,
+    MatSuffix,
     ReactiveFormsModule,
     RichTextEditorComponent,
   ],

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { RequirementsStore } from '../../../../program/requirements/requirements.store';
 
@@ -13,7 +13,7 @@ type CloneData = {
 
 @Component({
   selector: 'mas-clone-dialog',
-  imports: [MatDialogClose, MatFormFieldModule, MatInput, ReactiveFormsModule],
+  imports: [MatDialogClose, MatError, MatFormField, MatInput, MatLabel, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bg-surface text-ink">
