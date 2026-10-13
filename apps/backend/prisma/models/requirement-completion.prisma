@@ -1,0 +1,12 @@
+model RequirementCompletion {
+  userId        String
+  programId     String
+  requirementId String
+  completedAt   DateTime        @default(now())
+  userOnProgram UsersOnPrograms @relation(fields: [userId, programId], references: [userId, programId], onDelete: Cascade)
+  requirement   Requirement     @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  @@id([userId, programId, requirementId])
+  @@index([requirementId])
+  @@map("requirement_completions")
+}

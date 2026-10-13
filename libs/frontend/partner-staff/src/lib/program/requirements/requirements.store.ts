@@ -8,7 +8,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { type Requirement } from '@mas/prisma-client/browser';
 import { MatDialog } from '@angular/material/dialog';
 
-export type AddRequirement = Omit<Requirement, 'id' | 'createdAt' | 'updatedAt' | 'programId'>;
+type RequirementPayload = Omit<Requirement, 'dueAt' | 'actionInstructions'> & {
+  actionInstructions?: string | null;
+  dueAt?: string | null;
+};
+
+export type AddRequirement = Omit<RequirementPayload, 'id' | 'createdAt' | 'updatedAt' | 'programId'>;
 
 type RequirementsState = {
   programId: string | null;
@@ -61,7 +66,7 @@ export const RequirementsStore = signalStore(
         ),
       ),
     ),
-    patchRequirement: rxMethod<Partial<Requirement>>(
+    patchRequirement: rxMethod<Partial<RequirementPayload> & Pick<Requirement, 'id'>>(
       pipe(
         switchMap((requirement) =>
           http.patch<Requirement>(`${BASE_URL}/${requirement.id}`, requirement).pipe(

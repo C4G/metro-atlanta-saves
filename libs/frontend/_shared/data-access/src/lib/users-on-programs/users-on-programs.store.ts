@@ -38,15 +38,22 @@ export const UsersOnProgramsStore = signalStore(
       const userData = userOnProgram();
       const requirement = userData?.program.Requirement;
       const requirementStatus = userData?.requirementStatus;
+      const requirementCompletions = userData?.requirementCompletions ?? [];
 
       return (
-        requirement?.map(({ id, name, EducationalContent }) => {
-          const isCompleted = requirementStatus?.includes(id);
+        requirement?.map(({ id, name, actionInstructions, dueAt, EducationalContent }) => {
+          const completion = requirementCompletions.find((item) => item.requirementId === id);
+          const isCompleted = requirementStatus?.includes(id) || !!completion;
 
           return {
+            requirementId: id,
             requirementName: name,
+            actionInstructions,
+            dueAt,
+            isActionRequirement: !!actionInstructions?.trim(),
             status: isCompleted ? 'COMPLETED' : 'TODO',
             isCompleted,
+            completedAt: completion?.completedAt ?? null,
             completionLink: EducationalContent?.link ?? null,
           };
         }) ?? []
@@ -120,6 +127,60 @@ export const UsersOnProgramsStore = signalStore(
                 },
               }),
             ),
+          ),
+        ),
+      ),
+      completeRequirement: rxMethod<string>(
+        pipe(
+          switchMap((requirementId) =>
+            http
+              .post<{
+                requirementId: string;
+                completedAt: Date;
+              }>(`${BASE_URL}/user/program/${store.programId()}/requirements/${requirementId}/completion`, {})
+              .pipe(
+                tapResponse({
+                  next: (completion) => {
+                    patchState(store, (state) => {
+                      const userOnProgram = state.userOnProgram;
+                      if (!userOnProgram) {
+                        return state;
+                      }
+
+                      const requirementCompletions = userOnProgram.requirementCompletions ?? [];
+                      const existingCompletion = requirementCompletions.find(
+                        (item) => item.requirementId === completion.requirementId,
+                      );
+
+                      return {
+                        ...state,
+                        userOnProgram: {
+                          ...userOnProgram,
+                          requirementCompletions: existingCompletion
+                            ? requirementCompletions.map((item) =>
+                                item.requirementId === completion.requirementId ? completion : item,
+                              )
+                            : [...requirementCompletions, completion],
+                        },
+                      };
+                    });
+                    snackBar.open('Requirement marked complete', undefined, {
+                      panelClass: 'success',
+                      duration: 5000,
+                    });
+                  },
+                  error: (resp: HttpErrorResponse) => {
+                    snackBar.open(
+                      resp.error.message?.[0] || 'There was an error completing this requirement',
+                      undefined,
+                      {
+                        panelClass: 'error',
+                        duration: 5000,
+                      },
+                    );
+                  },
+                }),
+              ),
           ),
         ),
       ),
