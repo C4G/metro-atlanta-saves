@@ -1,27 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthStore } from '@mas/frontend-shared-auth';
-
-type BoardInfo = {
-  id: string;
-  name: string;
-  description: string | null;
-  programId: string | null;
-  cohortId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    bio?: string | null;
-  };
-  memberCount: number;
-  postCount: number;
-};
+import { type DiscussionBoard, DiscussionBoardsStore } from '@mas/frontend-shared-data-access';
 
 type User = {
   id: string;
@@ -1008,11 +991,12 @@ type DiscussionTag = {
     </div>
   `,
 })
-export class DiscussionBoardsDashboardComponent implements OnInit {
+export class DiscussionBoardsDashboardComponent {
   private http = inject(HttpClient);
   private authStore = inject(AuthStore);
+  private discussionBoardsStore = inject(DiscussionBoardsStore);
 
-  boards = signal<BoardInfo[]>([]);
+  boards = this.discussionBoardsStore.boards;
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   savingBoard = signal(false);
@@ -1021,8 +1005,8 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
   showSettingsModal = signal(false);
   pendingDeleteBoardName = signal<string | null>(null);
   pendingDeleteCallback = signal<(() => void) | null>(null);
-  editingBoard = signal<BoardInfo | null>(null);
-  settingsBoard = signal<BoardInfo | null>(null);
+  editingBoard = signal<DiscussionBoard | null>(null);
+  settingsBoard = signal<DiscussionBoard | null>(null);
   boardMembers = signal<BoardMember[]>([]);
   removingMemberId = signal<string | null>(null);
   togglingAdminId = signal<string | null>(null);
@@ -1099,18 +1083,12 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
       );
   });
 
-  ngOnInit(): void {
-    this.loadBoards();
-  }
-
   private loadBoards(): void {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.http.get<BoardInfo[]>('/api/discussion-boards').subscribe({
-      next: (boards) => {
-        this.boards.set(boards);
-      },
+    this.discussionBoardsStore.getBoards().subscribe({
+      next: () => undefined,
       error: (error) => {
         this.errorMessage.set(this.getApiErrorMessage(error, 'Unable to load discussion boards.'));
       },
@@ -1136,7 +1114,7 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
     });
   }
 
-  canManageBoard(board: BoardInfo): boolean {
+  canManageBoard(board: DiscussionBoard): boolean {
     const user = this.currentUser();
     return this.isAdmin() || user?.id === board.createdBy.id;
   }
@@ -1168,7 +1146,7 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
     document.body.style.overflow = 'hidden';
   }
 
-  openBoardSettings(board: BoardInfo): void {
+  openBoardSettings(board: DiscussionBoard): void {
     this.settingsBoard.set(board);
     this.addMemberSearch.set('');
     this.newTagName.set('');
@@ -1256,11 +1234,11 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
 
     const editBoard = this.editingBoard();
     const request = editBoard
-      ? this.http.patch(`/api/discussion-boards/${editBoard.id}`, {
+      ? this.discussionBoardsStore.updateBoard(editBoard.id, {
           name: payload.name,
           description: payload.description,
         })
-      : this.http.post<{ id: string }>('/api/discussion-boards', payload);
+      : this.discussionBoardsStore.createBoard(payload);
 
     request.subscribe({
       next: (result) => {
@@ -1299,7 +1277,7 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
     this.pendingDeleteBoardName.set(editBoard.name);
     this.pendingDeleteCallback.set(() => {
       this.savingBoard.set(true);
-      this.http.delete(`/api/discussion-boards/${editBoard.id}`).subscribe({
+      this.discussionBoardsStore.deleteBoard(editBoard.id).subscribe({
         next: () => {
           this.closeBoardModal();
           this.loadBoards();
@@ -1415,10 +1393,9 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
       updateData.description = this.editingBoardDescription();
     }
 
-    this.http.patch<BoardInfo>(`/api/discussion-boards/${board.id}`, updateData).subscribe({
+    this.discussionBoardsStore.updateBoard(board.id, updateData).subscribe({
       next: (updatedBoard) => {
         this.settingsBoard.set(updatedBoard);
-        this.boards.update((list) => list.map((b) => (b.id === board.id ? updatedBoard : b)));
         this.errorMessage.set(null);
       },
       error: (error) => {
@@ -1466,9 +1443,7 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
   }
 
   private updateBoardMemberCount(boardId: string, delta: number): void {
-    this.boards.update((list) =>
-      list.map((b) => (b.id === boardId ? { ...b, memberCount: b.memberCount + delta } : b)),
-    );
+    this.discussionBoardsStore.adjustMemberCount(boardId, delta);
   }
 
   canRemoveMember(): boolean {
@@ -1485,7 +1460,7 @@ export class DiscussionBoardsDashboardComponent implements OnInit {
     this.pendingDeleteBoardName.set(board.name);
     this.pendingDeleteCallback.set(() => {
       this.deletingBoardId.set(board.id);
-      this.http.delete(`/api/discussion-boards/${board.id}`).subscribe({
+      this.discussionBoardsStore.deleteBoard(board.id).subscribe({
         next: () => {
           this.closeSettingsModal();
           this.loadBoards();
