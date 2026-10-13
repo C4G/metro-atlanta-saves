@@ -56,6 +56,16 @@ export class UsersOnProgramsController {
     return this.usersOnProgramsService.getUserOnProgram(id, request.user.id);
   }
 
+  @UseGuards(ManagedSessionGuard)
+  @Post('user/program/:programId/requirements/:requirementId/completion')
+  completeRequirement(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('requirementId') requirementId: string,
+  ) {
+    return this.usersOnProgramsService.completeRequirement(request.user.id, programId, requirementId);
+  }
+
   @UseGuards(ManagedSessionGuard, RoleGuard)
   @Roles('Administrator', 'Partner_Staff')
   @Post()

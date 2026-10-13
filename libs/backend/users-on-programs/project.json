@@ -14,6 +14,10 @@
         "main": "libs/backend/users-on-programs/src/index.ts",
         "assets": ["libs/backend/users-on-programs/*.md"]
       }
-    }},
+    },
+    "test": {
+      "dependsOn": [{ "projects": "backend", "target": "prisma-generate" }]
+    }
+  },
   "tags": []
 }

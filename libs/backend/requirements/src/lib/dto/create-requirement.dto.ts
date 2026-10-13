@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateRequirementDto {
   @IsString()
@@ -10,6 +10,25 @@ export class CreateRequirementDto {
     description: 'The name of the requirement',
   })
   name!: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: String,
+    example: 'Attend the in-person meetup and check in with the program coordinator.',
+    description: 'Instructions for an action the learner can manually mark as complete',
+  })
+  actionInstructions?: string | null;
+
+  @IsDateString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: String,
+    format: 'date-time',
+    example: '2026-11-15T23:59:00.000Z',
+    description: 'The shared due timestamp for this requirement across the program',
+  })
+  dueAt?: string | null;
 
   @IsString()
   @IsOptional()
