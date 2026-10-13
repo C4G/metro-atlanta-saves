@@ -12,7 +12,7 @@ export const injectComputedUsersCombined = (injector = inject(Injector)) => {
 
     return users.map((user) => {
       const totalRequirements = requirementsLength ?? 0;
-      const completedRequirements = user.requirementStatus?.length ?? 0;
+      const completedRequirements = (user.completedRequirementIds ?? user.requirementStatus ?? []).length;
       const percentageCompleted =
         totalRequirements > 0 ? Math.round((completedRequirements / totalRequirements) * 100) : 0;
       const percentageOutstanding = 100 - percentageCompleted;

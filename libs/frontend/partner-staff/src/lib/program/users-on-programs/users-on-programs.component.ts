@@ -66,7 +66,7 @@ export default class UsersOnProgramsComponent {
       valueFormatter: (params) => formatCurrency(params.value ?? 0, 'en-us', '$', '1.2'),
     },
     {
-      field: 'requirementStatus',
+      field: 'completedRequirementIds',
       width: 390,
       filter: true,
       cellRenderer: RequirementBadgeComponent,

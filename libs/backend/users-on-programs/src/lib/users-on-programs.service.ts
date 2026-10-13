@@ -2,7 +2,7 @@ import { CheckpointsService } from '@mas/backend-checkpoints';
 import { PrismaService } from '@mas/backend-prisma';
 import { formatCurrency } from '@mas/backend-shared';
 import { UsersOnProgramsWithName } from '@mas/models';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@mas/prisma-client';
 import * as ExcelJS from 'exceljs';
 import { CreateUsersOnProgramsDto } from './dto/create-users-on-programs.dto';
@@ -54,6 +54,9 @@ export class UsersOnProgramsService {
             },
           },
         },
+        requirementCompletions: {
+          select: { requirementId: true },
+        },
       },
       orderBy: { user: { firstName: 'asc' } },
     });
@@ -63,11 +66,18 @@ export class UsersOnProgramsService {
     );
 
     const retUsersOnPrograms: UsersOnProgramsWithName[] = usersOnPrograms.map((data) => {
-      const { user, ...rest } = data;
+      const { user, requirementCompletions, ...rest } = data;
+      const completedRequirementIds = [
+        ...new Set([
+          ...(rest.requirementStatus ?? []),
+          ...requirementCompletions.map(({ requirementId }) => requirementId),
+        ]),
+      ];
 
       return {
         ...rest,
         ...user,
+        completedRequirementIds,
         totalAmountSaved: usersTotalSavedMap[data.userId],
       };
     });
@@ -97,11 +107,43 @@ export class UsersOnProgramsService {
             },
           },
         },
+        requirementCompletions: {
+          select: { requirementId: true, completedAt: true },
+        },
         checkpoints: {
           include: { checkpointName: true, images: true },
           orderBy: [{ checkpointName: { sequence: 'asc' } }],
         },
       },
+    });
+  }
+
+  async completeRequirement(userId: string, programId: string, requirementId: string) {
+    const userOnProgram = await this.prisma.usersOnPrograms.findUnique({
+      where: { userId_programId: { userId, programId } },
+      select: { userId: true },
+    });
+
+    if (!userOnProgram) {
+      throw new UnauthorizedException(["You can only complete requirements for programs you're enrolled in."]);
+    }
+
+    const requirement = await this.prisma.requirement.findUnique({
+      where: { id: requirementId },
+      select: { programId: true, actionInstructions: true },
+    });
+
+    if (!requirement || requirement.programId !== programId || !requirement.actionInstructions?.trim()) {
+      throw new BadRequestException(['This requirement is not an action requirement in the selected program.']);
+    }
+
+    return this.prisma.requirementCompletion.upsert({
+      where: {
+        userId_programId_requirementId: { userId, programId, requirementId },
+      },
+      create: { userId, programId, requirementId },
+      update: {},
+      select: { requirementId: true, completedAt: true },
     });
   }
 
@@ -184,7 +226,11 @@ export class UsersOnProgramsService {
       await this.prisma.checkpoint.createMany({
         data,
       });
-      return { ...rest, ...user };
+      return {
+        ...rest,
+        ...user,
+        completedRequirementIds: [...new Set(createdUserOnProgram.requirementStatus ?? [])],
+      };
     } catch (error: any) {
       throw new BadRequestException([error?.message || 'Failed to add user to program']);
     }
@@ -214,14 +260,23 @@ export class UsersOnProgramsService {
           user: {
             select: { firstName: true, lastName: true },
           },
+          requirementCompletions: {
+            select: { requirementId: true },
+          },
         },
       });
       const userTotalSavedMap = await this.checkpointsService.getTotalAmountSaved(programId, [userId]);
-      const { user, ...rest } = updatedUserOnProgram;
+      const { user, requirementCompletions, ...rest } = updatedUserOnProgram;
 
       return {
         ...rest,
         ...user,
+        completedRequirementIds: [
+          ...new Set([
+            ...(updatedUserOnProgram.requirementStatus ?? []),
+            ...requirementCompletions.map(({ requirementId }) => requirementId),
+          ]),
+        ],
         totalAmountSaved: userTotalSavedMap[userId],
       };
     } catch (error: any) {
@@ -314,10 +369,9 @@ export class UsersOnProgramsService {
       ];
 
       // Mark ticks for completed requirements
+      const completedRequirementIds = new Set(userOnProgram.completedRequirementIds ?? userOnProgram.requirementStatus);
       program.Requirement.forEach((requirement) => {
-        const completed = userOnProgram.requirementStatus.some(
-          (requirementId: string) => requirementId === requirement.id,
-        );
+        const completed = completedRequirementIds.has(requirement.id);
         rowData.push(completed ? '✔' : '');
       });
 

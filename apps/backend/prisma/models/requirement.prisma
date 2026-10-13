@@ -1,12 +1,15 @@
 model Requirement {
-  id                   String              @id @default(uuid())
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @default(now())
+  id                   String                  @id @default(uuid())
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @default(now())
   name                 String
-  program              Program             @relation(fields: [programId], references: [id])
+  actionInstructions   String?
+  dueAt                DateTime?
+  program              Program                 @relation(fields: [programId], references: [id])
   programId            String
   educationalContentId String?
-  EducationalContent   EducationalContent? @relation(fields: [educationalContentId], references: [id])
+  EducationalContent   EducationalContent?     @relation(fields: [educationalContentId], references: [id])
+  completions          RequirementCompletion[]
 
   @@map("requirements")
 }
