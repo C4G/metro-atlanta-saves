@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { expect } from '@jest/globals';
 import { EducationalContentStore } from '@mas/frontend-shared-data-access';
 import { RequirementsStore } from '../../requirements.store';
 import { AddRequirementComponent } from './add-requirement.component';
@@ -42,6 +43,7 @@ describe('AddRequirementComponent action configuration', () => {
       actionInstructions: '  Join the in-person meetup.  ',
       dueDate: localDueDate,
       dueTime: localDueTime,
+      reminderDaysBefore: null,
     });
 
     component.submitForm();
@@ -51,6 +53,7 @@ describe('AddRequirementComponent action configuration', () => {
       educationalContentId: null,
       actionInstructions: 'Join the in-person meetup.',
       dueAt: new Date(`${localDueDate}T${localDueTime}`).toISOString(),
+      reminderDaysBefore: null,
     });
   });
 
@@ -62,6 +65,7 @@ describe('AddRequirementComponent action configuration', () => {
       educationalContentId: null,
       actionInstructions: 'Join the in-person meetup.',
       dueAt,
+      reminderDaysBefore: null,
     };
     fixture = TestBed.createComponent(AddRequirementComponent);
 
@@ -83,6 +87,7 @@ describe('AddRequirementComponent action configuration', () => {
       educationalContentId: null,
       actionInstructions: 'Join the in-person meetup.',
       dueAt,
+      reminderDaysBefore: null,
     });
   });
 
@@ -94,6 +99,7 @@ describe('AddRequirementComponent action configuration', () => {
       actionInstructions: '   ',
       dueDate: '2026-11-15',
       dueTime: '',
+      reminderDaysBefore: 7,
     });
 
     fixture.componentInstance.submitForm();
@@ -102,11 +108,39 @@ describe('AddRequirementComponent action configuration', () => {
       expect.objectContaining({
         actionInstructions: null,
         dueAt: new Date('2026-11-15T00:00').toISOString(),
+        reminderDaysBefore: 7,
       }),
     );
 
     fixture.componentInstance.requirementForm.controls.dueDate.setValue('');
     fixture.componentInstance.submitForm();
-    expect(addRequirement).toHaveBeenLastCalledWith(expect.objectContaining({ dueAt: null }));
+    expect(addRequirement).toHaveBeenLastCalledWith(expect.objectContaining({ dueAt: null, reminderDaysBefore: null }));
+  });
+
+  it('persists the selected reminder offset when creating a requirement', () => {
+    fixture = TestBed.createComponent(AddRequirementComponent);
+    fixture.componentInstance.requirementForm.patchValue({
+      name: 'Read the guide',
+      dueDate: '2026-11-15',
+      reminderDaysBefore: 1,
+    });
+
+    fixture.componentInstance.submitForm();
+
+    expect(addRequirement).toHaveBeenCalledWith(expect.objectContaining({ reminderDaysBefore: 1 }));
+  });
+
+  it('persists the selected reminder offset when editing a requirement', () => {
+    dialogData = {
+      id: 'requirement-1',
+      name: 'Read the guide',
+      educationalContentId: null,
+      actionInstructions: '',
+      dueAt: '2026-11-15T23:59:00.000Z',
+      reminderDaysBefore: 7,
+    };
+    fixture = TestBed.createComponent(AddRequirementComponent);
+    fixture.componentInstance.submitForm();
+    expect(patchRequirement).toHaveBeenCalledWith(expect.objectContaining({ reminderDaysBefore: 7 }));
   });
 });

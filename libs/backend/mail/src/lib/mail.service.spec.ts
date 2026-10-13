@@ -3,6 +3,36 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { MailService } from './mail.service';
 
 describe('MailService', () => {
+  it('sends an individual reminder with the Eastern due date and learner progress link', async () => {
+    const sendMail = jest.fn().mockResolvedValue(undefined);
+    const mailerService = { sendMail } as unknown as MailerService;
+    const configService = { get: jest.fn().mockReturnValue('https://app.example.com/') } as unknown as ConfigService;
+    const service = new MailService(mailerService, configService);
+
+    await service.sendRequirementDueReminder({
+      email: 'learner@example.com',
+      firstName: 'Sam',
+      requirementName: 'Attend a workshop',
+      programName: 'Career Launch',
+      dueAt: new Date('2027-01-01T02:00:00.000Z'),
+      programId: 'program-1',
+    });
+
+    expect(sendMail).toHaveBeenCalledWith({
+      to: 'learner@example.com',
+      from: '"BRPATL" <no-reply@brpatl.com>',
+      subject: 'Reminder: Attend a workshop is due soon',
+      template: './requirement-due-reminder',
+      context: {
+        firstName: 'Sam',
+        requirementName: 'Attend a workshop',
+        programName: 'Career Launch',
+        dueDate: 'December 31, 2026 at 9:00 PM',
+        url: 'https://app.example.com/program-profiles/program-1/course-progress',
+      },
+    });
+  });
+
   it('converts public rich-text image paths to absolute URLs', async () => {
     const mailerService = { sendMail: jest.fn().mockResolvedValue(undefined) } as unknown as MailerService;
     const configService = {

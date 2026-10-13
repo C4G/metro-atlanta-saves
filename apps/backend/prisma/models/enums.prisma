@@ -20,3 +20,12 @@ enum CommentVoteType {
   UP
   DOWN
 }
+
+enum RequirementReminderStatus {
+  PENDING
+  PROCESSING
+  SENT
+  SKIPPED
+  CANCELLED
+  FAILED
+}

@@ -58,6 +58,43 @@ export class MailService {
     });
   }
 
+  async sendRequirementDueReminder({
+    email,
+    firstName,
+    requirementName,
+    programName,
+    dueAt,
+    programId,
+  }: {
+    email: string;
+    firstName: string;
+    requirementName: string;
+    programName: string;
+    dueAt: Date;
+    programId: string;
+  }) {
+    const publicAppUrl = (this.configService.get<string>('PUBLIC_APP_URL') ?? 'https://brpatl.com').replace(/\/+$/, '');
+    const dueDate = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      dateStyle: 'long',
+      timeStyle: 'short',
+    }).format(dueAt);
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: '"BRPATL" <no-reply@brpatl.com>',
+      subject: `Reminder: ${requirementName} is due soon`,
+      template: './requirement-due-reminder',
+      context: {
+        firstName,
+        requirementName,
+        programName,
+        dueDate,
+        url: `${publicAppUrl}/program-profiles/${programId}/course-progress`,
+      },
+    });
+  }
+
   async sendBulkEmail(emails: string[], subject: string, body: string) {
     await this.mailerService.sendMail({
       to: emails,

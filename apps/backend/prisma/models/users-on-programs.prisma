@@ -25,6 +25,7 @@ model UsersOnPrograms {
   paidDate               DateTime?
   checkpoints            Checkpoint[]
   requirementCompletions RequirementCompletion[]
+  requirementReminders   RequirementReminderDelivery[]
   graduated              Boolean                 @default(false)
   inactive               Boolean                 @default(false)
 
