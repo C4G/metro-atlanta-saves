@@ -35,5 +35,13 @@ test.describe('authentication', () => {
 
     await expect(page).toHaveURL(/\/dashboard$/);
     await expect(page.getByRole('button', { name: 'Open account menu' })).toContainText(initials);
+
+    await page.getByRole('button', { name: 'Open account menu' }).click();
+    await page.getByRole('menuitem', { name: 'Edit Profile' }).click();
+    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page.getByRole('heading', { name: 'Profile and preferences' })).toBeVisible();
+    await page.getByLabel('About you').fill('Updated from the profile page');
+    await page.getByRole('button', { name: 'Save changes' }).click();
+    await expect(page.getByText('Your profile has been updated!')).toBeVisible();
   });
 });

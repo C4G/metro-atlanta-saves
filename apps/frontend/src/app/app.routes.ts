@@ -178,6 +178,18 @@ export const appRoutes: Route[] = [
     },
   },
   {
+    path: 'profile',
+    canActivate: [authGuard],
+    resolve: [seoResolver],
+    loadComponent: () => import('./profile.component').then((m) => m.ProfileComponent),
+    data: {
+      seo: {
+        title: 'Profile',
+        description: 'View and update your Building Resilient Professionals profile.',
+      },
+    },
+  },
+  {
     path: 'enroll/:id',
     canActivate: [authGuard],
     resolve: [seoResolver],

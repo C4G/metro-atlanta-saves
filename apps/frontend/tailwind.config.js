@@ -3,7 +3,10 @@ const { join } = require('path');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [join(__dirname, '../../(libs|apps)/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(__dirname)],
+  content: [
+    join(__dirname, '../../(libs|apps)/**/!(*.stories|*.spec).{ts,html}'),
+    ...createGlobPatternsForDependencies(__dirname),
+  ],
   theme: {
     extend: {
       colors: {
@@ -25,6 +28,7 @@ module.exports = {
           soft: 'rgb(var(--mas-brand-soft) / <alpha-value>)',
           on: 'rgb(var(--mas-on-brand) / <alpha-value>)',
         },
+        danger: 'rgb(var(--mas-danger) / <alpha-value>)',
       },
     },
   },
