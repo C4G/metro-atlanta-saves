@@ -1,0 +1,107 @@
+libs/backend/requirements/src/lib/requirement-reminder-time.spec.ts
+  s_2b29e5aceee26d::t_09bf57b1a9d50e 31
+  s_2b29e5aceee26d::t_d171ad2d6761b6 1-9,16-24,32-37
+  s_2b29e5aceee26d::t_0968b454db1406 29
+  s_2b29e5aceee26d::t_6ee1978ed8a0fa 10-15,26-28,30
+  s_2b29e5aceee26d::t_84bf45ecba769b 25
+apps/backend/prisma/models/requirement.prisma
+  s_2b29e5aceee26d::t_24a566072313e2 8,14
+libs/frontend/partner-staff/src/lib/program/requirements/ui/add-requirement/add-requirement.component.ts
+  s_2b29e5aceee26d::t_43276efa146c73 79-87,112,129
+libs/backend/users-on-programs/src/lib/users-on-programs.service.ts
+  s_2b29e5aceee26d::t_6eae9d7341ecb8 2,38,231-234
+openspec/specs/program-requirements/spec.md
+  s_2b29e5aceee26d::t_84547ff98c75c6 37-98
+libs/backend/requirements/src/lib/dto/create-requirement.dto.ts
+  s_2b29e5aceee26d::t_43276efa146c73 2,33-41
+  s_2b29e5aceee26d::t_145f2875e00a73 42
+libs/backend/requirements/src/lib/requirements.service.spec.ts
+  s_2b29e5aceee26d::t_4f8c544a2be400 97-105
+  s_2b29e5aceee26d::t_832155fa7e40d5 9-10,95-96,106-113
+  s_2b29e5aceee26d::t_371b5f94d6dc73 1-8,11-94,114-115
+libs/backend/requirements/src/lib/requirements.module.ts
+  s_2b29e5aceee26d::t_6eae9d7341ecb8 5,9-10
+libs/frontend/partner-staff/src/lib/program/requirements/ui/add-requirement/add-requirement.component.spec.ts
+  s_2b29e5aceee26d::t_971ec841f42a19 4
+  s_2b29e5aceee26d::t_896c0200a5d25c 46,56,102,111,118-119,121-130,134-136,139-144
+  s_2b29e5aceee26d::t_25171be6930b49 68
+  s_2b29e5aceee26d::t_fdcd70c4fbbb0e 117
+  s_2b29e5aceee26d::t_28b0aa96122ff8 90,120,131-133,137-138
+libs/backend/users-on-programs/src/lib/users-on-programs.module.ts
+  s_2b29e5aceee26d::t_6eae9d7341ecb8 6,11
+apps/backend/prisma/models/enums.prisma
+  s_2b29e5aceee26d::t_24a566072313e2 23-31
+libs/backend/users-on-programs/src/lib/users-on-programs.service.spec.ts
+  s_2b29e5aceee26d::t_ccccc3dbdcfc54 23,49
+  s_2b29e5aceee26d::t_dd83a6537a991f 5-7
+  s_2b29e5aceee26d::t_25171be6930b49 8-11
+  s_2b29e5aceee26d::t_2e6649b3c312f7 24-28,39,43-46,126-142
+  s_2b29e5aceee26d::t_e1cc6fe6a52d5c 143
+libs/backend/requirements/src/index.ts
+  s_2b29e5aceee26d::t_ea278d8aabc3ba 3
+  s_2b29e5aceee26d::t_d171ad2d6761b6 2
+apps/backend/src/app/app.module.ts
+  s_2b29e5aceee26d::t_6eae9d7341ecb8 27,38
+libs/backend/requirements/src/lib/requirement-reminders.service.spec.ts
+  s_2b29e5aceee26d::t_d9fb02e4b8c16a 1-6,8-21,23-31,34-38,43-88,94-200,256-274,282-299,348-349
+  s_2b29e5aceee26d::t_fdcd70c4fbbb0e 32-33,275-281,321-327
+  s_2b29e5aceee26d::t_db11d4ae64c656 39-42
+  s_2b29e5aceee26d::t_dc275a16e8ab19 7,22,89-93,300-320,328-347
+  s_2b29e5aceee26d::t_3c5afc4207499c 201-255
+apps/backend/prisma/models/users-on-programs.prisma
+  s_2b29e5aceee26d::t_24a566072313e2 28
+apps/backend/prisma/migrations/20261013000000_add_requirement_due_date_reminders/migration.sql
+  s_2b29e5aceee26d::t_24a566072313e2 1-58
+package.json
+  s_2b29e5aceee26d::t_acf40cc94dde62 40
+libs/backend/requirements/src/lib/requirement-reminders.service.ts
+  s_2b29e5aceee26d::t_fdcd70c4fbbb0e 6,75,92-94,267-269
+  s_2b29e5aceee26d::t_11491090e948c4 1-5,7-74,76-91,95-266,270-282,284-389
+  s_2b29e5aceee26d::t_971ec841f42a19 283
+apps/backend/prisma/models/requirement-reminder-delivery.prisma
+  s_2b29e5aceee26d::t_24a566072313e2 1-24
+libs/backend/requirements/src/lib/requirement-reminder-time.ts
+  s_2b29e5aceee26d::t_fdcd70c4fbbb0e 39
+  s_2b29e5aceee26d::t_d171ad2d6761b6 1-38,40-63
+apps/backend/src/assets/templates/requirement-due-reminder.hbs
+  s_2b29e5aceee26d::t_2fcfc220f22fa3 1-7
+libs/backend/mail/src/lib/mail.service.ts
+  s_2b29e5aceee26d::t_dc275a16e8ab19 79-80
+  s_2b29e5aceee26d::t_a9f794f839153c 61-78,81-97
+libs/backend/requirements/src/lib/requirements.service.ts
+  s_2b29e5aceee26d::t_896c0200a5d25c 115-116
+  s_2b29e5aceee26d::t_6eae9d7341ecb8 5,9-12,30,33-34,71-81,83,88-89,107-110,112,119-120,126-128
+  s_2b29e5aceee26d::t_980d582949f8b7 16,111,113-114,117-118,121-125
+  s_2b29e5aceee26d::t_2edef5d1d3a64b 129
+libs/backend/mail/src/lib/mail.service.spec.ts
+  s_2b29e5aceee26d::t_dc275a16e8ab19 30
+  s_2b29e5aceee26d::t_832155fa7e40d5 6-29,31-35
+openspec/changes/archive/2026-10-13-requirement-due-date-reminders/.openspec.yaml
+  s_2b29e5aceee26d::t_8db50b70c58128 1-2
+pnpm-lock.yaml
+  s_2b29e5aceee26d::t_c06e900671c317 68-70,3231-3236,4509-4511,5826-5829,14025-14030,15551-15552,17008-17012
+openspec/changes/archive/2026-10-13-requirement-due-date-reminders/design.md
+  s_2b29e5aceee26d::t_85333f57bde7f9 1-61
+openspec/changes/archive/2026-10-13-requirement-due-date-reminders/proposal.md
+  s_2b29e5aceee26d::t_87fba5de4febdd 1-27
+openspec/changes/archive/2026-10-13-requirement-due-date-reminders/specs/program-requirements/spec.md
+  s_2b29e5aceee26d::t_c43da845e0f39c 1-63
+openspec/changes/archive/2026-10-13-requirement-due-date-reminders/tasks.md
+  s_2b29e5aceee26d::t_88dffaf6762b5a 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "45f3abfb8e76114a720ee7852fe368d78cb81a11",
+  "prompts": {},
+  "sessions": {
+    "s_2b29e5aceee26d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a135dc-b4cd-7642-889a-9c837e22f87d",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
