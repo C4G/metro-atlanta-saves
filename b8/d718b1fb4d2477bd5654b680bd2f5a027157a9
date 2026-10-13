@@ -1,0 +1,86 @@
+libs/frontend/partner-staff/src/lib/program/requirements/ui/add-requirement/add-requirement.component.spec.ts
+  s_e2538b3385c1c5::t_c26dda4b68eed8 1-112
+apps/backend/prisma/models/requirement.prisma
+  h_d5b6f744415839 6-7,12
+  s_e2538b3385c1c5::t_b320da0fb1b302 2-4,8,11
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.spec.ts
+  s_e2538b3385c1c5::t_c7d07502eba061 54-67,133,152
+libs/frontend/partner-staff/src/lib/program/requirements/ui/add-requirement/add-requirement.component.ts
+  s_e2538b3385c1c5::t_c26dda4b68eed8 5,11-25,33,64-78,100-102,114-120,124,130
+libs/frontend/program-profiles/src/lib/course-progress/course-progress.component.ts
+  s_e2538b3385c1c5::t_06c8a89d1e5ad7 12,14,18,22-27,67-79
+  s_e2538b3385c1c5::t_cda941dbebc17b 30,35,40,43-53
+  s_e2538b3385c1c5::t_857aa7b5b262f9 29
+libs/frontend/_shared/layout/src/lib/layout/nav/nav.component.ts
+  s_e2538b3385c1c5::t_c7d07502eba061 102-103,243-268
+  s_e2538b3385c1c5::t_10c7ef08ff7903 269-291
+apps/backend/prisma/models/users-on-programs.prisma
+  h_d5b6f744415839 27
+  s_e2538b3385c1c5::t_e0ddfb86f8fa19 2-26,28-29
+libs/frontend/program-profiles/src/lib/course-progress/course-progress.component.spec.ts
+  s_e2538b3385c1c5::t_06c8a89d1e5ad7 1-51,53-63
+  s_e2538b3385c1c5::t_cda941dbebc17b 52
+libs/frontend/_shared/auth/src/lib/data-access/auth.store.ts
+  s_e2538b3385c1c5::t_c7d07502eba061 12,40,49,54,78-83,225,417,452-458,461,463,467
+  s_e2538b3385c1c5::t_10c7ef08ff7903 418
+  s_e2538b3385c1c5::t_27704f5ac83d17 468-473
+apps/backend/prisma/models/requirement-completion.prisma
+  h_d5b6f744415839 1-12
+openspec/specs/program-requirements/spec.md
+  s_e2538b3385c1c5::t_55e072ae5d82cb 1-82
+libs/backend/users-on-programs/src/lib/users-on-programs.service.ts
+  s_e2538b3385c1c5::t_af8d03678a65a7 5,57-59,69-75,80,110-112,121-149,229-233,263-265,269,274-279,372,374
+libs/frontend/_shared/data-access/src/lib/users-on-programs/users-on-programs.store.ts
+  s_e2538b3385c1c5::t_f2d257369871c8 41,44-46,49,51-53,56,133-186
+openspec/changes/archive/2026-10-12-manual-action-requirements/.openspec.yaml
+  s_e2538b3385c1c5::t_e163b503d91a27 1-2
+apps/backend/prisma/migrations/20261012000000_add_action_requirements/migration.sql
+  s_e2538b3385c1c5::t_2a4713f1309a32 1-22
+libs/backend/requirements/src/lib/dto/create-requirement.dto.ts
+  s_e2538b3385c1c5::t_a934a5daa85382 2,14-32
+libs/backend/users-on-programs/src/lib/users-on-programs.controller.ts
+  s_e2538b3385c1c5::t_07dca384fc00a9 59-68
+libs/backend/users-on-programs/src/lib/users-on-programs.service.spec.ts
+  s_e2538b3385c1c5::t_b45ba57111c099 1-107
+libs/frontend/partner-staff/src/lib/program/cohort-percentage-completion/cohort-percentage-completion-chart.component.ts
+  s_e2538b3385c1c5::t_a9bf4316772e24 89
+libs/frontend/partner-staff/src/lib/program/cohort-percentage-completion/utils/inject-computed-users-combined.ts
+  s_e2538b3385c1c5::t_05250cc92d2acf 15
+libs/frontend/partner-staff/src/lib/program/requirements/requirements.store.ts
+  s_e2538b3385c1c5::t_98f09fb7053f57 11-16,69
+libs/frontend/partner-staff/src/lib/program/users-on-programs/users-on-programs.component.ts
+  s_e2538b3385c1c5::t_be5180f0effbcc 69
+libs/models/src/lib/user-on-program-agg.ts
+  s_e2538b3385c1c5::t_cc49a97220b06f 11-13
+libs/models/src/lib/users-on-programs-with-name.ts
+  s_e2538b3385c1c5::t_e13a6074c5f919 11
+openspec/changes/archive/2026-10-12-manual-action-requirements/design.md
+  s_e2538b3385c1c5::t_835be8683e849e 1-73
+openspec/changes/archive/2026-10-12-manual-action-requirements/proposal.md
+  s_e2538b3385c1c5::t_ae5a792e079d68 1-30
+openspec/changes/archive/2026-10-12-manual-action-requirements/specs/program-requirements/spec.md
+  s_e2538b3385c1c5::t_dd53e9efac4d81 1-80
+openspec/changes/archive/2026-10-12-manual-action-requirements/tasks.md
+  s_e2538b3385c1c5::t_3ceefc272599db 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b8d718b1fb4d2477bd5654b680bd2f5a027157a9",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_e2538b3385c1c5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1331f-2aec-7d52-bff5-5309e3e849c8",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
