@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-project-peer-evaluations',
-  imports: [FooterComponent, MatButtonModule],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col max-w-5xl mx-auto items-center p-6">
@@ -18,7 +16,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         ></iframe>
       </div>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

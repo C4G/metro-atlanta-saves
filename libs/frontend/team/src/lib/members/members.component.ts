@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 import { MembersStore } from './members.store';
 
 @Component({
   selector: 'mas-members',
-  imports: [FooterComponent],
+  imports: [],
   providers: [MembersStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -44,7 +43,6 @@ import { MembersStore } from './members.store';
         </div>
       }
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

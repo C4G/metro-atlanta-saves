@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-goal',
-  imports: [FooterComponent],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col p-5">
@@ -13,7 +12,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         structures, enhance communication tools, and improve administrative flexibility for staff and cohort members.
       </p>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

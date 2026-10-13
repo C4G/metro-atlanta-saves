@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 import { SavingsCalculatorStore } from './data-access/savings-calculator.store';
 import { SavingsData } from './savings-data.model';
 import { SavingsChartComponent } from './ui/savings-chart/savings-chart.component';
@@ -8,7 +7,7 @@ import { SavingsFormComponent } from './ui/savings-form/savings-form.component';
 
 @Component({
   selector: 'mas-savings-calculator',
-  imports: [SavingsFormComponent, SavingsChartComponent, FooterComponent, MatIcon],
+  imports: [SavingsFormComponent, SavingsChartComponent, MatIcon],
   providers: [SavingsCalculatorStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -28,7 +27,6 @@ import { SavingsFormComponent } from './ui/savings-form/savings-form.component';
         The average APY in the U.S. is 0.58%. Enter an APY to see how much you can save!
       </p>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

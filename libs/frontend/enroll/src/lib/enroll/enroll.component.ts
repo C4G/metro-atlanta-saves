@@ -2,25 +2,26 @@ import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angu
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatError, MatFormField, MatHint, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatError, MatHint, MatInput, MatLabel, MatPrefix } from '@angular/material/input';
+import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 // import { YesNoMaybe } from '@mas/prisma-client/browser';
 
 @Component({
   selector: 'mas-enroll',
   imports: [
-    FooterComponent,
     MatInput,
     MatAnchor,
     MatButton,
-    MatFormFieldModule,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatFormField,
     MatLabel,
     ReactiveFormsModule,
     RouterLink,
@@ -30,7 +31,7 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
     MatOption,
     MatSelect,
     MatHint,
-    MatDatepickerModule,
+    MatSuffix,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -201,7 +202,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         </div>
       </form>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

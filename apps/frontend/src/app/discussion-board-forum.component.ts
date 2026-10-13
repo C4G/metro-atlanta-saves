@@ -14,7 +14,8 @@ import { CommonModule } from '@angular/common';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { lastValueFrom } from 'rxjs';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { FooterComponent, PushNotificationService } from '@mas/frontend-shared-layout';
+import { DiscussionBoardsStore } from '@mas/frontend-shared-data-access';
+import { PushNotificationService } from '@mas/frontend-shared-layout';
 import { RichTextEditorComponent } from '@mas/frontend-shared-components';
 
 type DiscussionUser = {
@@ -55,23 +56,6 @@ type DiscussionPost = {
   boardId?: string;
 };
 
-type BoardInfo = {
-  id: string;
-  name: string;
-  description: string | null;
-  programId: string | null;
-  cohortId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-  memberCount: number;
-  postCount: number;
-};
-
 type BoardMember = {
   id: string;
   firstName: string;
@@ -85,7 +69,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
 @Component({
   selector: 'mas-discussion-board-forum',
   standalone: true,
-  imports: [CommonModule, NgClass, NgTemplateOutlet, RouterLink, FooterComponent, RichTextEditorComponent],
+  imports: [CommonModule, NgClass, NgTemplateOutlet, RouterLink, RichTextEditorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
@@ -2067,14 +2051,13 @@ type ManagementTab = 'general' | 'members' | 'tags';
           </div>
         </div>
       }
-
-      <mas-footer />
     </div>
   `,
 })
 export class DiscussionBoardForumComponent implements OnInit {
   private http = inject(HttpClient);
   private authStore = inject(AuthStore);
+  private discussionBoardsStore = inject(DiscussionBoardsStore);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private pushNotifications = inject(PushNotificationService);
@@ -2086,7 +2069,7 @@ export class DiscussionBoardForumComponent implements OnInit {
       ? `/api/discussion-posts/upload-image?boardId=${encodeURIComponent(boardId)}`
       : '/api/discussion-posts/upload-image';
   });
-  board = signal<BoardInfo | null>(null);
+  board = this.discussionBoardsStore.board;
   posts = signal<DiscussionPost[]>([]);
   availableTags = signal<DiscussionTag[]>([]);
   selectedTagIds = signal<string[]>([]);
@@ -2306,10 +2289,8 @@ export class DiscussionBoardForumComponent implements OnInit {
   private loadBoard(boardId: string): void {
     this.loading.set(true);
 
-    this.http.get<BoardInfo>(`/api/discussion-boards/${boardId}`).subscribe({
-      next: (board) => {
-        this.board.set(board);
-      },
+    this.discussionBoardsStore.getBoard(boardId).subscribe({
+      next: () => undefined,
       error: (error) => {
         this.errorMessage.set(this.getApiErrorMessage(error, 'Unable to load board.'));
       },
@@ -3049,9 +3030,7 @@ export class DiscussionBoardForumComponent implements OnInit {
       .then(
         () => {
           this.loadBoardMembersList(boardId);
-          if (this.board()) {
-            this.board.update((b) => (b ? { ...b, memberCount: b.memberCount + pending.length } : b));
-          }
+          this.discussionBoardsStore.adjustMemberCount(boardId, pending.length);
           this.pendingMembersToAdd.set([]);
         },
         () => {
@@ -3072,9 +3051,7 @@ export class DiscussionBoardForumComponent implements OnInit {
     this.http.delete(`/api/discussion-boards/${boardId}/members/${userId}`).subscribe({
       next: () => {
         this.loadBoardMembersList(boardId);
-        if (this.board()) {
-          this.board.update((b) => (b ? { ...b, memberCount: Math.max(0, b.memberCount - 1) } : b));
-        }
+        this.discussionBoardsStore.adjustMemberCount(boardId, -1);
       },
       error: (error) => {
         this.errorMessage.set(this.getApiErrorMessage(error, 'Unable to remove member.'));
@@ -3125,9 +3102,8 @@ export class DiscussionBoardForumComponent implements OnInit {
       updateData.description = this.editingBoardDescription();
     }
 
-    this.http.patch<BoardInfo>(`/api/discussion-boards/${boardId}`, updateData).subscribe({
-      next: (updatedBoard) => {
-        this.board.set(updatedBoard);
+    this.discussionBoardsStore.updateBoard(boardId, updateData).subscribe({
+      next: () => {
         this.errorMessage.set(null);
       },
       error: (error) => {

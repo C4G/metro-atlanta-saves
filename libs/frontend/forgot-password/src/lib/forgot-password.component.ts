@@ -1,24 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-forgot-password',
-  imports: [
-    FooterComponent,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterLink,
-  ],
+  imports: [MatButton, MatError, MatFormField, MatInput, MatLabel, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col px-6 max-w-3xl mx-auto p-6">
@@ -48,7 +38,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         Don't have an account? Sign Up
       </a>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',

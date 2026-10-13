@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatAnchor } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatChipOption } from '@angular/material/chips';
 import { EducationalCategoryStore, EducationalContentStore } from '@mas/frontend-shared-data-access';
-import { FooterComponent } from '@mas/frontend-shared-layout';
 
 @Component({
   selector: 'mas-educational-resources',
-  imports: [MatButtonModule, MatCardModule, FooterComponent, MatCheckboxModule, MatChipsModule],
+  imports: [MatAnchor, MatCard, MatCheckbox, MatChipOption],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="px-6 max-w-5xl mx-auto p-6 color-accent mb-6" color="accent">
@@ -68,7 +67,6 @@ import { FooterComponent } from '@mas/frontend-shared-layout';
         </div>
       </div>
     </div>
-    <mas-footer />
   `,
   host: {
     class: 'block',
