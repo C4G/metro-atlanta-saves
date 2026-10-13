@@ -8,6 +8,9 @@ export type UserOnProgramAgg = Prisma.UsersOnProgramsGetPayload<{
     program: {
       select: { name: true; Requirement: { include: { EducationalContent: true } } };
     };
+    requirementCompletions: {
+      select: { requirementId: true; completedAt: true };
+    };
     checkpoints: {
       include: { checkpointName: true; images: true };
       orderBy: [{ createdAt: 'desc' }];

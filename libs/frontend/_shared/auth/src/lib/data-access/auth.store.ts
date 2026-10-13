@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { ForgotResponse, UserFull } from '@mas/models';
 import { tapResponse } from '@ngrx/operators';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { firstValueFrom, of, pipe, switchMap } from 'rxjs';
+import { firstValueFrom, map, of, pipe, switchMap } from 'rxjs';
 
 type ForgotPasswordData = {
   email: string;
@@ -37,6 +37,7 @@ type AuthState = {
   loading: boolean;
   user: null | UserFull;
   realUser: null | UserFull;
+  isMimicking: boolean;
   googleClientId: string | null;
 };
 
@@ -45,11 +46,12 @@ const initialState: AuthState = {
   loading: true, // Start as true to prevent guards from running before auth is checked
   user: null,
   realUser: null,
+  isMimicking: false,
   googleClientId: null,
 };
 
 const BASE_URL = '/api/auth';
-type ManagedSessionResponse = { session: unknown; user: unknown } | null;
+type ManagedSessionResponse = { session: { impersonatedBy?: string | null }; user: unknown } | null;
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -73,8 +75,12 @@ export const AuthStore = signalStore(
       dialogRef = inject(MatDialog),
       document = inject(DOCUMENT),
     ) => {
-      const update = (data: { user?: AuthState['user']; realUser?: AuthState['realUser'] }): void => {
-        patchState(store, { user: data.user, realUser: data.realUser });
+      const update = (data: {
+        user?: AuthState['user'];
+        realUser?: AuthState['realUser'];
+        isMimicking?: boolean;
+      }): void => {
+        patchState(store, { user: data.user, realUser: data.realUser, isMimicking: data.isMimicking ?? false });
       };
 
       const currentUser = () => http.get<UserFull>('/api/users/me', { withCredentials: true });
@@ -216,7 +222,7 @@ export const AuthStore = signalStore(
                   next: async (user) => {
                     dialogRef.closeAll();
                     const realUser = store.user();
-                    update({ user, realUser });
+                    update({ user, realUser, isMimicking: true });
                     snackBar.open(`You are now mimicking ${user.firstName} ${user.lastName}`, undefined, {
                       panelClass: 'success',
                       duration: 5000,
@@ -408,7 +414,8 @@ export const AuthStore = signalStore(
               .post(`${BASE_URL}/scoped-stop-impersonating`, {}, { withCredentials: true })
               .pipe(switchMap(() => currentUser())),
           );
-          update({ user, realUser: null });
+          update({ user, realUser: null, isMimicking: false });
+          await navigateAfterAuthChange();
         } catch {
           snackBar.open('There was an error stopping impersonation, please try again.', undefined, {
             panelClass: 'error',
@@ -442,16 +449,28 @@ export const AuthStore = signalStore(
       http
         .get<ManagedSessionResponse>(`${BASE_URL}/get-session`, { withCredentials: true })
         .pipe(
-          switchMap((session) => (session ? http.get<UserFull>('/api/users/me', { withCredentials: true }) : of(null))),
+          switchMap((session) =>
+            session
+              ? http
+                  .get<UserFull>('/api/users/me', { withCredentials: true })
+                  .pipe(map((user) => ({ user, isMimicking: Boolean(session.session.impersonatedBy) })))
+              : of({ user: null, isMimicking: false }),
+          ),
         )
         .subscribe({
-          next: (user) => {
+          next: ({ user, isMimicking }) => {
             if (!store.authRefreshed())
-              patchState(store, { user, realUser: null, loading: false, authRefreshed: true });
+              patchState(store, { user, realUser: null, isMimicking, loading: false, authRefreshed: true });
           },
           error: () => {
             if (!store.authRefreshed())
-              patchState(store, { user: null, realUser: null, loading: false, authRefreshed: true });
+              patchState(store, {
+                user: null,
+                realUser: null,
+                isMimicking: false,
+                loading: false,
+                authRefreshed: true,
+              });
           },
         });
     },

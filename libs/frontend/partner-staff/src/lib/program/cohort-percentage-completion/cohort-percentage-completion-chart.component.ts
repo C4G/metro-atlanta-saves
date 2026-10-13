@@ -86,7 +86,7 @@ export class CohortPercentageCompletionChartComponent {
 
     return users.map((user: any) => {
       const totalRequirements = this.requirementsStore.requirements().length ?? 0;
-      const completedRequirements = user.requirementStatus?.length ?? 0;
+      const completedRequirements = (user.completedRequirementIds ?? user.requirementStatus ?? []).length;
       const percentageCompleted =
         totalRequirements > 0 ? Math.round((completedRequirements / totalRequirements) * 100) : 0;
       const percentageOutstanding = 100 - percentageCompleted;

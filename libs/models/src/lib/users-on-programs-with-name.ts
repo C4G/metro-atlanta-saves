@@ -8,4 +8,5 @@ export type UsersOnProgramsWithName = UsersOnPrograms & {
   lastLogin?: Date | null;
   bio?: string | null;
   totalAmountSaved?: number;
+  completedRequirementIds?: string[];
 };

@@ -51,6 +51,20 @@ describe('AuthStore managed sessions', () => {
 
     expect(store.user()).toEqual(user);
     expect(store.authRefreshed()).toBe(true);
+    expect(store.isMimicking()).toBe(false);
+  });
+
+  it('restores mimic mode from the managed session after a page reload', () => {
+    const store = TestBed.inject(AuthStore);
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/auth/get-session').flush({
+      session: { id: 'session-2', impersonatedBy: 'admin-1' },
+      user: { id: 'target-1' },
+    });
+    http.expectOne('/api/users/me').flush({ ...user, id: 'target-1' });
+
+    expect(store.user()?.id).toBe('target-1');
+    expect(store.isMimicking()).toBe(true);
   });
 
   it('signs in through Better Auth and refreshes the server-owned profile', () => {
@@ -116,6 +130,7 @@ describe('AuthStore managed sessions', () => {
 
     expect(store.user()).toEqual(target);
     expect(store.realUser()).toEqual(user);
+    expect(store.isMimicking()).toBe(true);
   });
 
   it('returns from impersonation through the server and clears the originating profile', async () => {
@@ -134,6 +149,7 @@ describe('AuthStore managed sessions', () => {
 
     expect(store.user()).toEqual(user);
     expect(store.realUser()).toBeNull();
+    expect(store.isMimicking()).toBe(false);
   });
 
   it('loads the managed session during SSR initialization', () => {
