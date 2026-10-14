@@ -4,15 +4,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
+import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
 import { ProgramsStore } from '@mas/frontend-shared-data-access';
 import { type Program } from '@mas/prisma-client/browser';
 import { AddProgramComponent } from './ui/add-program/add-program.component';
 import { CloneDialogComponent } from './ui/program-actions/clone-dialog/clone-dialog.component';
-import { DeleteProgramDialogComponent } from './ui/program-actions/delete-dialog/delete-dialog.component';
 
 type ProgramCard = Program & {
   descriptionText: string;
-  searchText: string;
 };
 
 @Component({
@@ -175,23 +174,17 @@ export default class ProgramsComponent {
   readonly programsStore = inject(ProgramsStore);
   readonly searchQuery = signal('');
   readonly programCards = computed<ProgramCard[]>(() => {
-    const query = this.searchQuery().trim().toLocaleLowerCase();
+    return this.programsStore.programs().map((program) => {
+      const descriptionText = (program.description ?? '')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
 
-    return this.programsStore
-      .programs()
-      .map((program) => {
-        const descriptionText = (program.description ?? '')
-          .replace(/<[^>]*>/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-
-        return {
-          ...program,
-          descriptionText,
-          searchText: `${program.name} ${descriptionText}`.toLocaleLowerCase(),
-        };
-      })
-      .filter((program) => !query || program.searchText.includes(query));
+      return {
+        ...program,
+        descriptionText,
+      };
+    });
   });
 
   constructor() {
@@ -199,10 +192,12 @@ export default class ProgramsComponent {
   }
 
   deleteProgram(program: Program): void {
-    this.dialog.open(DeleteProgramDialogComponent, {
+    this.dialog.open(ConfirmDialogComponent, {
       data: {
-        name: program.name,
-        onConfirm: () => this.programsStore.deleteProgram(program.id),
+        color: 'warn',
+        content: `Delete ${program.name}? This action cannot be undone.`,
+        onYesClick: () => this.programsStore.deleteProgram(program.id),
+        title: 'Delete program',
       },
       maxWidth: 'calc(100vw - 2rem)',
       width: '28rem',
@@ -237,6 +232,11 @@ export default class ProgramsComponent {
   }
 
   updateSearch(event: Event): void {
-    this.searchQuery.set((event.target as HTMLInputElement).value);
+    const search = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(search);
+    this.programsStore.searchPrograms({
+      partnerId: this.authStore.user()?.partnerId ?? undefined,
+      search,
+    });
   }
 }

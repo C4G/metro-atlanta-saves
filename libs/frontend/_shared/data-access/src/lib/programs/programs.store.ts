@@ -8,7 +8,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import type { CheckpointName, Enrollment, Program } from '@mas/prisma-client/browser';
-import { pipe, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, pipe, switchMap } from 'rxjs';
 
 type AddProgram = Omit<Program, 'id' | 'createdAt' | 'updatedAt'>;
 
@@ -24,6 +24,11 @@ type ProgramsState = {
 };
 
 type SubmitEnroll = Omit<Enrollment, 'id' | 'createdAt' | 'updatedAt'>;
+
+type ProgramSearch = {
+  partnerId?: string;
+  search: string;
+};
 
 const initialState: ProgramsState = {
   enrollments: [],
@@ -153,6 +158,31 @@ export const ProgramsStore = signalStore(
                 },
               }),
             ),
+          ),
+        ),
+      ),
+      searchPrograms: rxMethod<ProgramSearch>(
+        pipe(
+          debounceTime(300),
+          distinctUntilChanged(
+            (previous, current) => previous.partnerId === current.partnerId && previous.search === current.search,
+          ),
+          switchMap(({ partnerId, search }) =>
+            http
+              .get<Program[]>(`${BASE_URL}${partnerId ? '/partner/' + partnerId : ''}`, {
+                params: search.trim() ? { search: search.trim() } : {},
+              })
+              .pipe(
+                tapResponse({
+                  next: (programs) => patchState(store, { programs }),
+                  error: () => {
+                    snackBar.open('There was an error retrieving programs', undefined, {
+                      panelClass: 'error',
+                      duration: 5000,
+                    });
+                  },
+                }),
+              ),
           ),
         ),
       ),

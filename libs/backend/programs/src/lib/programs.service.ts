@@ -126,8 +126,9 @@ export class ProgramsService {
     }
   }
 
-  async findAll() {
+  async findAll(search?: string) {
     return await this.prismaService.program.findMany({
+      where: this.programSearchWhere(search),
       include: {
         checkpointNames: {
           select: {
@@ -148,9 +149,12 @@ export class ProgramsService {
     }
   }
 
-  async findAllForPartner(partnerId: string) {
+  async findAllForPartner(partnerId: string, search?: string) {
     return await this.prismaService.program.findMany({
-      where: { partnerId },
+      where: {
+        partnerId,
+        ...this.programSearchWhere(search),
+      },
       include: {
         checkpointNames: {
           select: {
@@ -159,6 +163,18 @@ export class ProgramsService {
         },
       },
     });
+  }
+
+  private programSearchWhere(search?: string) {
+    const term = search?.trim();
+    return term
+      ? {
+          OR: [
+            { name: { contains: term, mode: 'insensitive' as const } },
+            { description: { contains: term, mode: 'insensitive' as const } },
+          ],
+        }
+      : {};
   }
 
   async findUpcoming(id?: string) {

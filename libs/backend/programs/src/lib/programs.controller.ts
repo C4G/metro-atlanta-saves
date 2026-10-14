@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -51,8 +52,8 @@ export class ProgramsController {
   @UseGuards(RoleGuard)
   @Get()
   @Roles('Administrator')
-  findAll() {
-    return this.programsService.findAll();
+  findAll(@Query('search') search?: string) {
+    return this.programsService.findAll(search);
   }
 
   @Get('upcoming')
@@ -114,11 +115,15 @@ export class ProgramsController {
   @UseGuards(RoleGuard)
   @Roles('Administrator', 'Partner_Staff')
   @Get('partner/:id')
-  async findAllForPartner(@Req() request: Request & { user: UserFull }, @Param('id') id: string) {
+  async findAllForPartner(
+    @Req() request: Request & { user: UserFull },
+    @Param('id') id: string,
+    @Query('search') search?: string,
+  ) {
     if (validateUserAnyRole(request, id)) {
       throw new UnauthorizedException(['You can only add programs for your associated partner']);
     }
-    return this.programsService.findAllForPartner(id);
+    return this.programsService.findAllForPartner(id, search);
   }
 
   @Get(':id')

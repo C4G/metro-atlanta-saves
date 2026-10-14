@@ -27,10 +27,12 @@ describe('ProgramsComponent', () => {
     },
   ]);
   const getPrograms = jest.fn();
+  const searchPrograms = jest.fn();
   const open = jest.fn();
 
   beforeEach(() => {
     getPrograms.mockClear();
+    searchPrograms.mockClear();
     open.mockClear();
 
     TestBed.configureTestingModule({
@@ -45,6 +47,7 @@ describe('ProgramsComponent', () => {
             deleteProgram: jest.fn(),
             getPrograms,
             programs,
+            searchPrograms,
           },
         },
         { provide: MatDialog, useValue: { open } },
@@ -62,13 +65,14 @@ describe('ProgramsComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('article')).toHaveLength(2);
   });
 
-  it('filters programs using normalized names and descriptions', () => {
+  it('requests filtered programs from the server', () => {
     const fixture = TestBed.createComponent(ProgramsComponent);
-    fixture.componentInstance.searchQuery.set('saving habits');
-    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('input[type="search"]') as HTMLInputElement;
+    input.value = ' saving habits ';
+    input.dispatchEvent(new Event('input'));
 
-    expect(fixture.componentInstance.programCards().map((program) => program.id)).toEqual(['program-1']);
-    expect(fixture.componentInstance.programCards()[0].descriptionText).toBe('Build practical saving habits.');
+    expect(fixture.componentInstance.searchQuery()).toBe(' saving habits ');
+    expect(searchPrograms).toHaveBeenCalledWith({ partnerId: 'partner-1', search: ' saving habits ' });
   });
 
   it('opens the create flow with responsive dialog dimensions', () => {
