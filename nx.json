@@ -15,17 +15,34 @@
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
   "targetDefaults": {
-    "@nx/angular:application": { "cache": true, "dependsOn": ["^build"], "inputs": ["production", "^production"] },
-    "@nx/js:tsc": { "cache": true, "dependsOn": ["^build"], "inputs": ["production", "^production"] },
-    "@nx/angular:ng-packagr-lite": { "cache": true, "dependsOn": ["^build"], "inputs": ["production", "^production"] },
+    "*": { "dependsOn": [{ "projects": "backend", "target": "prisma-generate" }] },
+    "prisma-generate": {},
+    "@nx/angular:application": {
+      "cache": true,
+      "dependsOn": ["^build", { "projects": "backend", "target": "prisma-generate" }],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build", { "projects": "backend", "target": "prisma-generate" }],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/angular:ng-packagr-lite": {
+      "cache": true,
+      "dependsOn": ["^build", { "projects": "backend", "target": "prisma-generate" }],
+      "inputs": ["production", "^production"]
+    },
     "test": {
+      "dependsOn": [{ "projects": "backend", "target": "prisma-generate" }],
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
       "cache": true,
       "configurations": {
         "production": { "ci": true, "codeCoverage": false, "outputStyle": "stream", "runInBand": true }
       }
     },
-    "e2e-ci--**/*": { "dependsOn": ["^build"] }
+    "e2e-ci--**/*": {
+      "dependsOn": ["^build", { "projects": "backend", "target": "prisma-generate" }]
+    }
   },
   "plugins": [
     { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },

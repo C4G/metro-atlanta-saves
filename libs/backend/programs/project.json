@@ -4,17 +4,6 @@
   "sourceRoot": "libs/backend/programs/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/backend/programs",
-        "tsConfig": "libs/backend/programs/tsconfig.lib.json",
-        "packageJson": "libs/backend/programs/package.json",
-        "main": "libs/backend/programs/src/index.ts",
-        "assets": ["libs/backend/programs/*.md"]
-      }
-    },
     "test": {
       "dependsOn": [{ "projects": "backend", "target": "prisma-generate" }]
     }
