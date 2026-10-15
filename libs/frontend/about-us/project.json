@@ -4,24 +4,5 @@
   "sourceRoot": "libs/frontend/about-us/src",
   "prefix": "mas",
   "projectType": "library",
-  "tags": [],
-  "targets": {
-    "build": {
-      "executor": "@nx/angular:ng-packagr-lite",
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
-      "options": {
-        "project": "libs/frontend/about-us/ng-package.json",
-        "tsConfig": "libs/frontend/about-us/tsconfig.lib.json"
-      },
-      "configurations": {
-        "production": {
-          "tsConfig": "libs/frontend/about-us/tsconfig.lib.prod.json"
-        },
-        "development": {
-          "tsConfig": "libs/frontend/about-us/tsconfig.lib.json"
-        }
-      },
-      "defaultConfiguration": "production"
-    }
-  }
+  "tags": []
 }

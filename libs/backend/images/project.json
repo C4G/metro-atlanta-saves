@@ -5,16 +5,8 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/backend/images",
-        "tsConfig": "libs/backend/images/tsconfig.lib.json",
-        "packageJson": "libs/backend/images/package.json",
-        "main": "libs/backend/images/src/index.ts",
-        "assets": ["libs/backend/images/*.md"]
-      }
+    "test": {
+      "dependsOn": [{ "projects": "backend", "target": "prisma-generate" }]
     }
   }
 }
