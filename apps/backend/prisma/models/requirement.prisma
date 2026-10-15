@@ -5,11 +5,13 @@ model Requirement {
   name                 String
   actionInstructions   String?
   dueAt                DateTime?
+  reminderDaysBefore   Int?
   program              Program                 @relation(fields: [programId], references: [id])
   programId            String
   educationalContentId String?
   EducationalContent   EducationalContent?     @relation(fields: [educationalContentId], references: [id])
   completions          RequirementCompletion[]
+  reminderDeliveries   RequirementReminderDelivery[]
 
   @@map("requirements")
 }

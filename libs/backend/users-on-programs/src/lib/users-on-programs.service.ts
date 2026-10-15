@@ -1,4 +1,5 @@
 import { CheckpointsService } from '@mas/backend-checkpoints';
+import { RequirementRemindersService } from '@mas/backend-requirements';
 import { PrismaService } from '@mas/backend-prisma';
 import { formatCurrency } from '@mas/backend-shared';
 import { UsersOnProgramsWithName } from '@mas/models';
@@ -34,6 +35,7 @@ export class UsersOnProgramsService {
   constructor(
     private prisma: PrismaService,
     private checkpointsService: CheckpointsService,
+    private requirementRemindersService: RequirementRemindersService,
   ) {}
 
   async getUsersOnPrograms(programId: string) {
@@ -226,6 +228,10 @@ export class UsersOnProgramsService {
       await this.prisma.checkpoint.createMany({
         data,
       });
+      await this.requirementRemindersService.reconcileUserProgram(
+        createUsersOnProgramsDto.programId,
+        createUsersOnProgramsDto.userId,
+      );
       return {
         ...rest,
         ...user,

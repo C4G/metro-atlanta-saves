@@ -1,0 +1,24 @@
+model RequirementReminderDelivery {
+  id                 String                    @id @default(uuid())
+  userId             String
+  programId          String
+  requirementId      String
+  dueAtSnapshot      DateTime                  @db.Timestamp(3)
+  reminderDaysBefore Int
+  scheduledAt        DateTime                  @db.Timestamptz(3)
+  status             RequirementReminderStatus @default(PENDING)
+  attemptCount       Int                       @default(0)
+  nextAttemptAt      DateTime?                 @db.Timestamptz(3)
+  leaseExpiresAt     DateTime?                 @db.Timestamptz(3)
+  sentAt             DateTime?                 @db.Timestamptz(3)
+  lastError          String?                   @db.Text
+  createdAt          DateTime                  @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime                  @updatedAt @db.Timestamptz(3)
+  userOnProgram      UsersOnPrograms           @relation(fields: [userId, programId], references: [userId, programId], onDelete: Cascade)
+  requirement        Requirement               @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, programId, requirementId, dueAtSnapshot, reminderDaysBefore], map: "requirement_reminder_deliveries_identity_key")
+  @@index([status, scheduledAt])
+  @@index([requirementId, status])
+  @@map("requirement_reminder_deliveries")
+}

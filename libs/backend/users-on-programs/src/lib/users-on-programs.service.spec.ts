@@ -2,6 +2,13 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 jest.mock('@mas/backend-checkpoints', () => ({ CheckpointsService: class CheckpointsService {} }));
 jest.mock('@mas/backend-prisma', () => ({ PrismaService: class PrismaService {} }));
+jest.mock('@mas/backend-requirements', () => ({
+  RequirementRemindersService: class RequirementRemindersService {},
+}));
+jest.mock('@nestjs/schedule', () => ({
+  Cron: () => () => undefined,
+  CronExpression: { EVERY_5_MINUTES: '*/5 * * * *', EVERY_MINUTE: '* * * * *' },
+}));
 jest.mock('@mas/backend-shared', () => ({ formatCurrency: { format: (value: number) => String(value) } }));
 jest.mock('@mas/models', () => ({}));
 
@@ -13,6 +20,12 @@ describe('UsersOnProgramsService requirement actions', () => {
   const upsertCompletion = jest.fn();
   const findManyUsersOnPrograms = jest.fn();
   const getTotalAmountSaved = jest.fn();
+  const reconcileUserProgram = jest.fn();
+  const userFindFirst = jest.fn();
+  const findAllyOnProgram = jest.fn();
+  const createUserOnProgram = jest.fn();
+  const findCheckpointNames = jest.fn();
+  const createCheckpoints = jest.fn();
 
   let service: UsersOnProgramsService;
 
@@ -23,11 +36,17 @@ describe('UsersOnProgramsService requirement actions', () => {
         usersOnPrograms: {
           findUnique: findEnrollment,
           findMany: findManyUsersOnPrograms,
+          create: createUserOnProgram,
         },
         requirement: { findUnique: findRequirement },
         requirementCompletion: { upsert: upsertCompletion },
+        user: { findFirst: userFindFirst },
+        alliesOnPrograms: { findUnique: findAllyOnProgram },
+        checkpointName: { findMany: findCheckpointNames },
+        checkpoint: { createMany: createCheckpoints },
       } as any,
       { getTotalAmountSaved } as any,
+      { reconcileUserProgram } as any,
     );
   });
 
@@ -103,5 +122,23 @@ describe('UsersOnProgramsService requirement actions', () => {
       'action-requirement',
     ]);
     expect(result[0].totalAmountSaved).toBe(250);
+  });
+
+  it('reconciles requirement reminders after a learner enrolls', async () => {
+    userFindFirst.mockResolvedValue({ id: 'learner-1' });
+    findAllyOnProgram.mockResolvedValue(null);
+    findEnrollment.mockResolvedValue(null);
+    createUserOnProgram.mockResolvedValue({
+      userId: 'learner-1',
+      programId: 'program-1',
+      requirementStatus: [],
+      user: { email: 'learner@example.com', firstName: 'Sam', lastName: 'Learner' },
+    });
+    findCheckpointNames.mockResolvedValue([{ name: 'Initial Deposit' }]);
+    createCheckpoints.mockResolvedValue({ count: 1 });
+
+    await service.addUsersOnPrograms({ userId: 'learner-1', programId: 'program-1' } as any);
+
+    expect(reconcileUserProgram).toHaveBeenCalledWith('program-1', 'learner-1');
   });
 });
