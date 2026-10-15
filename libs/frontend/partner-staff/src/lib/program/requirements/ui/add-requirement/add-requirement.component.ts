@@ -76,6 +76,15 @@ function toLocalDateTimeInput(value: Date | string | null | undefined): { date: 
             <input matInput type="time" formControlName="dueTime" />
             <mat-hint>Defaults to midnight in your local time.</mat-hint>
           </mat-form-field>
+          <mat-form-field class="sm:col-span-2">
+            <mat-label>Email Reminder</mat-label>
+            <mat-select formControlName="reminderDaysBefore" [disabled]="!requirementForm.controls.dueDate.value">
+              <mat-option [value]="null">No reminder</mat-option>
+              <mat-option [value]="1">1 day before</mat-option>
+              <mat-option [value]="7">1 week before</mat-option>
+            </mat-select>
+            <mat-hint>Sent at 9:00 a.m. Eastern time on the selected date.</mat-hint>
+          </mat-form-field>
         </div>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
@@ -100,6 +109,7 @@ export class AddRequirementComponent {
     actionInstructions: this.fb.control(this.data?.actionInstructions ?? '', { nonNullable: true }),
     dueDate: this.fb.control(toLocalDateTimeInput(this.data?.dueAt).date),
     dueTime: this.fb.control(toLocalDateTimeInput(this.data?.dueAt).time),
+    reminderDaysBefore: this.fb.control<number | null>(this.data?.reminderDaysBefore ?? null),
   });
 
   constructor() {
@@ -116,6 +126,7 @@ export class AddRequirementComponent {
       ...formValue,
       actionInstructions: actionInstructions.trim() || null,
       dueAt: dueDate ? new Date(`${dueDate}T${dueTime || '00:00'}`).toISOString() : null,
+      reminderDaysBefore: dueDate ? formValue.reminderDaysBefore : null,
     };
 
     if (this.data) {

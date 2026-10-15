@@ -24,6 +24,7 @@ import { UsersOnProgramsModule } from '@mas/backend-users-on-programs';
 import { WhatWeAreModule } from '@mas/backend-what-we-are';
 import { AuthModule as BetterAuthModule } from '@thallesp/nestjs-better-auth';
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
 import { createBetterAuth } from '@mas/backend-auth';
@@ -34,6 +35,7 @@ import { PrismaService } from '@mas/backend-prisma';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     BetterAuthModule.forRootAsync({
       isGlobal: true,
       disableGlobalAuthGuard: true,

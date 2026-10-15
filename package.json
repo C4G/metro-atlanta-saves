@@ -37,6 +37,7 @@
     "@nestjs/core": "11.1.6",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "11.1.6",
+    "@nestjs/schedule": "6.1.3",
     "@nestjs/swagger": "11.2.0",
     "@ngrx/operators": "20.0.0",
     "@ngrx/signals": "20.0.0",
