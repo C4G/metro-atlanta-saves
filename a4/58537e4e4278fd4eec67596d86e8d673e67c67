@@ -1,0 +1,63 @@
+libs/frontend/_shared/components/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/blogs/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/register/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/admin/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/backend/peer-evaluation-guide/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 6
+libs/backend/checkpoint-names/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 6
+libs/backend/user-guide/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 6
+nx.json
+  s_1b8ab790941f10::t_39cf6b745e6266 18-34,36,43-45
+libs/frontend/_shared/data-access/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/_shared/layout/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/_shared/util/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/about-us/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+apps/backend/prisma/migrations/20261015033238_dev/migration.sql
+  s_1b8ab790941f10::t_2d435a9764e6f0 1-5
+libs/frontend/forgot-password/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/login/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/_shared/auth/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/educational-resources/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/home/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/program-profiles/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/savings-calculator/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/partner-staff/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/reset-password/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+libs/frontend/team/project.json
+  s_1b8ab790941f10::t_7be55ede3b95e5 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a458537e4e4278fd4eec67596d86e8d673e67c67",
+  "prompts": {},
+  "sessions": {
+    "s_1b8ab790941f10": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13d87-54cb-7ed3-99f5-3ac06050ae78",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
