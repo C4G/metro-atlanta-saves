@@ -57,6 +57,12 @@ export class UsersOnProgramsController {
   }
 
   @UseGuards(ManagedSessionGuard)
+  @Get('user/requirements')
+  getParticipantRequirements(@Req() request: Request & { user: UserFull }) {
+    return this.usersOnProgramsService.getParticipantRequirements(request.user.id);
+  }
+
+  @UseGuards(ManagedSessionGuard)
   @Post('user/program/:programId/requirements/:requirementId/completion')
   completeRequirement(
     @Req() request: Request & { user: UserFull },
@@ -64,6 +70,16 @@ export class UsersOnProgramsController {
     @Param('requirementId') requirementId: string,
   ) {
     return this.usersOnProgramsService.completeRequirement(request.user.id, programId, requirementId);
+  }
+
+  @UseGuards(ManagedSessionGuard)
+  @Delete('user/program/:programId/requirements/:requirementId/completion')
+  uncompleteRequirement(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('requirementId') requirementId: string,
+  ) {
+    return this.usersOnProgramsService.uncompleteRequirement(request.user.id, programId, requirementId);
   }
 
   @UseGuards(ManagedSessionGuard, RoleGuard)
