@@ -62,6 +62,10 @@ describe('RequirementsCalendarComponent', () => {
       .flush({ requirementId: 'requirement-1', completedAt: new Date().toISOString() });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('button[aria-pressed="true"] svg')).not.toBeNull();
+    const completedButton = fixture.nativeElement.querySelector('button[aria-label="Create a savings plan completed"]');
+    expect(completedButton.querySelector('svg')).not.toBeNull();
+    expect(completedButton.disabled).toBe(true);
+    completedButton.click();
+    http.expectNone((request) => request.method === 'DELETE');
   });
 });

@@ -10,6 +10,7 @@ import { ThemeService, UsersOnProgramsStore } from '@mas/frontend-shared-data-ac
     <div class="py-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @for (userProgram of usersOnProgramsStore.userProgramProgress(); track userProgram.requirementId) {
+          <!-- Requirement UUID is the calendar deep-link target in this single routed view. -->
           <div
             [id]="userProgram.requirementId"
             class="card border-2 rounded-md p-4 h-full flex flex-col"

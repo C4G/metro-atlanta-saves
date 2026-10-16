@@ -1,11 +1,12 @@
-import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { formatDate } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, LOCALE_ID, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ParticipantRequirementsStore } from '@mas/frontend-shared-data-access';
 import { RouterLink } from '@angular/router';
 import { ParticipantRequirement } from '@mas/models';
 
 type CalendarTask = {
+  requirement: ParticipantRequirement;
   id: string;
   title: string;
   program: string;
@@ -27,22 +28,20 @@ type CalendarDay = {
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 const toIsoDate = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return formatDate(date, 'yyyy-MM-dd', 'en-US');
 };
 
 @Component({
   selector: 'mas-requirements-calendar',
   imports: [MatIcon, RouterLink],
+  providers: [ParticipantRequirementsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="overflow-hidden rounded-2xl border border-outline bg-surface" aria-labelledby="calendar-heading">
+    <section class="overflow-hidden rounded-2xl border border-outline bg-surface" aria-label="Requirement calendar">
       <div class="flex flex-col gap-4 border-b border-outline px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">Schedule</p>
-          <h2 id="calendar-heading" class="mt-1 text-xl font-bold text-ink">Calendar</h2>
+          <h2 class="mt-1 text-xl font-bold text-ink">Calendar</h2>
           <p class="mt-1 text-sm text-ink-muted">Select a day to see what is due.</p>
         </div>
         <div class="flex items-center gap-2" aria-label="Calendar navigation">
@@ -50,7 +49,7 @@ const toIsoDate = (date: Date): string => {
             type="button"
             class="flex h-10 w-10 items-center justify-center rounded-xl border border-outline text-ink transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Previous month"
-            (click)="showPreviousMonth()"
+            (click)="changeMonth(-1)"
           >
             <mat-icon aria-hidden="true">chevron_left</mat-icon>
           </button>
@@ -65,7 +64,7 @@ const toIsoDate = (date: Date): string => {
             type="button"
             class="flex h-10 w-10 items-center justify-center rounded-xl border border-outline text-ink transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Next month"
-            (click)="showNextMonth()"
+            (click)="changeMonth(1)"
           >
             <mat-icon aria-hidden="true">chevron_right</mat-icon>
           </button>
@@ -78,11 +77,10 @@ const toIsoDate = (date: Date): string => {
             <h3 class="font-serif text-2xl font-semibold text-ink">{{ monthHeading() }}</h3>
             <span class="text-xs font-semibold text-ink-subtle">{{ yearHeading() }}</span>
           </div>
-          <div class="grid grid-cols-7 gap-1" role="grid" [attr.aria-label]="monthHeading() + ' ' + yearHeading()">
+          <div class="grid grid-cols-7 gap-1" role="group" [attr.aria-label]="monthHeading() + ' ' + yearHeading()">
             @for (weekday of weekdays; track weekday) {
               <div
                 class="pb-2 text-center text-[0.625rem] font-bold uppercase tracking-wide text-ink-subtle sm:text-xs"
-                role="columnheader"
               >
                 {{ weekday }}
               </div>
@@ -93,12 +91,12 @@ const toIsoDate = (date: Date): string => {
             @for (day of calendarDays(); track day.iso) {
               <button
                 type="button"
-                role="gridcell"
                 class="group relative flex min-h-16 flex-col items-center justify-center gap-1.5 rounded-xl border border-transparent p-1 text-center transition-colors hover:border-brand/40 hover:bg-brand-soft/40 focus:z-10 focus:border-brand focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand sm:min-h-20 sm:gap-2 sm:p-2"
                 [class.bg-brand-soft]="selectedDate() === day.iso"
                 [attr.aria-label]="day.label"
                 [attr.aria-pressed]="selectedDate() === day.iso"
-                (click)="selectDay(day.iso)"
+                [attr.aria-current]="day.isToday ? 'date' : null"
+                (click)="selectedDate.set(day.iso)"
               >
                 <span
                   class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold sm:h-8 sm:w-8 sm:text-sm"
@@ -123,7 +121,18 @@ const toIsoDate = (date: Date): string => {
         <aside class="bg-surface-subtle p-5 sm:p-6" aria-live="polite">
           <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">Selected day</p>
           <h3 class="mt-2 text-lg font-bold text-ink">{{ selectedDayHeading() }}</h3>
-          @if (selectedTasks().length) {
+          @if (requirementsStore.loading()) {
+            <p class="mt-5 text-sm text-ink-muted">Loading your calendar…</p>
+          } @else if (requirementsStore.loadFailed()) {
+            <p class="mt-5 text-sm text-ink-muted">We could not load your calendar.</p>
+            <button
+              type="button"
+              class="mt-3 rounded-xl border border-outline px-4 py-2 text-sm font-bold text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand"
+              (click)="requirementsStore.load()"
+            >
+              Try again
+            </button>
+          } @else if (selectedTasks().length) {
             <div class="mt-5 space-y-3">
               @for (task of selectedTasks(); track task.id) {
                 <article
@@ -141,21 +150,21 @@ const toIsoDate = (date: Date): string => {
                       <span class="flex w-14 shrink-0 items-center justify-center bg-brand-soft/70 px-3 py-4">
                         <button
                           type="button"
-                          class="pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors hover:border-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-brand-soft disabled:cursor-wait disabled:opacity-60"
+                          class="pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors hover:border-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-brand-soft disabled:cursor-default disabled:opacity-60"
                           [class.border-brand-strong]="task.isCompleted"
                           [class.bg-brand-strong]="task.isCompleted"
                           [class.text-brand-on]="task.isCompleted"
                           [class.border-brand]="!task.isCompleted"
                           [class.bg-surface]="!task.isCompleted"
                           [class.text-brand-strong]="!task.isCompleted"
-                          [disabled]="savingTaskIds().has(task.id)"
+                          [disabled]="task.isCompleted || requirementsStore.savingTaskIds().includes(task.id)"
                           [attr.aria-label]="
-                            task.isCompleted ? 'Mark ' + task.title + ' incomplete' : 'Mark ' + task.title + ' complete'
+                            task.isCompleted ? task.title + ' completed' : 'Mark ' + task.title + ' complete'
                           "
                           [attr.aria-pressed]="task.isCompleted"
-                          (click)="toggleTask(task)"
+                          (click)="requirementsStore.complete(task.requirement)"
                         >
-                          @if (savingTaskIds().has(task.id)) {
+                          @if (requirementsStore.savingTaskIds().includes(task.id)) {
                             <span
                               class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent"
                               aria-hidden="true"
@@ -181,12 +190,7 @@ const toIsoDate = (date: Date): string => {
                       </div>
                       <h4 class="mt-1.5 text-sm font-bold leading-5 text-ink">{{ task.title }}</h4>
                       <p class="mt-1 flex h-5 items-center gap-1.5 text-xs text-ink-muted">
-                        <mat-icon
-                          class="!flex !h-4 !w-4 shrink-0 items-center justify-center !text-base !leading-none"
-                          aria-hidden="true"
-                        >
-                          school
-                        </mat-icon>
+                        <mat-icon class="shrink-0 text-brand-strong" aria-hidden="true">school</mat-icon>
                         <span class="truncate leading-none">{{ task.program }}</span>
                       </p>
                     </div>
@@ -214,19 +218,18 @@ const toIsoDate = (date: Date): string => {
   host: { class: 'block' },
 })
 export class RequirementsCalendarComponent {
-  private readonly http = inject(HttpClient);
-  private readonly snackBar = inject(MatSnackBar);
+  readonly requirementsStore = inject(ParticipantRequirementsStore);
+  private readonly locale = inject(LOCALE_ID);
   readonly weekdays = DAYS;
   readonly today = new Date();
   readonly visibleMonth = signal(new Date(this.today.getFullYear(), this.today.getMonth(), 1));
   readonly selectedDate = signal(toIsoDate(this.today));
-  readonly requirements = signal<readonly ParticipantRequirement[]>([]);
-  readonly savingTaskIds = signal<ReadonlySet<string>>(new Set());
   readonly tasksByDate = computed<Readonly<Record<string, readonly CalendarTask[]>>>(() => {
     const grouped: Record<string, CalendarTask[]> = {};
-    for (const requirement of this.requirements()) {
+    for (const requirement of this.requirementsStore.requirements()) {
       const date = toIsoDate(new Date(requirement.dueAt));
       (grouped[date] ??= []).push({
+        requirement,
         id: requirement.id,
         title: requirement.name,
         program: requirement.programName,
@@ -239,7 +242,7 @@ export class RequirementsCalendarComponent {
     }
     return grouped;
   });
-  readonly monthHeading = computed(() => this.visibleMonth().toLocaleDateString(undefined, { month: 'long' }));
+  readonly monthHeading = computed(() => formatDate(this.visibleMonth(), 'MMMM', this.locale));
   readonly yearHeading = computed(() => `${this.visibleMonth().getFullYear()}`);
   readonly leadingBlanks = computed(() => Array.from({ length: this.visibleMonth().getDay() }));
   readonly calendarDays = computed<readonly CalendarDay[]>(() => {
@@ -257,89 +260,37 @@ export class RequirementsCalendarComponent {
         isToday: iso === todayIso,
         tasks,
         indicatorTasks: tasks.slice(0, 3),
-        label: `${date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}${dueLabel}`,
+        label: `${formatDate(date, 'EEEE, MMMM d, yyyy', this.locale)}${dueLabel}`,
       };
     });
   });
   readonly selectedTasks = computed(() => this.tasksByDate()[this.selectedDate()] ?? []);
   readonly selectedDayHeading = computed(() =>
-    new Date(`${this.selectedDate()}T12:00:00`).toLocaleDateString(undefined, {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-    }),
+    formatDate(new Date(`${this.selectedDate()}T12:00:00`), 'EEEE, MMMM d', this.locale),
   );
 
   constructor() {
-    this.http.get<ParticipantRequirement[]>('/api/users-on-programs/user/requirements').subscribe({
-      next: (requirements) => this.requirements.set(requirements),
-      error: () =>
-        this.snackBar.open('We could not load your calendar. Please try again.', undefined, { duration: 5000 }),
-    });
-  }
-
-  selectDay(iso: string): void {
-    this.selectedDate.set(iso);
+    this.requirementsStore.load();
   }
 
   private formatDueLabel(value: string): string {
     const dueAt = new Date(value);
-    const date = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(dueAt);
+    const date = formatDate(dueAt, 'MMM d', this.locale);
     const isToday = toIsoDate(dueAt) === toIsoDate(this.today);
     const isEndOfDay =
       (dueAt.getHours() === 0 && dueAt.getMinutes() === 0) || (dueAt.getHours() === 23 && dueAt.getMinutes() === 59);
-    const time = isEndOfDay
-      ? 'End of day'
-      : new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(dueAt);
+    const time = isEndOfDay ? 'End of day' : formatDate(dueAt, 'h:mm a', this.locale);
     return `Due ${isToday ? `today, ${date}` : date} · ${time}`;
   }
 
-  toggleTask(task: CalendarTask): void {
-    this.savingTaskIds.update((current) => {
-      const next = new Set(current);
-      next.add(task.id);
-      return next;
-    });
-    const url = `/api/users-on-programs/user/program/${task.programId}/requirements/${task.id}/completion`;
-    const request = task.isCompleted ? this.http.delete(url) : this.http.post(url, {});
-    request.subscribe({
-      next: () => {
-        this.requirements.update((requirements) =>
-          requirements.map((requirement) =>
-            requirement.id === task.id ? { ...requirement, isCompleted: !task.isCompleted } : requirement,
-          ),
-        );
-        this.finishSaving(task.id);
-      },
-      error: () => {
-        this.finishSaving(task.id);
-        this.snackBar.open('We could not update this task. Please try again.', undefined, { duration: 5000 });
-      },
-    });
-  }
-
-  showPreviousMonth(): void {
-    this.changeMonth(-1);
-  }
-  showNextMonth(): void {
-    this.changeMonth(1);
-  }
   showToday(): void {
     this.visibleMonth.set(new Date(this.today.getFullYear(), this.today.getMonth(), 1));
     this.selectedDate.set(toIsoDate(this.today));
   }
-  private changeMonth(offset: number): void {
+  changeMonth(offset: number): void {
     const current = this.visibleMonth();
     const next = new Date(current.getFullYear(), current.getMonth() + offset, 1);
     this.visibleMonth.set(next);
     this.selectedDate.set(toIsoDate(next));
-  }
-
-  private finishSaving(taskId: string): void {
-    this.savingTaskIds.update((current) => {
-      const next = new Set(current);
-      next.delete(taskId);
-      return next;
-    });
   }
 }

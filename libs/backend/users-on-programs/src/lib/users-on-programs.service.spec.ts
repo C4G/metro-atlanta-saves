@@ -18,7 +18,6 @@ describe('UsersOnProgramsService requirement actions', () => {
   const findEnrollment = jest.fn();
   const findRequirement = jest.fn();
   const upsertCompletion = jest.fn();
-  const deleteManyCompletions = jest.fn();
   const findManyUsersOnPrograms = jest.fn();
   const getTotalAmountSaved = jest.fn();
   const reconcileUserProgram = jest.fn();
@@ -40,7 +39,7 @@ describe('UsersOnProgramsService requirement actions', () => {
           create: createUserOnProgram,
         },
         requirement: { findUnique: findRequirement },
-        requirementCompletion: { deleteMany: deleteManyCompletions, upsert: upsertCompletion },
+        requirementCompletion: { upsert: upsertCompletion },
         user: { findFirst: userFindFirst },
         alliesOnPrograms: { findUnique: findAllyOnProgram },
         checkpointName: { findMany: findCheckpointNames },
@@ -92,6 +91,10 @@ describe('UsersOnProgramsService requirement actions', () => {
     ['a requirement from another program', { programId: 'program-2', actionInstructions: 'Attend the meetup.' }],
     ['a requirement without action instructions', { programId: 'program-1', actionInstructions: null }],
     ['a requirement with blank action instructions', { programId: 'program-1', actionInstructions: '  \n ' }],
+    [
+      'a dated requirement without action instructions',
+      { programId: 'program-1', actionInstructions: null, dueAt: new Date() },
+    ],
   ])('rejects %s', async (_description, requirement) => {
     findEnrollment.mockResolvedValue({ userId: 'learner-1' });
     findRequirement.mockResolvedValue(requirement);
@@ -153,27 +156,6 @@ describe('UsersOnProgramsService requirement actions', () => {
       },
     ]);
     expect(findManyUsersOnPrograms).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: 'learner-1' } }));
-  });
-
-  it('removes a completion only when the participant is enrolled in that program', async () => {
-    findEnrollment.mockResolvedValue({ userId: 'learner-1' });
-    deleteManyCompletions.mockResolvedValue({ count: 1 });
-
-    await expect(service.uncompleteRequirement('learner-1', 'program-1', 'requirement-1')).resolves.toEqual({
-      requirementId: 'requirement-1',
-    });
-    expect(deleteManyCompletions).toHaveBeenCalledWith({
-      where: { userId: 'learner-1', programId: 'program-1', requirementId: 'requirement-1' },
-    });
-  });
-
-  it('rejects an uncomplete request for a program the participant is not enrolled in', async () => {
-    findEnrollment.mockResolvedValue(null);
-
-    await expect(service.uncompleteRequirement('learner-1', 'program-1', 'requirement-1')).rejects.toBeInstanceOf(
-      UnauthorizedException,
-    );
-    expect(deleteManyCompletions).not.toHaveBeenCalled();
   });
 
   it('reconciles requirement reminders after a learner enrolls', async () => {

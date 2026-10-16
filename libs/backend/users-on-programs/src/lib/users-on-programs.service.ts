@@ -153,7 +153,7 @@ export class UsersOnProgramsService {
         programName: program.name,
         dueAt: requirement.dueAt,
         isCompleted: completedIds.has(requirement.id),
-        canComplete: true,
+        canComplete: !!requirement.actionInstructions?.trim(),
       }));
     });
   }
@@ -170,15 +170,11 @@ export class UsersOnProgramsService {
 
     const requirement = await this.prisma.requirement.findUnique({
       where: { id: requirementId },
-      select: { programId: true, actionInstructions: true, dueAt: true },
+      select: { programId: true, actionInstructions: true },
     });
 
-    if (
-      !requirement ||
-      requirement.programId !== programId ||
-      (!requirement.actionInstructions?.trim() && !requirement.dueAt)
-    ) {
-      throw new BadRequestException(['This requirement cannot be completed from the selected program.']);
+    if (!requirement || requirement.programId !== programId || !requirement.actionInstructions?.trim()) {
+      throw new BadRequestException(['This requirement is not an action requirement in the selected program.']);
     }
 
     return this.prisma.requirementCompletion.upsert({
@@ -189,20 +185,6 @@ export class UsersOnProgramsService {
       update: {},
       select: { requirementId: true, completedAt: true },
     });
-  }
-
-  async uncompleteRequirement(userId: string, programId: string, requirementId: string) {
-    const userOnProgram = await this.prisma.usersOnPrograms.findUnique({
-      where: { userId_programId: { userId, programId } },
-      select: { userId: true },
-    });
-
-    if (!userOnProgram) {
-      throw new UnauthorizedException(["You can only update requirements for programs you're enrolled in."]);
-    }
-
-    await this.prisma.requirementCompletion.deleteMany({ where: { userId, programId, requirementId } });
-    return { requirementId };
   }
 
   async addUsersOnPrograms(createUsersOnProgramsDto: CreateUsersOnProgramsDto) {
