@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -19,6 +20,7 @@ import { UserFull } from '@mas/models';
 import { UsersService } from '@mas/backend-users';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '@mas/backend-prisma';
+import { SaveMonthlyProgressDto } from './dto/save-monthly-progress.dto';
 
 @UseGuards(ManagedSessionGuard)
 @Controller('checkpoints')
@@ -31,6 +33,21 @@ export class CheckpointsController {
     private readonly usersService: UsersService,
     private readonly prismaService: PrismaService,
   ) {}
+
+  @Get('my/program/:programId')
+  getMyProgress(@Req() request: Request & { user: UserFull }, @Param('programId') programId: string) {
+    return this.checkpointsService.getParticipantProgress(request.user.id, programId);
+  }
+
+  @Put('my/program/:programId/month/:name')
+  saveMyProgress(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('name') name: string,
+    @Body() body: SaveMonthlyProgressDto,
+  ) {
+    return this.checkpointsService.saveParticipantProgress(request.user.id, programId, name, body);
+  }
 
   @Post()
   async create(@Req() request: Request & { user: UserFull }, @Body() createCheckpointDto: CreateCheckpointDto) {
