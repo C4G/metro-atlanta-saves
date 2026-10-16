@@ -91,7 +91,7 @@ describe('AddRequirementComponent action configuration', () => {
     });
   });
 
-  it('defaults a missing due time to local midnight and keeps an omitted date optional', () => {
+  it('defaults a missing due time to the local end of day and keeps an omitted date optional', () => {
     fixture = TestBed.createComponent(AddRequirementComponent);
     fixture.componentInstance.requirementForm.setValue({
       name: 'Read the guide',
@@ -107,7 +107,7 @@ describe('AddRequirementComponent action configuration', () => {
     expect(addRequirement).toHaveBeenCalledWith(
       expect.objectContaining({
         actionInstructions: null,
-        dueAt: new Date('2026-11-15T00:00').toISOString(),
+        dueAt: new Date('2026-11-15T23:59').toISOString(),
         reminderDaysBefore: 7,
       }),
     );

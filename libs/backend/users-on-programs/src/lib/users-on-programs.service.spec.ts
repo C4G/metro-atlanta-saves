@@ -91,6 +91,10 @@ describe('UsersOnProgramsService requirement actions', () => {
     ['a requirement from another program', { programId: 'program-2', actionInstructions: 'Attend the meetup.' }],
     ['a requirement without action instructions', { programId: 'program-1', actionInstructions: null }],
     ['a requirement with blank action instructions', { programId: 'program-1', actionInstructions: '  \n ' }],
+    [
+      'a dated requirement without action instructions',
+      { programId: 'program-1', actionInstructions: null, dueAt: new Date() },
+    ],
   ])('rejects %s', async (_description, requirement) => {
     findEnrollment.mockResolvedValue({ userId: 'learner-1' });
     findRequirement.mockResolvedValue(requirement);
@@ -122,6 +126,36 @@ describe('UsersOnProgramsService requirement actions', () => {
       'action-requirement',
     ]);
     expect(result[0].totalAmountSaved).toBe(250);
+  });
+
+  it('returns due requirements only from programs in which the participant is enrolled', async () => {
+    const dueAt = new Date('2026-10-20T23:59:00.000Z');
+    findManyUsersOnPrograms.mockResolvedValue([
+      {
+        program: {
+          id: 'program-1',
+          name: 'Savings foundations',
+          Requirement: [
+            { id: 'requirement-1', name: 'Create a budget', dueAt, actionInstructions: 'Upload your budget.' },
+          ],
+        },
+        requirementCompletions: [{ requirementId: 'requirement-1' }],
+        requirementStatus: [],
+      },
+    ]);
+
+    await expect(service.getParticipantRequirements('learner-1')).resolves.toEqual([
+      {
+        id: 'requirement-1',
+        name: 'Create a budget',
+        programId: 'program-1',
+        programName: 'Savings foundations',
+        dueAt,
+        isCompleted: true,
+        canComplete: true,
+      },
+    ]);
+    expect(findManyUsersOnPrograms).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: 'learner-1' } }));
   });
 
   it('reconciles requirement reminders after a learner enrolls', async () => {

@@ -5,20 +5,22 @@ import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { DiscussionBoardsStore, ProgramsStore } from '@mas/frontend-shared-data-access';
 
+import { RequirementsCalendarComponent } from './requirements-calendar.component';
+
 @Component({
   selector: 'mas-dashboard',
-  imports: [DatePipe, MatIcon, RouterLink],
+  imports: [DatePipe, MatIcon, RequirementsCalendarComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
       <div class="mx-auto max-w-7xl space-y-8">
         <header class="rounded-3xl border border-outline bg-surface-raised px-6 py-8 sm:px-10 sm:py-10">
-          <div class="max-w-2xl">
+          <div class="max-w-3xl">
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-strong">Your dashboard</p>
             <h1 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
               {{ welcomeHeading() }}
             </h1>
-            <p class="mt-3 max-w-xl text-sm leading-6 text-ink-muted">
+            <p class="mt-3 max-w-3xl text-pretty text-sm leading-6 text-ink-muted">
               Continue your program, connect with your community, or find practical tools for your next step.
             </p>
           </div>
@@ -63,6 +65,8 @@ import { DiscussionBoardsStore, ProgramsStore } from '@mas/frontend-shared-data-
           </article>
         </section>
 
+        <mas-requirements-calendar />
+
         <section class="grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(19rem,0.8fr)]">
           <section
             class="overflow-hidden rounded-2xl border border-outline bg-surface shadow-sm"
@@ -73,31 +77,34 @@ import { DiscussionBoardsStore, ProgramsStore } from '@mas/frontend-shared-data-
               <p class="mt-1 text-xs text-ink-muted">Your active learning and savings spaces.</p>
             </div>
             @if (programsStore.usersPrograms().length) {
-              <div class="divide-y divide-outline">
+              <div class="grid gap-4 p-5 sm:grid-cols-2">
                 @for (program of programsStore.usersPrograms(); track program.id) {
-                  <a
-                    class="group flex items-center gap-4 px-5 py-5 transition-colors hover:bg-brand-soft/35 focus-visible:bg-brand-soft/35 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
-                    [routerLink]="['/program-profiles', program.id]"
+                  <article
+                    class="group flex min-h-64 flex-col rounded-2xl border border-outline bg-surface-raised p-5 transition-colors hover:border-brand hover:bg-brand-soft/35 focus-within:border-brand focus-within:bg-brand-soft/35"
                   >
-                    <span
-                      class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-soft/70 text-brand-strong"
-                      aria-hidden="true"
-                    >
-                      <mat-icon>school</mat-icon>
-                    </span>
-                    <span class="min-w-0 flex-1">
-                      <span class="block truncate text-sm font-bold text-ink">{{ program.name }}</span>
-                      <span class="mt-1 block truncate text-xs text-ink-muted">
-                        {{ program.description || 'Open your program to view progress and next steps.' }}
+                    <div class="flex items-start justify-between gap-3">
+                      <span class="rounded-full bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand-strong">
+                        Active program
                       </span>
-                    </span>
-                    <mat-icon
-                      class="shrink-0 text-ink-subtle transition group-hover:translate-x-0.5 group-hover:text-brand-strong group-focus-visible:translate-x-0.5 group-focus-visible:text-brand-strong"
-                      aria-hidden="true"
+                      <span
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand-strong"
+                        aria-hidden="true"
+                      >
+                        <mat-icon>school</mat-icon>
+                      </span>
+                    </div>
+                    <h3 class="mt-5 line-clamp-2 text-lg font-bold tracking-tight text-ink">{{ program.name }}</h3>
+                    <div
+                      class="rich-content mt-2 line-clamp-3 text-sm leading-6 text-ink-muted"
+                      [innerHTML]="program.description || 'Open your program to view progress and next steps.'"
+                    ></div>
+                    <a
+                      class="mt-auto inline-flex min-h-10 items-center justify-center rounded-xl bg-brand-strong px-4 py-2 text-xs font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface-raised"
+                      [routerLink]="['/program-profiles', program.id]"
                     >
-                      arrow_forward
-                    </mat-icon>
-                  </a>
+                      Open program
+                    </a>
+                  </article>
                 }
               </div>
             } @else {

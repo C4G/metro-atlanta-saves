@@ -74,7 +74,7 @@ function toLocalDateTimeInput(value: Date | string | null | undefined): { date: 
           <mat-form-field>
             <mat-label>Due Time (optional)</mat-label>
             <input matInput type="time" formControlName="dueTime" />
-            <mat-hint>Defaults to midnight in your local time.</mat-hint>
+            <mat-hint>Defaults to the end of the selected day.</mat-hint>
           </mat-form-field>
           <mat-form-field class="sm:col-span-2">
             <mat-label>Email Reminder</mat-label>
@@ -125,7 +125,7 @@ export class AddRequirementComponent {
     const requirementValues = {
       ...formValue,
       actionInstructions: actionInstructions.trim() || null,
-      dueAt: dueDate ? new Date(`${dueDate}T${dueTime || '00:00'}`).toISOString() : null,
+      dueAt: dueDate ? new Date(`${dueDate}T${dueTime || '23:59'}`).toISOString() : null,
       reminderDaysBefore: dueDate ? formValue.reminderDaysBefore : null,
     };
 

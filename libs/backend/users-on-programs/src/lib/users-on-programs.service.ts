@@ -120,6 +120,44 @@ export class UsersOnProgramsService {
     });
   }
 
+  async getParticipantRequirements(userId: string) {
+    const enrollments = await this.prisma.usersOnPrograms.findMany({
+      where: { userId },
+      select: {
+        program: {
+          select: {
+            id: true,
+            name: true,
+            Requirement: {
+              where: { dueAt: { not: null } },
+              select: { id: true, name: true, dueAt: true, actionInstructions: true },
+              orderBy: { dueAt: 'asc' },
+            },
+          },
+        },
+        requirementCompletions: { select: { requirementId: true } },
+        requirementStatus: true,
+      },
+    });
+
+    return enrollments.flatMap(({ program, requirementCompletions, requirementStatus }) => {
+      const completedIds = new Set([
+        ...(requirementStatus ?? []),
+        ...requirementCompletions.map(({ requirementId }) => requirementId),
+      ]);
+
+      return program.Requirement.map((requirement) => ({
+        id: requirement.id,
+        name: requirement.name,
+        programId: program.id,
+        programName: program.name,
+        dueAt: requirement.dueAt,
+        isCompleted: completedIds.has(requirement.id),
+        canComplete: !!requirement.actionInstructions?.trim(),
+      }));
+    });
+  }
+
   async completeRequirement(userId: string, programId: string, requirementId: string) {
     const userOnProgram = await this.prisma.usersOnPrograms.findUnique({
       where: { userId_programId: { userId, programId } },
