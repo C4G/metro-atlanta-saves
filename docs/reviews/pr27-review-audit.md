@@ -36,6 +36,6 @@ This supplements the TheNexLevel Review Comment Tracker with all eight inline co
 
 ## Verification status
 
-Focused dashboard, data-access, and backend requirement checks pass, including the new store regression tests. The production frontend build passes. Light, dark, and 390px mobile screenshots have been visually inspected. The full affected lint/test run and fresh GitHub CI are pending.
+Focused dashboard, data-access, and backend requirement checks pass, including the new store regression tests. The production frontend build passes. Light, dark, and 390px mobile screenshots have been visually inspected. The full affected lint/test run across 47 projects passes. Backend integration tests require permission to bind local HTTP ports; after rerunning outside the sandbox, all 43 backend tests pass. Fresh GitHub CI, including Nx Agents E2E, remains the final publication check.
 
 The Word tracker has the same eight new review entries appended locally, but its required visual verification is blocked because the packaged renderer cannot locate LibreOffice. The Word copy remains a local draft; this Markdown supplement is the reviewable published tracker update. Historical global items remain preserved in the original saved Word tracker.
