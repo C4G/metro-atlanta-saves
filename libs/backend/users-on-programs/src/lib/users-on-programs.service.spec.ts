@@ -18,6 +18,7 @@ describe('UsersOnProgramsService requirement actions', () => {
   const findEnrollment = jest.fn();
   const findRequirement = jest.fn();
   const upsertCompletion = jest.fn();
+  const deleteCompletions = jest.fn();
   const findManyUsersOnPrograms = jest.fn();
   const getTotalAmountSaved = jest.fn();
   const reconcileUserProgram = jest.fn();
@@ -26,11 +27,13 @@ describe('UsersOnProgramsService requirement actions', () => {
   const createUserOnProgram = jest.fn();
   const findCheckpointNames = jest.fn();
   const createCheckpoints = jest.fn();
+  const removeLegacyStatus = jest.fn();
 
   let service: UsersOnProgramsService;
 
   beforeEach(() => {
     jest.resetAllMocks();
+    removeLegacyStatus.mockResolvedValue(1);
     service = new UsersOnProgramsService(
       {
         usersOnPrograms: {
@@ -39,11 +42,13 @@ describe('UsersOnProgramsService requirement actions', () => {
           create: createUserOnProgram,
         },
         requirement: { findUnique: findRequirement },
-        requirementCompletion: { upsert: upsertCompletion },
+        requirementCompletion: { upsert: upsertCompletion, deleteMany: deleteCompletions },
         user: { findFirst: userFindFirst },
         alliesOnPrograms: { findUnique: findAllyOnProgram },
         checkpointName: { findMany: findCheckpointNames },
         checkpoint: { createMany: createCheckpoints },
+        $executeRaw: removeLegacyStatus,
+        $transaction: jest.fn((operations) => Promise.all(operations)),
       } as any,
       { getTotalAmountSaved } as any,
       { reconcileUserProgram } as any,
@@ -75,6 +80,59 @@ describe('UsersOnProgramsService requirement actions', () => {
     });
   });
 
+  it('undoes only the enrolled participant’s action completion', async () => {
+    findEnrollment.mockResolvedValue({ requirementStatus: [] });
+    findRequirement.mockResolvedValue({ programId: 'program-1', actionInstructions: 'Attend.' });
+    await service.uncompleteRequirement('learner-1', 'program-1', 'requirement-1');
+    expect(deleteCompletions).toHaveBeenCalledWith({
+      where: { userId: 'learner-1', programId: 'program-1', requirementId: 'requirement-1' },
+    });
+  });
+
+  it('unchecks a non-action requirement recorded in the legacy status list', async () => {
+    findEnrollment.mockResolvedValue({ requirementStatus: ['requirement-1', 'keep-this'] });
+    findRequirement.mockResolvedValue({ programId: 'program-1', actionInstructions: null });
+    await service.uncompleteRequirement('learner-1', 'program-1', 'requirement-1');
+    expect(removeLegacyStatus).toHaveBeenCalledWith(expect.any(Array), 'requirement-1', 'learner-1', 'program-1');
+    expect(deleteCompletions).toHaveBeenCalledWith({
+      where: { userId: 'learner-1', programId: 'program-1', requirementId: 'requirement-1' },
+    });
+  });
+
+  it.each([null, '', '   '])('allows completion without action instructions: %s', async (actionInstructions) => {
+    findEnrollment.mockResolvedValue({ userId: 'learner-1', requirementStatus: [] });
+    findRequirement.mockResolvedValue({ programId: 'program-1', actionInstructions });
+    await service.completeRequirement('learner-1', 'program-1', 'requirement-1');
+    expect(upsertCompletion).toHaveBeenCalled();
+  });
+
+  it.each([
+    ['missing', null, []],
+    ['another program', { programId: 'program-2', actionInstructions: 'Attend.' }, []],
+  ])('rejects undo for %s requirements', async (_label, requirement, requirementStatus) => {
+    findEnrollment.mockResolvedValue({ requirementStatus });
+    findRequirement.mockResolvedValue(requirement);
+    await expect(service.uncompleteRequirement('learner-1', 'program-1', 'requirement-1')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    expect(deleteCompletions).not.toHaveBeenCalled();
+  });
+
+  it('allows participant writes to a previously staff-managed requirement', async () => {
+    findEnrollment.mockResolvedValue({ userId: 'learner-1', requirementStatus: ['requirement-1'] });
+    findRequirement.mockResolvedValue({ programId: 'program-1', actionInstructions: 'Attend.' });
+    await service.completeRequirement('learner-1', 'program-1', 'requirement-1');
+    expect(upsertCompletion).toHaveBeenCalled();
+  });
+
+  it('rejects undo for a participant outside the program', async () => {
+    findEnrollment.mockResolvedValue(null);
+    await expect(service.uncompleteRequirement('learner-1', 'program-1', 'requirement-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    expect(deleteCompletions).not.toHaveBeenCalled();
+  });
+
   it('rejects learners who are not enrolled before looking up the requirement', async () => {
     findEnrollment.mockResolvedValue(null);
 
@@ -89,12 +147,6 @@ describe('UsersOnProgramsService requirement actions', () => {
   it.each([
     ['a missing requirement', null],
     ['a requirement from another program', { programId: 'program-2', actionInstructions: 'Attend the meetup.' }],
-    ['a requirement without action instructions', { programId: 'program-1', actionInstructions: null }],
-    ['a requirement with blank action instructions', { programId: 'program-1', actionInstructions: '  \n ' }],
-    [
-      'a dated requirement without action instructions',
-      { programId: 'program-1', actionInstructions: null, dueAt: new Date() },
-    ],
   ])('rejects %s', async (_description, requirement) => {
     findEnrollment.mockResolvedValue({ userId: 'learner-1' });
     findRequirement.mockResolvedValue(requirement);

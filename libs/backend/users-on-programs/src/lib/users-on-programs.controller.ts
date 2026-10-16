@@ -72,6 +72,16 @@ export class UsersOnProgramsController {
     return this.usersOnProgramsService.completeRequirement(request.user.id, programId, requirementId);
   }
 
+  @UseGuards(ManagedSessionGuard)
+  @Delete('user/program/:programId/requirements/:requirementId/completion')
+  uncompleteRequirement(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('requirementId') requirementId: string,
+  ) {
+    return this.usersOnProgramsService.uncompleteRequirement(request.user.id, programId, requirementId);
+  }
+
   @UseGuards(ManagedSessionGuard, RoleGuard)
   @Roles('Administrator', 'Partner_Staff')
   @Post()

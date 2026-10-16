@@ -153,7 +153,7 @@ export class UsersOnProgramsService {
         programName: program.name,
         dueAt: requirement.dueAt,
         isCompleted: completedIds.has(requirement.id),
-        canComplete: !!requirement.actionInstructions?.trim(),
+        canComplete: true,
       }));
     });
   }
@@ -161,7 +161,7 @@ export class UsersOnProgramsService {
   async completeRequirement(userId: string, programId: string, requirementId: string) {
     const userOnProgram = await this.prisma.usersOnPrograms.findUnique({
       where: { userId_programId: { userId, programId } },
-      select: { userId: true },
+      select: { userId: true, requirementStatus: true },
     });
 
     if (!userOnProgram) {
@@ -173,8 +173,8 @@ export class UsersOnProgramsService {
       select: { programId: true, actionInstructions: true },
     });
 
-    if (!requirement || requirement.programId !== programId || !requirement.actionInstructions?.trim()) {
-      throw new BadRequestException(['This requirement is not an action requirement in the selected program.']);
+    if (!requirement || requirement.programId !== programId) {
+      throw new BadRequestException(['This requirement does not belong to the selected program.']);
     }
 
     return this.prisma.requirementCompletion.upsert({
@@ -185,6 +185,33 @@ export class UsersOnProgramsService {
       update: {},
       select: { requirementId: true, completedAt: true },
     });
+  }
+
+  async uncompleteRequirement(userId: string, programId: string, requirementId: string) {
+    const enrollment = await this.prisma.usersOnPrograms.findUnique({
+      where: { userId_programId: { userId, programId } },
+      select: { requirementStatus: true },
+    });
+    if (!enrollment) {
+      throw new UnauthorizedException(["You can only update requirements for programs you're enrolled in."]);
+    }
+    const requirement = await this.prisma.requirement.findUnique({
+      where: { id: requirementId },
+      select: { programId: true, actionInstructions: true },
+    });
+    if (!requirement || requirement.programId !== programId) {
+      throw new BadRequestException(['This requirement does not belong to the selected program.']);
+    }
+    // Remove both completion sources atomically, preserving other legacy statuses.
+    await this.prisma.$transaction([
+      this.prisma.$executeRaw`
+        UPDATE "UsersOnPrograms"
+        SET "requirementStatus" = array_remove("requirementStatus", ${requirementId}), "updatedAt" = NOW()
+        WHERE "userId" = ${userId} AND "programId" = ${programId}
+      `,
+      this.prisma.requirementCompletion.deleteMany({ where: { userId, programId, requirementId } }),
+    ]);
+    return { requirementId };
   }
 
   async addUsersOnPrograms(createUsersOnProgramsDto: CreateUsersOnProgramsDto) {

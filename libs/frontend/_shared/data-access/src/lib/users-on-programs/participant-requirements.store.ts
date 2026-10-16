@@ -29,31 +29,28 @@ export const ParticipantRequirementsStore = signalStore(
         ),
       ),
     ),
-    complete: rxMethod<ParticipantRequirement>(
+    toggle: rxMethod<ParticipantRequirement>(
       pipe(
-        filter((task) => task.canComplete && !task.isCompleted && !store.savingTaskIds().includes(task.id)),
+        filter((task) => task.canComplete && !store.savingTaskIds().includes(task.id)),
         tap((task) => patchState(store, { savingTaskIds: [...store.savingTaskIds(), task.id] })),
-        mergeMap((task) =>
-          http
-            .post(`/api/users-on-programs/user/program/${task.programId}/requirements/${task.id}/completion`, {})
-            .pipe(
-              tapResponse({
-                next: () =>
-                  patchState(store, {
-                    requirements: store
-                      .requirements()
-                      .map((requirement) =>
-                        requirement.id === task.id ? { ...requirement, isCompleted: true } : requirement,
-                      ),
-                  }),
-                error: () =>
-                  snackBar.open('We could not update this task. Please try again.', undefined, { duration: 5000 }),
-              }),
-              finalize(() =>
-                patchState(store, { savingTaskIds: store.savingTaskIds().filter((id) => id !== task.id) }),
-              ),
-            ),
-        ),
+        mergeMap((task) => {
+          const url = `/api/users-on-programs/user/program/${task.programId}/requirements/${task.id}/completion`;
+          return (task.isCompleted ? http.delete(url) : http.post(url, {})).pipe(
+            tapResponse({
+              next: () =>
+                patchState(store, {
+                  requirements: store
+                    .requirements()
+                    .map((requirement) =>
+                      requirement.id === task.id ? { ...requirement, isCompleted: !task.isCompleted } : requirement,
+                    ),
+                }),
+              error: () =>
+                snackBar.open('We could not update this task. Please try again.', undefined, { duration: 5000 }),
+            }),
+            finalize(() => patchState(store, { savingTaskIds: store.savingTaskIds().filter((id) => id !== task.id) })),
+          );
+        }),
       ),
     ),
   })),

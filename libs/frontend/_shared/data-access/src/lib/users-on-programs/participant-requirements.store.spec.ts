@@ -35,22 +35,51 @@ describe('ParticipantRequirementsStore', () => {
     TestBed.resetTestingModule();
   });
 
-  it('keeps completed and non-action requirements read only', () => {
-    store.complete({ ...task, isCompleted: true });
-    store.complete({ ...task, canComplete: false });
-    http.expectNone((request) => request.method !== 'GET');
+  it('allows checking a program requirement with no action instructions', () => {
+    store.load();
+    http.expectOne('/api/users-on-programs/user/requirements').flush([task]);
+    store.toggle(task);
+    const request = http.expectOne('/api/users-on-programs/user/program/program-1/requirements/task-1/completion');
+    expect(request.request.method).toBe('POST');
+    request.flush({});
+    expect(store.requirements()[0].isCompleted).toBe(true);
   });
 
   it('prevents duplicate writes and persists completion after the server succeeds', () => {
     store.load();
     http.expectOne('/api/users-on-programs/user/requirements').flush([task]);
-    store.complete(task);
-    store.complete(task);
+    store.toggle(task);
+    store.toggle(task);
     expect(store.savingTaskIds()).toEqual(['task-1']);
     const request = http.expectOne('/api/users-on-programs/user/program/program-1/requirements/task-1/completion');
     expect(request.request.method).toBe('POST');
     expect(store.requirements()[0].isCompleted).toBe(false);
     request.flush({});
+    expect(store.requirements()[0].isCompleted).toBe(true);
+    expect(store.savingTaskIds()).toEqual([]);
+  });
+
+  it('undoes a completed action after the server confirms deletion', () => {
+    const completed = { ...task, isCompleted: true };
+    store.load();
+    http.expectOne('/api/users-on-programs/user/requirements').flush([completed]);
+    store.toggle(completed);
+    const request = http.expectOne('/api/users-on-programs/user/program/program-1/requirements/task-1/completion');
+    expect(request.request.method).toBe('DELETE');
+    expect(store.requirements()[0].isCompleted).toBe(true);
+    request.flush({ requirementId: task.id });
+    expect(store.requirements()[0].isCompleted).toBe(false);
+    expect(store.savingTaskIds()).toEqual([]);
+  });
+
+  it('preserves completion and clears pending state when undo fails', () => {
+    const completed = { ...task, isCompleted: true };
+    store.load();
+    http.expectOne('/api/users-on-programs/user/requirements').flush([completed]);
+    store.toggle(completed);
+    http
+      .expectOne('/api/users-on-programs/user/program/program-1/requirements/task-1/completion')
+      .flush({}, { status: 500, statusText: 'Failed' });
     expect(store.requirements()[0].isCompleted).toBe(true);
     expect(store.savingTaskIds()).toEqual([]);
   });

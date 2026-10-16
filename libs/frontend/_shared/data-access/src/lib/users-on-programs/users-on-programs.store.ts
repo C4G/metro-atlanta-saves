@@ -8,7 +8,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { Checkpoint, type UsersOnPrograms } from '@mas/prisma-client/browser';
-import { pipe, switchMap } from 'rxjs';
+import { filter, finalize, map, mergeMap, pipe, switchMap, tap } from 'rxjs';
 
 type AddUsersOnPrograms = Omit<UsersOnPrograms, 'createdAt' | 'updatedAt' | 'programId'>;
 
@@ -26,9 +26,38 @@ const initialState: UsersOnProgramsState = {
 
 const BASE_URL = '/api/users-on-programs';
 
+type CreditCheckpoint = Pick<Checkpoint, 'createdAt' | 'creditScore' | 'name'>;
+
+export function calculateCreditScoreChange(checkpoints: CreditCheckpoint[]): number {
+  const withCreditScore = checkpoints.filter(
+    (checkpoint): checkpoint is CreditCheckpoint & { creditScore: number } => checkpoint.creditScore !== null,
+  );
+  const monthlyCheckpoints = withCreditScore.filter((checkpoint) => /^month\s+\d+$/i.test(checkpoint.name.trim()));
+  const checkpointsToCompare = monthlyCheckpoints.length >= 2 ? monthlyCheckpoints : withCreditScore;
+  const orderedCheckpoints = [...checkpointsToCompare].sort((first, second) => {
+    const firstMonth = Number(first.name.match(/^month\s+(\d+)$/i)?.[1]);
+    const secondMonth = Number(second.name.match(/^month\s+(\d+)$/i)?.[1]);
+
+    if (Number.isFinite(firstMonth) && Number.isFinite(secondMonth)) {
+      return firstMonth - secondMonth;
+    }
+
+    return new Date(first.createdAt).getTime() - new Date(second.createdAt).getTime();
+  });
+
+  const firstCheckpoint = orderedCheckpoints[0];
+  const lastCheckpoint = orderedCheckpoints.at(-1);
+  if (!firstCheckpoint || !lastCheckpoint) {
+    return 0;
+  }
+
+  return lastCheckpoint.creditScore - firstCheckpoint.creditScore;
+}
+
 export const UsersOnProgramsStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+  withState({ savingRequirementIds: [] as string[] }),
   withComputed(({ userOnProgram }) => ({
     userProgramProgress: computed(() => {
       if (!userOnProgram()) {
@@ -51,6 +80,7 @@ export const UsersOnProgramsStore = signalStore(
             actionInstructions,
             dueAt,
             isActionRequirement: !!actionInstructions?.trim(),
+            canComplete: true,
             status: isCompleted ? 'COMPLETED' : 'TODO',
             isCompleted,
             completedAt: completion?.completedAt ?? null,
@@ -66,7 +96,7 @@ export const UsersOnProgramsStore = signalStore(
       }
 
       const savedAmount = programUser.checkpoints.reduce(
-        (acc, curr) => acc + (curr.checkpointName.type === 'Savings' ? (curr.savedMoney ?? 0) : 0),
+        (total, checkpoint) => total + (checkpoint.savedMoney ?? 0),
         0,
       );
 
@@ -77,12 +107,8 @@ export const UsersOnProgramsStore = signalStore(
       if (!programUser) {
         return 0;
       }
-      const creditChanges = programUser.checkpoints
-        .filter((c) => c.checkpointName.type === 'Credit_Score')
-        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      return creditChanges.length > 1
-        ? (creditChanges.at(-1)?.creditScore ?? 0) - (creditChanges.at(0)?.creditScore ?? 0)
-        : 0;
+
+      return calculateCreditScoreChange(programUser.checkpoints);
     }),
     userProgramSavingsHistory: computed<Checkpoint[]>(() => {
       if (!userOnProgram()) {
@@ -128,6 +154,55 @@ export const UsersOnProgramsStore = signalStore(
               }),
             ),
           ),
+        ),
+      ),
+      setRequirementCompletion: rxMethod<{ requirementId: string; isCompleted: boolean }>(
+        pipe(
+          filter(
+            ({ requirementId }) =>
+              !!store.userProgramProgress().find((task) => task.requirementId === requirementId)?.canComplete &&
+              !store.savingRequirementIds().includes(requirementId),
+          ),
+          map((change) => ({ ...change, programId: store.programId() })),
+          tap(({ requirementId }) =>
+            patchState(store, { savingRequirementIds: [...store.savingRequirementIds(), requirementId] }),
+          ),
+          mergeMap(({ requirementId, isCompleted, programId }) => {
+            const url = `${BASE_URL}/user/program/${programId}/requirements/${requirementId}/completion`;
+            const request = isCompleted
+              ? http.post<{ requirementId: string; completedAt: Date }>(url, {})
+              : http.delete<{ requirementId: string; completedAt?: Date }>(url);
+            return request.pipe(
+              tapResponse({
+                next: (result) =>
+                  patchState(store, (state) => {
+                    if (!state.userOnProgram || state.programId !== programId) return state;
+                    const completions = state.userOnProgram.requirementCompletions.filter(
+                      (item) => item.requirementId !== requirementId,
+                    );
+                    return {
+                      userOnProgram: {
+                        ...state.userOnProgram,
+                        requirementStatus: isCompleted
+                          ? state.userOnProgram.requirementStatus
+                          : state.userOnProgram.requirementStatus.filter((id) => id !== requirementId),
+                        requirementCompletions:
+                          isCompleted && result.completedAt
+                            ? [...completions, { requirementId, completedAt: result.completedAt }]
+                            : completions,
+                      },
+                    };
+                  }),
+                error: () =>
+                  snackBar.open('We could not update this task. Please try again.', undefined, { duration: 5000 }),
+              }),
+              finalize(() =>
+                patchState(store, {
+                  savingRequirementIds: store.savingRequirementIds().filter((id) => id !== requirementId),
+                }),
+              ),
+            );
+          }),
         ),
       ),
       completeRequirement: rxMethod<string>(

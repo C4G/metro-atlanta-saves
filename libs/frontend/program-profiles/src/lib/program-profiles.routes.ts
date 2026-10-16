@@ -13,8 +13,8 @@ export const programProfilesRoutes: Route[] = [
         resolve: [seoResolver],
         data: {
           seo: {
-            title: `Description ${TITLE_SUFFIX}`,
-            description: 'Description of the program',
+            title: `Overview ${TITLE_SUFFIX}`,
+            description: 'Program overview',
           },
         },
       },
@@ -35,8 +35,8 @@ export const programProfilesRoutes: Route[] = [
         resolve: [seoResolver],
         data: {
           seo: {
-            title: `Course Progress ${TITLE_SUFFIX}`,
-            description: 'Track your program progress',
+            title: `My Tasks ${TITLE_SUFFIX}`,
+            description: 'View and complete your program tasks',
           },
         },
       },
@@ -46,8 +46,8 @@ export const programProfilesRoutes: Route[] = [
         resolve: [seoResolver],
         data: {
           seo: {
-            title: `Savings ${TITLE_SUFFIX}`,
-            description: 'Track your savings',
+            title: `My Progress ${TITLE_SUFFIX}`,
+            description: 'Record monthly savings and review your program progress',
           },
         },
       },
@@ -57,8 +57,8 @@ export const programProfilesRoutes: Route[] = [
         resolve: [seoResolver],
         data: {
           seo: {
-            title: `Upload Receipts ${TITLE_SUFFIX}`,
-            description: 'Upload your receipts',
+            title: `Receipts ${TITLE_SUFFIX}`,
+            description: 'Upload and review your receipts',
           },
         },
       },
