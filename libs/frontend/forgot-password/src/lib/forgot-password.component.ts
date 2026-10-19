@@ -54,13 +54,15 @@ import { AuthStore } from '@mas/frontend-shared-auth';
                 placeholder="name@example.com"
               />
               @if (
-                (forgotPasswordForm.controls.email.touched || form.submitted) &&
+                ((forgotPasswordForm.controls.email.touched && forgotPasswordForm.controls.email.dirty) ||
+                  form.submitted) &&
                 forgotPasswordForm.controls.email.errors?.['required']
               ) {
                 <mat-error>Email is required.</mat-error>
               }
               @if (
-                (forgotPasswordForm.controls.email.touched || form.submitted) &&
+                ((forgotPasswordForm.controls.email.touched && forgotPasswordForm.controls.email.dirty) ||
+                  form.submitted) &&
                 forgotPasswordForm.controls.email.errors?.['email']
               ) {
                 <mat-error>Please enter a valid email address.</mat-error>

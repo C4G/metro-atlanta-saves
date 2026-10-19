@@ -4,6 +4,17 @@ import { AuthStore } from '@mas/frontend-shared-auth';
 import { ForgotPasswordComponent } from './forgot-password.component';
 
 describe('ForgotPasswordComponent', () => {
+  it('does not show validation errors when untouched empty fields lose focus', () => {
+    const fixture = TestBed.createComponent(ForgotPasswordComponent);
+    fixture.detectChanges();
+    for (const input of Array.from(fixture.nativeElement.querySelectorAll('input')) as HTMLInputElement[]) {
+      input.dispatchEvent(new Event('blur'));
+      fixture.detectChanges();
+    }
+    expect(fixture.nativeElement.querySelector('mat-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+    expect(forgotPassword).not.toHaveBeenCalled();
+  });
   const forgotPassword = jest.fn();
   beforeEach(() => {
     jest.clearAllMocks();
