@@ -46,7 +46,8 @@ import { AuthStore } from '@mas/frontend-shared-auth';
                     placeholder="First name"
                   />
                   @if (
-                    (registerForm.controls.firstName.touched || form.submitted) &&
+                    ((registerForm.controls.firstName.touched && registerForm.controls.firstName.dirty) ||
+                      form.submitted) &&
                     registerForm.controls.firstName.errors?.['required']
                   ) {
                     <mat-error>First name is required.</mat-error>
@@ -64,7 +65,8 @@ import { AuthStore } from '@mas/frontend-shared-auth';
                     placeholder="Last name"
                   />
                   @if (
-                    (registerForm.controls.lastName.touched || form.submitted) &&
+                    ((registerForm.controls.lastName.touched && registerForm.controls.lastName.dirty) ||
+                      form.submitted) &&
                     registerForm.controls.lastName.errors?.['required']
                   ) {
                     <mat-error>Last name is required.</mat-error>
@@ -85,13 +87,14 @@ import { AuthStore } from '@mas/frontend-shared-auth';
                 placeholder="name@example.com"
               />
               @if (
-                (registerForm.controls.email.touched || form.submitted) &&
+                ((registerForm.controls.email.touched && registerForm.controls.email.dirty) || form.submitted) &&
                 registerForm.controls.email.errors?.['required']
               ) {
                 <mat-error>Email is required.</mat-error>
               }
               @if (
-                (registerForm.controls.email.touched || form.submitted) && registerForm.controls.email.errors?.['email']
+                ((registerForm.controls.email.touched && registerForm.controls.email.dirty) || form.submitted) &&
+                registerForm.controls.email.errors?.['email']
               ) {
                 <mat-error>Please enter a valid email address.</mat-error>
               }
@@ -118,13 +121,13 @@ import { AuthStore } from '@mas/frontend-shared-auth';
                 {{ passwordVisible() ? 'Hide' : 'Show' }}
               </button>
               @if (
-                (registerForm.controls.password.touched || form.submitted) &&
+                ((registerForm.controls.password.touched && registerForm.controls.password.dirty) || form.submitted) &&
                 registerForm.controls.password.errors?.['required']
               ) {
                 <mat-error>Password is required.</mat-error>
               }
               @if (
-                (registerForm.controls.password.touched || form.submitted) &&
+                ((registerForm.controls.password.touched && registerForm.controls.password.dirty) || form.submitted) &&
                 registerForm.controls.password.errors?.['minlength']
               ) {
                 <mat-error>Password must be at least 8 characters long.</mat-error>
