@@ -6,6 +6,17 @@ import { AuthStore } from '@mas/frontend-shared-auth';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
+  it('does not show validation errors when untouched empty fields lose focus', () => {
+    const fixture = TestBed.createComponent(LoginComponent);
+    fixture.detectChanges();
+    for (const input of Array.from(fixture.nativeElement.querySelectorAll('input')) as HTMLInputElement[]) {
+      input.dispatchEvent(new Event('blur'));
+      fixture.detectChanges();
+    }
+    expect(fixture.nativeElement.querySelector('mat-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+    expect(login).not.toHaveBeenCalled();
+  });
   const googleClientId = signal<string | null>(null);
   const initializeGoogle = jest.fn();
   const login = jest.fn();
