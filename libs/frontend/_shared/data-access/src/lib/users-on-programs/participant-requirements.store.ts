@@ -45,8 +45,7 @@ export const ParticipantRequirementsStore = signalStore(
                       requirement.id === task.id ? { ...requirement, isCompleted: !task.isCompleted } : requirement,
                     ),
                 }),
-              error: () =>
-                snackBar.open('We could not update this task. Please try again.', undefined, { duration: 5000 }),
+              error: () => snackBar.open('We could not update this task. Please try again.'),
             }),
             finalize(() => patchState(store, { savingTaskIds: store.savingTaskIds().filter((id) => id !== task.id) })),
           );

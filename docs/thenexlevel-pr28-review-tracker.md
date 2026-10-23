@@ -1,18 +1,22 @@
-# theNEXlevel — PR #28 review follow-up
+# theNEXlevel PR 28 review tracker
 
 Review: https://github.com/C4G/metro-atlanta-saves/pull/28
 
-This supplement records the October 22 review. The earlier Word tracker was located at `/private/tmp/metro-pr27-review-records/thenexlevel-review-comment-tracker.docx`; it has not yet been updated or audited in this pass.
+This supplement records all eight October 22 review comments. The historical Word tracker was read and audited; this version-controlled supplement maintains the PR 28 resolutions.
 
-| Comment                                                                                 | Requested change                                                         | Status                                                                                                                                                                                          |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [4355266256](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355266256) | Prevent Prisma/database error details reaching participants              | Implemented locally for monthly progress save: preserve intentional HTTP errors, return a generic internal error for unexpected failures, and retain serialization retry. Verification pending. |
-| [4355273130](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355273130) | Replace the legacy requirement-status array with a completion join table | Pending: needs a data-preserving backfill and audit of every legacy reader/writer.                                                                                                              |
-| [4355276457](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355276457) | Use a typed initial-state constant instead of assertions                 | Implemented locally in MonthlyProgressStore. Verification pending.                                                                                                                              |
-| [4355282885](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355282885) | Check whether snackbar duration is already configured globally           | Pending verification; do not remove the timeout without checking application defaults.                                                                                                          |
-| [4355289544](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355289544) | Keep credit-score helper private and use an arrow function               | Pending: existing tests import the helper and need to exercise store behavior instead.                                                                                                          |
-| [4355296665](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355296665) | Move task projection into a store computed                               | Pending.                                                                                                                                                                                        |
-| [4355297393](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355297393) | Use Angular formatDate                                                   | Pending alongside task projection.                                                                                                                                                              |
-| [4355300416](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355300416) | Confirm safe description rendering                                       | Direct Angular innerHTML binding retains built-in sanitization; bypassSecurityTrustHtml would disable that protection. Regression verification pending.                                         |
+- [4355266256](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355266256): Unexpected database errors return a generic message; intended HTTP errors survive; retries remain bounded. Regression tests pass.
+- [4355273130](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355273130): Completion reads, staff writes, participant toggles, exports, and reminders use RequirementCompletion. A migration backfills distinct valid same-program completions, preserves existing table timestamps, and clears the old array. The empty column remains temporarily for client compatibility; the API derives its compatibility property from the join table. Physical column removal remains a subsequent schema cleanup.
+- [4355276457](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355276457): Monthly progress and saving requirement IDs use typed initial-state constants.
+- [4355282885](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355282885): No global timeout existed. Added the shared five-second snackbar default and removed the redundant task-error timeout.
+- [4355289544](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355289544): Credit-score helper is a private arrow-function constant; regression tests exercise the public store computed.
+- [4355296665](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355296665): Task projection lives in the store computed; the component consumes the signal directly.
+- [4355297393](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355297393): Store date labels use Angular formatDate with injected LOCALE_ID.
+- [4355300416](https://github.com/C4G/metro-atlanta-saves/pull/28#discussion_r4355300416): Direct innerHTML binding retains Angular sanitization. A regression test verifies supported markup survives while scripts, event handlers, and executable URLs are blocked.
 
-No commit or remote update has been made in this pass. Existing unrelated local changes must be preserved.
+## Validation
+
+59 tests passed across completion services (16), requirements and reminders (21), monthly progress (12), participant pages (5), and participant store (5). Angular and backend compilation passed; existing optional-chain warnings remain in savings templates. Lint found no errors; existing backend any-type warnings remain.
+
+The migration ran against temporary PostgreSQL fixture tables inside a rolled-back transaction, verifying deduplication, rejection of cross-program requirements, and clearing legacy arrays. No live application data was changed.
+
+Historical tracker requirements checked: semantic theme tokens, standalone Material imports, Tailwind presentation, store computed projections, generated model types, and safe HTML binding. The original Word file remains the historical record; this supplement is the maintained PR 28 update.

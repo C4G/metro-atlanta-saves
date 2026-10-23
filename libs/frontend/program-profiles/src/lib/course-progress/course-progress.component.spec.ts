@@ -11,6 +11,7 @@ describe('CourseProgressComponent action requirements', () => {
       requirementName: 'Attend a meetup',
       actionInstructions: 'Join the in-person meetup and check in with the coordinator.',
       dueAt: '2026-11-15T23:59:00.000Z',
+      dueLabel: 'Nov 15, 2026',
       isActionRequirement: true,
       canComplete: true,
       isCompleted: false,

@@ -1,6 +1,6 @@
-import { formatCurrency } from '@angular/common';
+import { formatCurrency, formatDate } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { computed, DOCUMENT, inject } from '@angular/core';
+import { computed, DOCUMENT, inject, LOCALE_ID } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserOnProgramAgg, UsersOnProgramsWithName } from '@mas/models';
@@ -16,19 +16,21 @@ type UsersOnProgramsState = {
   programId: string | null;
   users: UsersOnProgramsWithName[];
   userOnProgram: UserOnProgramAgg | null;
+  savingRequirementIds: string[];
 };
 
 const initialState: UsersOnProgramsState = {
   programId: null,
   users: [],
   userOnProgram: null,
+  savingRequirementIds: [],
 };
 
 const BASE_URL = '/api/users-on-programs';
 
 type CreditCheckpoint = Pick<Checkpoint, 'createdAt' | 'creditScore' | 'name'>;
 
-export function calculateCreditScoreChange(checkpoints: CreditCheckpoint[]): number {
+const calculateCreditScoreChange = (checkpoints: CreditCheckpoint[]): number => {
   const withCreditScore = checkpoints.filter(
     (checkpoint): checkpoint is CreditCheckpoint & { creditScore: number } => checkpoint.creditScore !== null,
   );
@@ -52,13 +54,12 @@ export function calculateCreditScoreChange(checkpoints: CreditCheckpoint[]): num
   }
 
   return lastCheckpoint.creditScore - firstCheckpoint.creditScore;
-}
+};
 
 export const UsersOnProgramsStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withState({ savingRequirementIds: [] as string[] }),
-  withComputed(({ userOnProgram }) => ({
+  withComputed(({ userOnProgram }, locale = inject(LOCALE_ID)) => ({
     userProgramProgress: computed(() => {
       if (!userOnProgram()) {
         return [];
@@ -66,19 +67,19 @@ export const UsersOnProgramsStore = signalStore(
 
       const userData = userOnProgram();
       const requirement = userData?.program.Requirement;
-      const requirementStatus = userData?.requirementStatus;
       const requirementCompletions = userData?.requirementCompletions ?? [];
 
       return (
         requirement?.map(({ id, name, actionInstructions, dueAt, EducationalContent }) => {
           const completion = requirementCompletions.find((item) => item.requirementId === id);
-          const isCompleted = requirementStatus?.includes(id) || !!completion;
+          const isCompleted = !!completion;
 
           return {
             requirementId: id,
             requirementName: name,
             actionInstructions,
             dueAt,
+            dueLabel: dueAt ? formatDate(dueAt, 'MMM d, y', locale) : null,
             isActionRequirement: !!actionInstructions?.trim(),
             canComplete: true,
             status: isCompleted ? 'COMPLETED' : 'TODO',

@@ -89,11 +89,11 @@ describe('UsersOnProgramsService requirement actions', () => {
     });
   });
 
-  it('unchecks a non-action requirement recorded in the legacy status list', async () => {
+  it('unchecks a migrated non-action requirement through the join table', async () => {
     findEnrollment.mockResolvedValue({ requirementStatus: ['requirement-1', 'keep-this'] });
     findRequirement.mockResolvedValue({ programId: 'program-1', actionInstructions: null });
     await service.uncompleteRequirement('learner-1', 'program-1', 'requirement-1');
-    expect(removeLegacyStatus).toHaveBeenCalledWith(expect.any(Array), 'requirement-1', 'learner-1', 'program-1');
+    expect(removeLegacyStatus).not.toHaveBeenCalled();
     expect(deleteCompletions).toHaveBeenCalledWith({
       where: { userId: 'learner-1', programId: 'program-1', requirementId: 'requirement-1' },
     });
@@ -158,7 +158,7 @@ describe('UsersOnProgramsService requirement actions', () => {
     expect(upsertCompletion).not.toHaveBeenCalled();
   });
 
-  it('combines legacy requirement status with timestamped completions without duplicates', async () => {
+  it('uses timestamped completions as the source of truth', async () => {
     findManyUsersOnPrograms.mockResolvedValue([
       {
         userId: 'learner-1',
@@ -172,11 +172,7 @@ describe('UsersOnProgramsService requirement actions', () => {
 
     const result = await service.getUsersOnPrograms('program-1');
 
-    expect(result[0].completedRequirementIds).toEqual([
-      'legacy-requirement',
-      'shared-requirement',
-      'action-requirement',
-    ]);
+    expect(result[0].completedRequirementIds).toEqual(['action-requirement', 'shared-requirement']);
     expect(result[0].totalAmountSaved).toBe(250);
   });
 

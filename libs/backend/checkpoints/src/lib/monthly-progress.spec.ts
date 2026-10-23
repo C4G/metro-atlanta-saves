@@ -90,6 +90,17 @@ describe('Participant monthly progress', () => {
     expect(transaction).toHaveBeenCalledTimes(2);
   });
 
+  it.each([new Error('database credentials and SQL'), { code: 'P2034', message: 'serialization details' }])(
+    'hides unexpected database failures after bounded retries',
+    async (error) => {
+      transaction.mockRejectedValue(error);
+      await expect(service.saveParticipantProgress('participant-1', 'program-1', 'Month 3', body)).rejects.toThrow(
+        'We could not save your progress. Please try again.',
+      );
+      expect(transaction.mock.calls.length).toBeLessThanOrEqual(3);
+    },
+  );
+
   it.each([-1, 1.001, NaN, Infinity])('rejects invalid savings amount %s', async (savedMoney) => {
     const dto = Object.assign(new SaveMonthlyProgressDto(), { savedMoney });
     expect((await validate(dto)).some((error) => error.property === 'savedMoney')).toBe(true);
