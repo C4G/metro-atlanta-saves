@@ -107,6 +107,7 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
               <mat-error>Job Title is required.</mat-error>
             }
           </mat-form-field>
+          <!--
           <mat-form-field>
             <mat-label>Months Employed</mat-label>
             <input matInput formControlName="monthsEmployed" type="number" />
@@ -117,6 +118,7 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
               <mat-error>Months Employed is required</mat-error>
             }
           </mat-form-field>
+          -->
           <mat-form-field>
             <mat-label>Zip Code</mat-label>
             <input matInput formControlName="zipCode" type="number" />
@@ -139,6 +141,7 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
               <mat-error>County of Employment is required</mat-error>
             }
           </mat-form-field>
+          <!-- 
           <mat-form-field>
             <mat-label>Annual Income</mat-label>
             <input matInput formControlName="annualIncome" type="number" />
@@ -150,7 +153,7 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
               <mat-error>Annual Income is required</mat-error>
             }
           </mat-form-field>
-          <!-- <mat-form-field>
+          <mat-form-field>
             <mat-label>Are you available to attend all 6 meetings (3 in-person/3 virtual)?</mat-label>
             <mat-select formControlName="meetingAvailablility">
               @for (option of yesNoMaybe; track option) {
@@ -194,7 +197,8 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
             @if ((enrollForm.get('gain')?.touched || form.submitted) && enrollForm.get('gain')?.errors?.['required']) {
               <mat-error>What you would like to gain is required</mat-error>
             }
-          </mat-form-field> -->
+          </mat-form-field>
+          -->
         </div>
         <div class="flex gap-4 justify-end">
           <a mat-raised-button color="accent" routerLink="/dashboard">Back to Dashboard</a>
