@@ -62,10 +62,18 @@ describe('RequirementsCalendarComponent', () => {
       .flush({ requirementId: 'requirement-1', completedAt: new Date().toISOString() });
     fixture.detectChanges();
 
-    const completedButton = fixture.nativeElement.querySelector('button[aria-label="Create a savings plan completed"]');
+    const completedButton = fixture.nativeElement.querySelector(
+      'button[aria-label="Mark Create a savings plan incomplete"]',
+    );
     expect(completedButton.querySelector('svg')).not.toBeNull();
-    expect(completedButton.disabled).toBe(true);
+    expect(completedButton.disabled).toBe(false);
     completedButton.click();
-    http.expectNone((request) => request.method === 'DELETE');
+    const undo = http.expectOne('/api/users-on-programs/user/program/program-1/requirements/requirement-1/completion');
+    expect(undo.request.method).toBe('DELETE');
+    undo.flush({ requirementId: 'requirement-1' });
+    fixture.detectChanges();
+    expect(
+      fixture.nativeElement.querySelector('button[aria-label="Mark Create a savings plan complete"]'),
+    ).not.toBeNull();
   });
 });

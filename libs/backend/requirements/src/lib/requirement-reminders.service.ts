@@ -86,13 +86,10 @@ export class RequirementRemindersService implements OnApplicationBootstrap {
           programId: requirement.programId,
           requirementCompletions: { none: { requirementId } },
         },
-        select: { userId: true, programId: true, requirementStatus: true },
+        select: { userId: true, programId: true },
       });
 
-      const incompleteMemberships = memberships.filter(
-        ({ requirementStatus }) => !requirementStatus.includes(requirementId),
-      );
-      await this.createDeliveries(incompleteMemberships, requirement.id, requirement.dueAt, offset, scheduledAt);
+      await this.createDeliveries(memberships, requirement.id, requirement.dueAt, offset, scheduledAt);
     } catch (error) {
       this.logger.error(`Could not reconcile reminders for requirement ${requirementId}`, error);
     }
@@ -106,7 +103,6 @@ export class RequirementRemindersService implements OnApplicationBootstrap {
           select: {
             userId: true,
             programId: true,
-            requirementStatus: true,
             requirementCompletions: { select: { requirementId: true } },
           },
         }),
@@ -120,10 +116,7 @@ export class RequirementRemindersService implements OnApplicationBootstrap {
         return;
       }
 
-      const completedIds = new Set([
-        ...membership.requirementStatus,
-        ...membership.requirementCompletions.map(({ requirementId }) => requirementId),
-      ]);
+      const completedIds = new Set([...membership.requirementCompletions.map(({ requirementId }) => requirementId)]);
       const now = new Date();
 
       for (const requirement of requirements) {
@@ -326,9 +319,7 @@ export class RequirementRemindersService implements OnApplicationBootstrap {
       return;
     }
 
-    const completed =
-      row.userOnProgram.requirementStatus.includes(requirement.id) ||
-      row.userOnProgram.requirementCompletions.length > 0;
+    const completed = row.userOnProgram.requirementCompletions.length > 0;
     if (completed) {
       await this.finishWithoutSending(row.id, RequirementReminderStatus.SKIPPED);
       return;
