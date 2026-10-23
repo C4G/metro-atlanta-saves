@@ -17,16 +17,28 @@ type ProgressSubmission = {
   onSaved: () => void;
 };
 
+type MonthlyProgressState = {
+  programId: string | null;
+  checkpointNames: CheckpointName[];
+  checkpoints: ExtendedCheckpoint[];
+  loading: boolean;
+  loadFailed: boolean;
+  saving: boolean;
+  saveError: string;
+};
+
+const initialState: MonthlyProgressState = {
+  programId: null,
+  checkpointNames: [],
+  checkpoints: [],
+  loading: false,
+  loadFailed: false,
+  saving: false,
+  saveError: '',
+};
+
 export const MonthlyProgressStore = signalStore(
-  withState({
-    programId: null as string | null,
-    checkpointNames: [] as CheckpointName[],
-    checkpoints: [] as ExtendedCheckpoint[],
-    loading: false,
-    loadFailed: false,
-    saving: false,
-    saveError: '',
-  }),
+  withState(initialState),
   withComputed((store) => ({
     months: computed(() =>
       store

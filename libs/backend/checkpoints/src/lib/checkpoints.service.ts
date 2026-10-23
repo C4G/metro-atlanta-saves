@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { PrismaService } from '@mas/backend-prisma';
 import { MailService } from '@mas/backend-mail';
@@ -61,6 +61,7 @@ export class CheckpointsService {
           { isolationLevel: 'Serializable' },
         );
       } catch (error) {
+        if (error instanceof HttpException) throw error;
         if (
           attempt === 2 ||
           typeof error !== 'object' ||
@@ -68,7 +69,7 @@ export class CheckpointsService {
           !('code' in error) ||
           error.code !== 'P2034'
         )
-          throw error;
+          throw new InternalServerErrorException('We could not save your progress. Please try again.');
       }
     }
     throw new BadRequestException('We could not save your progress. Please try again.');

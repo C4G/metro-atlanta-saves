@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { formatDate } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, LOCALE_ID } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { UsersOnProgramsStore } from '@mas/frontend-shared-data-access';
 
@@ -132,11 +133,11 @@ import { UsersOnProgramsStore } from '@mas/frontend-shared-data-access';
 })
 export default class CourseProgressComponent {
   usersOnProgramsStore = inject(UsersOnProgramsStore);
-  private dueDateFormatter = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  private readonly locale = inject(LOCALE_ID);
   tasks = computed(() =>
     this.usersOnProgramsStore
       .userProgramProgress()
-      .map((task) => ({ ...task, dueLabel: task.dueAt ? this.dueDateFormatter.format(new Date(task.dueAt)) : null })),
+      .map((task) => ({ ...task, dueLabel: task.dueAt ? formatDate(task.dueAt, 'MMM d, y', this.locale) : null })),
   );
   completedCount = computed(() => this.tasks().filter((task) => task.isCompleted).length);
 
