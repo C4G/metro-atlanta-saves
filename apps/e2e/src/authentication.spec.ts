@@ -28,10 +28,10 @@ test.describe('authentication', () => {
     await expect(signInLink).toBeVisible();
 
     await signInLink.click();
-    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Sign in to your account' })).toBeVisible();
     await page.getByLabel('Email').fill(email);
-    await page.getByLabel('Password').fill(password);
-    await page.getByRole('button', { name: 'Login' }).click();
+    await page.getByLabel('Password', { exact: true }).fill(password);
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
     await expect(page).toHaveURL(/\/dashboard$/);
     await expect(page.getByRole('button', { name: 'Open account menu' })).toContainText(initials);
