@@ -30,7 +30,7 @@ const BASE_URL = '/api/users-on-programs';
 
 type CreditCheckpoint = Pick<Checkpoint, 'createdAt' | 'creditScore' | 'name'>;
 
-const calculateCreditScoreChange = (checkpoints: CreditCheckpoint[]): number => {
+export const calculateCreditScoreChange = (checkpoints: CreditCheckpoint[]): number => {
   const withCreditScore = checkpoints.filter(
     (checkpoint): checkpoint is CreditCheckpoint & { creditScore: number } => checkpoint.creditScore !== null,
   );
@@ -184,9 +184,6 @@ export const UsersOnProgramsStore = signalStore(
                     return {
                       userOnProgram: {
                         ...state.userOnProgram,
-                        requirementStatus: isCompleted
-                          ? state.userOnProgram.requirementStatus
-                          : state.userOnProgram.requirementStatus.filter((id) => id !== requirementId),
                         requirementCompletions:
                           isCompleted && result.completedAt
                             ? [...completions, { requirementId, completedAt: result.completedAt }]

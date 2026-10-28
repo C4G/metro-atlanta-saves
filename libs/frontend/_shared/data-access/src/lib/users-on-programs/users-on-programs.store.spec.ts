@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UsersOnProgramsStore } from './users-on-programs.store';
+import { calculateCreditScoreChange, UsersOnProgramsStore } from './users-on-programs.store';
 
 describe('UsersOnProgramsStore task completion', () => {
   it.each(['Attend a meetup.', null])(
@@ -59,26 +59,6 @@ describe('UsersOnProgramsStore task completion', () => {
 });
 
 describe('calculateCreditScoreChange', () => {
-  const calculateCreditScoreChange = (checkpoints: { name: string; creditScore: number | null; createdAt: Date }[]) => {
-    TestBed.configureTestingModule({
-      providers: [
-        UsersOnProgramsStore,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: MatDialog, useValue: {} },
-        { provide: MatSnackBar, useValue: { open: jest.fn() } },
-      ],
-    });
-    const store = TestBed.inject(UsersOnProgramsStore);
-    const http = TestBed.inject(HttpTestingController);
-    store.setProgramId('program-1');
-    store.getUserOnProgram();
-    http.expectOne('/api/users-on-programs/user/program/program-1').flush({ checkpoints });
-    const change = store.userCreditIncrease();
-    http.verify();
-    TestBed.resetTestingModule();
-    return change;
-  };
   it('compares the first and last numbered months even when their creation timestamps match', () => {
     const createdAt = new Date('2026-01-01T00:00:00.000Z');
 
