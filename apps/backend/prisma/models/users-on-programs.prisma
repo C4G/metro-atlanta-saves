@@ -5,7 +5,6 @@ model UsersOnPrograms {
   programId              String
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @default(now())
-  requirementStatus      String[]
   married                Boolean                 @default(false)
   educationStatus        String?
   militaryStatus         Boolean                 @default(false)

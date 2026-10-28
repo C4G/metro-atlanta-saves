@@ -157,12 +157,12 @@ const toIsoDate = (date: Date): string => {
                           [class.border-brand]="!task.isCompleted"
                           [class.bg-surface]="!task.isCompleted"
                           [class.text-brand-strong]="!task.isCompleted"
-                          [disabled]="task.isCompleted || requirementsStore.savingTaskIds().includes(task.id)"
+                          [disabled]="requirementsStore.savingTaskIds().includes(task.id)"
                           [attr.aria-label]="
-                            task.isCompleted ? task.title + ' completed' : 'Mark ' + task.title + ' complete'
+                            task.isCompleted ? 'Mark ' + task.title + ' incomplete' : 'Mark ' + task.title + ' complete'
                           "
                           [attr.aria-pressed]="task.isCompleted"
-                          (click)="requirementsStore.complete(task.requirement)"
+                          (click)="requirementsStore.toggle(task.requirement)"
                         >
                           @if (requirementsStore.savingTaskIds().includes(task.id)) {
                             <span
@@ -182,6 +182,13 @@ const toIsoDate = (date: Date): string => {
                           }
                         </button>
                       </span>
+                    } @else {
+                      <span
+                        class="flex w-14 shrink-0 items-center justify-center border-r border-outline bg-surface-subtle text-ink-muted"
+                        title="Read-only requirement"
+                      >
+                        <mat-icon aria-hidden="true">assignment</mat-icon>
+                      </span>
                     }
 
                     <div class="min-w-0 flex-1 self-center p-4">
@@ -189,6 +196,9 @@ const toIsoDate = (date: Date): string => {
                         <span class="uppercase tracking-wide text-brand-strong">{{ task.dueLabel }}</span>
                       </div>
                       <h4 class="mt-1.5 text-sm font-bold leading-5 text-ink">{{ task.title }}</h4>
+                      @if (!task.canComplete) {
+                        <span class="sr-only">Read-only requirement. Updated by your program team.</span>
+                      }
                       <p class="mt-1 flex h-5 items-center gap-1.5 text-xs text-ink-muted">
                         <mat-icon class="shrink-0 text-brand-strong" aria-hidden="true">school</mat-icon>
                         <span class="truncate leading-none">{{ task.program }}</span>

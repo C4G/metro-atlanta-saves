@@ -51,7 +51,6 @@ describe('RequirementRemindersService', () => {
     usersOnProgramsFindMany.mockResolvedValue([
       { userId: 'learner-1', programId: 'program-1', requirementStatus: [] },
       { userId: 'learner-2', programId: 'program-1', requirementStatus: ['other-requirement'] },
-      { userId: 'learner-3', programId: 'program-1', requirementStatus: ['requirement-1'] },
     ]);
 
     await service.reconcileRequirement('requirement-1');
@@ -62,7 +61,7 @@ describe('RequirementRemindersService', () => {
         programId: 'program-1',
         requirementCompletions: { none: { requirementId: 'requirement-1' } },
       },
-      select: { userId: true, programId: true, requirementStatus: true },
+      select: { userId: true, programId: true },
     });
     expect(deliveryCreateMany).toHaveBeenCalledTimes(2);
     for (const [call] of deliveryCreateMany.mock.calls) {
@@ -182,8 +181,8 @@ describe('RequirementRemindersService', () => {
       requirement: { id: 'requirement-1', dueAt, reminderDaysBefore: 1 },
       userOnProgram: {
         user: { email: 'learner@example.com', firstName: 'Sam' },
-        requirementStatus: ['requirement-1'],
-        requirementCompletions: [],
+        requirementStatus: [],
+        requirementCompletions: [{ requirementId: 'requirement-1' }],
       },
     });
 

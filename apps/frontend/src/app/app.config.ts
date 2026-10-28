@@ -18,11 +18,13 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor, authServerInterceptor } from '@mas/frontend-shared-auth';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { PROVIDE_PWA_NOTIFICATIONS } from '@mas/frontend-shared-layout';
 import { ThemeService } from '@mas/frontend-shared-data-access';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 5000 } },
     provideClientHydration(
       withEventReplay(),
       withHttpTransferCacheOptions({

@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { PrismaService } from '@mas/backend-prisma';
 import { MailService } from '@mas/backend-mail';
+import { SaveMonthlyProgressDto } from './dto/save-monthly-progress.dto';
 
 @Injectable()
 export class CheckpointsService {
@@ -9,6 +10,70 @@ export class CheckpointsService {
     private prismaService: PrismaService,
     private mailService: MailService,
   ) {}
+
+  async getParticipantProgress(userId: string, programId: string) {
+    const enrollment = await this.prismaService.usersOnPrograms.findUnique({
+      where: { userId_programId: { userId, programId } },
+      select: {
+        program: { select: { checkpointNames: { orderBy: [{ sequence: 'asc' }, { name: 'asc' }] } } },
+        checkpoints: { include: { images: true }, orderBy: { updatedAt: 'desc' } },
+      },
+    });
+    if (!enrollment) throw new ForbiddenException('You can only view progress for programs you are enrolled in.');
+    return { checkpointNames: enrollment.program.checkpointNames, checkpoints: enrollment.checkpoints };
+  }
+
+  async saveParticipantProgress(userId: string, programId: string, name: string, body: SaveMonthlyProgressDto) {
+    // Serializable retries prevent simultaneous first submissions from creating duplicate monthly entries.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        return await this.prismaService.$transaction(
+          async (tx) => {
+            const enrollment = await tx.usersOnPrograms.findUnique({
+              where: { userId_programId: { userId, programId } },
+              select: { program: { select: { checkpointNames: { where: { name } } } } },
+            });
+            if (!enrollment) throw new ForbiddenException('You can only save progress for your own programs.');
+            const configured = enrollment.program.checkpointNames[0];
+            if (!configured || (configured.type !== 'Savings' && !/^month\s+\d+$/i.test(configured.name.trim()))) {
+              throw new BadRequestException('This month is not available in your program.');
+            }
+            const entries = await tx.checkpoint.findMany({
+              where: { userId, programId, name },
+              include: { images: true },
+              orderBy: { updatedAt: 'desc' },
+            });
+            if (entries.some((entry) => entry.images.some((image) => image.imageVerified))) {
+              throw new ForbiddenException(
+                'This progress has been verified. Contact your program team to make changes.',
+              );
+            }
+            const existing = entries[0];
+            const data = {
+              savedMoney: body.savedMoney,
+              creditScore: body.creditScore ?? null,
+              application: body.application?.trim() || null,
+            };
+            return existing
+              ? tx.checkpoint.update({ where: { id: existing.id }, data, include: { images: true } })
+              : tx.checkpoint.create({ data: { ...data, name, programId, userId }, include: { images: true } });
+          },
+          { isolationLevel: 'Serializable' },
+        );
+      } catch (error) {
+        if (error instanceof HttpException) throw error;
+        if (
+          attempt === 2 ||
+          typeof error !== 'object' ||
+          error === null ||
+          !('code' in error) ||
+          error.code !== 'P2034'
+        )
+          throw new InternalServerErrorException('We could not save your progress. Please try again.');
+      }
+    }
+    throw new BadRequestException('We could not save your progress. Please try again.');
+  }
 
   async create(checkpoint: CreateCheckpointDto) {
     try {

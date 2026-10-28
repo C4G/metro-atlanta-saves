@@ -38,6 +38,17 @@ export class UsersOnProgramsService {
     private requirementRemindersService: RequirementRemindersService,
   ) {}
 
+  private async validateRequirements(programId: string, requirementIds: string[]) {
+    const ids = [...new Set(requirementIds)];
+    if (!ids.length) return;
+    const requirements = await this.prisma.requirement.findMany({
+      where: { programId, id: { in: ids } },
+      select: { id: true },
+    });
+    if (requirements.length !== ids.length)
+      throw new BadRequestException('A requirement does not belong to this program.');
+  }
+
   async getUsersOnPrograms(programId: string) {
     const usersOnPrograms = await this.prisma.usersOnPrograms.findMany({
       where: {
@@ -70,16 +81,14 @@ export class UsersOnProgramsService {
     const retUsersOnPrograms: UsersOnProgramsWithName[] = usersOnPrograms.map((data) => {
       const { user, requirementCompletions, ...rest } = data;
       const completedRequirementIds = [
-        ...new Set([
-          ...(rest.requirementStatus ?? []),
-          ...requirementCompletions.map(({ requirementId }) => requirementId),
-        ]),
+        ...new Set([...requirementCompletions.map(({ requirementId }) => requirementId)]),
       ];
 
       return {
         ...rest,
         ...user,
         completedRequirementIds,
+        requirementStatus: completedRequirementIds,
         totalAmountSaved: usersTotalSavedMap[data.userId],
       };
     });
@@ -88,7 +97,7 @@ export class UsersOnProgramsService {
   }
 
   async getUserOnProgram(programId: string, userId: string) {
-    return await this.prisma.usersOnPrograms.findUnique({
+    const enrollment = await this.prisma.usersOnPrograms.findUnique({
       where: {
         userId_programId: {
           userId: userId,
@@ -118,6 +127,12 @@ export class UsersOnProgramsService {
         },
       },
     });
+    return enrollment
+      ? {
+          ...enrollment,
+          requirementStatus: enrollment.requirementCompletions.map(({ requirementId }) => requirementId),
+        }
+      : null;
   }
 
   async getParticipantRequirements(userId: string) {
@@ -136,15 +151,11 @@ export class UsersOnProgramsService {
           },
         },
         requirementCompletions: { select: { requirementId: true } },
-        requirementStatus: true,
       },
     });
 
-    return enrollments.flatMap(({ program, requirementCompletions, requirementStatus }) => {
-      const completedIds = new Set([
-        ...(requirementStatus ?? []),
-        ...requirementCompletions.map(({ requirementId }) => requirementId),
-      ]);
+    return enrollments.flatMap(({ program, requirementCompletions }) => {
+      const completedIds = new Set([...requirementCompletions.map(({ requirementId }) => requirementId)]);
 
       return program.Requirement.map((requirement) => ({
         id: requirement.id,
@@ -153,7 +164,7 @@ export class UsersOnProgramsService {
         programName: program.name,
         dueAt: requirement.dueAt,
         isCompleted: completedIds.has(requirement.id),
-        canComplete: !!requirement.actionInstructions?.trim(),
+        canComplete: true,
       }));
     });
   }
@@ -173,8 +184,8 @@ export class UsersOnProgramsService {
       select: { programId: true, actionInstructions: true },
     });
 
-    if (!requirement || requirement.programId !== programId || !requirement.actionInstructions?.trim()) {
-      throw new BadRequestException(['This requirement is not an action requirement in the selected program.']);
+    if (!requirement || requirement.programId !== programId) {
+      throw new BadRequestException(['This requirement does not belong to the selected program.']);
     }
 
     return this.prisma.requirementCompletion.upsert({
@@ -187,7 +198,28 @@ export class UsersOnProgramsService {
     });
   }
 
+  async uncompleteRequirement(userId: string, programId: string, requirementId: string) {
+    const enrollment = await this.prisma.usersOnPrograms.findUnique({
+      where: { userId_programId: { userId, programId } },
+      select: { userId: true },
+    });
+    if (!enrollment) {
+      throw new UnauthorizedException(["You can only update requirements for programs you're enrolled in."]);
+    }
+    const requirement = await this.prisma.requirement.findUnique({
+      where: { id: requirementId },
+      select: { programId: true, actionInstructions: true },
+    });
+    if (!requirement || requirement.programId !== programId) {
+      throw new BadRequestException(['This requirement does not belong to the selected program.']);
+    }
+    await this.prisma.requirementCompletion.deleteMany({ where: { userId, programId, requirementId } });
+    return { requirementId };
+  }
+
   async addUsersOnPrograms(createUsersOnProgramsDto: CreateUsersOnProgramsDto) {
+    const { requirementStatus = [], ...membershipData } = createUsersOnProgramsDto;
+    await this.validateRequirements(membershipData.programId, requirementStatus);
     const user = await this.prisma.user.findFirst({
       where: {
         id: createUsersOnProgramsDto.userId,
@@ -242,7 +274,10 @@ export class UsersOnProgramsService {
     }
     try {
       const createdUserOnProgram = await this.prisma.usersOnPrograms.create({
-        data: createUsersOnProgramsDto,
+        data: {
+          ...membershipData,
+          requirementCompletions: { create: [...new Set(requirementStatus)].map((requirementId) => ({ requirementId })) },
+        },
         include: {
           user: {
             select: { email: true, firstName: true, lastName: true },
@@ -273,7 +308,8 @@ export class UsersOnProgramsService {
       return {
         ...rest,
         ...user,
-        completedRequirementIds: [...new Set(createdUserOnProgram.requirementStatus ?? [])],
+        completedRequirementIds: [...new Set(requirementStatus)],
+        requirementStatus: [...new Set(requirementStatus)],
       };
     } catch (error: any) {
       throw new BadRequestException([error?.message || 'Failed to add user to program']);
@@ -281,6 +317,8 @@ export class UsersOnProgramsService {
   }
 
   async patchUsersOnPrograms(userId: string, programId: string, updateUsersOnProgramsDto: UpdateUsersOnProgramsDto) {
+    const { requirementStatus, ...membershipData } = updateUsersOnProgramsDto;
+    if (requirementStatus) await this.validateRequirements(programId, requirementStatus);
     const existingUserOnProgram = await this.prisma.usersOnPrograms.findUnique({
       where: {
         userId_programId: {
@@ -297,7 +335,19 @@ export class UsersOnProgramsService {
       const updatedUserOnProgram = await this.prisma.usersOnPrograms.update({
         where: { userId_programId: { userId, programId } },
         data: {
-          ...updateUsersOnProgramsDto,
+          ...membershipData,
+          ...(requirementStatus
+            ? {
+                requirementCompletions: {
+                  deleteMany: { requirementId: { notIn: requirementStatus } },
+                  upsert: [...new Set(requirementStatus)].map((requirementId) => ({
+                    where: { userId_programId_requirementId: { userId, programId, requirementId } },
+                    create: { requirementId },
+                    update: {},
+                  })),
+                },
+              }
+            : {}),
           updatedAt: new Date(),
         },
         include: {
@@ -315,12 +365,8 @@ export class UsersOnProgramsService {
       return {
         ...rest,
         ...user,
-        completedRequirementIds: [
-          ...new Set([
-            ...(updatedUserOnProgram.requirementStatus ?? []),
-            ...requirementCompletions.map(({ requirementId }) => requirementId),
-          ]),
-        ],
+        requirementStatus: requirementCompletions.map(({ requirementId }) => requirementId),
+        completedRequirementIds: [...new Set([...requirementCompletions.map(({ requirementId }) => requirementId)])],
         totalAmountSaved: userTotalSavedMap[userId],
       };
     } catch (error: any) {
@@ -413,7 +459,7 @@ export class UsersOnProgramsService {
       ];
 
       // Mark ticks for completed requirements
-      const completedRequirementIds = new Set(userOnProgram.completedRequirementIds ?? userOnProgram.requirementStatus);
+      const completedRequirementIds = new Set(userOnProgram.completedRequirementIds ?? []);
       program.Requirement.forEach((requirement) => {
         const completed = completedRequirementIds.has(requirement.id);
         rowData.push(completed ? '✔' : '');
