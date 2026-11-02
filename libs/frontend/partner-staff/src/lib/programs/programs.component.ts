@@ -1,186 +1,152 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
+import { ConnectedPosition } from '@angular/cdk/overlay';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { ConfirmDialogComponent } from '@mas/frontend-shared-components';
-import { ProgramsStore } from '@mas/frontend-shared-data-access';
+import {
+  ActionCardComponent,
+  type ActionCardTone,
+  ConfirmDialogComponent,
+  PageTitleComponent,
+  SectionPanelComponent,
+} from '@mas/frontend-shared-components';
+import { type DirectorySection, ProgramsStore } from '@mas/frontend-shared-data-access';
 import { type Program } from '@mas/prisma-client/browser';
 import { AddProgramComponent } from './ui/add-program/add-program.component';
 import { CloneDialogComponent } from './ui/program-actions/clone-dialog/clone-dialog.component';
-import { htmlToText } from '@mas/frontend-shared-util';
 
-type ProgramCard = Program & {
-  descriptionText: string;
+export const DIRECTORY_TONES: Record<DirectorySection, ActionCardTone> = {
+  active: 'brand',
+  upcoming: 'soft',
+  inactive: 'warn',
+  template: 'muted',
 };
+
+const PROGRAM_MENU_POSITIONS: ConnectedPosition[] = [
+  { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 8 },
+  { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom', offsetY: -8 },
+];
 
 @Component({
   selector: 'mas-programs',
-  imports: [DatePipe, MatIcon, RouterLink],
+  imports: [
+    ActionCardComponent,
+    CdkMenu,
+    CdkMenuItem,
+    CdkMenuTrigger,
+    MatIcon,
+    PageTitleComponent,
+    SectionPanelComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
-      <div class="mx-auto max-w-7xl space-y-6">
-        <header
-          class="relative overflow-hidden rounded-3xl border border-outline bg-surface-subtle px-6 py-8 sm:px-10 sm:py-10"
-        >
-          <span
-            aria-hidden="true"
-            class="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[22px] border-brand/10"
-          ></span>
-          <span
-            aria-hidden="true"
-            class="pointer-events-none absolute -bottom-24 right-20 h-44 w-44 rounded-full border border-brand/15"
-          ></span>
-          <span
-            aria-hidden="true"
-            class="pointer-events-none absolute right-14 top-16 h-3 w-3 rounded-full bg-brand/35 sm:right-28"
-          ></span>
-          <div class="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div class="flex max-w-2xl items-start gap-4">
-              <span
-                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong"
-                aria-hidden="true"
-              >
-                <mat-icon>folder_managed</mat-icon>
-              </span>
-              <div>
-                <p class="text-sm font-semibold text-brand-strong">Program operations</p>
-                <h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Programs</h1>
-                <p class="mt-3 text-sm leading-6 text-ink-muted">
-                  Create, organize, and maintain the programs your participants rely on.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              class="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-xl bg-brand-strong px-4 py-2.5 text-sm font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface-subtle sm:self-auto"
-              (click)="openCreateDialog()"
-            >
-              <mat-icon aria-hidden="true">add</mat-icon>
-              New program
-            </button>
-          </div>
-        </header>
+    <div class="px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
+      <div class="mx-auto max-w-7xl space-y-8">
+        <mas-page-title title="Programs" />
 
-        <section
-          class="overflow-hidden rounded-3xl border border-outline bg-surface shadow-sm"
-          aria-labelledby="directory-title"
-        >
-          <div
-            class="flex flex-col gap-4 border-b border-outline px-5 py-5 sm:px-6 lg:flex-row lg:items-end lg:justify-between"
-          >
-            <div>
-              <div class="flex items-center gap-3">
-                <h2 id="directory-title" class="text-lg font-bold text-ink">Program directory</h2>
-                <span class="rounded-full bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand-strong">
-                  {{ programsStore.programs().length }}
-                </span>
-              </div>
-              <p class="mt-1 text-sm text-ink-muted">
-                Open a program to manage its participants, requirements, and content.
-              </p>
-            </div>
-
-            <label class="relative block w-full lg:w-80">
-              <span class="sr-only">Search programs</span>
-              <mat-icon
-                class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle"
-                aria-hidden="true"
-              >
-                search
-              </mat-icon>
-              <input
-                type="search"
-                class="min-h-11 w-full rounded-xl border border-outline bg-surface-raised py-2.5 pl-11 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-brand focus:ring-2 focus:ring-brand/25"
-                placeholder="Search programs"
-                [value]="searchQuery()"
-                (input)="updateSearch($event)"
-              />
-            </label>
-          </div>
-
-          @if (programCards().length) {
-            <div class="grid gap-4 p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
-              @for (program of programCards(); track program.id) {
-                <article
-                  class="group flex min-h-72 flex-col rounded-2xl border border-outline bg-surface-raised p-5 transition-colors hover:border-brand hover:bg-brand-soft/35 focus-within:border-brand focus-within:bg-brand-soft/35"
+        @for (group of programsStore.directoryGroups(); track group.key) {
+          <mas-section-panel [heading]="group.title" [headingId]="'programs-' + group.key" [count]="group.total">
+            <div panelActions class="flex w-full items-center gap-2 sm:w-auto">
+              <label class="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
+                <span class="sr-only">Search {{ group.title.toLowerCase() }}</span>
+                <mat-icon
+                  class="mas-icon-sm pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle"
+                  aria-hidden="true"
                 >
-                  <div class="flex items-start justify-between gap-3">
-                    <span class="rounded-full bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand-strong">
-                      {{ program.isTemplate ? 'Template' : 'Active program' }}
-                    </span>
+                  search
+                </mat-icon>
+                <input
+                  type="search"
+                  class="min-h-10 w-full rounded-xl border border-brand/25 bg-surface-raised/70 py-2 pl-9 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle hover:border-brand/70 hover:bg-surface-raised focus:border-brand/70 focus:bg-surface-raised focus-visible:ring-2 focus-visible:ring-brand"
+                  [placeholder]="'Search ' + group.title.toLowerCase()"
+                  [value]="group.query"
+                  (input)="updateSearch(group.key, $event)"
+                />
+              </label>
+              @if (group.key === 'active') {
+                <button
+                  type="button"
+                  class="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-brand/70 bg-surface-raised px-2.5 text-sm font-bold text-brand-strong transition-colors hover:border-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:px-3"
+                  aria-label="New program"
+                  (click)="openCreateDialog()"
+                >
+                  <mat-icon class="mas-icon-sm" aria-hidden="true">add</mat-icon>
+                  <span class="hidden sm:inline" aria-hidden="true">New program</span>
+                </button>
+              }
+            </div>
+
+            @if (group.cards.length) {
+              <div class="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3">
+                @for (card of group.cards; track card.program.id) {
+                  <mas-action-card
+                    [title]="card.program.name"
+                    [status]="card.label"
+                    [tone]="tones[group.key]"
+                    [inactive]="card.isInactive"
+                    [meta]="card.meta"
+                    [description]="card.program.description || 'No program description has been added yet.'"
+                    actionLabel="Open program"
+                    [link]="['/partner-staff/programs', card.program.id, 'progress']"
+                  >
                     <button
+                      cardMenu
                       type="button"
-                      class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-xl text-danger transition-colors hover:bg-danger/10 focus:outline-none focus:ring-2 focus:ring-danger/40"
-                      [attr.aria-label]="'Delete ' + program.name"
-                      (click)="deleteProgram(program)"
+                      class="-my-1.5 -mr-2 flex h-8 w-8 items-center justify-center rounded-lg border border-transparent text-ink-muted transition-colors hover:border-brand/40 hover:bg-surface-raised hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand aria-expanded:border-brand/40 aria-expanded:bg-surface-raised aria-expanded:text-ink"
+                      [cdkMenuTriggerFor]="programMenu"
+                      [cdkMenuTriggerData]="{ $implicit: card.program }"
+                      [cdkMenuPosition]="menuPositions"
+                      [attr.aria-label]="'More actions for ' + card.program.name"
                     >
-                      <mat-icon aria-hidden="true">delete_outline</mat-icon>
+                      <mat-icon class="mas-icon-md" aria-hidden="true">more_horiz</mat-icon>
                     </button>
-                  </div>
-
-                  <h3 class="mt-5 line-clamp-2 text-lg font-bold tracking-tight text-ink">{{ program.name }}</h3>
-                  <p class="mt-2 line-clamp-3 text-sm leading-6 text-ink-muted">
-                    {{ program.descriptionText || 'No program description has been added yet.' }}
-                  </p>
-
-                  <dl class="mt-5 grid grid-cols-2 gap-3 border-t border-outline pt-4 text-xs">
-                    <div>
-                      <dt class="font-medium text-ink-subtle">Starts</dt>
-                      <dd class="mt-1 font-bold text-ink">
-                        {{ program.startDate ? (program.startDate | date: 'MMM d, y') : 'To be set' }}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt class="font-medium text-ink-subtle">Ends</dt>
-                      <dd class="mt-1 font-bold text-ink">
-                        {{ program.endDate ? (program.endDate | date: 'MMM d, y') : 'To be set' }}
-                      </dd>
-                    </div>
-                  </dl>
-
-                  <div class="mt-auto flex flex-wrap items-center gap-2 pt-5">
-                    <a
-                      class="inline-flex min-h-10 flex-1 items-center justify-center rounded-xl bg-brand-strong px-3 py-2 text-xs font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface-raised"
-                      [routerLink]="[program.id, 'progress']"
-                    >
-                      Open Program
-                    </a>
-                    @if (program.isTemplate) {
+                    @if (card.isTemplate) {
                       <button
+                        cardActions
                         type="button"
-                        class="inline-flex min-h-10 items-center justify-center rounded-xl border border-outline bg-surface px-3 py-2 text-xs font-bold text-brand-strong transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand/40"
-                        (click)="openCloneDialog(program)"
+                        class="flex min-h-10 items-center justify-center rounded-xl border border-brand/55 px-4 text-xs font-bold text-brand-strong transition-colors hover:border-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                        [attr.aria-label]="'Clone ' + card.program.name"
+                        (click)="openCloneDialog(card.program)"
                       >
                         Clone
                       </button>
                     }
-                  </div>
-                </article>
-              }
-            </div>
-          } @else {
-            <div class="flex flex-col items-center px-6 py-16 text-center">
-              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
-                <mat-icon aria-hidden="true">{{ searchQuery() ? 'search_off' : 'school' }}</mat-icon>
-              </span>
-              <h3 class="mt-4 text-base font-bold text-ink">
-                {{ searchQuery() ? 'No programs match your search' : 'No programs yet' }}
-              </h3>
-              <p class="mt-1 max-w-sm text-sm leading-6 text-ink-muted">
-                {{
-                  searchQuery()
-                    ? 'Try a different name or description.'
-                    : 'Create your first program to begin organizing participants and requirements.'
-                }}
+                  </mas-action-card>
+                }
+              </div>
+            } @else {
+              <p class="px-5 py-10 text-center text-sm text-ink-muted">
+                {{ group.query.trim() ? 'No matches in this section.' : group.emptyText }}
               </p>
-            </div>
-          }
-        </section>
+            }
+          </mas-section-panel>
+        }
       </div>
     </div>
+
+    <ng-template #programMenu let-program>
+      <div
+        cdkMenu
+        class="w-60 rounded-2xl border border-brand/25 bg-surface-raised p-2 text-ink shadow-xl"
+        [attr.aria-label]="'Actions for ' + program.name"
+      >
+        <button
+          cdkMenuItem
+          type="button"
+          class="flex min-h-11 w-full items-center gap-3 rounded-xl border border-danger/35 py-1.5 pl-1.5 pr-2.5 text-left text-sm font-bold text-danger transition-colors hover:border-danger/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger/40"
+          (cdkMenuItemTriggered)="deleteProgram(program)"
+        >
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-danger/10" aria-hidden="true">
+            <mat-icon class="mas-icon-sm">delete</mat-icon>
+          </span>
+          <span>
+            Delete program
+            <span class="block text-xs font-normal text-ink-muted">This cannot be undone</span>
+          </span>
+        </button>
+      </div>
+    </ng-template>
   `,
   host: { class: 'block' },
 })
@@ -188,19 +154,11 @@ export default class ProgramsComponent {
   private readonly authStore = inject(AuthStore);
   private readonly dialog = inject(MatDialog);
   readonly programsStore = inject(ProgramsStore);
-  readonly searchQuery = signal('');
-  readonly programCards = computed<ProgramCard[]>(() => {
-    return this.programsStore.programs().map((program) => {
-      const descriptionText = htmlToText(program.description);
-
-      return {
-        ...program,
-        descriptionText,
-      };
-    });
-  });
+  readonly tones = DIRECTORY_TONES;
+  readonly menuPositions = PROGRAM_MENU_POSITIONS;
 
   constructor() {
+    this.programsStore.clearDirectoryQueries();
     this.programsStore.getPrograms(this.authStore.user()?.partnerId ?? undefined);
   }
 
@@ -236,12 +194,7 @@ export default class ProgramsComponent {
     });
   }
 
-  updateSearch(event: Event): void {
-    const search = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(search);
-    this.programsStore.searchPrograms({
-      partnerId: this.authStore.user()?.partnerId ?? undefined,
-      search,
-    });
+  updateSearch(section: DirectorySection, event: Event): void {
+    this.programsStore.setDirectoryQuery(section, (event.target as HTMLInputElement).value);
   }
 }
