@@ -22,3 +22,4 @@ export * from './users';
 export * from './notification-config';
 export * from './what-we-are';
 export * from './pilot-progress';
+export * from './upcoming-program';

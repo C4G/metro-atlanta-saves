@@ -21,6 +21,7 @@ import {
   seedPilotProgress,
   seedSampleParticipants,
   seedStories,
+  seedUpcomingProgram,
   seedUserCheckpoints,
   seedUserGuide,
   seedUserIntoProgram,
@@ -64,6 +65,7 @@ async function main() {
   await seedSampleParticipants(prisma);
   await seedPilotProgress(prisma);
   await seedWhatWeAre(prisma);
+  await seedUpcomingProgram(prisma);
 }
 
 main()

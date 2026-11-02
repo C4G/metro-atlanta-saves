@@ -8,6 +8,18 @@ import { AuthStore } from '@mas/frontend-shared-auth';
 
 import { RequirementsCalendarComponent } from './requirements-calendar.component';
 
+const viewButton = (element: HTMLElement, label: string) =>
+  Array.from(element.querySelectorAll<HTMLButtonElement>('[aria-label="Calendar view"] button')).find((button) =>
+    button.textContent?.includes(label),
+  ) as HTMLButtonElement;
+
+const daysFromNow = (days: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  date.setHours(23, 59, 0, 0);
+  return date.toISOString();
+};
+
 describe('RequirementsCalendarComponent', () => {
   let http: HttpTestingController;
 
@@ -49,11 +61,13 @@ describe('RequirementsCalendarComponent', () => {
       },
     ]);
     fixture.detectChanges();
+    viewButton(fixture.nativeElement, 'Month').click();
+    fixture.detectChanges();
 
-    const cardLink = fixture.nativeElement.querySelector('article a');
+    const cardLink = fixture.nativeElement.querySelector('a[aria-label="Open Create a savings plan in Pilot"]');
     expect(cardLink.getAttribute('href')).toBe('/program-profiles/program-1/progress#requirement-1');
-    expect(fixture.nativeElement.textContent).toContain('Due today');
-    expect(fixture.nativeElement.textContent).toContain('End of day');
+    expect(fixture.nativeElement.textContent).toContain('Pilot · End of day');
+    expect(fixture.nativeElement.textContent).toContain('1 left');
 
     const completionButton: HTMLButtonElement = fixture.nativeElement.querySelector(
       'button[aria-label="Mark Create a savings plan complete"]',
@@ -80,6 +94,96 @@ describe('RequirementsCalendarComponent', () => {
     expect(
       fixture.nativeElement.querySelector('button[aria-label="Mark Create a savings plan complete"]'),
     ).not.toBeNull();
+  });
+
+  it('opens on Due soon with overdue tasks first, the next task up and later tasks in the side panel', () => {
+    const fixture = TestBed.createComponent(RequirementsCalendarComponent);
+    const base = { programId: 'program-1', programName: 'Pilot', canComplete: true, isEnrolled: true };
+
+    http.expectOne('/api/users-on-programs/user/requirements').flush([
+      { ...base, id: 'late', name: 'Upload receipts', dueAt: daysFromNow(-2), isCompleted: false },
+      { ...base, id: 'late-done', name: 'Old finished task', dueAt: daysFromNow(-3), isCompleted: true },
+      { ...base, id: 'soon', name: 'Record savings', dueAt: daysFromNow(2), isCompleted: false },
+      { ...base, id: 'later', name: 'Submit plan', dueAt: daysFromNow(10), isCompleted: false },
+      { ...base, id: 'far', name: 'Far away task', dueAt: daysFromNow(35), isCompleted: false },
+    ]);
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.nativeElement;
+    const timelineTitles = () =>
+      Array.from(element.querySelectorAll('ol article h4')).map((title) => title.textContent?.trim());
+    const nextUp = () => element.querySelector('aside[aria-label="Next up"]')?.textContent ?? '';
+
+    expect(viewButton(element, 'Due soon').getAttribute('aria-pressed')).toBe('true');
+    expect(viewButton(element, 'Due soon').textContent).toContain('2');
+    expect(timelineTitles()).toEqual(['Upload receipts', 'Record savings', 'Submit plan']);
+    expect(element.textContent).toContain('Overdue');
+    expect(element.textContent).toContain('In 2 days');
+    expect(element.textContent).toContain('Later');
+    expect(element.textContent).not.toContain('Old finished task');
+    expect(element.textContent).not.toContain('Far away task');
+    expect(element.querySelector('#due-task-late')?.textContent).toContain('Next up');
+    expect(nextUp()).toContain('Upload receipts');
+
+    element.querySelector<HTMLButtonElement>('button[aria-label="Show Submit plan in the timeline"]')?.click();
+    fixture.detectChanges();
+    expect(element.querySelector('#due-task-later')?.classList).toContain('ring-2');
+
+    element
+      .querySelector<HTMLButtonElement>('#due-task-late button[aria-label="Mark Upload receipts complete"]')
+      ?.click();
+    http
+      .expectOne('/api/users-on-programs/user/program/program-1/requirements/late/completion')
+      .flush({ requirementId: 'late', completedAt: new Date().toISOString() });
+    fixture.detectChanges();
+
+    expect(timelineTitles()).toEqual(['Record savings', 'Submit plan']);
+    expect(nextUp()).toContain('Record savings');
+    expect(element.querySelector('#due-task-soon')?.textContent).toContain('Next up');
+
+    const nav = (label: string) =>
+      Array.from(element.querySelectorAll<HTMLButtonElement>('[aria-label="Calendar navigation"] button')).find(
+        (button) => button.getAttribute('aria-label') === label || button.textContent?.trim() === label,
+      ) as HTMLButtonElement;
+    nav('Next week').click();
+    fixture.detectChanges();
+    expect(timelineTitles()).toEqual(['Submit plan', 'Far away task']);
+    expect(element.querySelector('ol')?.textContent).toContain(' – ');
+    expect(viewButton(element, 'Due soon').textContent).toContain('1');
+
+    nav('Today').click();
+    fixture.detectChanges();
+    expect(timelineTitles()).toEqual(['Record savings', 'Submit plan']);
+
+    viewButton(element, 'Month').click();
+    fixture.detectChanges();
+    expect(nav('Next month')).toBeTruthy();
+    expect(element.textContent).toContain('Selected day');
+  });
+
+  it('points to the Month view when nothing is due soon', () => {
+    const fixture = TestBed.createComponent(RequirementsCalendarComponent);
+    http.expectOne('/api/users-on-programs/user/requirements').flush([
+      {
+        id: 'far',
+        name: 'Far away task',
+        programId: 'program-1',
+        programName: 'Pilot',
+        dueAt: daysFromNow(45),
+        isCompleted: false,
+        canComplete: true,
+        isEnrolled: true,
+      },
+    ]);
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.textContent).toContain('Nothing due in the next 30 days');
+    Array.from(element.querySelectorAll('button'))
+      .find((button) => button.textContent?.includes('Open the month'))
+      ?.click();
+    fixture.detectChanges();
+    expect(viewButton(element, 'Month').getAttribute('aria-pressed')).toBe('true');
   });
 
   it('filters calendar tasks from the programs dropdown', () => {
