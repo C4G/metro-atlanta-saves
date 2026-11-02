@@ -10,7 +10,7 @@ import { AuthStore } from '@mas/frontend-shared-auth';
   imports: [MatError, MatFormField, MatInput, MatSuffix, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="bg-canvas px-4 py-8 text-ink sm:px-6 sm:py-12 lg:px-8 lg:py-16" aria-labelledby="login-title">
+    <section class="px-4 py-8 text-ink sm:px-6 sm:py-12 lg:px-8 lg:py-16" aria-labelledby="login-title">
       <div class="mx-auto max-w-xl">
         <div class="overflow-hidden rounded-3xl border border-outline bg-surface-raised">
           <div class="h-1.5 bg-brand" aria-hidden="true"></div>

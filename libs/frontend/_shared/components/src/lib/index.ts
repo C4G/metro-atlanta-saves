@@ -13,4 +13,5 @@ export * from './receipt-preview/receipt-preview.component';
 export * from './loader/loader.component';
 export * from './loader/spinner.component';
 export * from './date-input/date-input.component';
+export * from './navigation';
 export * from './surfaces';

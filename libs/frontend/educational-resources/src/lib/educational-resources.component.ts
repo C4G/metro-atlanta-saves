@@ -57,7 +57,7 @@ import { EducationalCategoryStore, EducationalContentStore } from '@mas/frontend
                     <img
                       [src]="resource.image ?? 'assets/Logo/BRP_Logo.webp'"
                       alt="Resource Image"
-                      class="object-cover h-full w-full mb-4 rounded"
+                      class="object-cover h-full w-full mb-4 rounded-lg"
                     />
                   </div>
                 </div>
