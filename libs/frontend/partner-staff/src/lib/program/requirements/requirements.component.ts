@@ -27,7 +27,7 @@ import { RequirementActionsComponent } from './ui/requirement-actions/requiremen
           (click)="openModal()"
           class="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-strong px-4 text-sm font-semibold text-brand-on hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand"
         >
-          <mat-icon aria-hidden="true" class="text-[19px] leading-[19px]">add</mat-icon>
+          <mat-icon aria-hidden="true" class="text-xl leading-[19px]">add</mat-icon>
           Add requirement
         </button>
       </header>
@@ -74,9 +74,9 @@ import { RequirementActionsComponent } from './ui/requirement-actions/requiremen
             <div class="min-w-0">
               <div class="flex flex-wrap items-center gap-2">
                 <span
-                  class="inline-flex items-center gap-1.5 rounded-md bg-brand-soft px-2 py-1 text-xs font-medium text-brand-strong"
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-brand-soft px-2 py-1 text-xs font-medium text-brand-strong"
                 >
-                  <mat-icon aria-hidden="true" class="text-[15px] leading-[15px]">
+                  <mat-icon aria-hidden="true" class="text-base leading-[15px]">
                     {{ requirement.actionInstructions ? 'bolt' : 'checklist' }}
                   </mat-icon>
                   {{ requirement.actionInstructions ? 'Action task' : 'Program requirement' }}
@@ -98,7 +98,7 @@ import { RequirementActionsComponent } from './ui/requirement-actions/requiremen
                   rel="noopener noreferrer"
                   class="mt-4 inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2 text-sm font-semibold text-brand-strong hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
                 >
-                  <mat-icon aria-hidden="true" class="text-[18px] leading-[18px]">menu_book</mat-icon>
+                  <mat-icon aria-hidden="true" class="text-lg leading-[18px]">menu_book</mat-icon>
                   {{ content.title }}
                   <span class="sr-only">(opens in a new tab)</span>
                 </a>
@@ -129,7 +129,7 @@ import { RequirementActionsComponent } from './ui/requirement-actions/requiremen
         } @empty {
           @if (!requirementsStore.loading() && !requirementsStore.loadFailed()) {
             <div class="rounded-2xl border border-dashed border-outline bg-surface-raised px-6 py-10 text-center">
-              <mat-icon aria-hidden="true" class="text-[28px] text-brand-strong">checklist</mat-icon>
+              <mat-icon aria-hidden="true" class="text-2xl text-brand-strong">checklist</mat-icon>
               <p class="mt-3 font-medium">Your program plan starts here.</p>
               <p class="mt-1 text-sm text-ink-muted">Add the first step for your participants.</p>
             </div>

@@ -9,7 +9,7 @@ import { ProgramsStore, TaskReviewStore } from '@mas/frontend-shared-data-access
   providers: [TaskReviewStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-w-0 bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
+    <div class="min-w-0 px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
       <div class="mx-auto max-w-7xl">
         <header
           class="relative overflow-clip rounded-3xl border border-outline bg-surface-subtle px-6 py-8 sm:px-10 sm:py-10"

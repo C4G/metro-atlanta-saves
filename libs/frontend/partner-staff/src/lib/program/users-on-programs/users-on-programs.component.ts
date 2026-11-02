@@ -83,7 +83,7 @@ import { UsersOnProgramsActionsComponent } from './ui/users-on-programs-actions/
               <div class="min-w-0 flex-1">
                 <div class="flex min-w-0 items-center justify-between gap-3">
                   <h4 class="truncate font-semibold tracking-tight">{{ user.firstName }} {{ user.lastName }}</h4>
-                  <span class="shrink-0 rounded-md bg-brand-soft px-2 py-1 text-xs font-medium text-brand-strong">
+                  <span class="shrink-0 rounded-lg bg-brand-soft px-2 py-1 text-xs font-medium text-brand-strong">
                     Participant
                   </span>
                 </div>
@@ -93,14 +93,14 @@ import { UsersOnProgramsActionsComponent } from './ui/users-on-programs-actions/
             <dl class="grid grid-cols-2 divide-x divide-outline border-y border-outline">
               <div class="px-5 py-4">
                 <dt class="flex items-center gap-1.5 text-xs text-ink-subtle">
-                  <mat-icon aria-hidden="true" class="text-[16px] leading-4">savings</mat-icon>
+                  <mat-icon aria-hidden="true" class="text-base leading-4">savings</mat-icon>
                   Total saved
                 </dt>
                 <dd class="mt-1.5 text-lg font-semibold tracking-tight">{{ user.totalAmountSaved ?? 0 | currency }}</dd>
               </div>
               <div class="px-5 py-4">
                 <dt class="flex items-center gap-1.5 text-xs text-ink-subtle">
-                  <mat-icon aria-hidden="true" class="text-[16px] leading-4">task_alt</mat-icon>
+                  <mat-icon aria-hidden="true" class="text-base leading-4">task_alt</mat-icon>
                   Completed
                 </dt>
                 <dd class="mt-1.5 text-lg font-semibold tracking-tight">

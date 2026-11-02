@@ -86,7 +86,7 @@ const datesInOrder = ({ value }: { value: { startDate?: string | null; endDate?:
                   {{ tab.label }}
                   <span
                     aria-hidden="true"
-                    class="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-outline bg-surface px-1.5 text-xs tabular-nums text-ink-muted"
+                    class="inline-flex h-6 min-w-6 items-center justify-center rounded-lg border border-outline bg-surface px-1.5 text-xs tabular-nums text-ink-muted"
                   >
                     {{ tab.count }}
                   </span>
@@ -514,7 +514,7 @@ const datesInOrder = ({ value }: { value: { startDate?: string | null; endDate?:
               <p class="mb-2 mt-3.5 flex items-center gap-2 text-xs font-bold text-ink-muted">
                 Receipts without a month
                 <span
-                  class="rounded-md border px-1.5 text-[0.6875rem]"
+                  class="rounded-lg border px-1.5 text-xs"
                   [class.border-warn-ink]="documents.unsorted().length"
                   [class.bg-warn-soft]="documents.unsorted().length"
                   [class.text-warn-ink]="documents.unsorted().length"
@@ -565,7 +565,7 @@ const datesInOrder = ({ value }: { value: { startDate?: string | null; endDate?:
                   >
                     <span
                       aria-hidden="true"
-                      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-[0.5625rem] font-black text-brand-strong"
+                      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-xs font-black text-brand-strong"
                     >
                       {{ file.kind }}
                     </span>
