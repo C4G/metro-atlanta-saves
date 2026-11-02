@@ -65,6 +65,10 @@ $brand-teal-palette: (
   --mas-review-ink: 30 58 138;
   --mas-on-review: 255 255 255;
   --mas-logo-filter: none;
+  --mas-glow-a: 20 184 166;
+  --mas-glow-b: 94 234 212;
+  --mas-glow-a-alpha: 0.14;
+  --mas-glow-b-alpha: 0.15;
   color-scheme: light;
 }
 
@@ -133,6 +137,10 @@ body {
   --mas-on-review: 11 19 35;
   --mas-logo-filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg)
     brightness(101%) contrast(96%);
+  --mas-glow-a: 45 212 191;
+  --mas-glow-b: 29 78 216;
+  --mas-glow-a-alpha: 0.09;
+  --mas-glow-b-alpha: 0.1;
   color-scheme: dark;
 
   // Force light mode for Discussion Board pages so Tailwind styles are unaffected
@@ -162,6 +170,28 @@ body {
 }
 
 /* You can add global styles to this file, and also import other style files */
+
+.mat-icon.mas-icon-sm,
+.mat-icon.mas-icon-md,
+.mat-icon.mas-icon-lg {
+  flex: none;
+  line-height: 1;
+}
+.mat-icon.mas-icon-sm {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+.mat-icon.mas-icon-md {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+.mat-icon.mas-icon-lg {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
 
 body {
   margin: 0;

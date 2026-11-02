@@ -9,6 +9,19 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        '2xs': ['0.6875rem', { lineHeight: '0.875rem' }],
+      },
+      backgroundImage: {
+        'page-glow': [
+          'radial-gradient(36rem 36rem at 0% 12%, rgb(var(--mas-glow-a) / var(--mas-glow-a-alpha)), transparent 70%)',
+          'radial-gradient(40rem 40rem at 100% 55%, rgb(var(--mas-glow-b) / var(--mas-glow-b-alpha)), transparent 70%)',
+          'radial-gradient(32rem 32rem at 30% 100%, rgb(var(--mas-glow-a) / var(--mas-glow-a-alpha)), transparent 70%)',
+        ].join(', '),
+      },
+      fontFamily: {
+        serif: ['"Source Serif 4"', 'ui-serif', 'Georgia', 'Cambria', 'serif'],
+      },
       colors: {
         canvas: 'rgb(var(--mas-canvas) / <alpha-value>)',
         surface: {
