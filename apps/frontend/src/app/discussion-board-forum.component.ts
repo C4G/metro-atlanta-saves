@@ -1,3 +1,4 @@
+import { MatIcon } from '@angular/material/icon';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -69,7 +70,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
 @Component({
   selector: 'mas-discussion-board-forum',
   standalone: true,
-  imports: [CommonModule, NgClass, NgTemplateOutlet, RouterLink, RichTextEditorComponent],
+  imports: [MatIcon, CommonModule, NgClass, NgTemplateOutlet, RouterLink, RichTextEditorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
@@ -88,19 +89,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
           <a routerLink="/discussion-boards" class="font-medium text-gray-500 hover:text-blue-600 transition-colors">
             Discussion Boards
           </a>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="11"
-            height="11"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="m9 18 6-6-6-6" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">chevron_right</mat-icon>
           @if (board(); as boardInfo) {
             <span class="font-semibold text-gray-700">{{ boardInfo.name }}</span>
           }
@@ -115,40 +104,13 @@ type ManagementTab = 'general' | 'members' | 'tags';
               }
               <div class="mt-2 flex items-center gap-3">
                 <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
+                  <mat-icon aria-hidden="true" class="mas-icon-sm">group</mat-icon>
                   <span class="font-semibold text-gray-700">{{ boardInfo.memberCount }}</span>
                   members
                 </span>
                 <span class="text-gray-300">|</span>
                 <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                  </svg>
+                  <mat-icon aria-hidden="true" class="mas-icon-sm">chat_bubble_outline</mat-icon>
                   <span class="font-semibold text-gray-700">{{ boardInfo.postCount }}</span>
                   posts
                 </span>
@@ -162,22 +124,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                 class="flex-1 sm:flex-none justify-center inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
                 (click)="openManagementModal('general')"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
-                  />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
+                <mat-icon aria-hidden="true" class="mas-icon-sm">settings</mat-icon>
                 Manage
               </button>
             }
@@ -187,27 +134,14 @@ type ManagementTab = 'general' | 'members' | 'tags';
               (click)="openCreatePost()"
               [disabled]="!isLoggedIn()"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
+              <mat-icon aria-hidden="true" class="mas-icon-sm">add</mat-icon>
               New Post
             </button>
           </div>
         </header>
 
         @if (!isLoggedIn()) {
-          <div class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
             Please
             <a routerLink="/login" class="underline">log in</a>
             to create posts and comments.
@@ -215,7 +149,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
         }
 
         @if (errorMessage(); as error) {
-          <div class="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">{{ error }}</div>
+          <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{{ error }}</div>
         }
 
         <div class="grid gap-4 lg:grid-cols-[24rem_1fr] auto-rows-max lg:auto-rows-1fr">
@@ -255,25 +189,16 @@ type ManagementTab = 'general' | 'members' | 'tags';
               <div class="px-3 pb-3 space-y-2">
                 <label for="discussion-search" class="sr-only">Search posts</label>
                 <div class="relative">
-                  <svg
-                    class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                  <mat-icon
+                    aria-hidden="true"
+                    class="mas-icon-sm absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                   >
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
+                    search
+                  </mat-icon>
                   <input
                     id="discussion-search"
                     type="text"
-                    class="w-full rounded-lg border border-gray-200 pl-8 pr-3 py-2 text-[13px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
+                    class="w-full rounded-lg border border-gray-200 pl-8 pr-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
                     placeholder="Search posts..."
                     [value]="searchQuery()"
                     (input)="setSearch($event)"
@@ -281,31 +206,23 @@ type ManagementTab = 'general' | 'members' | 'tags';
                 </div>
                 <button
                   type="button"
-                  class="w-full flex items-center justify-between px-3 py-2 text-[12px] font-semibold text-gray-500 hover:bg-gray-50 rounded-lg transition-colors"
+                  class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 hover:bg-gray-50 rounded-lg transition-colors"
                   (click)="showFilterPanel.set(!showFilterPanel())"
                 >
                   <span class="uppercase tracking-wide">Filter by category</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="transition-transform"
+                  <mat-icon
+                    aria-hidden="true"
+                    class="mas-icon-sm transition-transform"
                     [class.rotate-180]="showFilterPanel()"
                   >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
+                    expand_more
+                  </mat-icon>
                 </button>
                 @if (showFilterPanel()) {
                   <div class="relative">
                     <select
                       id="tag-filter"
-                      class="w-full appearance-none rounded-lg border border-gray-200 px-3 py-2 pr-8 text-[13px] text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+                      class="w-full appearance-none rounded-lg border border-gray-200 px-3 py-2 pr-8 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
                       [value]="selectedTagFilter() || ''"
                       (change)="setTagFilter($event)"
                     >
@@ -314,20 +231,12 @@ type ManagementTab = 'general' | 'members' | 'tags';
                         <option [value]="tag.id">{{ tag.name }}</option>
                       }
                     </select>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="13"
-                      height="13"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    <mat-icon
+                      aria-hidden="true"
+                      class="mas-icon-sm pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                     >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
+                      expand_more
+                    </mat-icon>
                   </div>
                 }
               </div>
@@ -339,45 +248,19 @@ type ManagementTab = 'general' | 'members' | 'tags';
                   <!-- Truly empty board -->
                   <div class="flex flex-col items-center justify-center py-16 px-6 text-center">
                     <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50">
-                      <svg
-                        class="text-blue-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="28"
-                        height="28"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                      </svg>
+                      <mat-icon aria-hidden="true" class="mas-icon-lg text-blue-400">chat_bubble_outline</mat-icon>
                     </div>
                     <p class="text-sm font-semibold text-gray-500">This board is empty</p>
-                    <p class="text-[11px] text-gray-400 mt-1 leading-relaxed max-w-[180px]">
+                    <p class="text-xs text-gray-400 mt-1 leading-relaxed max-w-[180px]">
                       Be the first to start a discussion. Share a question or idea!
                     </p>
                   </div>
                 } @else {
                   <!-- No results for current search/filter -->
                   <div class="flex flex-col items-center justify-center py-14 px-6 text-center">
-                    <svg
-                      class="text-gray-200 mb-3"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="36"
-                      height="36"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                    </svg>
+                    <mat-icon aria-hidden="true" class="mas-icon-lg text-gray-200 mb-3">chat_bubble_outline</mat-icon>
                     <p class="text-sm font-semibold text-gray-400">No posts found</p>
-                    <p class="text-[11px] text-gray-300 mt-0.5">Try a different search or filter</p>
+                    <p class="text-xs text-gray-300 mt-0.5">Try a different search or filter</p>
                   </div>
                 }
               } @else if (!loading()) {
@@ -385,7 +268,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                   @if (post.isPinned && (i === 0 || !filteredPosts()[i - 1].isPinned)) {
                     <div class="relative flex items-center px-4 py-1.5">
                       <div class="flex-1 border-t border-dashed border-gray-200"></div>
-                      <span class="mx-2 text-[9px] font-bold uppercase tracking-widest text-gray-300">pinned</span>
+                      <span class="mx-2 text-xs font-bold uppercase tracking-widest text-gray-300">pinned</span>
                       <div class="flex-1 border-t border-dashed border-gray-200"></div>
                     </div>
                   }
@@ -402,7 +285,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     <!-- Title row -->
                     <div class="flex items-start justify-between gap-2">
                       <p
-                        class="line-clamp-2 text-[13px] font-semibold leading-snug"
+                        class="line-clamp-2 text-sm font-semibold leading-snug"
                         [class.text-blue-900]="activeView() === 'thread' && selectedPostId() === post.id"
                         [class.text-gray-900]="!(activeView() === 'thread' && selectedPostId() === post.id)"
                       >
@@ -410,34 +293,19 @@ type ManagementTab = 'general' | 'members' | 'tags';
                       </p>
                       @if (post.isPinned) {
                         <span
-                          class="mt-0.5 shrink-0 inline-flex items-center gap-0.5 rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700"
+                          class="mt-0.5 shrink-0 inline-flex items-center gap-0.5 rounded-lg bg-amber-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-700"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="8"
-                            height="8"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          >
-                            <path d="M12 17v5" />
-                            <path
-                              d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"
-                            />
-                          </svg>
+                          <mat-icon aria-hidden="true" class="mas-icon-sm">push_pin</mat-icon>
                           pinned
                         </span>
                       }
                     </div>
                     <!-- Meta row -->
-                    <div class="mt-2 flex items-center gap-1.5 text-[11px] text-gray-400">
+                    <div class="mt-2 flex items-center gap-1.5 text-xs text-gray-400">
                       @if (post.tags.length > 0) {
                         @for (tag of post.tags; track tag.id) {
                           <span
-                            class="inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                            class="inline-block rounded-lg px-1.5 py-0.5 text-xs font-semibold"
                             [ngClass]="getTagColorClass(tag)"
                           >
                             {{ tag.name }}
@@ -451,24 +319,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                       <span class="text-gray-300 shrink-0">·</span>
                       <span class="shrink-0">{{ formatTimeAgo(post.createdAt) }}</span>
                       <span class="ml-auto inline-flex items-center gap-1 shrink-0">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="11"
-                          height="11"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path
-                            d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"
-                          />
-                          <path d="M8 12h.01" />
-                          <path d="M12 12h.01" />
-                          <path d="M16 12h.01" />
-                        </svg>
+                        <mat-icon aria-hidden="true" class="mas-icon-sm">chat</mat-icon>
                         <span class="tabular-nums">{{ post.comments.length }}</span>
                       </span>
                     </div>
@@ -476,7 +327,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                   @if (post.isPinned && (i + 1 >= filteredPosts().length || !filteredPosts()[i + 1].isPinned)) {
                     <div class="relative flex items-center px-4 py-1.5">
                       <div class="flex-1 border-t border-dashed border-gray-200"></div>
-                      <span class="mx-2 text-[9px] font-bold uppercase tracking-widest text-gray-300">discussions</span>
+                      <span class="mx-2 text-xs font-bold uppercase tracking-widest text-gray-300">discussions</span>
                       <div class="flex-1 border-t border-dashed border-gray-200"></div>
                     </div>
                   }
@@ -499,19 +350,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                   class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
                   (click)="sidebarCollapsed.set(false)"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
+                  <mat-icon aria-hidden="true" class="mas-icon-sm">chevron_left</mat-icon>
                   All posts
                 </button>
               </div>
@@ -519,7 +358,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
             @if (activeView() === 'new') {
               <div class="border-b border-gray-100 px-5 py-5 flex items-start justify-between gap-4">
                 <div>
-                  <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">New Post</p>
+                  <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-0.5">New Post</p>
                   <h2 class="text-lg font-bold text-gray-900 leading-tight">Create a Thread</h2>
                 </div>
                 <button
@@ -528,27 +367,14 @@ type ManagementTab = 'general' | 'members' | 'tags';
                   (click)="cancelCreatePost()"
                   title="Cancel"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
+                  <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                 </button>
               </div>
 
               <div class="flex-1 overflow-auto px-5 py-5 space-y-5">
                 <!-- Title -->
                 <div>
-                  <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
+                  <label class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
                     Post Title
                     <span class="text-red-400">*</span>
                   </label>
@@ -564,13 +390,13 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     [disabled]="creatingPost() || !isLoggedIn()"
                   />
                   @if (showPostErrors() && !newPostTitle().trim()) {
-                    <p class="mt-1.5 text-[11px] text-red-500 font-medium">Post title is required.</p>
+                    <p class="mt-1.5 text-xs text-red-500 font-medium">Post title is required.</p>
                   }
                 </div>
 
                 <!-- Body -->
                 <div>
-                  <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
+                  <label class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
                     Post Body
                     <span class="text-red-400">*</span>
                   </label>
@@ -589,7 +415,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     />
                   </div>
                   @if (showPostErrors() && isBodyEmpty(newPostBody())) {
-                    <p class="mt-1.5 text-[11px] text-red-500 font-medium">Post body is required.</p>
+                    <p class="mt-1.5 text-xs text-red-500 font-medium">Post body is required.</p>
                   }
                 </div>
 
@@ -599,7 +425,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     <input
                       type="checkbox"
                       id="announcement-toggle"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-100"
+                      class="rounded-lg border-gray-300 text-blue-600 focus:ring-blue-100"
                       [checked]="creatingAnnouncement()"
                       (change)="toggleCreatingAnnouncement()"
                       [disabled]="creatingPost()"
@@ -608,12 +434,12 @@ type ManagementTab = 'general' | 'members' | 'tags';
                       <label for="announcement-toggle" class="text-sm font-semibold text-gray-700 cursor-pointer">
                         Post as Announcement
                       </label>
-                      <p class="text-[11px] text-gray-400 mt-0.5">
+                      <p class="text-xs text-gray-400 mt-0.5">
                         Announcements appear in the announcements tab of the sidebar
                       </p>
                     </div>
                     <span
-                      class="text-[9px] font-bold uppercase tracking-widest text-gray-400 bg-gray-200 rounded px-1.5 py-0.5"
+                      class="text-xs font-bold uppercase tracking-widest text-gray-400 bg-gray-200 rounded-lg px-1.5 py-0.5"
                     >
                       Admin
                     </span>
@@ -624,7 +450,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                       <input
                         type="checkbox"
                         id="email-notification-toggle"
-                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-100"
+                        class="rounded-lg border-gray-300 text-blue-600 focus:ring-blue-100"
                         [checked]="sendEmailNotification()"
                         (change)="toggleSendEmailNotification()"
                         [disabled]="creatingPost()"
@@ -636,10 +462,10 @@ type ManagementTab = 'general' | 'members' | 'tags';
                         >
                           Send email notification
                         </label>
-                        <p class="text-[11px] text-gray-400 mt-0.5">Emails all board members about this announcement</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Emails all board members about this announcement</p>
                       </div>
                       <span
-                        class="text-[9px] font-bold uppercase tracking-widest text-gray-400 bg-gray-200 rounded px-1.5 py-0.5 shrink-0"
+                        class="text-xs font-bold uppercase tracking-widest text-gray-400 bg-gray-200 rounded-lg px-1.5 py-0.5 shrink-0"
                       >
                         Admin
                       </span>
@@ -650,80 +476,39 @@ type ManagementTab = 'general' | 'members' | 'tags';
                       <div class="rounded-lg border border-blue-200 bg-blue-50 overflow-hidden">
                         <!-- Preview header -->
                         <div class="flex items-center gap-2 px-4 py-2 bg-blue-100 border-b border-blue-200">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-3.5 w-3.5 text-blue-600"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                            />
-                          </svg>
-                          <span class="text-[10px] font-bold uppercase tracking-widest text-blue-700">
-                            Email Preview
-                          </span>
-                          <span class="ml-auto text-[9px] text-blue-400 font-medium">Sent to all board members</span>
+                          <mat-icon aria-hidden="true" class="mas-icon-sm text-blue-600">mail</mat-icon>
+                          <span class="text-xs font-bold uppercase tracking-widest text-blue-700">Email Preview</span>
+                          <span class="ml-auto text-xs text-blue-400 font-medium">Sent to all board members</span>
                         </div>
 
                         <div class="px-4 py-3 space-y-3">
                           <!-- Subject -->
                           <div>
-                            <p class="text-[9px] font-bold uppercase tracking-widest text-blue-400 mb-0.5">Subject</p>
+                            <p class="text-xs font-bold uppercase tracking-widest text-blue-400 mb-0.5">Subject</p>
                             <p class="text-sm font-semibold text-gray-800">{{ newPostTitle() || '(no title yet)' }}</p>
                           </div>
 
                           <!-- Body (read-only preview, mirrors post body in real time) -->
                           <div>
-                            <p class="text-[9px] font-bold uppercase tracking-widest text-blue-400 mb-1">Message</p>
+                            <p class="text-xs font-bold uppercase tracking-widest text-blue-400 mb-1">Message</p>
                             <div
-                              class="rich-content rounded-md bg-white border border-blue-200 px-3 py-2.5 min-h-[100px] text-sm text-gray-700 overflow-auto prose prose-sm max-w-none"
+                              class="rich-content rounded-lg bg-white border border-blue-200 px-3 py-2.5 min-h-[100px] text-sm text-gray-700 overflow-auto prose prose-sm max-w-none"
                               [innerHTML]="emailPreviewBody"
                             ></div>
                           </div>
 
                           <!-- Post link callout -->
-                          <div class="flex items-center gap-2 rounded-md bg-white border border-blue-200 px-3 py-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-3.5 w-3.5 text-blue-500 shrink-0"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                              />
-                            </svg>
+                          <div class="flex items-center gap-2 rounded-lg bg-white border border-blue-200 px-3 py-2">
+                            <mat-icon aria-hidden="true" class="mas-icon-sm text-blue-500 shrink-0">link</mat-icon>
                             <div class="flex-1 min-w-0">
-                              <p class="text-[11px] font-semibold text-gray-700">
+                              <p class="text-xs font-semibold text-gray-700">
                                 Direct link to this post included automatically
                               </p>
-                              <p class="text-[10px] text-gray-400 truncate">
+                              <p class="text-xs text-gray-400 truncate">
                                 {{ postPreviewUrl() }}
                               </p>
                             </div>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-4 w-4 text-green-500 shrink-0"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2.5"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
+                            <mat-icon aria-hidden="true" class="mas-icon-sm text-green-500 shrink-0">check</mat-icon>
                           </div>
                         </div>
                       </div>
@@ -733,7 +518,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
 
                 <!-- Category -->
                 <div class="pt-3 border-t border-gray-100">
-                  <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
+                  <label class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
                     Category
                     <span class="text-red-400">*</span>
                   </label>
@@ -741,7 +526,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     @for (tag of availableTags(); track tag.id) {
                       <button
                         type="button"
-                        class="px-3 py-1.5 text-[12px] font-semibold rounded-lg transition-all"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
                         [class.ring-2]="selectedTagIds().includes(tag.id)"
                         [class.ring-offset-2]="selectedTagIds().includes(tag.id)"
                         [class.ring-blue-600]="selectedTagIds().includes(tag.id) && tag.color === 'blue'"
@@ -759,7 +544,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     }
                   </div>
                   @if (showPostErrors() && selectedTagIds().length === 0) {
-                    <p class="mt-1.5 text-[11px] text-red-500 font-medium">Category is required.</p>
+                    <p class="mt-1.5 text-xs text-red-500 font-medium">Category is required.</p>
                   }
                 </div>
 
@@ -809,7 +594,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                         />
                       } @else {
                         <div
-                          class="flex items-center justify-center rounded-full bg-blue-500 text-[9px] font-bold text-white flex-shrink-0"
+                          class="flex items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white flex-shrink-0"
                           style="width: 20px; height: 20px;"
                         >
                           {{ post.author.firstName.charAt(0) }}{{ post.author.lastName.charAt(0) }}
@@ -824,7 +609,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                         <span class="text-xs text-gray-200">·</span>
                         @for (tag of post.tags; track tag.id) {
                           <span
-                            class="inline-block rounded px-2 py-0.5 text-[10px] font-semibold"
+                            class="inline-block rounded-lg px-2 py-0.5 text-xs font-semibold"
                             [ngClass]="getTagColorClass(tag)"
                           >
                             {{ tag.name }}
@@ -834,22 +619,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                       @if (post.isPinned) {
                         <span class="text-xs text-gray-200">·</span>
                         <span class="inline-flex items-center text-blue-500" title="Pinned">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          >
-                            <path d="M12 17v5" />
-                            <path
-                              d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"
-                            />
-                          </svg>
+                          <mat-icon aria-hidden="true" class="mas-icon-sm">push_pin</mat-icon>
                         </span>
                       }
                     </div>
@@ -867,22 +637,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                           (click)="editingPostId() === post.id ? cancelPostEdit() : startEditPost(post)"
                           [title]="editingPostId() === post.id ? 'Cancel editing' : 'Edit post'"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="13"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          >
-                            <path
-                              d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-                            />
-                            <path d="m15 5 4 4" />
-                          </svg>
+                          <mat-icon aria-hidden="true" class="mas-icon-sm">edit</mat-icon>
                         </button>
                         <!-- Delete -->
                         <button
@@ -908,23 +663,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                               <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                             </svg>
                           } @else {
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="13"
-                              height="13"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            >
-                              <path d="M10 11v6" />
-                              <path d="M14 11v6" />
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                              <path d="M3 6h18" />
-                              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                            </svg>
+                            <mat-icon aria-hidden="true" class="mas-icon-sm">delete</mat-icon>
                           }
                         </button>
                       }
@@ -960,22 +699,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                               <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                             </svg>
                           } @else {
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="13"
-                              height="13"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            >
-                              <path d="M12 17v5" />
-                              <path
-                                d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"
-                              />
-                            </svg>
+                            <mat-icon aria-hidden="true" class="mas-icon-sm">push_pin</mat-icon>
                           }
                         </button>
                       }
@@ -997,7 +721,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     <!-- Category -->
                     @if (availableTags().length > 0) {
                       <div class="pt-3 border-t border-gray-100">
-                        <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
+                        <label class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
                           Category
                           <span class="text-red-400">*</span>
                         </label>
@@ -1005,7 +729,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                           @for (tag of availableTags(); track tag.id) {
                             <button
                               type="button"
-                              class="px-3 py-1.5 text-[12px] font-semibold rounded-lg transition-all"
+                              class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
                               [class.ring-2]="editPostTagIds().includes(tag.id)"
                               [class.ring-offset-2]="editPostTagIds().includes(tag.id)"
                               [class.ring-blue-600]="editPostTagIds().includes(tag.id) && tag.color === 'blue'"
@@ -1067,7 +791,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                         <div class="flex justify-end px-3 py-2 border-t border-gray-100 bg-gray-50/60">
                           <button
                             type="button"
-                            class="rounded-md h-8 px-4 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-40 transition-colors inline-flex items-center gap-1.5"
+                            class="rounded-lg h-8 px-4 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-40 transition-colors inline-flex items-center gap-1.5"
                             (click)="createComment(post.id)"
                             [disabled]="creatingComment() || isBodyEmpty(newCommentBody())"
                           >
@@ -1137,7 +861,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                             (click)="toggleCollapsed(comment.id)"
                           >
                             <span
-                              class="flex items-center justify-center w-4 h-4 text-[9px] rounded-full border border-zinc-300 text-zinc-400 bg-white flex-shrink-0"
+                              class="flex items-center justify-center w-4 h-4 text-xs rounded-full border border-zinc-300 text-zinc-400 bg-white flex-shrink-0"
                             >
                               +
                             </span>
@@ -1155,7 +879,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                               @if (comment.author.id === board()?.createdBy?.id) {
                                 <span class="text-xs text-zinc-400">•</span>
                                 <span
-                                  class="inline-flex items-center rounded border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-violet-600"
+                                  class="inline-flex items-center rounded-lg border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-violet-600"
                                 >
                                   Creator
                                 </span>
@@ -1164,14 +888,14 @@ type ManagementTab = 'general' | 'members' | 'tags';
                               ) {
                                 <span class="text-xs text-zinc-400">•</span>
                                 <span
-                                  class="inline-flex items-center rounded border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-600"
+                                  class="inline-flex items-center rounded-lg border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-600"
                                 >
                                   Staff
                                 </span>
                               } @else if (isBoardAdminAuthor(comment.author.id)) {
                                 <span class="text-xs text-zinc-400">•</span>
                                 <span
-                                  class="inline-flex items-center rounded border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-600"
+                                  class="inline-flex items-center rounded-lg border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-600"
                                 >
                                   Staff
                                 </span>
@@ -1218,7 +942,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                 @if (comment.replies.length > 0) {
                                   <button
                                     type="button"
-                                    class="flex items-center justify-center w-4 h-4 text-[9px] rounded-full border border-zinc-400 text-zinc-500 bg-white hover:border-zinc-600 hover:text-zinc-700 transition"
+                                    class="flex items-center justify-center w-4 h-4 text-xs rounded-full border border-zinc-400 text-zinc-500 bg-white hover:border-zinc-600 hover:text-zinc-700 transition"
                                     style="margin-left: 8px;"
                                     (click)="toggleCollapsed(comment.id)"
                                     aria-label="Collapse thread"
@@ -1238,21 +962,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                     [class.text-blue-500]="commentVotes().get(comment.id) === 'UP'"
                                     (click)="voteComment(post.id, comment.id, 'UP')"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="16"
-                                      height="16"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    >
-                                      <path
-                                        d="M9 19a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-6a1 1 0 0 1 1-1h3.293a.707.707 0 0 0 .5-1.207l-7.086-7.086a1 1 0 0 0-1.414 0l-7.086 7.086a.707.707 0 0 0 .5 1.207H8a1 1 0 0 1 1 1z"
-                                      />
-                                    </svg>
+                                    <mat-icon aria-hidden="true" class="mas-icon-sm">arrow_upward</mat-icon>
                                   </button>
                                   <span
                                     class="flex items-center justify-center min-w-6 text-center tabular-nums leading-none"
@@ -1267,21 +977,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                     [class.text-orange-500]="commentVotes().get(comment.id) === 'DOWN'"
                                     (click)="voteComment(post.id, comment.id, 'DOWN')"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="16"
-                                      height="16"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    >
-                                      <path
-                                        d="M9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 0 1 1h3.293a.707.707 0 0 1 .5 1.207l-7.086 7.086a1 1 0 0 1-1.414 0l-7.086-7.086a.707.707 0 0 1 .5-1.207H8a1 1 0 0 0 1-1z"
-                                      />
-                                    </svg>
+                                    <mat-icon aria-hidden="true" class="mas-icon-sm">arrow_downward</mat-icon>
                                   </button>
                                 </div>
                                 <!-- Reply button -->
@@ -1292,24 +988,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                     (click)="startReply(comment.id)"
                                     [disabled]="replyingToCommentId() === comment.id || creatingReply()"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="16"
-                                      height="16"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    >
-                                      <path
-                                        d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"
-                                      />
-                                      <path d="M8 12h.01" />
-                                      <path d="M12 12h.01" />
-                                      <path d="M16 12h.01" />
-                                    </svg>
+                                    <mat-icon aria-hidden="true" class="mas-icon-sm">chat</mat-icon>
                                     <span>Reply</span>
                                   </button>
                                 }
@@ -1322,22 +1001,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                     [disabled]="editingCommentId() !== null"
                                     title="Edit"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="13"
-                                      height="13"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    >
-                                      <path
-                                        d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-                                      />
-                                      <path d="m15 5 4 4" />
-                                    </svg>
+                                    <mat-icon aria-hidden="true" class="mas-icon-sm">edit</mat-icon>
                                   </button>
                                 }
                                 <!-- Delete button -->
@@ -1351,23 +1015,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                     @if (deletingCommentId() === comment.id) {
                                       <span>Deleting...</span>
                                     } @else {
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="14"
-                                        height="14"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                      >
-                                        <path d="M10 11v6" />
-                                        <path d="M14 11v6" />
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                                        <path d="M3 6h18" />
-                                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                      </svg>
+                                      <mat-icon aria-hidden="true" class="mas-icon-sm">delete</mat-icon>
                                     }
                                   </button>
                                 }
@@ -1386,7 +1034,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                 <div class="flex gap-2">
                                   <button
                                     type="button"
-                                    class="rounded-md px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 transition-colors"
+                                    class="rounded-lg px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 transition-colors"
                                     (click)="createReply(post.id, comment.id)"
                                     [disabled]="creatingReply() || isBodyEmpty(newReplyBody())"
                                   >
@@ -1394,7 +1042,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                   </button>
                                   <button
                                     type="button"
-                                    class="rounded-md px-3 py-1.5 text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
+                                    class="rounded-lg px-3 py-1.5 text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
                                     (click)="cancelReply()"
                                     [disabled]="creatingReply()"
                                   >
@@ -1419,7 +1067,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                   ></div>
                                 }
                                 <div
-                                  class="absolute -left-7 -top-[0.1px] h-5 w-7 border-l border-b border-zinc-300 rounded-bl-[2rem] cursor-pointer"
+                                  class="absolute -left-7 -top-[0.1px] h-5 w-7 border-l border-b border-zinc-300 rounded-bl-3xl cursor-pointer"
                                   (click)="toggleCollapsed(comment.id)"
                                 ></div>
                                 <ng-container
@@ -1439,22 +1087,9 @@ type ManagementTab = 'general' | 'members' | 'tags';
               </div>
             } @else {
               <div class="flex flex-col items-center justify-center h-full py-20 px-8 text-center">
-                <svg
-                  class="text-gray-200 mb-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
+                <mat-icon aria-hidden="true" class="mas-icon-lg text-gray-200 mb-4">chat_bubble_outline</mat-icon>
                 <p class="text-sm font-semibold text-gray-400">No post selected</p>
-                <p class="text-[12px] text-gray-300 mt-1">Select a post from the sidebar to view its discussion</p>
+                <p class="text-xs text-gray-300 mt-1">Select a post from the sidebar to view its discussion</p>
               </div>
             }
           </article>
@@ -1475,7 +1110,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
               <!-- Header -->
               <div class="flex items-start justify-between px-6 pt-5 pb-4 border-b border-gray-100">
                 <div>
-                  <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Board Settings</p>
+                  <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Board Settings</p>
                   <h2 class="text-lg font-bold text-gray-900 leading-tight">{{ board()?.name }}</h2>
                 </div>
                 <button
@@ -1483,20 +1118,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                   class="h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors ml-4 mt-0.5 shrink-0"
                   (click)="closeManagementModal()"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
+                  <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                 </button>
               </div>
 
@@ -1525,7 +1147,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     <div>
                       <label
                         for="forum-board-name-input"
-                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                        class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                       >
                         Board Name
                       </label>
@@ -1541,7 +1163,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     <div>
                       <label
                         for="forum-board-description-input"
-                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                        class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                       >
                         Description
                         <span class="normal-case tracking-normal font-normal text-gray-400">(optional)</span>
@@ -1559,11 +1181,11 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     <div class="grid grid-cols-2 gap-3 rounded-xl bg-gray-50 p-4">
                       <div class="text-center">
                         <p class="text-2xl font-bold text-gray-900">{{ board()?.memberCount ?? 0 }}</p>
-                        <p class="text-[11px] text-gray-500 mt-0.5">members</p>
+                        <p class="text-xs text-gray-500 mt-0.5">members</p>
                       </div>
                       <div class="text-center">
                         <p class="text-2xl font-bold text-gray-900">{{ board()?.postCount ?? 0 }}</p>
-                        <p class="text-[11px] text-gray-500 mt-0.5">posts</p>
+                        <p class="text-xs text-gray-500 mt-0.5">posts</p>
                       </div>
                     </div>
                   </div>
@@ -1574,7 +1196,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                   <!-- Current Members -->
                   <div>
                     <div class="flex items-center justify-between mb-3">
-                      <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Current Members</p>
+                      <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">Current Members</p>
                     </div>
                     <div class="space-y-1 max-h-44 overflow-auto mb-4">
                       @if (boardMembersList().length === 0) {
@@ -1601,30 +1223,30 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                     : 'bg-blue-500'
                               "
                             >
-                              <span class="text-[11px] font-bold text-white">
+                              <span class="text-xs font-bold text-white">
                                 {{ member.firstName[0] + member.lastName[0] }}
                               </span>
                             </div>
                             <div class="flex-1 min-w-0">
                               <div class="flex items-center gap-1.5 flex-wrap">
-                                <p class="text-[13px] font-semibold text-gray-900 truncate">
+                                <p class="text-sm font-semibold text-gray-900 truncate">
                                   {{ member.firstName }} {{ member.lastName }}
                                 </p>
                                 @if (member.id === board()?.createdBy?.id) {
                                   <span
-                                    class="inline-flex items-center rounded border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-violet-600 shrink-0"
+                                    class="inline-flex items-center rounded-lg border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-violet-600 shrink-0"
                                   >
                                     Creator
                                   </span>
                                 } @else if (member.isAdmin) {
                                   <span
-                                    class="inline-flex items-center rounded border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-600 shrink-0"
+                                    class="inline-flex items-center rounded-lg border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-600 shrink-0"
                                   >
                                     Staff
                                   </span>
                                 }
                               </div>
-                              <p class="text-[11px] text-gray-400 truncate">{{ member.email }}</p>
+                              <p class="text-xs text-gray-400 truncate">{{ member.email }}</p>
                             </div>
                             <div class="flex items-center gap-1 shrink-0">
                               @if (isAdmin() && member.id !== board()?.createdBy?.id) {
@@ -1654,19 +1276,13 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                                     </svg>
                                   } @else {
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="12"
-                                      height="12"
-                                      viewBox="0 0 24 24"
+                                    <mat-icon
+                                      aria-hidden="true"
+                                      class="mas-icon-sm"
                                       [attr.fill]="member.isAdmin ? 'currentColor' : 'none'"
-                                      stroke="currentColor"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
                                     >
-                                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                    </svg>
+                                      shield
+                                    </mat-icon>
                                   }
                                 </button>
                               }
@@ -1691,20 +1307,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                                     </svg>
                                   } @else {
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="13"
-                                      height="13"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    >
-                                      <path d="M18 6 6 18" />
-                                      <path d="m6 6 12 12" />
-                                    </svg>
+                                    <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                                   }
                                 </button>
                               }
@@ -1717,26 +1320,17 @@ type ManagementTab = 'general' | 'members' | 'tags';
 
                   <!-- Add Members -->
                   <div class="border-t border-gray-100 pt-4">
-                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Members</p>
+                    <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Members</p>
                     <div class="relative mb-2">
-                      <svg
-                        class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="13"
-                        height="13"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                      <mat-icon
+                        aria-hidden="true"
+                        class="mas-icon-sm absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                       >
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.3-4.3" />
-                      </svg>
+                        search
+                      </mat-icon>
                       <input
                         type="text"
-                        class="w-full rounded-lg border border-gray-200 pl-8 pr-3 py-2.5 text-[13px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 disabled:bg-gray-50"
+                        class="w-full rounded-lg border border-gray-200 pl-8 pr-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 disabled:bg-gray-50"
                         placeholder="Search users by name or email..."
                         [value]="addMemberSearch()"
                         (input)="setAddMemberSearch($event)"
@@ -1745,7 +1339,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                     </div>
 
                     @if (loadingUsers()) {
-                      <div class="flex items-center justify-center gap-2 py-4 text-[13px] text-gray-400">
+                      <div class="flex items-center justify-center gap-2 py-4 text-sm text-gray-400">
                         <svg
                           class="animate-spin"
                           xmlns="http://www.w3.org/2000/svg"
@@ -1770,34 +1364,32 @@ type ManagementTab = 'general' | 'members' | 'tags';
                             [disabled]="savingMembers()"
                           >
                             <div class="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                              <span class="text-[10px] font-bold text-gray-600">
+                              <span class="text-xs font-bold text-gray-600">
                                 {{ user.firstName[0] + user.lastName[0] }}
                               </span>
                             </div>
                             <div class="flex-1 min-w-0">
-                              <p class="text-[13px] font-semibold text-gray-900 truncate">
+                              <p class="text-sm font-semibold text-gray-900 truncate">
                                 {{ user.firstName }} {{ user.lastName }}
                               </p>
-                              <p class="text-[11px] text-gray-400 truncate">{{ user.email }}</p>
+                              <p class="text-xs text-gray-400 truncate">{{ user.email }}</p>
                             </div>
                           </button>
                         }
                       </div>
                     } @else if (allUsers().length > 0) {
-                      <p class="text-center text-[13px] text-gray-400 py-4">No users found matching your search.</p>
+                      <p class="text-center text-sm text-gray-400 py-4">No users found matching your search.</p>
                     }
                   </div>
 
                   <!-- Pending Members -->
                   @if (pendingMembersToAdd().length > 0) {
                     <div class="border-t border-gray-100 pt-4">
-                      <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
-                        Pending to Add
-                      </p>
+                      <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Pending to Add</p>
                       <div class="flex flex-wrap gap-2">
                         @for (member of pendingMembersToAdd(); track member.id) {
                           <div
-                            class="inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-100 px-3 py-1 text-[12px] font-semibold text-blue-700"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 border border-blue-100 px-3 py-1 text-xs font-semibold text-blue-700"
                           >
                             <span>{{ member.firstName }} {{ member.lastName }}</span>
                             <button
@@ -1806,20 +1398,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                               (click)="unstageMember(member.id)"
                               [disabled]="savingMembers()"
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="11"
-                                height="11"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              >
-                                <path d="M18 6 6 18" />
-                                <path d="m6 6 12 12" />
-                              </svg>
+                              <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                             </button>
                           </div>
                         }
@@ -1832,9 +1411,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                 @if (managementTab() === 'tags') {
                   <!-- Current Categories -->
                   <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
-                      Current Categories
-                    </p>
+                    <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Current Categories</p>
                     @if (availableTags().length === 0) {
                       <p class="text-sm text-gray-400 text-center py-4">No categories yet.</p>
                     } @else {
@@ -1842,7 +1419,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                         @for (tag of availableTags(); track tag.id) {
                           <div class="flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-3 py-2">
                             <span
-                              class="inline-block rounded-lg px-2.5 py-1 text-[11px] font-semibold"
+                              class="inline-block rounded-lg px-2.5 py-1 text-xs font-semibold"
                               [ngClass]="getTagColorClass(tag)"
                             >
                               {{ tag.name }}
@@ -1867,20 +1444,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                                   <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                                 </svg>
                               } @else {
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="12"
-                                  height="12"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                >
-                                  <path d="M18 6 6 18" />
-                                  <path d="m6 6 12 12" />
-                                </svg>
+                                <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                               }
                             </button>
                           </div>
@@ -1891,12 +1455,12 @@ type ManagementTab = 'general' | 'members' | 'tags';
 
                   <!-- Add Category -->
                   <div class="border-t border-gray-100 pt-4">
-                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Category</p>
+                    <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Category</p>
                     <div class="space-y-3">
                       <div>
                         <label
                           for="forum-tag-name"
-                          class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                          class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                         >
                           Category Name
                         </label>
@@ -1913,7 +1477,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
                       <div>
                         <label
                           for="forum-tag-color"
-                          class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                          class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                         >
                           Color
                         </label>
@@ -2007,23 +1571,7 @@ type ManagementTab = 'general' | 'members' | 'tags';
             <!-- Icon + header -->
             <div class="flex flex-col items-center px-6 pt-7 pb-5 text-center">
               <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-50 mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#ef4444"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                  <path d="M3 6h18" />
-                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
+                <mat-icon aria-hidden="true" class="mas-icon-lg">delete</mat-icon>
               </div>
               <h3 class="text-base font-bold text-gray-900 mb-1">Delete this post?</h3>
               <p class="text-sm text-gray-500 leading-relaxed">
