@@ -129,6 +129,15 @@ describe('NavComponent', () => {
     expect(items()).toContainEqual(expect.stringContaining('Mimic user'));
   });
 
+  it('circles the avatar with the moving ring only while mimicking', () => {
+    setup(authStore({ isStaff: true, isMimicking: true }));
+    expect(trigger().querySelector('mas-mimic-ring')).not.toBeNull();
+    TestBed.resetTestingModule();
+
+    setup(authStore({ isStaff: true }));
+    expect(trigger().querySelector('mas-mimic-ring')).toBeNull();
+  });
+
   it('offers a way back while mimicking and logs out from the menu', () => {
     setup(authStore({ isStaff: true, isMimicking: true }));
     openMenu();

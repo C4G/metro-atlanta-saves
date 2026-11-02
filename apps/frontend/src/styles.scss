@@ -510,6 +510,23 @@ body.dark-theme {
   background: rgb(2 6 16 / 0.7);
 }
 
+.mas-card-dialog {
+  --mat-dialog-container-color: transparent;
+  --mat-dialog-container-elevation-shadow: none;
+  --mat-dialog-container-shape: 1rem;
+}
+
+.mas-card-dialog .mat-mdc-dialog-surface {
+  background-color: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.mas-card-backdrop {
+  background: rgb(var(--mas-ink) / 0.35);
+  backdrop-filter: blur(3px);
+}
+
 body,
 body.dark-theme {
   --mat-datepicker-calendar-container-background-color: rgb(var(--mas-surface-raised));
