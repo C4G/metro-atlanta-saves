@@ -19,6 +19,7 @@ type UsersOnProgramsState = {
   usersLoadFailed: boolean;
   userOnProgram: UserOnProgramAgg | null;
   savingRequirementIds: string[];
+  participantQuery: string;
 };
 
 const initialState: UsersOnProgramsState = {
@@ -28,6 +29,7 @@ const initialState: UsersOnProgramsState = {
   usersLoadFailed: false,
   userOnProgram: null,
   savingRequirementIds: [],
+  participantQuery: '',
 };
 
 const BASE_URL = '/api/users-on-programs';
@@ -58,6 +60,22 @@ export const calculateCreditScoreChange = (checkpoints: CreditCheckpoint[]): num
   }
 
   return lastCheckpoint.creditScore - firstCheckpoint.creditScore;
+};
+
+type ParticipantName = Pick<UsersOnProgramsWithName, 'firstName' | 'lastName'>;
+
+export const participantInitials = ({ firstName, lastName }: ParticipantName): string =>
+  `${firstName.trim().charAt(0)}${lastName.trim().charAt(0)}`.toLocaleUpperCase();
+
+export const matchesParticipantQuery = (
+  participant: ParticipantName & Pick<UsersOnProgramsWithName, 'bio'>,
+  query: string,
+): boolean => {
+  const needle = query.trim().toLocaleLowerCase();
+  if (!needle) return true;
+  return `${participant.firstName} ${participant.lastName} ${participant.bio ?? ''}`
+    .toLocaleLowerCase()
+    .includes(needle);
 };
 
 export const UsersOnProgramsStore = signalStore(
@@ -124,6 +142,13 @@ export const UsersOnProgramsStore = signalStore(
       return userOnProgram()?.checkpoints || [];
     }),
   })),
+  withComputed(({ users, participantQuery }) => ({
+    visibleParticipants: computed(() =>
+      users()
+        .filter((user) => matchesParticipantQuery(user, participantQuery()))
+        .map((user) => ({ ...user, initials: participantInitials(user) })),
+    ),
+  })),
   withComputed(({ userProgramProgress }) => ({
     percentageCompleted: computed(() => {
       const total = userProgramProgress().length;
@@ -142,6 +167,9 @@ export const UsersOnProgramsStore = signalStore(
     ) => ({
       setProgramId: (programId: string) => {
         patchState(store, (state) => ({ ...state, programId }));
+      },
+      setParticipantQuery: (participantQuery: string) => {
+        patchState(store, { participantQuery });
       },
       getUserOnProgram: rxMethod<void>(
         pipe(

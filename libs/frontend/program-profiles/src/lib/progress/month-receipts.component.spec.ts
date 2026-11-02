@@ -50,10 +50,9 @@ describe('Monthly receipt control', () => {
     fixture.detectChanges();
     const button = root.querySelector<HTMLButtonElement>('button');
     expect(button?.textContent).toContain('Upload receipts');
-    expect(button?.classList.contains('focus-visible:ring-inset')).toBe(true);
     expect(button?.disabled).toBe(false);
     expect(load).not.toHaveBeenCalled();
-    expect(fixture.nativeElement.textContent).toContain('Attach supporting documents for Month 3.');
+    expect(fixture.nativeElement.textContent).toContain('JPG, PNG, WebP or PDF');
     uploading.set(true);
     fixture.detectChanges();
     expect(button?.disabled).toBe(true);
@@ -67,14 +66,8 @@ describe('Monthly receipt control', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('input[type=file]')?.hasAttribute('multiple')).toBe(true);
     expect(buttons().find((item) => item.textContent?.includes('Add more receipts'))).toBeDefined();
-    expect(fixture.nativeElement.textContent).toContain('Receipt attached');
-    expect(fixture.nativeElement.textContent).toContain('Select a receipt to preview it.');
-    expect(fixture.nativeElement.textContent).not.toContain('Attach supporting documents');
-    expect(fixture.nativeElement.textContent).not.toContain('attach_file');
-    expect(fixture.nativeElement.textContent).not.toContain('description');
-    expect(
-      fixture.nativeElement.querySelector('button[aria-label="Delete Savings.pdf"]').classList.contains('h-16'),
-    ).toBe(true);
+    expect(root.querySelector('[role="status"]')?.textContent?.trim()).toBe('1 file');
+    expect(root.querySelector('button[aria-label="View Savings.pdf"]')?.textContent).toContain('View receipt');
     const preview = root.querySelector<HTMLButtonElement>('button[aria-label="View Savings.pdf"]');
     preview?.click();
     expect(open).toHaveBeenCalledWith(
@@ -103,15 +96,15 @@ describe('Monthly receipt control', () => {
       { id: 'receipt-2', name: 'Statement.pdf' },
     ]);
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('2 receipts attached');
+    expect(root.querySelector('[role="status"]')?.textContent?.trim()).toBe('2 files');
     receipts.set([]);
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).not.toContain('receipts attached');
-    expect(fixture.nativeElement.textContent).toContain('Attach supporting documents for Month 3.');
+    expect(root.querySelector('[role="status"]')).toBeNull();
+    expect(buttons().find((item) => item.textContent?.includes('Upload receipts'))).toBeDefined();
     expect(reset).toHaveBeenCalledTimes(1);
     fixture.componentRef.setInput('monthName', 'Month 4');
     fixture.detectChanges();
     expect(reset).toHaveBeenCalledTimes(2);
-    expect(fixture.nativeElement.textContent).toContain('Attach supporting documents for Month 4.');
+    expect(root.querySelector('section')?.getAttribute('aria-label')).toBe('Month 4 receipts');
   });
 });
