@@ -13,7 +13,7 @@ describe('LoginComponent', () => {
       input.dispatchEvent(new Event('blur'));
       fixture.detectChanges();
     }
-    expect(fixture.nativeElement.querySelector('mat-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[aria-invalid="true"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
     expect(login).not.toHaveBeenCalled();
   });
@@ -67,8 +67,9 @@ describe('LoginComponent', () => {
 
     const alert = fixture.nativeElement.querySelector('[role="alert"]');
     expect(alert.textContent).toContain('Enter your email and password');
-    expect(fixture.nativeElement.textContent).toContain('Email is required.');
-    expect(fixture.nativeElement.textContent).toContain('Password is required.');
+    expect(fixture.nativeElement.querySelector('#login-email-error').textContent).toContain('Enter your email address');
+    expect(fixture.nativeElement.querySelector('#login-password-error').textContent).toContain('Enter your password');
+    expect(fixture.nativeElement.querySelector('#login-email').getAttribute('aria-invalid')).toBe('true');
     expect(login).not.toHaveBeenCalled();
   });
 
@@ -98,5 +99,21 @@ describe('LoginComponent', () => {
     googleButton.click();
 
     expect(signInWithGoogle).toHaveBeenCalledWith('login');
+  });
+
+  it('waits for the button before pointing out a mistyped email', () => {
+    const fixture = TestBed.createComponent(LoginComponent);
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('#login-email') as HTMLInputElement;
+    input.value = 'not-an-email';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#login-email-error')).toBeNull();
+    fixture.nativeElement.querySelector('button[type="submit"]').click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#login-email-error').textContent).toContain(
+      'Enter an email like name@example.com',
+    );
   });
 });

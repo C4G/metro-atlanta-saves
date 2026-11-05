@@ -11,7 +11,7 @@ describe('ForgotPasswordComponent', () => {
       input.dispatchEvent(new Event('blur'));
       fixture.detectChanges();
     }
-    expect(fixture.nativeElement.querySelector('mat-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[aria-invalid="true"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
     expect(forgotPassword).not.toHaveBeenCalled();
   });
@@ -28,7 +28,34 @@ describe('ForgotPasswordComponent', () => {
     const component = TestBed.createComponent(ForgotPasswordComponent).componentInstance;
     component.forgotPasswordForm.setValue({ email: ' MEMBER@EXAMPLE.COM ' });
     component.submitForm();
-    expect(forgotPassword).toHaveBeenCalledWith({ email: 'member@example.com' });
+    expect(forgotPassword).toHaveBeenCalledWith({ email: 'member@example.com', onSent: expect.any(Function) });
+  });
+  it('shows the check-your-email screen once the link is sent and can send it again', () => {
+    const fixture = TestBed.createComponent(ForgotPasswordComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.forgotPasswordForm.setValue({ email: 'member@example.com' });
+    fixture.componentInstance.submitForm();
+    forgotPassword.mock.calls[0][0].onSent();
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('h1')?.textContent).toContain('Check your email');
+    expect(element.textContent).toContain('member@example.com');
+    (
+      Array.from(element.querySelectorAll('button')).find((button) =>
+        button.textContent?.includes('send it again'),
+      ) as HTMLButtonElement
+    ).click();
+    forgotPassword.mock.calls[1][0].onSent();
+    fixture.detectChanges();
+    expect(element.textContent).toContain('We sent the link again.');
+    (
+      Array.from(element.querySelectorAll('button')).find((button) =>
+        button.textContent?.includes('Use a different email'),
+      ) as HTMLButtonElement
+    ).click();
+    fixture.detectChanges();
+    expect(element.querySelector('h1')?.textContent).toContain('Reset your password');
+    expect(fixture.componentInstance.forgotPasswordForm.controls.email.value).toBe('');
   });
   it('rejects missing and invalid email with visible field guidance', () => {
     const fixture = TestBed.createComponent(ForgotPasswordComponent);
@@ -36,11 +63,30 @@ describe('ForgotPasswordComponent', () => {
     fixture.nativeElement.querySelector('button[type=submit]').click();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[role=alert]').textContent).toContain(
-      'Please enter your email address',
+      'Enter the email connected to your account',
+    );
+    expect(fixture.nativeElement.querySelector('#recovery-email-error').textContent).toContain(
+      'Enter your email address',
     );
     expect(forgotPassword).not.toHaveBeenCalled();
     fixture.componentInstance.forgotPasswordForm.setValue({ email: 'invalid' });
     fixture.componentInstance.submitForm();
     expect(forgotPassword).not.toHaveBeenCalled();
+  });
+
+  it('waits for the button before pointing out a mistyped email', () => {
+    const fixture = TestBed.createComponent(ForgotPasswordComponent);
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('#recovery-email') as HTMLInputElement;
+    input.value = 'not-an-email';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#recovery-email-error')).toBeNull();
+    fixture.nativeElement.querySelector('button[type="submit"]').click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#recovery-email-error').textContent).toContain(
+      'Enter an email like name@example.com',
+    );
   });
 });

@@ -13,6 +13,7 @@ import { firstValueFrom, map, of, pipe, switchMap } from 'rxjs';
 
 type ForgotPasswordData = {
   email: string;
+  onSent?: () => void;
 };
 
 type ResetPasswordData = {
@@ -311,7 +312,7 @@ export const AuthStore = signalStore(
 
       const forgotPassword = rxMethod<ForgotPasswordData>(
         pipe(
-          switchMap((requestData) =>
+          switchMap(({ onSent, ...requestData }) =>
             http
               .post<ForgotResponse>(
                 `${BASE_URL}/request-password-reset`,
@@ -327,6 +328,10 @@ export const AuthStore = signalStore(
               .pipe(
                 tapResponse({
                   next: ({ message }) => {
+                    if (onSent) {
+                      onSent();
+                      return;
+                    }
                     snackBar.open(message, undefined, {
                       panelClass: 'success',
                       duration: 5000,
@@ -365,7 +370,7 @@ export const AuthStore = signalStore(
                       panelClass: 'success',
                       duration: 5000,
                     });
-                    router.navigate(['/']);
+                    router.navigate(['/login']);
                   },
                   error: () => {
                     snackBar.open('There was an error resetting your password, please try again.', undefined, {

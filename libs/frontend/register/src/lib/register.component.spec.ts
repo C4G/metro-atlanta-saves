@@ -12,7 +12,7 @@ describe('RegisterComponent', () => {
       input.dispatchEvent(new Event('blur'));
       fixture.detectChanges();
     }
-    expect(fixture.nativeElement.querySelector('mat-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[aria-invalid="true"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
     expect(register).not.toHaveBeenCalled();
   });
@@ -76,5 +76,21 @@ describe('RegisterComponent', () => {
     );
     button?.click();
     expect(signInWithGoogle).toHaveBeenCalledWith('register');
+  });
+
+  it('waits for the button before pointing out a mistyped email', () => {
+    const fixture = TestBed.createComponent(RegisterComponent);
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('#register-email') as HTMLInputElement;
+    input.value = 'not-an-email';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#register-email-error')).toBeNull();
+    fixture.nativeElement.querySelector('button[type="submit"]').click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#register-email-error').textContent).toContain(
+      'Enter an email like name@example.com',
+    );
   });
 });
