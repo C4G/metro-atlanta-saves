@@ -1,4 +1,6 @@
 import { Route } from '@angular/router';
+import { inject } from '@angular/core';
+import { AuthStore } from '@mas/frontend-shared-auth';
 import { seoResolver } from '@mas/frontend-shared-util';
 
 const TITLE_SUFFIX = '- Programs';
@@ -9,14 +11,8 @@ export const programProfilesRoutes: Route[] = [
     loadChildren: () => [
       {
         path: '',
-        loadComponent: () => import('./description/description.component'),
-        resolve: [seoResolver],
-        data: {
-          seo: {
-            title: `Overview ${TITLE_SUFFIX}`,
-            description: 'Program overview',
-          },
-        },
+        pathMatch: 'full',
+        redirectTo: () => (inject(AuthStore).isStaff() ? 'particpants' : 'progress'),
       },
       {
         path: 'particpants',
@@ -30,38 +26,30 @@ export const programProfilesRoutes: Route[] = [
         },
       },
       {
-        path: 'course-progress',
-        loadComponent: () => import('./course-progress/course-progress.component'),
-        resolve: [seoResolver],
-        data: {
-          seo: {
-            title: `My Tasks ${TITLE_SUFFIX}`,
-            description: 'View and complete your program tasks',
-          },
-        },
-      },
-      {
-        path: 'savings',
-        loadComponent: () => import('./savings/savings.component'),
+        path: 'progress',
+        loadComponent: () => import('./progress/progress.component'),
         resolve: [seoResolver],
         data: {
           seo: {
             title: `My Progress ${TITLE_SUFFIX}`,
-            description: 'Record monthly savings and review your program progress',
+            description: 'Track your tasks, savings and receipts month by month',
           },
         },
       },
       {
-        path: 'receipts',
-        loadComponent: () => import('./receipts/receipts.component'),
+        path: 'insights',
+        loadComponent: () => import('./insights/insights.component'),
         resolve: [seoResolver],
         data: {
           seo: {
-            title: `Receipts ${TITLE_SUFFIX}`,
-            description: 'Upload and review your receipts',
+            title: `My Insights ${TITLE_SUFFIX}`,
+            description: 'See your progress, savings and credit score change at a glance',
           },
         },
       },
+      { path: 'course-progress', pathMatch: 'full', redirectTo: 'progress' },
+      { path: 'savings', pathMatch: 'full', redirectTo: 'progress' },
+      { path: 'receipts', pathMatch: 'full', redirectTo: 'progress' },
     ],
     loadComponent: () => import('./program-profile/program-profile.component'),
   },

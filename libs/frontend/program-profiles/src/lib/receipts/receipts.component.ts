@@ -2,12 +2,12 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, input, OnDestroy, untracked } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { DocumentDropzoneComponent } from '@mas/frontend-shared-components';
+import { DocumentDropzoneComponent, SpinnerComponent } from '@mas/frontend-shared-components';
 import { CheckpointsStore, DocumentManagementStore, ImagesStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-receipts',
-  imports: [DatePipe, DocumentDropzoneComponent, MatIcon, MatProgressSpinner],
+  imports: [SpinnerComponent, DatePipe, DocumentDropzoneComponent, MatIcon, MatProgressSpinner],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="py-6 sm:py-8" aria-labelledby="receipts-heading">
@@ -76,7 +76,10 @@ import { CheckpointsStore, DocumentManagementStore, ImagesStore } from '@mas/fro
               } @else {
                 <div class="flex flex-col items-center gap-3 text-ink-muted">
                   <mat-spinner diameter="36" />
-                  <span class="text-sm font-semibold">Loading preview…</span>
+                  <span class="text-sm font-semibold flex items-center gap-2" role="status">
+                    <mas-spinner class="text-brand" />
+                    <span class="sr-only">Loading preview</span>
+                  </span>
                 </div>
               }
             </div>
