@@ -10,19 +10,32 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UnprocessableEntityException,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { unlink } from 'node:fs';
 import { UsersOnProgramsService } from './users-on-programs.service';
 import { CreateUsersOnProgramsDto } from './dto/create-users-on-programs.dto';
 import { UpdateUsersOnProgramsDto } from './dto/update-users-on-programs.dto';
 import { VerifyRequirementDto } from './dto/verify-requirement.dto';
+import { RecordPaymentDto } from './dto/record-payment.dto';
 import {
+  guidFileName,
+  IMAGES_DIR,
   ManagedSessionGuard,
+  MAX_IMAGE_SIZE_IN_BYTES,
+  privateDir,
   RoleGuard,
   Roles,
   validateUserAnyRole,
   validateUserIsAdminOrStaff,
 } from '@mas/backend-shared';
+
+const PROOF_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'application/pdf'];
 
 import { ProgramsService } from '@mas/backend-programs';
 import { UserFull } from '@mas/models';
@@ -63,6 +76,86 @@ export class UsersOnProgramsController {
       throw new UnauthorizedException(['You can only verify tasks for programs managed by your partner.']);
     }
     return this.usersOnProgramsService.verifyRequirement(programId, userId, requirementId, request.user.id, body);
+  }
+
+  @UseGuards(ManagedSessionGuard, RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Post('program/:programId/participants/:userId/requirements/:requirementId/completion')
+  async completeForParticipant(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('userId') userId: string,
+    @Param('requirementId') requirementId: string,
+  ) {
+    await this.assertManages(request, programId);
+    return this.usersOnProgramsService.completeForParticipant(programId, userId, requirementId, request.user.id);
+  }
+
+  @UseGuards(ManagedSessionGuard, RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Delete('program/:programId/participants/:userId/requirements/:requirementId/completion')
+  async uncompleteForParticipant(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('userId') userId: string,
+    @Param('requirementId') requirementId: string,
+  ) {
+    await this.assertManages(request, programId);
+    return this.usersOnProgramsService.uncompleteForParticipant(programId, userId, requirementId);
+  }
+
+  @UseGuards(ManagedSessionGuard, RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Get('program/:programId/payments')
+  async getPayments(@Req() request: Request & { user: UserFull }, @Param('programId') programId: string) {
+    await this.assertManages(request, programId);
+    return this.usersOnProgramsService.getPayments(programId);
+  }
+
+  @UseGuards(ManagedSessionGuard, RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Post('program/:programId/participants/:userId/payments')
+  @UseInterceptors(
+    FileInterceptor('proof', {
+      storage: diskStorage({
+        destination: (_, __, callback) => callback(null, privateDir(IMAGES_DIR)),
+        filename: guidFileName,
+      }),
+      limits: { fileSize: MAX_IMAGE_SIZE_IN_BYTES },
+    }),
+  )
+  async recordPayment(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('userId') userId: string,
+    @Body() body: RecordPaymentDto,
+    @UploadedFile() proof?: Express.Multer.File,
+  ) {
+    const discard = () => proof && unlink(proof.path, () => undefined);
+    if (!proof) throw new BadRequestException(['Add a photo of the check as proof of payment.']);
+    if (!PROOF_TYPES.includes(proof.mimetype)) {
+      discard();
+      throw new UnprocessableEntityException(['The proof must be a JPG, PNG, WebP, HEIC or PDF file.']);
+    }
+    try {
+      await this.assertManages(request, programId);
+      return await this.usersOnProgramsService.recordPayment(programId, userId, request.user.id, body, proof);
+    } catch (error) {
+      discard();
+      throw error;
+    }
+  }
+
+  @UseGuards(ManagedSessionGuard, RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Get('program/:programId/payments/:paymentId/proof')
+  async getPaymentProof(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('paymentId') paymentId: string,
+  ) {
+    await this.assertManages(request, programId);
+    return this.usersOnProgramsService.getPaymentProof(programId, paymentId);
   }
 
   @UseGuards(ManagedSessionGuard)
@@ -188,5 +281,12 @@ export class UsersOnProgramsController {
     res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.set('Content-Disposition', 'attachment; filename=example.xlsx');
     res.send(excelBuffer);
+  }
+
+  private async assertManages(request: Request & { user: UserFull }, programId: string) {
+    const program = await this.programsService.findOne(programId);
+    if (validateUserAnyRole(request, program.partnerId)) {
+      throw new UnauthorizedException(['You can only manage participants in programs run by your partner.']);
+    }
   }
 }

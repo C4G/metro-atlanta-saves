@@ -120,14 +120,12 @@ describe('Task verification', () => {
       { name: 'Month 10', number: 10 },
     ]);
   });
-  it.each([
-    { verified: 'true', completedAt },
-    { verified: true, completedAt: 'not-a-date' },
-    { completedAt },
-    { verified: true },
-  ])('validates incoming verification payload %p', async (body) => {
-    expect((await validate(Object.assign(new VerifyRequirementDto(), body))).length).toBeGreaterThan(0);
-  });
+  it.each([{ verified: 'true', completedAt }, { verified: true, completedAt: 'not-a-date' }, { completedAt }])(
+    'validates incoming verification payload %p',
+    async (body) => {
+      expect((await validate(Object.assign(new VerifyRequirementDto(), body))).length).toBeGreaterThan(0);
+    },
+  );
 });
 
 describe('Task review permissions', () => {

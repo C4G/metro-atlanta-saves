@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -161,6 +162,9 @@ export class ProgramsController {
     const program = await this.programsService.findOne(id);
     if (validateUserAnyRole(request, program.partnerId)) {
       throw new UnauthorizedException(['You can only add programs for your associated partner']);
+    }
+    if (updateProgramDto.partnerId && updateProgramDto.partnerId !== program.partnerId && !isUserAdmin(request)) {
+      throw new ForbiddenException(['Only administrators can move a program to another partner.']);
     }
     return this.programsService.update(id, updateProgramDto);
   }

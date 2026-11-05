@@ -1,12 +1,16 @@
 import {
   Checkpoint,
   Image,
+  ParticipantPayment as PaymentRecord,
   Requirement,
   RequirementCompletion,
   User,
 } from '@mas/prisma-client/browser';
 
-export type TaskReviewCompletion = Pick<RequirementCompletion, 'requirementId' | 'completedAt' | 'verifiedAt'> & {
+export type TaskReviewCompletion = Pick<
+  RequirementCompletion,
+  'requirementId' | 'completedAt' | 'completedById' | 'verifiedAt'
+> & {
   verifiedBy: Pick<User, 'id' | 'firstName' | 'lastName'> | null;
 };
 
@@ -38,3 +42,8 @@ export type SavedMonthlyPlan = {
   created: TaskReviewData['requirements'];
   removedRequirementIds: string[];
 };
+
+export type ParticipantPayment = Pick<
+  PaymentRecord,
+  'id' | 'createdAt' | 'userId' | 'amount' | 'paidAt' | 'checkNumber' | 'paidBy' | 'note' | 'proofName' | 'proofType'
+>;
