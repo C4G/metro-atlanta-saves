@@ -15,22 +15,20 @@ import { AddRequirementComponent } from '../add-requirement/add-requirement.comp
   template: `
     <div class="flex items-center justify-center gap-3 h-full">
       <button
-        class="!flex !justify-center !content-center"
-        mat-icon-button
+        class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-xl text-brand-strong hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
         aria-label="Edit"
         title="Edit"
         (click)="openEdit()"
       >
-        <mat-icon color="accent">edit</mat-icon>
+        <mat-icon aria-hidden="true">edit</mat-icon>
       </button>
       <button
-        class="!flex !justify-center !content-center"
-        mat-icon-button
+        class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-xl text-danger hover:bg-danger/10 focus:outline-none focus:ring-2 focus:ring-brand"
         aria-label="Delete"
         title="Delete"
         (click)="openConfirm()"
       >
-        <mat-icon color="warn">delete</mat-icon>
+        <mat-icon aria-hidden="true">delete</mat-icon>
       </button>
     </div>
   `,
