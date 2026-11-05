@@ -1,7 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthStore } from '@mas/frontend-shared-auth';
 import { ParticipantRequirement } from '@mas/models';
 import { ParticipantRequirementsStore } from './participant-requirements.store';
 
@@ -13,8 +15,11 @@ describe('ParticipantRequirementsStore', () => {
     programName: 'Pilot',
     dueAt: '2026-10-20T12:00:00Z',
     canComplete: true,
+    isEnrolled: true,
     isCompleted: false,
   };
+  const user = signal<{ id: string } | null>({ id: 'user-1' });
+  const isStaff = signal(false);
   let store: InstanceType<typeof ParticipantRequirementsStore>;
   let http: HttpTestingController;
 
@@ -25,6 +30,7 @@ describe('ParticipantRequirementsStore', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: MatSnackBar, useValue: { open: jest.fn() } },
+        { provide: AuthStore, useValue: { user, isStaff } },
       ],
     });
     store = TestBed.inject(ParticipantRequirementsStore);
@@ -32,6 +38,9 @@ describe('ParticipantRequirementsStore', () => {
   });
   afterEach(() => {
     http.verify();
+    localStorage.clear();
+    user.set({ id: 'user-1' });
+    isStaff.set(false);
     TestBed.resetTestingModule();
   });
 
@@ -93,5 +102,109 @@ describe('ParticipantRequirementsStore', () => {
     http.expectOne('/api/users-on-programs/user/requirements').flush([task]);
     expect(store.loadFailed()).toBe(false);
     expect(store.requirements()).toEqual([task]);
+  });
+
+  it('filters requirements and lists programs with task counts', () => {
+    const otherTask: ParticipantRequirement = { ...task, id: 'task-2', programId: 'program-2', programName: 'Alpha' };
+    store.load();
+    http.expectOne('/api/users-on-programs/user/requirements').flush([task, otherTask, { ...task, id: 'task-3' }]);
+
+    expect(store.programs()).toEqual([
+      { id: 'program-2', name: 'Alpha', taskCount: 1, isVisible: true },
+      { id: 'program-1', name: 'Pilot', taskCount: 2, isVisible: true },
+    ]);
+    expect(store.allProgramsVisible()).toBe(true);
+
+    store.toggleProgram('program-1');
+    expect(store.allProgramsVisible()).toBe(false);
+    expect(store.visiblePrograms().map(({ id }) => id)).toEqual(['program-2']);
+    expect(store.visibleRequirements().map(({ id }) => id)).toEqual(['task-2']);
+    expect(
+      Object.values(store.tasksByDate())
+        .flat()
+        .map(({ id }) => id),
+    ).toEqual(['task-2']);
+
+    store.hideAllPrograms();
+    expect(store.visibleRequirements()).toEqual([]);
+    store.showAllPrograms();
+    expect(store.visibleRequirements()).toHaveLength(3);
+
+    store.setProgramQuery('alp');
+    expect(store.matchingPrograms().map(({ name }) => name)).toEqual(['Alpha']);
+  });
+
+  it('builds calendar links for enrolled and staff-only requirements', () => {
+    store.load();
+    http
+      .expectOne('/api/users-on-programs/user/requirements')
+      .flush([task, { ...task, id: 'task-2', programId: 'program-2', isEnrolled: false, canComplete: false }]);
+
+    const links = Object.values(store.tasksByDate())
+      .flat()
+      .map(({ link }) => link);
+    expect(links).toEqual([
+      ['/program-profiles', 'program-1', 'progress'],
+      ['/partner-staff/programs', 'program-2', 'progress'],
+    ]);
+  });
+
+  it('never offers admins or partner staff a check-off, even in programs they joined', () => {
+    isStaff.set(true);
+    store.load();
+    http.expectOne('/api/users-on-programs/user/requirements').flush([task]);
+
+    const [staffTask] = Object.values(store.tasksByDate()).flat();
+    expect(staffTask).toEqual(
+      expect.objectContaining({ canComplete: false, link: ['/partner-staff/programs', 'program-1', 'progress'] }),
+    );
+  });
+
+  it('saves the program selection for the signed-in user and restores it on the next visit', () => {
+    localStorage.setItem('mas-calendar-hidden-programs:user-2', JSON.stringify(['program-9']));
+    TestBed.tick();
+
+    store.toggleProgram('program-1');
+    TestBed.tick();
+    expect(localStorage.getItem('mas-calendar-hidden-programs:user-1')).toBe('["program-1"]');
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        ParticipantRequirementsStore,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: MatSnackBar, useValue: { open: jest.fn() } },
+        { provide: AuthStore, useValue: { user, isStaff } },
+      ],
+    });
+    store = TestBed.inject(ParticipantRequirementsStore);
+    http = TestBed.inject(HttpTestingController);
+    TestBed.tick();
+    expect(store.hiddenProgramIds()).toEqual(['program-1']);
+
+    user.set({ id: 'user-2' });
+    TestBed.tick();
+    expect(store.hiddenProgramIds()).toEqual(['program-9']);
+
+    store.showAllPrograms();
+    TestBed.tick();
+    expect(localStorage.getItem('mas-calendar-hidden-programs:user-2')).toBeNull();
+    expect(localStorage.getItem('mas-calendar-hidden-programs:user-1')).toBe('["program-1"]');
+  });
+
+  it('ignores unreadable saved selections', () => {
+    localStorage.setItem('mas-calendar-hidden-programs:user-2', '{not json');
+    user.set({ id: 'user-2' });
+    TestBed.tick();
+    expect(store.hiddenProgramIds()).toEqual([]);
+  });
+
+  it('does not restore or save a selection before anyone is signed in', () => {
+    user.set(null);
+    TestBed.tick();
+    store.toggleProgram('program-1');
+    TestBed.tick();
+    expect(localStorage.length).toBe(0);
   });
 });

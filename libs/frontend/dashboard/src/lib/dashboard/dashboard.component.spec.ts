@@ -46,7 +46,7 @@ describe('DashboardComponent', () => {
         provideRouter([]),
         {
           provide: AuthStore,
-          useValue: { user: signal({ firstName: 'Jordan' }) },
+          useValue: { user: signal({ firstName: 'Jordan' }), isStaff: signal(false) },
         },
         {
           provide: ProgramsStore,
@@ -77,6 +77,21 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.availablePrograms().map((program) => program.id)).toEqual(['program-2']);
+  });
+
+  it.each([false, true])('links program cards to the correct view for staff=%s', (isStaff) => {
+    TestBed.overrideProvider(AuthStore, {
+      useValue: { user: signal({ firstName: 'Jordan' }), isStaff: signal(isStaff) },
+    });
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
+      '[aria-labelledby="my-programs-heading"] article a',
+    );
+    expect(!!fixture.nativeElement.querySelector('[aria-label="Dashboard overview"]')).toBe(isStaff);
+    expect(link.getAttribute('href')).toBe(
+      isStaff ? '/partner-staff/programs/program-1/progress' : '/program-profiles/program-1',
+    );
   });
 
   it('shows the empty discussion state when boards cannot be loaded', () => {
