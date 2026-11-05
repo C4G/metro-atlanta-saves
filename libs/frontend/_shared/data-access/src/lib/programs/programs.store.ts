@@ -91,7 +91,7 @@ export const matchesDirectoryQuery = (program: Pick<Program, 'name' | 'descripti
   return text.includes(needle);
 };
 
-export type UserAndEnrollment = Enrollment & { firstName: string; lastName: string };
+export type UserAndEnrollment = Enrollment & { firstName: string; lastName: string; email?: string };
 
 type ProgramsState = {
   enrollments: UserAndEnrollment[];
@@ -133,6 +133,7 @@ export const ProgramsStore = signalStore(
   withState(initialState),
   withComputed(
     ({ program, programs, usersPrograms, upcomingPrograms, directoryQueries }, locale = inject(LOCALE_ID)) => ({
+      programName: computed(() => program()?.name ?? 'this program'),
       directoryGroups: computed<DirectoryGroup[]>(() => {
         const now = new Date();
         const queries = directoryQueries();

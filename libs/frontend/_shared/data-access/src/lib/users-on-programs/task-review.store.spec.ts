@@ -71,9 +71,47 @@ describe('TaskReviewStore', () => {
     expect(store.data()?.participants[0].completions).toEqual([]);
     expect(store.saveError()).toBe('');
   });
-  it('does not send verification for a task the participant has not reported', () => {
-    store.verify({ ...submission, requirementId: 'task-2' });
+  it('reviews a task the participant has not reported by sending no submission time', () => {
+    store.verify({ userId: 'person-1', requirementId: 'task-2', verified: true });
+    const request = http.expectOne(
+      '/api/users-on-programs/program/program-1/participants/person-1/requirements/task-2/verification',
+    );
+    expect(request.request.body).toEqual({ verified: true });
+    const reviewed = {
+      requirementId: 'task-2',
+      completedAt,
+      completedById: 'staff-1',
+      verifiedAt: completedAt,
+      verifiedBy: null,
+    };
+    request.flush(reviewed);
+    expect(store.data()?.participants[0].completions).toEqual([completion, reviewed]);
+  });
+  it('never unreviews a task that has no submission', () => {
+    store.verify({ userId: 'person-1', requirementId: 'task-2', verified: false });
     http.expectNone((request) => request.method === 'PATCH');
+  });
+  it('lets staff mark a task done and undo it', () => {
+    const completionUrl =
+      '/api/users-on-programs/program/program-1/participants/person-1/requirements/task-2/completion';
+    store.setCompletion({ userId: 'person-1', requirementId: 'task-2', complete: true });
+    const created = {
+      requirementId: 'task-2',
+      completedAt,
+      completedById: 'staff-1',
+      verifiedAt: null,
+      verifiedBy: null,
+    };
+    const post = http.expectOne(completionUrl);
+    expect(post.request.method).toBe('POST');
+    post.flush(created);
+    expect(store.data()?.participants[0].completions).toEqual([completion, created]);
+
+    store.setCompletion({ userId: 'person-1', requirementId: 'task-2', complete: false });
+    const remove = http.expectOne(completionUrl);
+    expect(remove.request.method).toBe('DELETE');
+    remove.flush({ requirementId: 'task-2' });
+    expect(store.data()?.participants[0].completions).toEqual([completion]);
   });
   it('exposes loading errors instead of presenting an empty task list', () => {
     store.load('program-1');

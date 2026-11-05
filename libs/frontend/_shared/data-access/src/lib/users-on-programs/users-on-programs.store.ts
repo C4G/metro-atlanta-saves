@@ -312,7 +312,7 @@ export const UsersOnProgramsStore = signalStore(
           }),
         ),
       ),
-      patchUser: rxMethod<Partial<UsersOnPrograms>>(
+      patchUser: rxMethod<Partial<UsersOnProgramsWithName>>(
         pipe(
           switchMap((usersOnPrograms) =>
             http.patch<UsersOnProgramsWithName>(`${BASE_URL}`, usersOnPrograms).pipe(

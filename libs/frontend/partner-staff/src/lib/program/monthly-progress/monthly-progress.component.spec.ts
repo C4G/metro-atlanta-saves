@@ -2,9 +2,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { TaskReviewStore } from '@mas/frontend-shared-data-access';
+import { MonthTaskStatus, TaskReviewStore } from '@mas/frontend-shared-data-access';
 import { TaskReviewData } from '@mas/models';
-import MonthlyProgressComponent from './monthly-progress.component';
+import MonthlyProgressComponent, { taskStatusLabel } from './monthly-progress.component';
 
 describe('MonthlyProgressComponent', () => {
   const completedAt = '2026-10-16T12:00:00.000Z';
@@ -19,6 +19,7 @@ describe('MonthlyProgressComponent', () => {
     completions: completed.map((requirementId) => ({
       requirementId,
       completedAt: new Date(completedAt),
+      completedById: null,
       verifiedAt: null,
       verifiedBy: null,
     })),
@@ -41,7 +42,6 @@ describe('MonthlyProgressComponent', () => {
   const setup = () => {
     TestBed.configureTestingModule({
       imports: [MonthlyProgressComponent],
-      // The program shell provides and loads the shared monthly review data.
       providers: [TaskReviewStore, provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
     const fixture = TestBed.createComponent(MonthlyProgressComponent);
@@ -57,7 +57,6 @@ describe('MonthlyProgressComponent', () => {
         (item) =>
           item.getAttribute('aria-label') === name ||
           item.textContent?.trim().startsWith(name) ||
-          // Buttons led by an icon read as "icon-name Label".
           item.textContent?.trim().endsWith(name),
       );
     const roster = () =>
@@ -68,19 +67,18 @@ describe('MonthlyProgressComponent', () => {
   };
   afterEach(() => TestBed.resetTestingModule());
 
-  it('opens on the current month with its roster, totals and the first participant', () => {
+  it('opens on the current month with its roster and the first participant', () => {
     const { element, button, roster } = setup();
     expect(element.querySelector('#focused-month-heading')?.textContent).toContain('Month 4');
-    expect(button('Current month')?.disabled).toBe(true);
-    // The month bar shows only the month and its navigation.
-    expect(element.textContent).not.toContain('Finished everything');
+    expect(button('This month')?.disabled).toBe(true);
     expect(roster()).toEqual([
       expect.stringContaining('Brianna Lee'),
       expect.stringContaining('Carlos Mendez'),
       expect.stringContaining('Dana Whitfield'),
     ]);
     expect(roster()[0]).toContain('1 to review');
-    expect(element.querySelector('aside')?.textContent).toContain('Brianna Lee');
+    expect(element.querySelector('#selected-month-heading')?.textContent).toContain('Brianna Lee');
+    expect(element.textContent).not.toContain('All set');
   });
 
   it('filters the roster and moves between months', () => {
@@ -92,28 +90,53 @@ describe('MonthlyProgressComponent', () => {
     button('Previous month')?.click();
     fixture.detectChanges();
     expect(element.querySelector('#focused-month-heading')?.textContent).toContain('Month 3');
-    expect(button('Current month')?.disabled).toBe(false);
-    button('Current month')?.click();
+    expect(button('This month')?.disabled).toBe(false);
+    button('This month')?.click();
     fixture.detectChanges();
     expect(element.querySelector('#focused-month-heading')?.textContent).toContain('Month 4');
   });
 
   it('records a staff review and moves to the next participant waiting for review', () => {
     const { fixture, http, element, button } = setup();
-    const checkboxes = Array.from(element.querySelectorAll<HTMLInputElement>('aside input[type="checkbox"]'));
-    expect(checkboxes.map((item) => item.disabled)).toEqual([false, true]);
-    checkboxes[0].click();
+    button('Reviewed: Credit report review for Brianna Lee')?.click();
     const request = http.expectOne(
       '/api/users-on-programs/program/program-1/participants/brianna/requirements/review/verification',
     );
     expect(request.request.body).toEqual({ verified: true, completedAt });
-    request.flush({ requirementId: 'review', completedAt, verifiedAt: completedAt, verifiedBy: null });
+    request.flush({
+      requirementId: 'review',
+      completedAt,
+      completedById: null,
+      verifiedAt: completedAt,
+      verifiedBy: null,
+    });
     fixture.detectChanges();
-    expect(element.querySelector('aside')?.textContent).toContain('Reviewed');
+    expect(button('Reviewed: Credit report review for Brianna Lee')?.getAttribute('aria-pressed')).toBe('true');
 
     button('Next participant to review')?.click();
     fixture.detectChanges();
     expect(element.querySelector('#selected-month-heading')?.textContent).toContain('Carlos Mendez');
+  });
+
+  it('lets staff tick off a task the participant has not finished', () => {
+    const { fixture, http, element, button } = setup();
+    button('Mark done: Upload deposit receipts for Brianna Lee')?.click();
+    const request = http.expectOne(
+      '/api/users-on-programs/program/program-1/participants/brianna/requirements/receipts/completion',
+    );
+    expect(request.request.method).toBe('POST');
+    request.flush({
+      requirementId: 'receipts',
+      completedAt,
+      completedById: 'staff-1',
+      verifiedAt: null,
+      verifiedBy: null,
+    });
+    fixture.detectChanges();
+    expect(element.querySelector('[aria-labelledby="selected-month-heading"]')?.textContent).toContain(
+      'Marked done by staff',
+    );
+    expect(button('Mark not done: Upload deposit receipts for Brianna Lee')?.getAttribute('aria-checked')).toBe('true');
   });
 
   it('shows every month in the grid and opens a month from a cell', () => {
@@ -122,11 +145,33 @@ describe('MonthlyProgressComponent', () => {
     fixture.detectChanges();
     const headers = Array.from(element.querySelectorAll('thead abbr')).map((item) => item.textContent?.trim());
     expect(headers).toEqual(['M1', 'M2', 'M3', 'M4', 'M5', 'M6']);
+    expect(element.querySelector('#all-months-heading')?.textContent).toContain('All 6 months');
     expect(element.querySelector('tbody tr:last-child')?.textContent).toContain('2 months open');
 
     button('Dana Whitfield, Month 1: 0 of 1 tasks complete, 0 waiting for review. Open this month')?.click();
     fixture.detectChanges();
     expect(element.querySelector('#focused-month-heading')?.textContent).toContain('Month 1');
     expect(element.querySelector('#selected-month-heading')?.textContent).toContain('Dana Whitfield');
+  });
+});
+
+describe('taskStatusLabel', () => {
+  const task = (overrides: Partial<MonthTaskStatus>): MonthTaskStatus => ({
+    requirementId: 'task-1',
+    name: 'Budget',
+    completion: null,
+    isComplete: false,
+    isReviewed: false,
+    isLegacy: false,
+    isStaffCompleted: false,
+    ...overrides,
+  });
+  it.each([
+    [task({}), 'Not complete yet'],
+    [task({ isComplete: true }), 'Completed by participant'],
+    [task({ isComplete: true, isStaffCompleted: true }), 'Marked done by staff'],
+    [task({ isComplete: true, isLegacy: true }), 'Complete in an older program record'],
+  ])('labels %#', (value, label) => {
+    expect(taskStatusLabel(value)).toBe(label);
   });
 });

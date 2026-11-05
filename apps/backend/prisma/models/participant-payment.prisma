@@ -1,0 +1,21 @@
+model ParticipantPayment {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  userId       String
+  user         User     @relation("PaymentRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  programId    String
+  program      Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  amount       Float
+  paidAt       DateTime
+  checkNumber  String?
+  paidBy       String?
+  note         String?
+  proofName    String
+  proofType    String
+  proofPath    String
+  recordedById String?
+  recordedBy   User?    @relation("PaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([programId, userId])
+  @@map("participant_payments")
+}

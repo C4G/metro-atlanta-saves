@@ -1,14 +1,43 @@
 import { CheckpointsService } from '@mas/backend-checkpoints';
 import { RequirementRemindersService } from '@mas/backend-requirements';
 import { PrismaService } from '@mas/backend-prisma';
-import { formatCurrency } from '@mas/backend-shared';
+import { formatCurrency, imageAbsPath, imageRelPath } from '@mas/backend-shared';
 import { UserFull, UsersOnProgramsWithName } from '@mas/models';
-import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  StreamableFile,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { createReadStream } from 'node:fs';
 import { Prisma } from '@mas/prisma-client';
 import * as ExcelJS from 'exceljs';
 import { CreateUsersOnProgramsDto } from './dto/create-users-on-programs.dto';
 import { UpdateUsersOnProgramsDto } from './dto/update-users-on-programs.dto';
 import { VerifyRequirementDto } from './dto/verify-requirement.dto';
+import { RecordPaymentDto } from './dto/record-payment.dto';
+
+const COMPLETION_SELECT = {
+  requirementId: true,
+  completedAt: true,
+  completedById: true,
+  verifiedAt: true,
+  verifiedBy: { select: { id: true, firstName: true, lastName: true } },
+} as const;
+
+const PAYMENT_SELECT = {
+  id: true,
+  createdAt: true,
+  userId: true,
+  amount: true,
+  paidAt: true,
+  checkNumber: true,
+  paidBy: true,
+  note: true,
+  proofName: true,
+  proofType: true,
+} as const;
 
 const monthNumber = (name: string) => Number(/^month\s+(\d+)$/i.exec(name.trim())?.[1] ?? 0);
 
@@ -53,12 +82,7 @@ export class UsersOnProgramsService {
         select: {
           user: { select: { id: true, firstName: true, lastName: true, email: true } },
           requirementCompletions: {
-            select: {
-              requirementId: true,
-              completedAt: true,
-              verifiedAt: true,
-              verifiedBy: { select: { id: true, firstName: true, lastName: true } },
-            },
+            select: COMPLETION_SELECT,
           },
           checkpoints: {
             select: {
@@ -103,13 +127,31 @@ export class UsersOnProgramsService {
     reviewerId: string,
     body: VerifyRequirementDto,
   ) {
+    if (!body.completedAt) {
+      if (!body.verified) throw new BadRequestException(['Only a completed task can be marked as not reviewed.']);
+      await this.assertParticipantTask(programId, userId, requirementId);
+      return this.prisma.requirementCompletion.upsert({
+        where: { userId_programId_requirementId: { userId, programId, requirementId } },
+        create: {
+          userId,
+          programId,
+          requirementId,
+          completedById: reviewerId,
+          verifiedAt: new Date(),
+          verifiedById: reviewerId,
+        },
+        update: { verifiedAt: new Date(), verifiedById: reviewerId },
+        select: COMPLETION_SELECT,
+      });
+    }
+    const completedAt = body.completedAt;
     return this.prisma.$transaction(async (tx) => {
       const updated = await tx.requirementCompletion.updateMany({
         where: {
           programId,
           userId,
           requirementId,
-          completedAt: new Date(body.completedAt),
+          completedAt: new Date(completedAt),
           requirement: { programId },
         },
         data: body.verified
@@ -122,16 +164,107 @@ export class UsersOnProgramsService {
         );
       const completion = await tx.requirementCompletion.findUnique({
         where: { userId_programId_requirementId: { userId, programId, requirementId } },
-        select: {
-          requirementId: true,
-          completedAt: true,
-          verifiedAt: true,
-          verifiedBy: { select: { id: true, firstName: true, lastName: true } },
-        },
+        select: COMPLETION_SELECT,
       });
       if (!completion) throw new ConflictException('This submission is no longer available. Refresh the task list.');
       return completion;
     });
+  }
+
+  async completeForParticipant(programId: string, userId: string, requirementId: string, staffId: string) {
+    await this.assertParticipantTask(programId, userId, requirementId);
+    return this.prisma.requirementCompletion.upsert({
+      where: { userId_programId_requirementId: { userId, programId, requirementId } },
+      create: { userId, programId, requirementId, completedById: staffId },
+      update: {},
+      select: COMPLETION_SELECT,
+    });
+  }
+
+  async uncompleteForParticipant(programId: string, userId: string, requirementId: string) {
+    await this.assertParticipantTask(programId, userId, requirementId);
+    await this.removeCompletion(userId, programId, requirementId);
+    return { requirementId };
+  }
+
+  async getPayments(programId: string) {
+    return this.prisma.participantPayment.findMany({
+      where: { programId },
+      select: PAYMENT_SELECT,
+      orderBy: { paidAt: 'desc' },
+    });
+  }
+
+  async recordPayment(
+    programId: string,
+    userId: string,
+    staffId: string,
+    body: RecordPaymentDto,
+    proof: Express.Multer.File,
+  ) {
+    const enrollment = await this.prisma.usersOnPrograms.findUnique({
+      where: { userId_programId: { userId, programId } },
+      select: { totalAmountPaidOut: true, paidDate: true },
+    });
+    if (!enrollment) throw new BadRequestException(['This participant is not in the program.']);
+    const paidAt = new Date(body.paidAt);
+    const amount = Number(body.amount);
+    const [payment] = await this.prisma.$transaction([
+      this.prisma.participantPayment.create({
+        data: {
+          userId,
+          programId,
+          amount,
+          paidAt,
+          checkNumber: body.checkNumber?.trim() || null,
+          paidBy: body.paidBy?.trim() || null,
+          note: body.note?.trim() || null,
+          proofName: proof.originalname,
+          proofType: proof.mimetype,
+          proofPath: imageRelPath(proof.path),
+          recordedById: staffId,
+        },
+        select: PAYMENT_SELECT,
+      }),
+      this.prisma.usersOnPrograms.update({
+        where: { userId_programId: { userId, programId } },
+        data: {
+          totalAmountPaidOut: { increment: amount },
+          paidDate: enrollment.paidDate && enrollment.paidDate > paidAt ? enrollment.paidDate : paidAt,
+          updatedAt: new Date(),
+        },
+      }),
+    ]);
+    return payment;
+  }
+
+  async getPaymentProof(programId: string, paymentId: string) {
+    const payment = await this.prisma.participantPayment.findFirst({
+      where: { id: paymentId, programId },
+      select: { proofName: true, proofType: true, proofPath: true },
+    });
+    if (!payment) throw new BadRequestException(['This payment does not exist.']);
+    return new StreamableFile(createReadStream(imageAbsPath(payment.proofPath)), {
+      type: payment.proofType,
+      disposition: `inline; filename="${payment.proofName}"`,
+    });
+  }
+
+  private async assertParticipantTask(programId: string, userId: string, requirementId: string) {
+    const [enrollment, requirement] = await Promise.all([
+      this.prisma.usersOnPrograms.findUnique({
+        where: { userId_programId: { userId, programId } },
+        select: { userId: true },
+      }),
+      this.prisma.requirement.findUnique({ where: { id: requirementId }, select: { programId: true } }),
+    ]);
+    if (!enrollment) throw new BadRequestException(['This participant is not in the program.']);
+    if (!requirement || requirement.programId !== programId)
+      throw new BadRequestException(['This requirement does not belong to the selected program.']);
+  }
+
+  private async removeCompletion(userId: string, programId: string, requirementId: string) {
+    await this.prisma.requirementCompletion.deleteMany({ where: { userId, programId, requirementId } });
   }
 
   constructor(
@@ -346,7 +479,7 @@ export class UsersOnProgramsService {
     if (!requirement || requirement.programId !== programId) {
       throw new BadRequestException(['This requirement does not belong to the selected program.']);
     }
-    await this.prisma.requirementCompletion.deleteMany({ where: { userId, programId, requirementId } });
+    await this.removeCompletion(userId, programId, requirementId);
     return { requirementId };
   }
 
