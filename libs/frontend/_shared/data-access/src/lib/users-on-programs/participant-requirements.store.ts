@@ -18,6 +18,7 @@ export type CalendarTask = {
   programId: string;
   dueAt: string;
   dueLabel: string;
+  dueTime: string;
   isCompleted: boolean;
   canComplete: boolean;
   isEnrolled: boolean;
@@ -77,14 +78,18 @@ const writeHiddenProgramIds = (key: string, hiddenProgramIds: string[]) => {
 
 const toIsoDate = (date: Date) => formatDate(date, 'yyyy-MM-dd', 'en-US');
 
+const formatDueTime = (value: string, locale: string) => {
+  const dueAt = new Date(value);
+  const isEndOfDay =
+    (dueAt.getHours() === 0 && dueAt.getMinutes() === 0) || (dueAt.getHours() === 23 && dueAt.getMinutes() === 59);
+  return isEndOfDay ? 'End of day' : formatDate(dueAt, 'h:mm a', locale);
+};
+
 const formatDueLabel = (value: string, locale: string) => {
   const dueAt = new Date(value);
   const date = formatDate(dueAt, 'MMM d', locale);
   const isToday = toIsoDate(dueAt) === toIsoDate(new Date());
-  const isEndOfDay =
-    (dueAt.getHours() === 0 && dueAt.getMinutes() === 0) || (dueAt.getHours() === 23 && dueAt.getMinutes() === 59);
-  const time = isEndOfDay ? 'End of day' : formatDate(dueAt, 'h:mm a', locale);
-  return `Due ${isToday ? `today, ${date}` : date} · ${time}`;
+  return `Due ${isToday ? `today, ${date}` : date} · ${formatDueTime(value, locale)}`;
 };
 
 export const ParticipantRequirementsStore = signalStore(
@@ -138,6 +143,7 @@ export const ParticipantRequirementsStore = signalStore(
               programId: requirement.programId,
               dueAt: requirement.dueAt,
               dueLabel: formatDueLabel(requirement.dueAt, locale),
+              dueTime: formatDueTime(requirement.dueAt, locale),
               isCompleted: requirement.isCompleted,
               canComplete: requirement.canComplete && !authStore.isStaff(),
               isEnrolled: requirement.isEnrolled && !authStore.isStaff(),

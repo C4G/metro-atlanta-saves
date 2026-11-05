@@ -1,9 +1,11 @@
+import { MatIcon } from '@angular/material/icon';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { AuthStore } from '@mas/frontend-shared-auth';
+import { PageTitleComponent } from '@mas/frontend-shared-components';
 import { type DiscussionBoard, DiscussionBoardsStore } from '@mas/frontend-shared-data-access';
 
 type User = {
@@ -29,7 +31,7 @@ type DiscussionTag = {
 @Component({
   selector: 'mas-discussion-boards-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [MatIcon, CommonModule, PageTitleComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
@@ -42,78 +44,33 @@ type DiscussionTag = {
     }
 
     <div class="flex min-h-dvh flex-col">
-      <section class="flex-1 mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 w-full">
-        <header class="mb-8 hidden sm:flex sm:items-center sm:justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">Discussion Boards</h1>
-            <p class="mt-1 text-sm text-gray-600">Select a board to start discussing with your community.</p>
-          </div>
+      <section class="flex-1 mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 w-full">
+        <mas-page-title title="Discussion" />
+        <div class="mb-8 mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p class="px-1 text-sm text-ink-muted">Select a board to start discussing with your community.</p>
           @if (isAdmin()) {
             <button
               type="button"
-              class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors"
+              class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-strong px-4 py-2.5 text-sm font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
               (click)="openCreateBoardModal()"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-              New Board
+              <mat-icon aria-hidden="true" class="mas-icon-sm">add</mat-icon>
+              New board
             </button>
           }
-        </header>
-
-        <header class="mb-6 sm:hidden">
-          <h1 class="text-3xl font-bold text-gray-900">Discussion Boards</h1>
-          <p class="mt-1 text-sm text-gray-600">Select a board to start discussing with your community.</p>
-          @if (isAdmin()) {
-            <hr class="my-6 border-gray-200" />
-            <button
-              type="button"
-              class="w-full justify-center inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors"
-              (click)="openCreateBoardModal()"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-              New Board
-            </button>
-          }
-        </header>
-        <hr class="mb-8 border-gray-200" />
+        </div>
 
         @if (errorMessage(); as error) {
-          <div class="mb-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+          <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
             {{ error }}
           </div>
         }
 
         @if (boards().length === 0 && !loading()) {
-          <div class="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-            <p class="text-gray-600">No discussion boards available yet.</p>
+          <div class="rounded-2xl border border-dashed border-outline bg-surface/60 p-12 text-center">
+            <p class="text-sm font-bold text-ink">No discussion boards available yet.</p>
             @if (isAdmin()) {
-              <p class="mt-2 text-sm text-gray-500">Create your first board to get started.</p>
+              <p class="mt-1 text-sm text-ink-muted">Create your first board to get started.</p>
             }
           </div>
         } @else if (boards().length > 0) {
@@ -125,11 +82,11 @@ type DiscussionTag = {
               >
                 <!-- Card body -->
                 <div class="flex-1 px-5 pt-5 pb-4">
-                  <h3 class="text-[15px] font-bold text-gray-900 leading-snug tracking-tight">{{ board.name }}</h3>
+                  <h3 class="text-base font-bold text-gray-900 leading-snug">{{ board.name }}</h3>
                   @if (board.description) {
-                    <p class="mt-2 line-clamp-2 text-[13px] leading-relaxed text-gray-500">{{ board.description }}</p>
+                    <p class="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-500">{{ board.description }}</p>
                   } @else {
-                    <p class="mt-2 text-[13px] italic text-gray-400">No description provided.</p>
+                    <p class="mt-2 text-sm italic text-gray-400">No description provided.</p>
                   }
                   <div class="mt-4 flex items-center gap-3">
                     <div class="flex items-center gap-1.5">
@@ -157,22 +114,7 @@ type DiscussionTag = {
                       class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 hover:border-gray-300 transition-colors inline-flex items-center gap-1.5"
                       (click)="openBoardSettings(board)"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="13"
-                        height="13"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path
-                          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-                        />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
+                      <mat-icon aria-hidden="true" class="mas-icon-sm">settings</mat-icon>
                       Manage
                     </button>
                   }
@@ -194,7 +136,7 @@ type DiscussionTag = {
               <!-- Modal Header -->
               <div class="flex items-start justify-between px-6 pt-6 pb-5 border-b border-gray-100">
                 <div>
-                  <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">
+                  <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-0.5">
                     {{ editingBoard() ? 'Edit' : 'New' }} Board
                   </p>
                   <h2 class="text-lg font-bold text-gray-900 leading-tight">
@@ -207,20 +149,7 @@ type DiscussionTag = {
                   (click)="closeBoardModal()"
                   title="Close"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
+                  <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                 </button>
               </div>
 
@@ -230,7 +159,7 @@ type DiscussionTag = {
                 <div>
                   <label
                     for="board-name"
-                    class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                    class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                   >
                     Board Name
                     <span class="text-red-400">*</span>
@@ -250,10 +179,10 @@ type DiscussionTag = {
                 <div>
                   <label
                     for="board-description"
-                    class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                    class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                   >
                     Description
-                    <span class="text-gray-300 normal-case tracking-normal font-normal text-[11px]">(optional)</span>
+                    <span class="text-gray-300 normal-case tracking-normal font-normal text-xs">(optional)</span>
                   </label>
                   <textarea
                     id="board-description"
@@ -269,9 +198,9 @@ type DiscussionTag = {
                 <!-- Add Members (create only) -->
                 @if (!editingBoard()) {
                   <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
+                    <label class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5">
                       Add Members
-                      <span class="text-gray-300 normal-case tracking-normal font-normal text-[11px]">(optional)</span>
+                      <span class="text-gray-300 normal-case tracking-normal font-normal text-xs">(optional)</span>
                     </label>
                     <div class="space-y-2">
                       <input
@@ -282,7 +211,7 @@ type DiscussionTag = {
                         (input)="searchMembers($event)"
                       />
                       @if (searchingUsers()) {
-                        <div class="flex items-center gap-2 py-2 px-1 text-[13px] text-gray-400">
+                        <div class="flex items-center gap-2 py-2 px-1 text-sm text-gray-400">
                           <svg
                             class="animate-spin"
                             xmlns="http://www.w3.org/2000/svg"
@@ -305,44 +234,31 @@ type DiscussionTag = {
                               class="w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors"
                               (click)="addMemberToForm(user)"
                             >
-                              <p class="text-[13px] font-semibold text-gray-800">
+                              <p class="text-sm font-semibold text-gray-800">
                                 {{ user.firstName }} {{ user.lastName }}
                               </p>
-                              <p class="text-[11px] text-gray-400">{{ user.email }}</p>
+                              <p class="text-xs text-gray-400">{{ user.email }}</p>
                             </button>
                           }
                         </div>
                       } @else if (allUsers().length > 0) {
-                        <p class="text-[12px] text-gray-400 px-1">No users match your search.</p>
+                        <p class="text-xs text-gray-400 px-1">No users match your search.</p>
                       }
                       @if (selectedMembers().length > 0) {
                         <div class="pt-1 space-y-1.5">
-                          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Selected</p>
+                          <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">Selected</p>
                           <div class="flex flex-wrap gap-1.5">
                             @for (member of selectedMembers(); track member.id) {
                               <div
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 border border-blue-100 pl-2.5 pr-1.5 py-1 text-[12px] font-semibold text-blue-700"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 border border-blue-100 pl-2.5 pr-1.5 py-1 text-xs font-semibold text-blue-700"
                               >
                                 <span>{{ member.firstName }} {{ member.lastName }}</span>
                                 <button
                                   type="button"
-                                  class="flex h-4 w-4 items-center justify-center rounded text-blue-400 hover:bg-blue-200 hover:text-blue-700 transition-colors"
+                                  class="flex h-4 w-4 items-center justify-center rounded-lg text-blue-400 hover:bg-blue-200 hover:text-blue-700 transition-colors"
                                   (click)="removeMemberFromForm(member.id)"
                                 >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="10"
-                                    height="10"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  >
-                                    <path d="M18 6 6 18" />
-                                    <path d="m6 6 12 12" />
-                                  </svg>
+                                  <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                                 </button>
                               </div>
                             }
@@ -400,7 +316,7 @@ type DiscussionTag = {
               <!-- Header -->
               <div class="flex items-start justify-between px-6 pt-6 pb-4">
                 <div>
-                  <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Board Settings</p>
+                  <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Board Settings</p>
                   <h2 class="text-lg font-bold text-gray-900 leading-tight">{{ settingsBoard()?.name }}</h2>
                 </div>
                 <button
@@ -408,20 +324,7 @@ type DiscussionTag = {
                   class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
                   (click)="closeSettingsModal()"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
+                  <mat-icon aria-hidden="true" class="mas-icon-md">close</mat-icon>
                 </button>
               </div>
 
@@ -482,7 +385,7 @@ type DiscussionTag = {
                     <div>
                       <label
                         for="board-name-input"
-                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                        class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                       >
                         Board Name
                       </label>
@@ -498,7 +401,7 @@ type DiscussionTag = {
                     <div>
                       <label
                         for="board-description-input"
-                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
+                        class="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5"
                       >
                         Description
                         <span class="normal-case font-normal text-gray-400">(optional)</span>
@@ -515,12 +418,12 @@ type DiscussionTag = {
                     </div>
                     <div class="flex gap-6 rounded-xl bg-gray-50 px-4 py-3">
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Members</p>
+                        <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">Members</p>
                         <p class="mt-0.5 text-2xl font-bold text-gray-900">{{ settingsBoard()?.memberCount ?? 0 }}</p>
                       </div>
                       <div class="w-px bg-gray-200"></div>
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Posts</p>
+                        <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">Posts</p>
                         <p class="mt-0.5 text-2xl font-bold text-gray-900">{{ settingsBoard()?.postCount ?? 0 }}</p>
                       </div>
                     </div>
@@ -532,7 +435,7 @@ type DiscussionTag = {
                   <div class="space-y-5">
                     <div>
                       <div class="flex items-center justify-between mb-3">
-                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Current Members</p>
+                        <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">Current Members</p>
                       </div>
                       <div class="space-y-1 max-h-48 overflow-auto">
                         @if (boardMembers().length === 0) {
@@ -551,7 +454,7 @@ type DiscussionTag = {
                             >
                               <div class="flex items-center gap-3 min-w-0">
                                 <div
-                                  class="flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold text-white flex-shrink-0 transition-colors"
+                                  class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white flex-shrink-0 transition-colors"
                                   [class]="
                                     member.id === settingsBoard()?.createdBy?.id
                                       ? 'bg-violet-500'
@@ -569,19 +472,19 @@ type DiscussionTag = {
                                     </p>
                                     @if (member.id === settingsBoard()?.createdBy?.id) {
                                       <span
-                                        class="inline-flex items-center rounded border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-violet-600 flex-shrink-0"
+                                        class="inline-flex items-center rounded-lg border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-violet-600 flex-shrink-0"
                                       >
                                         Creator
                                       </span>
                                     } @else if (member.isAdmin) {
                                       <span
-                                        class="inline-flex items-center rounded border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-600 flex-shrink-0"
+                                        class="inline-flex items-center rounded-lg border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-600 flex-shrink-0"
                                       >
                                         Staff
                                       </span>
                                     }
                                   </div>
-                                  <p class="text-[11px] text-gray-400 truncate">{{ member.email }}</p>
+                                  <p class="text-xs text-gray-400 truncate">{{ member.email }}</p>
                                 </div>
                               </div>
                               <div class="flex items-center gap-1 flex-shrink-0 ml-2">
@@ -612,19 +515,13 @@ type DiscussionTag = {
                                         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                                       </svg>
                                     } @else {
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="12"
-                                        height="12"
-                                        viewBox="0 0 24 24"
+                                      <mat-icon
+                                        aria-hidden="true"
+                                        class="mas-icon-sm"
                                         [attr.fill]="member.isAdmin ? 'currentColor' : 'none'"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
                                       >
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                      </svg>
+                                        shield
+                                      </mat-icon>
                                     }
                                   </button>
                                 }
@@ -649,20 +546,7 @@ type DiscussionTag = {
                                         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                                       </svg>
                                     } @else {
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="12"
-                                        height="12"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2.5"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                      >
-                                        <path d="M18 6 6 18" />
-                                        <path d="m6 6 12 12" />
-                                      </svg>
+                                      <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                                     }
                                   </button>
                                 }
@@ -674,7 +558,7 @@ type DiscussionTag = {
                     </div>
 
                     <div class="border-t border-gray-100 pt-5">
-                      <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Members</p>
+                      <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Members</p>
                       <input
                         type="text"
                         class="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 transition mb-2"
@@ -695,7 +579,7 @@ type DiscussionTag = {
                               [disabled]="savingBoard()"
                             >
                               <div
-                                class="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-[10px] font-bold text-gray-600 flex-shrink-0"
+                                class="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-600 flex-shrink-0"
                               >
                                 {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
                               </div>
@@ -703,7 +587,7 @@ type DiscussionTag = {
                                 <p class="text-sm font-medium text-gray-900">
                                   {{ user.firstName }} {{ user.lastName }}
                                 </p>
-                                <p class="text-[11px] text-gray-400">{{ user.email }}</p>
+                                <p class="text-xs text-gray-400">{{ user.email }}</p>
                               </div>
                             </button>
                           }
@@ -715,13 +599,11 @@ type DiscussionTag = {
 
                     @if (pendingMembersToAdd().length > 0) {
                       <div class="border-t border-gray-100 pt-4">
-                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
-                          Pending to Add
-                        </p>
+                        <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Pending to Add</p>
                         <div class="flex flex-wrap gap-2">
                           @for (member of pendingMembersToAdd(); track member.id) {
                             <div
-                              class="inline-flex items-center gap-2 rounded-md bg-blue-50 border border-blue-100 pl-2.5 pr-2 py-1 text-xs font-medium text-blue-800"
+                              class="inline-flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-100 pl-2.5 pr-2 py-1 text-xs font-medium text-blue-800"
                             >
                               <span>{{ member.firstName }} {{ member.lastName }}</span>
                               <button
@@ -730,20 +612,7 @@ type DiscussionTag = {
                                 (click)="unstageMember(member.id)"
                                 [disabled]="savingBoard()"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="11"
-                                  height="11"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  stroke-width="2.5"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                >
-                                  <path d="M18 6 6 18" />
-                                  <path d="m6 6 12 12" />
-                                </svg>
+                                <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                               </button>
                             </div>
                           }
@@ -757,7 +626,7 @@ type DiscussionTag = {
                 @if (managementTab() === 'tags') {
                   <div class="space-y-5">
                     <div>
-                      <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
+                      <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
                         Current Categories
                       </p>
                       @if (boardTags().length === 0) {
@@ -781,20 +650,7 @@ type DiscussionTag = {
                                 @if (deletingTagId() === tag.id) {
                                   <span class="text-xs">...</span>
                                 } @else {
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="12"
-                                    height="12"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  >
-                                    <path d="M18 6 6 18" />
-                                    <path d="m6 6 12 12" />
-                                  </svg>
+                                  <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
                                 }
                               </button>
                             </div>
@@ -804,7 +660,7 @@ type DiscussionTag = {
                     </div>
 
                     <div class="border-t border-gray-100 pt-5">
-                      <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Category</p>
+                      <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Add Category</p>
                       <div class="space-y-3">
                         <div>
                           <label for="tag-name" class="block text-xs font-medium text-gray-600 mb-1.5">Name</label>
@@ -930,7 +786,7 @@ type DiscussionTag = {
             <!-- Header -->
             <div class="flex items-start justify-between px-6 pt-5 pb-4 border-b border-gray-100">
               <div>
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Danger Zone</p>
+                <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Danger Zone</p>
                 <h2 class="text-lg font-bold text-gray-900 leading-tight">Delete Board</h2>
               </div>
               <button
@@ -938,20 +794,7 @@ type DiscussionTag = {
                 class="h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors ml-4 mt-0.5 shrink-0"
                 (click)="pendingDeleteCallback.set(null); pendingDeleteBoardName.set(null)"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
+                <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
               </button>
             </div>
             <!-- Content -->
