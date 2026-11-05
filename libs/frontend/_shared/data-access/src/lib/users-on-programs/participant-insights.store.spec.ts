@@ -79,7 +79,7 @@ describe('ParticipantInsightsStore', () => {
       expect.objectContaining({ percent: 33, completed: 2, total: 6, monthsComplete: 2, monthCount: 5 }),
     );
     expect(store.savings()).toEqual({ totalLabel: '$451.00', latestLabel: '+$70.00 in Month 4' });
-    expect(store.credit()).toEqual({ change: 12, changeLabel: '+12', rangeLabel: '620 in the first month → 632 now' });
+    expect(store.credit()).toEqual({ change: 12, changeLabel: '+12', rangeLabel: '620 → 632' });
     expect(store.receipts()).toEqual({ count: 5, monthCount: 3 });
   });
 
@@ -93,9 +93,8 @@ describe('ParticipantInsightsStore', () => {
       ['M4', true, 50],
       ['M5', false, 0],
     ]);
-    expect(store.selectedSavings()).toEqual({ name: 'Month 4', amount: '$70.00' });
+    expect(store.savingsBars().find(({ isSelected }) => isSelected)?.short).toBe('M4');
     store.focusMonth(2);
-    expect(store.selectedSavings()).toEqual({ name: 'Month 2', amount: '$140.00' });
     expect(store.savingsBars().find(({ isSelected }) => isSelected)?.short).toBe('M2');
   });
 
@@ -107,15 +106,6 @@ describe('ParticipantInsightsStore', () => {
     ]);
     expect(store.creditChart()?.line).toBe('40.0,150.0 160.0,108.3 280.0,50.0');
     expect(store.creditChart()?.dots.at(-1)?.isLatest).toBe(true);
-  });
-
-  it('lists the next three dated tasks, flagging overdue ones', () => {
-    expect(store.comingUp().map(({ requirementId, isOverdue }) => [requirementId, isOverdue])).toEqual([
-      ['d', true],
-      ['c', false],
-      ['e', false],
-    ]);
-    expect(store.comingUp()[1].dueLabel).toMatch(/^Due Nov 1[23]$/);
   });
 
   it('marks finished months and the current one', () => {

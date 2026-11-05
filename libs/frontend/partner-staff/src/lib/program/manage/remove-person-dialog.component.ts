@@ -22,7 +22,7 @@ import { ManageProgramStore } from './manage-program.store';
             aria-hidden="true"
             class="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-[3px] border-surface-raised bg-danger text-brand-on"
           >
-            <mat-icon class="!h-3.5 !w-3.5 !text-[0.875rem] !leading-none">
+            <mat-icon class="mas-icon-sm">
               {{ person.isParticipant ? 'person_remove' : 'visibility_off' }}
             </mat-icon>
           </span>

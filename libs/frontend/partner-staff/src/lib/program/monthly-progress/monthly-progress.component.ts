@@ -70,7 +70,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
             aria-hidden="true"
             class="flex animate-pulse items-center justify-between gap-4 rounded-2xl border border-outline bg-surface-raised px-5 py-4 motion-reduce:animate-none"
           >
-            <span class="h-6 w-28 rounded-md bg-outline/50"></span>
+            <span class="h-6 w-28 rounded-lg bg-outline/50"></span>
             <span class="flex gap-2">
               <span class="h-11 w-11 rounded-xl bg-outline/50"></span>
               <span class="h-11 w-36 rounded-xl bg-outline/50"></span>
@@ -90,8 +90,8 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                 @for (row of skeletonRows; track row) {
                   <div class="flex items-center gap-4 px-3.5 py-3">
                     <span class="h-9 w-9 shrink-0 rounded-full bg-outline/50"></span>
-                    <span class="h-4 flex-1 rounded-md bg-outline/50"></span>
-                    <span class="h-4 w-16 rounded-md bg-outline/50"></span>
+                    <span class="h-4 flex-1 rounded-lg bg-outline/50"></span>
+                    <span class="h-4 w-16 rounded-lg bg-outline/50"></span>
                     <span class="h-7 w-24 rounded-lg bg-outline/50"></span>
                   </div>
                 }
@@ -100,7 +100,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
             <div
               class="min-w-0 flex-[1_1_22rem] animate-pulse space-y-4 rounded-2xl border border-outline bg-surface-raised p-5 motion-reduce:animate-none"
             >
-              <span class="block h-5 w-1/2 rounded-md bg-outline/50"></span>
+              <span class="block h-5 w-1/2 rounded-lg bg-outline/50"></span>
               @for (task of [1, 2, 3]; track task) {
                 <span class="block h-14 rounded-xl bg-outline/50"></span>
               }
@@ -182,7 +182,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                             M{{ month.number }}
                           </abbr>
                           <span
-                            class="mt-0.5 block text-[0.6875rem] font-bold"
+                            class="mt-0.5 block text-xs font-bold"
                             [class.text-review-ink]="month.awaitingReview > 0"
                             [class.text-ink-muted]="month.awaitingReview === 0"
                           >
@@ -251,7 +251,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                             @if (cell.awaitingReview) {
                               <span
                                 aria-hidden="true"
-                                class="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-surface-raised bg-review px-1 text-[0.625rem] font-bold text-review-on"
+                                class="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-surface-raised bg-review px-1 text-xs font-bold text-review-on"
                               >
                                 {{ cell.awaitingReview }}
                               </span>
@@ -263,7 +263,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                       <td class="px-5 py-1.5 text-right">
                         <span class="block text-sm font-bold tabular-nums">{{ row.percentComplete }}%</span>
                         <span
-                          class="block text-[0.6875rem] font-bold"
+                          class="block text-xs font-bold"
                           [class.text-warn-ink]="row.openMonths > 0"
                           [class.text-brand-strong]="row.openMonths === 0"
                         >
@@ -280,15 +280,15 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
               </table>
               <ul class="flex flex-wrap gap-x-5 gap-y-2 border-t border-outline px-5 py-4 text-xs text-ink-muted">
                 <li class="flex items-center gap-2">
-                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded bg-brand-strong"></span>
+                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded-lg bg-brand-strong"></span>
                   All tasks done
                 </li>
                 <li class="flex items-center gap-2">
-                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded border border-warn-ink bg-warn-soft"></span>
+                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded-lg border border-warn-ink bg-warn-soft"></span>
                   In progress
                 </li>
                 <li class="flex items-center gap-2">
-                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded border border-dashed border-outline"></span>
+                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded-lg border border-dashed border-outline"></span>
                   Not open yet
                 </li>
                 <li class="flex items-center gap-2">
@@ -365,7 +365,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                     {{ filter.label }}
                     <span
                       aria-hidden="true"
-                      class="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-outline bg-surface px-1.5 text-xs tabular-nums text-ink-muted"
+                      class="inline-flex h-6 min-w-6 items-center justify-center rounded-lg border border-outline bg-surface px-1.5 text-xs tabular-nums text-ink-muted"
                     >
                       {{ filter.count }}
                     </span>
@@ -467,7 +467,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                       [class.border-outline]="!task.completion || task.isReviewed"
                     >
                       <div class="px-4 pb-3 pt-3.5">
-                        <h5 class="text-[0.9375rem] font-bold leading-snug">{{ task.name }}</h5>
+                        <h5 class="text-base font-bold leading-snug">{{ task.name }}</h5>
                         <p
                           class="mt-1.5 flex items-center gap-2 text-sm"
                           [class.text-ink]="task.isComplete"
@@ -540,7 +540,7 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                         } @else {
                           <span
                             aria-hidden="true"
-                            class="flex h-[1.375rem] w-[1.375rem] shrink-0 items-center justify-center rounded-md border-2 peer-disabled:opacity-50"
+                            class="flex h-[1.375rem] w-[1.375rem] shrink-0 items-center justify-center rounded-lg border-2 peer-disabled:opacity-50"
                             [class.border-review]="task.isReviewed || !!task.completion"
                             [class.bg-review]="task.isReviewed"
                             [class.text-review-on]="task.isReviewed"

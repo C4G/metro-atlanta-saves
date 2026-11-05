@@ -1,4 +1,4 @@
-import { formatCurrency, formatDate } from '@angular/common';
+import { formatCurrency } from '@angular/common';
 import { computed, inject, LOCALE_ID } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { MonthlyProgressStore } from './monthly-progress.store';
@@ -73,7 +73,7 @@ export const ParticipantInsightsStore = signalStore(
           return {
             change,
             changeLabel: `${change > 0 ? '+' : ''}${change}`,
-            rangeLabel: all.length > 1 ? `${all[0]} in the first month → ${all.at(-1)} now` : null,
+            rangeLabel: all.length > 1 ? `${all[0]} → ${all.at(-1)}` : null,
           };
         }),
         receipts: computed(() => {
@@ -99,12 +99,6 @@ export const ParticipantInsightsStore = signalStore(
                 saved === null ? `${month.name}: no savings recorded` : `${month.name}: ${money(saved, locale)} saved`,
             };
           });
-        }),
-        selectedSavings: computed(() => {
-          const month = selectedBar();
-          return month && month.checkpoint?.savedMoney !== null && month.checkpoint?.savedMoney !== undefined
-            ? { name: month.name, amount: money(month.checkpoint.savedMoney, locale) }
-            : null;
         }),
         creditChart: computed(() => {
           const points = scored();
@@ -135,20 +129,6 @@ export const ParticipantInsightsStore = signalStore(
             label: `${month.name}: ${month.stateLabel}`,
           })),
         ),
-        comingUp: computed(() => {
-          const now = Date.now();
-          return tasks()
-            .filter((task) => !task.isCompleted && task.dueAt)
-            .map((task) => ({ ...task, dueTime: task.dueAt ? new Date(task.dueAt).getTime() : 0 }))
-            .sort((a, b) => a.dueTime - b.dueTime)
-            .slice(0, 3)
-            .map((task) => ({
-              requirementId: task.requirementId,
-              name: task.requirementName,
-              dueLabel: `Due ${formatDate(task.dueTime, 'MMM d', locale)}`,
-              isOverdue: task.dueTime < now,
-            }));
-        }),
       };
     },
   ),

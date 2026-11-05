@@ -68,7 +68,7 @@ import { EnrollmentsActionsComponent } from './ui/enrollments-actions/enrollment
             </div>
             <div class="min-w-0 border-l-0 border-outline lg:border-l lg:pl-5">
               <p class="flex items-center gap-1.5 text-xs font-medium text-ink-subtle">
-                <mat-icon aria-hidden="true" class="text-[16px] leading-4">format_quote</mat-icon>
+                <mat-icon aria-hidden="true" class="text-base leading-4">format_quote</mat-icon>
                 Why they want to join
               </p>
               <p class="mt-1.5 line-clamp-3 text-sm leading-6 text-ink-muted">
@@ -95,7 +95,7 @@ import { EnrollmentsActionsComponent } from './ui/enrollments-actions/enrollment
         } @empty {
           @if (!programsStore.enrollmentsLoading() && !programsStore.enrollmentsLoadFailed()) {
             <div class="px-5 py-10 text-center sm:px-6">
-              <mat-icon aria-hidden="true" class="text-[28px] text-brand-strong">task_alt</mat-icon>
+              <mat-icon aria-hidden="true" class="text-2xl text-brand-strong">task_alt</mat-icon>
               <p class="mt-3 font-medium">You’re all caught up.</p>
               <p class="mt-1 text-sm text-ink-muted">No applications are waiting for review.</p>
             </div>

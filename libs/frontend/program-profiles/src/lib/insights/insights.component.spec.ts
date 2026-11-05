@@ -52,7 +52,7 @@ describe('InsightsComponent', () => {
   };
   afterEach(() => TestBed.resetTestingModule());
 
-  it('shows the highlight tiles, the savings chart and what is coming up', () => {
+  it('shows the overall progress cards, the savings chart and the months, without coming up', () => {
     const { element } = setup([
       {
         id: 'entry-1',
@@ -65,21 +65,22 @@ describe('InsightsComponent', () => {
       },
     ]);
     const text = element.textContent?.replace(/\s+/g, ' ') ?? '';
-    expect(text).toContain('1 of 2 tasks');
-    expect(text).toContain('$100.00');
+    const headings = Array.from(element.querySelectorAll('h2')).map((heading) => heading.textContent?.trim());
+    expect(headings).toEqual(['Overall progress', 'Savings by month', 'Credit score', 'Months completed']);
+    expect(element.querySelector('[aria-label="50 percent of tasks done"]')).not.toBeNull();
+    expect(text).not.toContain('1 of 2 tasks');
     expect(text).toContain('+$100.00 in Month 1');
-    expect(text).toContain('Uploaded across 1 month');
-    expect(text).toContain('Budgeting');
-    expect(text).toContain('Month 1: $100.00');
+    expect(text).toContain('Across 1 month');
+    expect(text).not.toContain('Budgeting');
+    expect(text).not.toContain('Coming up');
+    expect(text).not.toContain('Month 1: $100.00');
     expect(element.querySelector('[aria-label="Month 2: no savings recorded"]')?.hasAttribute('disabled')).toBe(true);
     const chart = element.querySelector('[aria-labelledby="savings-chart-heading"]')?.textContent?.replace(/\s+/g, ' ');
-    expect(chart).toMatch(/Total saved ?\$100\.00/);
-    expect(element.textContent).not.toContain('Last 3 months');
+    expect(chart).toMatch(/Total saved: ?\$100\.00/);
   });
 
   it('explains empty charts before any monthly update', () => {
     const { element } = setup([]);
-    expect(element.textContent).toContain('No savings recorded yet.');
     expect(element.textContent).toContain('Add your credit score in a monthly update to see it here.');
     expect(element.textContent).toContain('Add your first monthly update to start the count.');
   });
