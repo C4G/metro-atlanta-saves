@@ -3,12 +3,19 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { RichTextEditorComponent } from '@mas/frontend-shared-components';
+import { RichTextEditorComponent, SpinnerComponent } from '@mas/frontend-shared-components';
 import { EmailBlastStore } from './email-blast.store';
 
 @Component({
   selector: 'mas-email-blast',
-  imports: [RichTextEditorComponent, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatButtonModule],
+  imports: [
+    SpinnerComponent,
+    RichTextEditorComponent,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EmailBlastStore],
   template: `
@@ -48,7 +55,13 @@ import { EmailBlastStore } from './email-blast.store';
           [disabled]="emailBlastStore.sending()"
           class="w-fit ml-auto"
         >
-          {{ emailBlastStore.sending() ? 'Sending...' : 'Send to All Users' }}
+          <span class="relative inline-flex items-center justify-center">
+            <span [class.invisible]="emailBlastStore.sending()">Send to All Users</span>
+            @if (emailBlastStore.sending()) {
+              <mas-spinner class="absolute" />
+              <span class="sr-only">Send to All Users</span>
+            }
+          </span>
         </button>
       </form>
     </div>

@@ -8,6 +8,7 @@ import { LearningsStore } from '@mas/frontend-shared-data-access';
 import { type ColDef } from 'ag-grid-community';
 import { AddLearningComponent } from './ui/add-learning/add-learning.component';
 import { LearningActionsComponent } from './ui/learning-actions/learning-actions.component';
+import { htmlToText } from '@mas/frontend-shared-util';
 
 @Component({
   selector: 'mas-admin-learnings',
@@ -61,6 +62,7 @@ export default class AdminLearningsComponent {
     {
       field: 'body',
       filter: true,
+      valueFormatter: (params) => htmlToText(params.value),
     },
     {
       field: 'sequence',

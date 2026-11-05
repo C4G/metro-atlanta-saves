@@ -45,19 +45,25 @@ $brand-teal-palette: (
 
 // Semantic tokens are RGB channels so Tailwind opacity modifiers keep working.
 :root {
-  --mas-canvas: 246 250 249;
-  --mas-surface: 255 255 255;
+  --mas-canvas: 243 247 245;
+  --mas-surface: 252 253 252;
   --mas-surface-raised: 255 255 255;
-  --mas-surface-subtle: 240 247 245;
+  --mas-surface-subtle: 234 243 240;
   --mas-ink: 16 42 44;
   --mas-ink-muted: 82 102 106;
   --mas-ink-subtle: 100 116 120;
-  --mas-outline: 207 222 219;
+  --mas-outline: 201 218 213;
   --mas-brand: 15 118 110;
   --mas-brand-strong: 17 94 89;
   --mas-brand-soft: 204 251 241;
   --mas-on-brand: 255 255 255;
   --mas-danger: 185 28 28;
+  --mas-warn-soft: 254 243 199;
+  --mas-warn-ink: 146 64 14;
+  --mas-review: 29 78 216;
+  --mas-review-soft: 219 234 254;
+  --mas-review-ink: 30 58 138;
+  --mas-on-review: 255 255 255;
   --mas-logo-filter: none;
   color-scheme: light;
 }
@@ -119,6 +125,12 @@ body {
   --mas-brand-soft: 19 78 74;
   --mas-on-brand: 8 47 46;
   --mas-danger: 248 113 113;
+  --mas-warn-soft: 61 55 40;
+  --mas-warn-ink: 253 224 138;
+  --mas-review: 147 197 253;
+  --mas-review-soft: 33 52 86;
+  --mas-review-ink: 191 219 254;
+  --mas-on-review: 11 19 35;
   --mas-logo-filter: brightness(0) saturate(100%) invert(89%) sepia(23%) saturate(731%) hue-rotate(119deg)
     brightness(101%) contrast(96%);
   color-scheme: dark;
@@ -156,6 +168,13 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   background-color: rgb(var(--mas-canvas));
   color: rgb(var(--mas-ink));
+}
+
+body,
+body.dark-theme {
+  --mat-dialog-container-color: rgb(var(--mas-surface));
+  --mat-dialog-subhead-color: rgb(var(--mas-ink));
+  --mat-dialog-supporting-text-color: rgb(var(--mas-ink-muted));
 }
 
 .mat-drawer-container,
@@ -203,15 +222,72 @@ body {
   transform: translateY(0);
 }
 
-.mat-mdc-snack-bar-container {
+.mat-mdc-snack-bar-container:not(.update-snackbar) {
+  --mat-snack-bar-container-color: rgb(var(--mas-surface-raised));
+  --mat-snack-bar-supporting-text-color: rgb(var(--mas-ink));
+  --mat-snack-bar-button-color: rgb(var(--mas-brand-strong));
+  --mat-snack-bar-container-shape: 1rem;
+  --mat-snack-bar-supporting-text-size: 0.875rem;
+  --mat-snack-bar-supporting-text-weight: 600;
+  --mat-snack-bar-supporting-text-line-height: 1.35rem;
+  --mas-toast-accent: var(--mas-brand);
+  --mas-toast-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 11v5'/><path d='M12 8h.01'/></svg>");
+  margin: 1rem;
+
+  .mdc-snackbar__surface {
+    min-width: min(20rem, calc(100vw - 2rem));
+    max-width: min(28rem, calc(100vw - 2rem));
+    border: 1px solid rgb(var(--mas-outline));
+    border-left: 4px solid rgb(var(--mas-toast-accent));
+    box-shadow: 0 18px 40px rgb(16 42 44 / 0.18);
+    animation: mas-toast-in 180ms ease-out;
+  }
+
+  .mdc-snackbar__label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem 0.875rem 0.875rem;
+  }
+
+  .mdc-snackbar__label .mat-mdc-snack-bar-label {
+    padding: 0;
+  }
+
+  .mdc-snackbar__label::before {
+    content: '';
+    flex: none;
+    width: 1.375rem;
+    height: 1.375rem;
+    background-color: rgb(var(--mas-toast-accent));
+    mask: var(--mas-toast-icon) center / contain no-repeat;
+  }
+
   &.success {
-    --mat-snackbar-container-color: #0f766e;
-    --mat-snackbar-supporting-text-color: #ecfeff;
+    --mas-toast-accent: var(--mas-brand);
+    --mas-toast-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='m8 12.5 2.5 2.5L16 9.5'/></svg>");
   }
 
   &.error {
-    --mat-snackbar-container-color: #f44336;
-    --mat-snackbar-supporting-text-color: white;
+    --mas-toast-accent: var(--mas-danger);
+    --mas-toast-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 7.5v5'/><path d='M12 16.2h.01'/></svg>");
+  }
+}
+
+.dark-theme .mat-mdc-snack-bar-container:not(.update-snackbar) .mdc-snackbar__surface {
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.55);
+}
+
+@keyframes mas-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    animation: none;
   }
 }
 
@@ -382,5 +458,87 @@ body {
 @media (min-width: 640px) {
   .modal-sheet {
     animation: modal-scale-in 0.22s ease-out;
+  }
+}
+
+.mas-plain-dialog .mat-mdc-dialog-surface {
+  border: 1px solid rgb(var(--mas-outline));
+  border-radius: 1.5rem;
+  box-shadow: 0 24px 60px rgb(16 42 44 / 0.25);
+  overflow: hidden;
+}
+
+.mas-plain-backdrop {
+  background: rgb(16 42 44 / 0.45);
+}
+
+.dark-theme .mas-plain-dialog .mat-mdc-dialog-surface {
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.6);
+}
+
+.dark-theme .mas-plain-backdrop {
+  background: rgb(2 6 16 / 0.7);
+}
+
+body,
+body.dark-theme {
+  --mat-datepicker-calendar-container-background-color: rgb(var(--mas-surface-raised));
+  --mat-datepicker-calendar-container-text-color: rgb(var(--mas-ink));
+  --mat-datepicker-calendar-container-shape: 1.25rem;
+  --mat-datepicker-calendar-container-touch-shape: 1.25rem;
+  --mat-datepicker-calendar-container-elevation-shadow: 0 18px 40px rgb(16 42 44 / 0.18);
+  --mat-datepicker-calendar-container-touch-elevation-shadow: 0 18px 40px rgb(16 42 44 / 0.18);
+  --mat-datepicker-calendar-text-font: Roboto, 'Helvetica Neue', sans-serif;
+  --mat-datepicker-calendar-text-size: 0.8125rem;
+  --mat-datepicker-calendar-header-text-color: rgb(var(--mas-ink-subtle));
+  --mat-datepicker-calendar-header-text-size: 0.6875rem;
+  --mat-datepicker-calendar-header-text-weight: 700;
+  --mat-datepicker-calendar-header-divider-color: rgb(var(--mas-outline));
+  --mat-datepicker-calendar-body-label-text-color: rgb(var(--mas-brand-strong));
+  --mat-datepicker-calendar-body-label-text-weight: 700;
+  --mat-datepicker-calendar-period-button-text-color: rgb(var(--mas-ink));
+  --mat-datepicker-calendar-period-button-text-weight: 700;
+  --mat-datepicker-calendar-period-button-icon-color: rgb(var(--mas-ink-muted));
+  --mat-datepicker-calendar-navigation-button-icon-color: rgb(var(--mas-ink));
+  --mat-datepicker-calendar-date-text-color: rgb(var(--mas-ink));
+  --mat-datepicker-calendar-date-disabled-state-text-color: rgb(var(--mas-ink-subtle) / 0.5);
+  --mat-datepicker-calendar-date-selected-state-background-color: rgb(var(--mas-brand-strong));
+  --mat-datepicker-calendar-date-selected-state-text-color: rgb(var(--mas-on-brand));
+  --mat-datepicker-calendar-date-selected-disabled-state-background-color: rgb(var(--mas-brand-strong) / 0.4);
+  --mat-datepicker-calendar-date-today-outline-color: rgb(var(--mas-brand));
+  --mat-datepicker-calendar-date-today-selected-state-outline-color: rgb(var(--mas-on-brand));
+  --mat-datepicker-calendar-date-today-disabled-state-outline-color: rgb(var(--mas-brand) / 0.4);
+  --mat-datepicker-calendar-date-hover-state-background-color: rgb(var(--mas-brand-soft));
+  --mat-datepicker-calendar-date-focus-state-background-color: rgb(var(--mas-brand-soft));
+  --mat-datepicker-calendar-date-in-range-state-background-color: rgb(var(--mas-brand-soft));
+  --mat-datepicker-toggle-icon-color: rgb(var(--mas-ink-muted));
+  --mat-datepicker-toggle-active-state-icon-color: rgb(var(--mas-brand-strong));
+}
+
+.dark-theme {
+  --mat-datepicker-calendar-container-elevation-shadow: 0 18px 40px rgb(0 0 0 / 0.55);
+  --mat-datepicker-calendar-container-touch-elevation-shadow: 0 18px 40px rgb(0 0 0 / 0.55);
+}
+
+.mat-datepicker-content {
+  border: 1px solid rgb(var(--mas-outline));
+
+  .mat-calendar-body-cell-content {
+    font-weight: 600;
+  }
+
+  .mat-calendar-body-selected {
+    font-weight: 700;
+  }
+
+  .mat-calendar-table-header th {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .mat-calendar-controls .mat-mdc-icon-button {
+    border: 1px solid rgb(var(--mas-outline));
+    border-radius: 0.75rem;
+    margin-left: 0.25rem;
   }
 }

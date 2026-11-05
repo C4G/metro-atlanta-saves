@@ -5,11 +5,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap } from 'rxjs';
+import { exhaustMap, pipe, switchMap } from 'rxjs';
 import type { User } from '@mas/prisma-client/browser';
 
 type AlliesState = {
   programId: string | null;
+  loading: boolean;
+  loadFailed: boolean;
+  assignmentSaving: boolean;
   allies: Array<{
     userId: string;
     id: string;
@@ -25,6 +28,9 @@ type AlliesState = {
 
 const initialState: AlliesState = {
   programId: null,
+  loading: false,
+  loadFailed: false,
+  assignmentSaving: false,
   allies: [],
 };
 
@@ -40,8 +46,9 @@ export const AlliesOnProgramsStore = signalStore(
     },
     getAllies: rxMethod<void>(
       pipe(
-        switchMap(() =>
-          http
+        switchMap(() => {
+          patchState(store, { allies: [], loading: true, loadFailed: false });
+          return http
             .get<
               (User & { createdAt?: string | null; updatedAt?: string | null })[]
             >(`/api/allies-on-programs/program/${store.programId()}`)
@@ -62,20 +69,23 @@ export const AlliesOnProgramsStore = signalStore(
                   patchState(store, (state) => ({ ...state, allies: mapped }));
                 },
                 error: (resp: HttpErrorResponse) => {
+                  patchState(store, { loadFailed: true });
                   snackBar.open(resp.error?.message?.[0] || 'There was an error retrieving allies', undefined, {
                     panelClass: 'error',
                     duration: 5000,
                   });
                 },
+                finalize: () => patchState(store, { loading: false }),
               }),
-            ),
-        ),
+            );
+        }),
       ),
     ),
     addAlly: rxMethod<{ userId: string }>(
       pipe(
-        switchMap((payload) =>
-          http.post<User>(`/api/allies-on-programs`, { ...payload, programId: store.programId() }).pipe(
+        exhaustMap((payload) => {
+          patchState(store, { assignmentSaving: true });
+          return http.post<User>(`/api/allies-on-programs`, { ...payload, programId: store.programId() }).pipe(
             tapResponse({
               next: (user) => {
                 const mapped = {
@@ -102,9 +112,10 @@ export const AlliesOnProgramsStore = signalStore(
                   duration: 5000,
                 });
               },
+              finalize: () => patchState(store, { assignmentSaving: false }),
             }),
-          ),
-        ),
+          );
+        }),
       ),
     ),
     deleteAlly: rxMethod<string>(

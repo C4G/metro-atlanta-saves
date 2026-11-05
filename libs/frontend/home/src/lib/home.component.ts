@@ -2,6 +2,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { DescriptionStore, IntroductionStore, WhatWeAreStore } from '@mas/frontend-shared-data-access';
+import { htmlToText } from '@mas/frontend-shared-util';
 
 type FinancialFact = {
   description: string;
@@ -204,7 +205,7 @@ export class HomeComponent {
   readonly usesDefaultHeroImage = computed(() => this.heroImageUrl() === DEFAULT_HERO_IMAGE);
   readonly programsTitle = computed(() => this.descriptionStore.description()?.title ?? '');
   readonly programsEyebrow = computed(() => this.descriptionStore.description()?.eyebrow ?? '');
-  readonly programsDescription = computed(() => this.toPlainText(this.descriptionStore.description()?.body));
+  readonly programsDescription = computed(() => htmlToText(this.descriptionStore.description()?.body));
   readonly programs = computed(() => {
     const content = this.parseJsonItems<ProgramContent>(this.descriptionStore.description()?.programsJson);
     return content.map((program, index) => ({ ...program, icon: PROGRAM_ICONS[index] ?? 'savings' }));
@@ -247,14 +248,5 @@ export class HomeComponent {
     } catch {
       return [];
     }
-  }
-
-  private toPlainText(value: string | undefined): string {
-    return (
-      value
-        ?.replace(/<[^>]*>/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim() ?? ''
-    );
   }
 }
