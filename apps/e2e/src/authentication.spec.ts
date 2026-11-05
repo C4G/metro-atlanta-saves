@@ -18,12 +18,12 @@ test.describe('authentication', () => {
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
 
     await expect(page).toHaveURL(/\/dashboard$/);
-    const accountMenu = page.getByRole('button', { name: 'Open account menu' });
+    const accountMenu = page.getByRole('button', { name: /^Account menu/ });
     await expect(accountMenu).toBeVisible();
     await expect(accountMenu).toContainText(initials);
 
     await accountMenu.click();
-    await page.getByRole('menuitem', { name: 'Logout' }).click();
+    await page.getByRole('menuitem', { name: 'Log out' }).click();
     const signInLink = page.getByRole('link', { name: 'Sign in' });
     await expect(signInLink).toBeVisible();
 
@@ -34,10 +34,10 @@ test.describe('authentication', () => {
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
     await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByRole('button', { name: 'Open account menu' })).toContainText(initials);
+    await expect(page.getByRole('button', { name: /^Account menu/ })).toContainText(initials);
 
-    await page.getByRole('button', { name: 'Open account menu' }).click();
-    await page.getByRole('menuitem', { name: 'Edit Profile' }).click();
+    await page.getByRole('button', { name: /^Account menu/ }).click();
+    await page.getByRole('menuitem', { name: /Edit profile/ }).click();
     await expect(page).toHaveURL(/\/profile$/);
     await expect(page.getByRole('heading', { name: 'Profile and preferences' })).toBeVisible();
     await page.getByLabel('About you').fill('Updated from the profile page');

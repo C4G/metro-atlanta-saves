@@ -1,26 +1,44 @@
-import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  PLATFORM_ID,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser } from '@angular/common';
+import { CdkMenu, CdkMenuItem, CdkMenuItemCheckbox, CdkMenuTrigger } from '@angular/cdk/menu';
+import { ConnectedPosition } from '@angular/cdk/overlay';
 import { MatIcon } from '@angular/material/icon';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { ThemeService } from '@mas/frontend-shared-data-access';
+import { MainNavStore, ProgramsStore, ThemeService } from '@mas/frontend-shared-data-access';
 import { MimicUserModalComponent } from '@mas/frontend-shared-components';
 import { PushNotificationService } from '../../services/push-notification.service';
 
+export const ACCOUNT_MENU_POSITIONS: ConnectedPosition[] = [
+  { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetX: 8, offsetY: 20 },
+  { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom', offsetX: 8, offsetY: -20 },
+];
+
 @Component({
   selector: 'mas-nav',
-  imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, RouterLink, RouterLinkActive],
+  imports: [CdkMenu, CdkMenuItem, CdkMenuItemCheckbox, CdkMenuTrigger, MatIcon, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <nav class="h-14 border-b border-outline bg-surface/95 text-ink backdrop-blur sm:h-16" aria-label="Primary">
-      <div
-        class="flex h-full w-full items-center gap-3 px-3 sm:gap-4 sm:px-5 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
-      >
+    <nav
+      class="rounded-2xl border border-outline/65 bg-surface/80 text-ink shadow-lg backdrop-blur-md backdrop-saturate-150"
+      aria-label="Primary"
+    >
+      <div class="flex h-14 w-full items-center justify-between gap-3 pl-2.5 pr-2 sm:h-16 sm:pl-3.5 sm:pr-3">
         <a
           [routerLink]="authStore.user() ? '/dashboard' : '/'"
-          class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand lg:justify-self-start"
+          class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           aria-label="Metro Atlanta Saves home"
         >
           <span class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-soft">
@@ -33,279 +51,238 @@ import { PushNotificationService } from '../../services/push-notification.servic
             />
           </span>
           <span class="hidden min-w-0 sm:block">
-            <span class="block truncate text-sm font-bold tracking-tight text-ink">Metro Atlanta</span>
-            <span class="block text-[10px] font-bold uppercase tracking-[0.15em] text-brand">Saves</span>
+            <span class="block truncate text-sm font-bold text-ink">Metro Atlanta</span>
+            <span class="block text-xs font-bold uppercase tracking-[0.15em] text-brand">Saves</span>
           </span>
         </a>
 
-        <div class="hidden items-center justify-center gap-2 lg:flex">
-          @if (authStore.user()) {
-            <a
-              routerLink="/dashboard"
-              routerLinkActive="bg-brand-soft/70 text-brand-strong"
-              [routerLinkActiveOptions]="{ exact: true }"
-              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
+        <div class="flex min-w-0 items-center gap-1 rounded-xl border border-brand/25 bg-surface-raised/60 p-1">
+          @if (mainNavStore.switcher(); as switcher) {
+            <button
+              #switcherButton
+              type="button"
+              class="group flex min-h-9 min-w-0 max-w-40 items-center gap-1.5 rounded-lg border border-transparent px-2 text-xs font-bold text-ink-muted transition-colors hover:border-brand/40 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand aria-expanded:border-brand/70 aria-expanded:bg-surface-raised aria-expanded:text-brand-strong sm:max-w-64"
+              aria-controls="site-switcher"
+              [attr.aria-expanded]="switcherOpen()"
+              [attr.aria-label]="'Sections and programs, current: ' + switcher.label"
+              (click)="toggleSwitcher()"
             >
-              <mat-icon>space_dashboard</mat-icon>
-              Dashboard
-            </a>
-            <a
-              routerLink="/discussion-boards"
-              routerLinkActive="bg-brand-soft/70 text-brand-strong"
-              ariaCurrentWhenActive="page"
-              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
-            >
-              <mat-icon aria-hidden="true">forum</mat-icon>
-              Discussion
-            </a>
+              <mat-icon class="mas-icon-md shrink-0" aria-hidden="true">{{ switcher.icon }}</mat-icon>
+              <span class="min-w-0 truncate">{{ switcher.label }}</span>
+              <mat-icon class="mas-icon-sm shrink-0" aria-hidden="true">unfold_more</mat-icon>
+            </button>
+            <span class="h-6 w-px shrink-0 bg-brand/25" aria-hidden="true"></span>
           }
-          @if (authStore.isStaff()) {
-            <a
-              routerLink="/partner-staff/programs"
-              routerLinkActive="bg-brand-soft/70 text-brand-strong"
-              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
-            >
-              <mat-icon>folder_managed</mat-icon>
-              Programs
-            </a>
-          }
-          @if (authStore.isAdmin()) {
-            <a
-              routerLink="/admin"
-              routerLinkActive="bg-brand-soft/70 text-brand-strong"
-              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
-            >
-              <mat-icon>admin_panel_settings</mat-icon>
-              Admin
-            </a>
-          }
-        </div>
-        <div class="ml-auto flex min-w-0 items-center gap-2 sm:gap-3 lg:ml-0 lg:justify-self-end">
           <button
             type="button"
-            class="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:hidden"
-            aria-label="Open navigation menu"
-            [matMenuTriggerFor]="mobileNavMenu"
-            data-testid="navigation-menu"
-          >
-            <mat-icon>menu</mat-icon>
-          </button>
-          <button
-            type="button"
-            class="hidden h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:flex"
+            class="flex h-9 w-9 items-center justify-center rounded-lg border border-transparent text-ink-muted transition-colors hover:border-brand/40 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             [attr.aria-label]="themeService.darkMode() ? 'Use light mode' : 'Use dark mode'"
             (click)="themeService.toggleDarkMode()"
           >
-            <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+            <mat-icon class="mas-icon-md" aria-hidden="true">
+              {{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}
+            </mat-icon>
           </button>
+          <span class="h-6 w-px bg-brand/25" aria-hidden="true"></span>
 
           @if (!authStore.user()) {
             <a
               routerLink="/login"
-              class="inline-flex items-center rounded-xl bg-brand-strong px-4 py-2 text-sm font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+              class="flex min-h-9 items-center rounded-lg border border-transparent px-3 text-xs font-bold text-brand-strong transition-colors hover:border-brand/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             >
               Sign in
             </a>
           } @else {
             <button
               type="button"
-              class="flex items-center gap-2 rounded-xl p-1 pr-1.5 transition-colors hover:bg-surface-subtle focus:outline-none focus:ring-2 focus:ring-brand"
-              [class.ring-2]="authStore.isMimicking()"
-              [class.ring-red-500]="authStore.isMimicking()"
-              [matMenuTriggerFor]="userMenu"
-              aria-label="Open account menu"
+              class="group flex min-h-9 items-center gap-2 rounded-lg border border-transparent pl-1 pr-1.5 text-xs font-bold text-ink-muted transition-colors hover:border-brand/40 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand aria-expanded:border-brand/70 aria-expanded:bg-surface-raised aria-expanded:text-brand-strong sm:pr-2"
+              [cdkMenuTriggerFor]="accountMenu"
+              [cdkMenuPosition]="accountMenuPositions"
+              [attr.aria-label]="'Account menu, ' + fullName()"
             >
               <span
-                class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+                class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+                [class.ring-2]="authStore.isMimicking()"
+                [class.ring-danger]="authStore.isMimicking()"
               >
                 {{ authStore.initials() }}
               </span>
-              <span class="hidden max-w-28 text-left sm:block">
-                <span class="block truncate text-xs font-bold text-ink">
-                  {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
-                </span>
-                <span class="block text-[10px] font-medium text-ink-subtle">Account</span>
-              </span>
+              <span class="hidden max-w-40 truncate sm:inline">{{ fullName() }}</span>
+              <mat-icon
+                class="mas-icon-sm transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none"
+                aria-hidden="true"
+              >
+                expand_more
+              </mat-icon>
             </button>
           }
         </div>
       </div>
+
+      @if (switcherOpen()) {
+        <div
+          id="site-switcher"
+          class="grid max-h-[calc(100dvh-6rem)] gap-3 overflow-y-auto border-t border-outline/55 p-3 md:grid-cols-2 md:gap-6 md:px-3.5 md:py-4"
+        >
+          <section aria-labelledby="switcher-sections-heading">
+            <h2 id="switcher-sections-heading" class="px-1 text-xs font-bold text-ink-muted">Go to</h2>
+            <ul class="mt-2 grid grid-cols-2 gap-2">
+              @for (section of linkedSections(); track section.key) {
+                <li>
+                  <a
+                    [routerLink]="section.link"
+                    routerLinkActive
+                    [routerLinkActiveOptions]="{ exact: section.exact }"
+                    ariaCurrentWhenActive="page"
+                    [class]="switcherRowClass"
+                  >
+                    <span [class]="menuIconClass" aria-hidden="true">
+                      <mat-icon class="mas-icon-sm">{{ section.icon }}</mat-icon>
+                    </span>
+                    <span class="min-w-0 flex-1 truncate">{{ section.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </section>
+          @if (programsStore.myProgramCards().length) {
+            <section aria-labelledby="switcher-programs-heading">
+              <h2 id="switcher-programs-heading" class="px-1 text-xs font-bold text-ink-muted">Your programs</h2>
+              <ul class="mt-2 grid gap-2 lg:grid-cols-2">
+                @for (card of programsStore.myProgramCards(); track card.program.id) {
+                  @let current = card.program.id === mainNavStore.program()?.id;
+                  <li>
+                    <a
+                      [routerLink]="
+                        authStore.isStaff()
+                          ? ['/partner-staff/programs', card.program.id, 'progress']
+                          : ['/program-profiles', card.program.id]
+                      "
+                      [class]="switcherRowClass"
+                      [class.text-ink-muted]="card.isInactive && !current"
+                      [attr.aria-current]="current ? 'page' : null"
+                    >
+                      <span [class]="menuIconClass" aria-hidden="true">
+                        <mat-icon class="mas-icon-sm">school</mat-icon>
+                      </span>
+                      <span class="min-w-0 flex-1 truncate">{{ card.program.name }}</span>
+                      @if (current) {
+                        <mat-icon class="mas-icon-md shrink-0 text-brand-strong" aria-hidden="true">check</mat-icon>
+                      }
+                    </a>
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
+      }
     </nav>
 
-    <mat-menu #mobileNavMenu="matMenu" class="min-w-60 rounded-2xl border border-outline p-2">
-      @if (authStore.user()) {
-        <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/dashboard">
-          <mat-icon>space_dashboard</mat-icon>
-          <span>Dashboard</span>
-        </a>
-        <a
-          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
-          mat-menu-item
-          routerLink="/discussion-boards"
-        >
-          <mat-icon aria-hidden="true">forum</mat-icon>
-          <span>Discussion</span>
-        </a>
-      }
-      @if (authStore.isStaff()) {
-        <a
-          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
-          mat-menu-item
-          routerLink="/partner-staff/programs"
-        >
-          <mat-icon>folder_managed</mat-icon>
-          <span>Programs</span>
-        </a>
-      }
-      @if (authStore.isAdmin()) {
-        <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/admin">
-          <mat-icon>admin_panel_settings</mat-icon>
-          <span>Admin settings</span>
-        </a>
-      }
-      <button
-        class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
-        mat-menu-item
-        (click)="themeService.toggleDarkMode()"
+    <ng-template #accountMenu>
+      <div
+        cdkMenu
+        class="w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-brand/25 bg-surface-raised text-ink shadow-xl"
+        aria-label="Account"
       >
-        <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-        <span>{{ themeService.darkMode() ? 'Light mode' : 'Dark mode' }}</span>
-      </button>
-    </mat-menu>
+        <div class="flex items-center gap-3 border-b border-outline/55 p-4">
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-strong text-sm font-bold text-brand-on"
+          >
+            {{ authStore.initials() }}
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block truncate text-sm font-bold">{{ fullName() }}</span>
+            <span class="block truncate text-xs text-ink-muted">{{ authStore.user()?.email }}</span>
+          </span>
+          <span class="shrink-0 rounded-full border border-brand/40 px-2 py-0.5 text-xs font-bold text-brand-strong">
+            {{ authStore.roleLabel() }}
+          </span>
+        </div>
 
-    <mat-menu #userMenu="matMenu" class="min-w-60 rounded-2xl border border-outline p-2">
-      <div class="mx-3 mb-2 flex items-center gap-3 border-b border-outline px-1 pb-3 pt-1 text-ink">
-        <span
-          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
-        >
-          {{ authStore.initials() }}
-        </span>
-        <span class="min-w-0">
-          <span class="block truncate text-sm font-bold">
-            {{ authStore.user()?.firstName }} {{ authStore.user()?.lastName }}
-          </span>
-          <span class="block truncate text-xs text-ink-subtle">{{ authStore.user()?.email }}</span>
-        </span>
+        <div class="space-y-2 p-3">
+          <a cdkMenuItem routerLink="/profile" [class]="menuRowClass">
+            <span [class]="menuIconClass" aria-hidden="true"><mat-icon class="mas-icon-sm">person</mat-icon></span>
+            <span class="min-w-0 flex-1">
+              Edit profile
+              <span class="block text-xs font-normal text-ink-muted">Name, email and bio</span>
+            </span>
+            <mat-icon class="mas-icon-sm text-ink-muted" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+          @if (notificationsSupported) {
+            <button
+              type="button"
+              cdkMenuItemCheckbox
+              [cdkMenuItemChecked]="notificationsEnabled()"
+              [class]="menuRowClass"
+              (cdkMenuItemTriggered)="toggleNotifications()"
+            >
+              <span [class]="menuIconClass" aria-hidden="true">
+                <mat-icon class="mas-icon-sm">notifications</mat-icon>
+              </span>
+              <span class="min-w-0 flex-1">
+                Notifications
+                <span class="block text-xs font-normal text-ink-muted">Push alerts on this device</span>
+              </span>
+              <span
+                class="relative h-5 w-9 shrink-0 rounded-full border transition-colors"
+                [class]="
+                  notificationsEnabled() ? 'border-brand-strong bg-brand-strong' : 'border-brand/40 bg-surface-subtle'
+                "
+                aria-hidden="true"
+              >
+                <span
+                  class="absolute top-0.5 h-3.5 w-3.5 rounded-full transition-[left] motion-reduce:transition-none"
+                  [class]="notificationsEnabled() ? 'left-[1.125rem] bg-brand-on' : 'left-0.5 bg-ink-subtle'"
+                ></span>
+              </span>
+            </button>
+          }
+          @if (authStore.isMimicking()) {
+            <button
+              type="button"
+              cdkMenuItem
+              class="flex min-h-12 w-full items-center gap-3 rounded-xl border border-warn-ink/35 bg-warn-soft/40 py-1.5 pl-1.5 pr-2.5 text-left text-sm font-bold text-warn-ink transition-colors hover:border-warn-ink/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              (cdkMenuItemTriggered)="authStore.stopMimickingUser()"
+            >
+              <span
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-warn-soft text-warn-ink"
+                aria-hidden="true"
+              >
+                <mat-icon class="mas-icon-sm">visibility_off</mat-icon>
+              </span>
+              <span class="min-w-0 flex-1">
+                Stop mimicking
+                <span class="block text-xs font-normal">Return to your own account</span>
+              </span>
+            </button>
+          } @else if (authStore.isStaff()) {
+            <button type="button" cdkMenuItem [class]="menuRowClass" (cdkMenuItemTriggered)="openMimicUserModal()">
+              <span [class]="menuIconClass" aria-hidden="true">
+                <mat-icon class="mas-icon-sm">visibility</mat-icon>
+              </span>
+              <span class="min-w-0 flex-1">
+                Mimic user
+                <span class="block text-xs font-normal text-ink-muted">See the app as someone else</span>
+              </span>
+              <mat-icon class="mas-icon-sm text-ink-muted" aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          }
+        </div>
+
+        <div class="border-t border-outline/55 p-3">
+          <button
+            type="button"
+            cdkMenuItem
+            class="flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-brand/25 bg-surface-raised/70 text-sm font-bold text-ink transition-colors hover:border-brand/70 hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            (cdkMenuItemTriggered)="authStore.logout()"
+          >
+            <mat-icon class="mas-icon-sm" aria-hidden="true">logout</mat-icon>
+            Log out
+          </button>
+        </div>
       </div>
-      <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/profile">
-        <span class="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-          <span>Edit Profile</span>
-        </span>
-      </a>
-      @if (notificationsSupported) {
-        <button
-          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
-          mat-menu-item
-          (click)="toggleNotifications()"
-        >
-          <span class="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-            </svg>
-            <span>{{ notificationsEnabled() ? 'Disable Notifications' : 'Enable Notifications' }}</span>
-          </span>
-        </button>
-      }
-      <button
-        class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
-        mat-menu-item
-        (click)="authStore.logout()"
-      >
-        <span class="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-          <span>Logout</span>
-        </span>
-      </button>
-      @if (authStore.isMimicking()) {
-        <button
-          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
-          mat-menu-item
-          (click)="authStore.stopMimickingUser()"
-        >
-          <span class="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-10-7-10-7a18.45 18.45 0 0 1 5.06-5.94" />
-              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19" />
-              <line x1="1" y1="1" x2="23" y2="23" />
-            </svg>
-            <span>Stop Mimicking User</span>
-          </span>
-        </button>
-      } @else if (authStore.isStaff()) {
-        <button
-          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
-          mat-menu-item
-          (click)="openMimicUserModal()"
-        >
-          <span class="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <span>Mimic User</span>
-          </span>
-        </button>
-      }
-    </mat-menu>
+    </ng-template>
 
     @if (notificationModal()) {
       <div
@@ -321,9 +298,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           <!-- Header -->
           <div class="flex items-start justify-between border-b border-outline px-6 pb-4 pt-5">
             <div>
-              <p class="mb-0.5 text-[10px] font-semibold uppercase tracking-widest text-ink-subtle">
-                Push Notifications
-              </p>
+              <p class="mb-0.5 text-xs font-semibold uppercase tracking-widest text-ink-subtle">Push Notifications</p>
               <h2 class="text-lg font-bold leading-tight text-ink">
                 {{ notificationModal() === 'not-supported' ? 'Not Supported' : 'Notifications Enabled' }}
               </h2>
@@ -333,20 +308,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
               class="ml-4 mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink"
               (click)="notificationModal.set(null)"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
+              <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
             </button>
           </div>
           <!-- Content -->
@@ -403,23 +365,61 @@ import { PushNotificationService } from '../../services/push-notification.servic
     }
   `,
   host: {
-    class: 'block fixed top-0 left-0 right-0 z-50',
+    class: 'fixed inset-x-2 top-2 z-50 block sm:inset-x-4 sm:top-3',
+    '(document:click)': 'closeOnOutsideClick($event)',
+    '(document:keydown.escape)': 'closeSwitcher(true)',
   },
 })
 export class NavComponent {
   authStore = inject(AuthStore);
   private dialog = inject(MatDialog);
   themeService = inject(ThemeService);
+  readonly mainNavStore = inject(MainNavStore);
+  readonly programsStore = inject(ProgramsStore);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  readonly switcherOpen = signal(false);
+  private readonly switcherButton = viewChild<ElementRef<HTMLButtonElement>>('switcherButton');
+  readonly linkedSections = computed(() => this.mainNavStore.sections().filter(({ link }) => !!link));
   private push = inject(PushNotificationService);
   private platformId = inject(PLATFORM_ID);
   notificationsEnabled = signal(false);
   notificationsSupported = isPlatformBrowser(this.platformId);
   notificationModal = signal<null | 'not-supported' | 'already-enabled'>(null);
+  readonly fullName = this.authStore.fullName;
+  readonly accountMenuPositions = ACCOUNT_MENU_POSITIONS;
+  readonly menuRowClass =
+    'flex min-h-12 w-full items-center gap-3 rounded-xl border border-brand/25 bg-surface-raised/70 py-1.5 pl-1.5 pr-2.5 text-left text-sm font-bold text-ink transition-colors hover:border-brand/70 hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-brand';
+  readonly switcherRowClass =
+    'flex min-h-11 w-full items-center gap-3 rounded-xl border border-brand/25 bg-surface-raised/70 py-1.5 pl-1.5 pr-2.5 text-left text-sm font-bold text-ink transition-colors hover:border-brand/70 hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-brand aria-[current=page]:border-brand/70 aria-[current=page]:bg-surface-raised';
+  readonly menuIconClass =
+    'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft/70 text-brand-strong';
 
   constructor() {
+    inject(Router)
+      .events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.switcherOpen.set(false));
     if (this.notificationsSupported && 'Notification' in window) {
       this.notificationsEnabled.set(Notification.permission === 'granted');
     }
+  }
+
+  toggleSwitcher() {
+    const open = !this.switcherOpen();
+    this.switcherOpen.set(open);
+    if (open && !this.programsStore.usersPrograms().length) this.programsStore.getProgramsForUser();
+  }
+
+  closeSwitcher(restoreFocus = false) {
+    if (!this.switcherOpen()) return;
+    this.switcherOpen.set(false);
+    if (restoreFocus) this.switcherButton()?.nativeElement.focus();
+  }
+
+  closeOnOutsideClick(event: MouseEvent) {
+    if (event.target instanceof Node && !this.host.nativeElement.contains(event.target)) this.closeSwitcher();
   }
 
   async toggleNotifications() {

@@ -6,7 +6,7 @@ import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { AuthStore } from './auth.store';
+import { AuthStore, roleLabelFor } from './auth.store';
 
 const mockOneTap = jest.fn().mockResolvedValue(undefined);
 jest.mock('better-auth/client', () => ({ createAuthClient: () => ({ oneTap: mockOneTap }) }));
@@ -284,5 +284,16 @@ describe('AuthStore managed sessions', () => {
     http.expectOne('/api/auth/get-session').flush(null);
     await store.initializeGoogle('login');
     http.expectNone('/api/google-auth/config');
+  });
+});
+
+describe('roleLabelFor', () => {
+  it.each([
+    ['Administrator', 'Admin'],
+    ['Partner_Staff', 'Partner staff'],
+    [null, 'Participant'],
+    [undefined, 'Participant'],
+  ] as const)('labels %s as %s', (role, label) => {
+    expect(roleLabelFor(role)).toBe(label);
   });
 });
