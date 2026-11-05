@@ -1,4 +1,11 @@
-import { BadRequestException, ForbiddenException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { PrismaService } from '@mas/backend-prisma';
 import { MailService } from '@mas/backend-mail';
@@ -6,6 +13,7 @@ import { SaveMonthlyProgressDto } from './dto/save-monthly-progress.dto';
 
 @Injectable()
 export class CheckpointsService {
+  private readonly logger = new Logger(CheckpointsService.name);
   constructor(
     private prismaService: PrismaService,
     private mailService: MailService,
@@ -23,7 +31,11 @@ export class CheckpointsService {
     return { checkpointNames: enrollment.program.checkpointNames, checkpoints: enrollment.checkpoints };
   }
 
-  async saveParticipantProgress(userId: string, programId: string, name: string, body: SaveMonthlyProgressDto) {
+  ensureParticipantReceiptMonth(userId: string, programId: string, name: string) {
+    return this.saveParticipantProgress(userId, programId, name, null);
+  }
+
+  async saveParticipantProgress(userId: string, programId: string, name: string, body: SaveMonthlyProgressDto | null) {
     // Serializable retries prevent simultaneous first submissions from creating duplicate monthly entries.
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
@@ -43,20 +55,24 @@ export class CheckpointsService {
               include: { images: true },
               orderBy: { updatedAt: 'desc' },
             });
-            if (entries.some((entry) => entry.images.some((image) => image.imageVerified))) {
+            if (body && entries.some((entry) => entry.images.some((image) => image.imageVerified))) {
               throw new ForbiddenException(
                 'This progress has been verified. Contact your program team to make changes.',
               );
             }
             const existing = entries[0];
-            const data = {
-              savedMoney: body.savedMoney,
-              creditScore: body.creditScore ?? null,
-              application: body.application?.trim() || null,
-            };
-            return existing
-              ? tx.checkpoint.update({ where: { id: existing.id }, data, include: { images: true } })
-              : tx.checkpoint.create({ data: { ...data, name, programId, userId }, include: { images: true } });
+            const data = body
+              ? {
+                  savedMoney: body.savedMoney,
+                  creditScore: body.creditScore ?? null,
+                  application: body.application?.trim() || null,
+                }
+              : {};
+            if (existing) {
+              if (!body) return existing;
+              return tx.checkpoint.update({ where: { id: existing.id }, data, include: { images: true } });
+            }
+            return tx.checkpoint.create({ data: { ...data, name, programId, userId }, include: { images: true } });
           },
           { isolationLevel: 'Serializable' },
         );
@@ -166,7 +182,11 @@ export class CheckpointsService {
         where: { id: checkpoint.userId },
       });
       if (user) {
-        await this.mailService.sendCheckpointImageChanged(true, user.email, checkpoint.id);
+        try {
+          await this.mailService.sendCheckpointImageChanged(true, user.email, checkpoint.name);
+        } catch (error) {
+          this.logger.error('Receipt review saved, but approval email could not be sent.', error);
+        }
       }
     }
     return checkpoint;
@@ -189,7 +209,11 @@ export class CheckpointsService {
         where: { id: checkpoint.userId },
       });
       if (user) {
-        await this.mailService.sendCheckpointImageChanged(false, user.email, checkpoint.id);
+        try {
+          await this.mailService.sendCheckpointImageChanged(false, user.email, checkpoint.name);
+        } catch (error) {
+          this.logger.error('Receipt review saved, but update email could not be sent.', error);
+        }
       }
     }
     return checkpoint;

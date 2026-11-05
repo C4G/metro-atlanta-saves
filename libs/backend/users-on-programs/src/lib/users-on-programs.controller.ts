@@ -15,6 +15,7 @@ import {
 import { UsersOnProgramsService } from './users-on-programs.service';
 import { CreateUsersOnProgramsDto } from './dto/create-users-on-programs.dto';
 import { UpdateUsersOnProgramsDto } from './dto/update-users-on-programs.dto';
+import { VerifyRequirementDto } from './dto/verify-requirement.dto';
 import {
   ManagedSessionGuard,
   RoleGuard,
@@ -35,6 +36,34 @@ export class UsersOnProgramsController {
     private usersOnProgramsService: UsersOnProgramsService,
     private programsService: ProgramsService,
   ) {}
+
+  @UseGuards(ManagedSessionGuard, RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Get('program/:programId/task-review')
+  async getTaskReview(@Req() request: Request & { user: UserFull }, @Param('programId') programId: string) {
+    const program = await this.programsService.findOne(programId);
+    if (validateUserAnyRole(request, program.partnerId)) {
+      throw new UnauthorizedException(['You can only review tasks for programs managed by your partner.']);
+    }
+    return this.usersOnProgramsService.getTaskReview(programId);
+  }
+
+  @UseGuards(ManagedSessionGuard, RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Patch('program/:programId/participants/:userId/requirements/:requirementId/verification')
+  async verifyRequirement(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('userId') userId: string,
+    @Param('requirementId') requirementId: string,
+    @Body() body: VerifyRequirementDto,
+  ) {
+    const program = await this.programsService.findOne(programId);
+    if (validateUserAnyRole(request, program.partnerId)) {
+      throw new UnauthorizedException(['You can only verify tasks for programs managed by your partner.']);
+    }
+    return this.usersOnProgramsService.verifyRequirement(programId, userId, requirementId, request.user.id, body);
+  }
 
   @UseGuards(ManagedSessionGuard)
   @Get('program/:id')
@@ -59,7 +88,7 @@ export class UsersOnProgramsController {
   @UseGuards(ManagedSessionGuard)
   @Get('user/requirements')
   getParticipantRequirements(@Req() request: Request & { user: UserFull }) {
-    return this.usersOnProgramsService.getParticipantRequirements(request.user.id);
+    return this.usersOnProgramsService.getParticipantRequirements(request.user.id, request.user);
   }
 
   @UseGuards(ManagedSessionGuard)

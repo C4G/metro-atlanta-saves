@@ -56,6 +56,31 @@ describe('Participant monthly progress', () => {
     });
   });
 
+  it('creates a receipt-only month without inventing savings, a credit score, or notes', async () => {
+    await service.ensureParticipantReceiptMonth('participant-1', 'program-1', 'Month 3');
+    expect(create).toHaveBeenCalledWith({
+      data: { name: 'Month 3', programId: 'program-1', userId: 'participant-1' },
+      include: { images: true },
+    });
+  });
+  it('reuses existing progress untouched for receipt uploads', async () => {
+    const existing = { id: 'existing', savedMoney: 200, images: [] };
+    entries.mockResolvedValue([existing]);
+    expect(await service.ensureParticipantReceiptMonth('participant-1', 'program-1', 'Month 3')).toEqual(existing);
+    expect(update).not.toHaveBeenCalled();
+    expect(create).not.toHaveBeenCalled();
+  });
+  it('rejects receipt setup for unconfigured months or unenrolled participants', async () => {
+    enrollment.mockResolvedValue(null);
+    await expect(
+      service.ensureParticipantReceiptMonth('participant-1', 'other-program', 'Month 3'),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    enrollment.mockResolvedValue({ program: { checkpointNames: [] } });
+    await expect(
+      service.ensureParticipantReceiptMonth('participant-1', 'program-1', 'Month 99'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(create).not.toHaveBeenCalled();
+  });
   it('rejects access outside the participant’s enrollment', async () => {
     enrollment.mockResolvedValue(null);
     await expect(service.getParticipantProgress('participant-1', 'other-program')).rejects.toBeInstanceOf(

@@ -49,6 +49,15 @@ export class CheckpointsController {
     return this.checkpointsService.saveParticipantProgress(request.user.id, programId, name, body);
   }
 
+  @Post('my/program/:programId/month/:name/receipt-checkpoint')
+  ensureMyReceiptMonth(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('name') name: string,
+  ) {
+    return this.checkpointsService.ensureParticipantReceiptMonth(request.user.id, programId, name);
+  }
+
   @Post()
   async create(@Req() request: Request & { user: UserFull }, @Body() createCheckpointDto: CreateCheckpointDto) {
     const program = await this.programsService.findOne(createCheckpointDto.programId);
@@ -75,6 +84,22 @@ export class CheckpointsController {
   @Roles('Administrator')
   findAll() {
     return this.checkpointsService.findAll();
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Post('program/:programId/user/:userId/month/:name/receipt-checkpoint')
+  async ensureReceiptMonth(
+    @Req() request: Request & { user: UserFull },
+    @Param('programId') programId: string,
+    @Param('userId') userId: string,
+    @Param('name') name: string,
+  ) {
+    const program = await this.programsService.findOne(programId);
+    if (validateUserAnyRole(request, program.partnerId)) {
+      throw new UnauthorizedException(['You can only add receipts for programs managed by your partner.']);
+    }
+    return this.checkpointsService.ensureParticipantReceiptMonth(userId, programId, name);
   }
 
   @Get('program/:programId/user/:userId')
@@ -138,6 +163,8 @@ export class CheckpointsController {
   }
 
   @Post(':id/approve')
+  @UseGuards(RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
   async approve(@Req() request: Request & { user: UserFull }, @Param('id') id: string) {
     const checkpoint = await this.prismaService.checkpoint.findUnique({
       where: { id },
@@ -149,17 +176,17 @@ export class CheckpointsController {
     if (checkpoint.images.length === 0) {
       throw new BadRequestException(['That checkpoint has no images to approve']);
     }
-    if (checkpoint.images.every((img) => img.imageVerified)) {
-      throw new BadRequestException(['All images for this checkpoint are already approved']);
-    }
     const program = await this.programsService.findOne(checkpoint.programId);
     if (validateUserAnyRole(request, program.partnerId)) {
       throw new UnauthorizedException(['You can only approve images for your associated program']);
     }
+    if (checkpoint.images.every((img) => img.imageVerified)) return checkpoint;
     return this.checkpointsService.approve(id);
   }
 
   @Post(':id/reject')
+  @UseGuards(RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
   async reject(@Req() request: Request & { user: UserFull }, @Param('id') id: string) {
     const checkpoint = await this.checkpointsService.findOne(id);
     if (checkpoint == null) {

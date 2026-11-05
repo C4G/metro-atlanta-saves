@@ -6,6 +6,7 @@ export * from './lib/extended-image';
 export * from './lib/extended-program';
 export * from './lib/nav';
 export * from './lib/participant-requirement';
+export * from './lib/task-review';
 export * from './lib/user-full';
 export * from './lib/user-on-program-agg';
 export * from './lib/users-names-only';
