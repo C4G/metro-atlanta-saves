@@ -18,6 +18,8 @@ import {
   seedLearnings,
   seedNotificationConfig,
   seedPeerEvaluationGuide,
+  seedPilotProgress,
+  seedSampleParticipants,
   seedStories,
   seedUserCheckpoints,
   seedUserGuide,
@@ -59,6 +61,8 @@ async function main() {
   await seedAlliesIntoProgram(prisma);
   await seedCheckpointNames(prisma);
   await seedUserCheckpoints(prisma);
+  await seedSampleParticipants(prisma);
+  await seedPilotProgress(prisma);
   await seedWhatWeAre(prisma);
 }
 

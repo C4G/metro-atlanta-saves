@@ -28,6 +28,7 @@ describe('UsersOnProgramsService requirement actions', () => {
   const findCheckpointNames = jest.fn();
   const createCheckpoints = jest.fn();
   const removeLegacyStatus = jest.fn();
+  const findManyPrograms = jest.fn();
 
   let service: UsersOnProgramsService;
 
@@ -41,6 +42,7 @@ describe('UsersOnProgramsService requirement actions', () => {
           findMany: findManyUsersOnPrograms,
           create: createUserOnProgram,
         },
+        program: { findMany: findManyPrograms },
         requirement: { findUnique: findRequirement },
         requirementCompletion: { upsert: upsertCompletion, deleteMany: deleteCompletions },
         user: { findFirst: userFindFirst },
@@ -201,9 +203,59 @@ describe('UsersOnProgramsService requirement actions', () => {
         dueAt,
         isCompleted: true,
         canComplete: true,
+        isEnrolled: true,
       },
     ]);
     expect(findManyUsersOnPrograms).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: 'learner-1' } }));
+    expect(findManyPrograms).not.toHaveBeenCalled();
+  });
+
+  it.each<{ role: 'Administrator' | 'Partner_Staff'; partnerId: string | null; where: object }>([
+    { role: 'Administrator', partnerId: null, where: { isTemplate: false, id: { notIn: ['program-1'] } } },
+    {
+      role: 'Partner_Staff',
+      partnerId: 'partner-1',
+      where: { partnerId: 'partner-1', isTemplate: false, id: { notIn: ['program-1'] } },
+    },
+  ])('adds read-only requirements from programs managed by $role', async ({ role, partnerId, where }) => {
+    const dueAt = new Date('2026-10-20T23:59:00.000Z');
+    findManyUsersOnPrograms.mockResolvedValue([
+      {
+        program: { id: 'program-1', name: 'Savings foundations', Requirement: [] },
+        requirementCompletions: [],
+        requirementStatus: [],
+      },
+    ]);
+    findManyPrograms.mockResolvedValue([
+      {
+        id: 'program-2',
+        name: 'Credit builders',
+        Requirement: [{ id: 'requirement-2', name: 'Pull a report', dueAt }],
+      },
+    ]);
+
+    await expect(service.getParticipantRequirements('staff-1', { role, partnerId })).resolves.toEqual([
+      {
+        id: 'requirement-2',
+        name: 'Pull a report',
+        programId: 'program-2',
+        programName: 'Credit builders',
+        dueAt,
+        isCompleted: false,
+        canComplete: false,
+        isEnrolled: false,
+      },
+    ]);
+    expect(findManyPrograms).toHaveBeenCalledWith(expect.objectContaining({ where }));
+  });
+
+  it('does not add managed programs for partner staff without a partner', async () => {
+    findManyUsersOnPrograms.mockResolvedValue([]);
+
+    await expect(
+      service.getParticipantRequirements('staff-1', { role: 'Partner_Staff', partnerId: null }),
+    ).resolves.toEqual([]);
+    expect(findManyPrograms).not.toHaveBeenCalled();
   });
 
   it('reconciles requirement reminders after a learner enrolls', async () => {

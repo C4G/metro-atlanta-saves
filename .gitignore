@@ -59,3 +59,7 @@ Thumbs.db
 
 # Prisma 7's generated TypeScript client is recreated by prisma generate.
 /libs/prisma-client/src/generated/prisma
+
+# Locally installed agent skills
+.claude/skills/
+.claude/agents/impeccable-*.md

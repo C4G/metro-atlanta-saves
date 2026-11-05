@@ -10,6 +10,7 @@ import {
   ManagedSessionGuard,
   MAX_IMAGE_SIZE_IN_BYTES,
   privateDir,
+  validateUserAnyRole,
   validateUserIsAdminOrStaff,
 } from '@mas/backend-shared';
 import { UsersService } from '@mas/backend-users';
@@ -22,6 +23,7 @@ import {
   ForbiddenException,
   Get,
   HttpStatus,
+  Logger,
   Param,
   ParseFilePipeBuilder,
   Patch,
@@ -38,12 +40,14 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { unlink } from 'node:fs';
 import { ImagesService } from './images.service';
+import { AssignReceiptMonthDto } from './dto/assign-receipt-month.dto';
 
 @UseGuards(ManagedSessionGuard)
 @Controller('images')
 @ApiBearerAuth()
 @ApiTags('images')
 export class ImagesController {
+  private readonly logger = new Logger(ImagesController.name);
   constructor(
     private imagesService: ImagesService,
     private checkpointsService: CheckpointsService,
@@ -153,6 +157,21 @@ export class ImagesController {
       }
     }
 
+    if (checkpointId) {
+      const checkpoint = await this.checkpointsService.findOne(checkpointId);
+      if (
+        !checkpoint ||
+        checkpoint.programId !== programId ||
+        (!validateUserIsAdminOrStaff(request) && checkpoint.userId !== request.user.id)
+      ) {
+        for (const file of files)
+          unlink(file.path, () => {
+            /** */
+          });
+        throw new ForbiddenException(['You cannot attach receipts to this checkpoint']);
+      }
+    }
+
     const uploadPromises = files.map(async (file) => {
       if (validateUserIsAdminOrStaff(request)) {
         return this.imagesService.addOrReplaceImage(file, programId, checkpointId, undefined);
@@ -164,10 +183,17 @@ export class ImagesController {
         if (programWithMatchingId) {
           // Logic to get partner emails and send an email with link to checkpoints
           // https://www.brpatl.com/partner-staff/programs/:programId/users/:userId
-          const { partnerId } = await this.programsService.findOne(programId);
-          const partnerEmails = await this.usersService.getPartnerEmails(partnerId);
-          this.mailService.sendPartnerStaffImageAdded(partnerEmails, programId, request.user);
-          return this.imagesService.addOrReplaceImage(file, programId, checkpointId, request.user.id);
+          const receipt = await this.imagesService.addOrReplaceImage(file, programId, checkpointId, request.user.id);
+          try {
+            const { partnerId } = await this.programsService.findOne(programId);
+            const partnerEmails = await this.usersService.getPartnerEmails(partnerId);
+            if (partnerEmails.length) {
+              await this.mailService.sendPartnerStaffImageAdded(partnerEmails, programId, request.user);
+            }
+          } catch {
+            this.logger.warn('Receipt saved, but the staff notification could not be delivered.');
+          }
+          return receipt;
         }
       }
 
@@ -179,6 +205,33 @@ export class ImagesController {
 
     const results = await Promise.all(uploadPromises);
     return results;
+  }
+
+  @Patch(':id/month')
+  async assignMonth(
+    @Req() request: Request & { user: UserFull },
+    @Param('id') id: string,
+    @Body() body: AssignReceiptMonthDto,
+  ) {
+    const image = await this.imagesService.findByImageId(id);
+    if (!image) throw new BadRequestException(['That document does not exist.']);
+    if (!validateUserIsAdminOrStaff(request)) {
+      throw new ForbiddenException(['You are not authorized to update this document.']);
+    }
+    const { programId, userId } = image;
+    if (!programId || !userId) {
+      throw new BadRequestException(['Only a participant’s program receipt can be filed under a month.']);
+    }
+    const partnerId = await this.programsService.getPartnerId(programId);
+    if (validateUserAnyRole(request, partnerId)) {
+      throw new ForbiddenException(['You can only file documents for programs managed by your partner.']);
+    }
+    const checkpoint = await this.checkpointsService.ensureParticipantReceiptMonth(
+      userId,
+      programId,
+      `Month ${body.month}`,
+    );
+    return this.imagesService.updateImage(id, undefined, checkpoint.id);
   }
 
   @Patch(':id')
@@ -209,7 +262,15 @@ export class ImagesController {
     if (image.imageVerified && !isUserAdmin(request)) {
       throw new ForbiddenException(['Only an admin can delete a verified image']);
     }
-    if (validateUserIsAdminOrStaff(request) || (request.user.id && checkpoint?.id)) {
+    const isOwner =
+      !!request.user.id &&
+      (image.userId === request.user.id || (!image.userId && checkpoint?.userId === request.user.id));
+    const isOwnPartner =
+      isUserParterStaff(request) &&
+      !!request.user.partnerId &&
+      !!image.programId &&
+      (await this.programsService.findOne(image.programId)).partnerId === request.user.partnerId;
+    if (isUserAdmin(request) || isOwnPartner || isOwner) {
       const deletedImage = await this.imagesService.deleteImage(id);
       unlink(imageAbsPath(deletedImage.path), () => {
         /** */

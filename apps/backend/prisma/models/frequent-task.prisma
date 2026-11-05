@@ -1,0 +1,12 @@
+model FrequentTask {
+  id                   String              @id @default(uuid())
+  createdAt            DateTime            @default(now())
+  name                 String
+  partner              Partner             @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  partnerId            String
+  educationalContentId String?
+  educationalContent   EducationalContent? @relation(fields: [educationalContentId], references: [id], onDelete: SetNull)
+
+  @@unique([partnerId, name])
+  @@map("frequent_tasks")
+}

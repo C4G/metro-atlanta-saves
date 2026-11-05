@@ -51,6 +51,7 @@ describe('AddRequirementComponent action configuration', () => {
     expect(addRequirement).toHaveBeenCalledWith({
       name: 'Attend a meetup',
       educationalContentId: null,
+      month: null,
       actionInstructions: 'Join the in-person meetup.',
       dueAt: new Date(`${localDueDate}T${localDueTime}`).toISOString(),
       reminderDaysBefore: null,

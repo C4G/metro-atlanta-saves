@@ -2,12 +2,17 @@ import { CheckpointsService } from '@mas/backend-checkpoints';
 import { RequirementRemindersService } from '@mas/backend-requirements';
 import { PrismaService } from '@mas/backend-prisma';
 import { formatCurrency } from '@mas/backend-shared';
-import { UsersOnProgramsWithName } from '@mas/models';
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserFull, UsersOnProgramsWithName } from '@mas/models';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@mas/prisma-client';
 import * as ExcelJS from 'exceljs';
 import { CreateUsersOnProgramsDto } from './dto/create-users-on-programs.dto';
 import { UpdateUsersOnProgramsDto } from './dto/update-users-on-programs.dto';
+import { VerifyRequirementDto } from './dto/verify-requirement.dto';
+
+const monthNumber = (name: string) => Number(/^month\s+(\d+)$/i.exec(name.trim())?.[1] ?? 0);
+
+type RequirementCalendarAccess = Partial<Pick<UserFull, 'role' | 'partnerId'>>;
 
 const EXCEL_COLUMN_KEYS: (keyof UsersOnProgramsWithName)[] = [
   'birthdate',
@@ -32,6 +37,103 @@ const EXCEL_COLUMN_KEYS: (keyof UsersOnProgramsWithName)[] = [
 
 @Injectable()
 export class UsersOnProgramsService {
+  async getTaskReview(programId: string) {
+    const [program, requirements, enrollments] = await Promise.all([
+      this.prisma.program.findUnique({
+        where: { id: programId },
+        select: { startDate: true, checkpointNames: { select: { name: true } } },
+      }),
+      this.prisma.requirement.findMany({
+        where: { programId },
+        select: { id: true, name: true, dueAt: true, month: true, educationalContentId: true },
+        orderBy: [{ dueAt: { sort: 'asc', nulls: 'last' } }, { name: 'asc' }],
+      }),
+      this.prisma.usersOnPrograms.findMany({
+        where: { programId },
+        select: {
+          user: { select: { id: true, firstName: true, lastName: true, email: true } },
+          requirementCompletions: {
+            select: {
+              requirementId: true,
+              completedAt: true,
+              verifiedAt: true,
+              verifiedBy: { select: { id: true, firstName: true, lastName: true } },
+            },
+          },
+          checkpoints: {
+            select: {
+              id: true,
+              name: true,
+              savedMoney: true,
+              creditScore: true,
+              application: true,
+              updatedAt: true,
+              images: {
+                select: { id: true, name: true, type: true, imageVerified: true, createdAt: true },
+                orderBy: { createdAt: 'asc' },
+              },
+            },
+            orderBy: { updatedAt: 'desc' },
+          },
+        },
+        orderBy: { user: { lastName: 'asc' } },
+      }),
+    ]);
+    const months = (program?.checkpointNames ?? [])
+      .map(({ name }) => ({ name, number: monthNumber(name) }))
+      .filter(({ number }) => number > 0)
+      .sort((a, b) => a.number - b.number);
+    return {
+      startDate: program?.startDate ?? null,
+      months,
+      requirements,
+      participants: enrollments.map(({ user, requirementCompletions, checkpoints }) => ({
+        ...user,
+        requirementStatus: requirementCompletions.map(({ requirementId }) => requirementId),
+        completions: requirementCompletions,
+        checkpoints,
+      })),
+    };
+  }
+
+  async verifyRequirement(
+    programId: string,
+    userId: string,
+    requirementId: string,
+    reviewerId: string,
+    body: VerifyRequirementDto,
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.requirementCompletion.updateMany({
+        where: {
+          programId,
+          userId,
+          requirementId,
+          completedAt: new Date(body.completedAt),
+          requirement: { programId },
+        },
+        data: body.verified
+          ? { verifiedAt: new Date(), verifiedById: reviewerId }
+          : { verifiedAt: null, verifiedById: null },
+      });
+      if (updated.count !== 1)
+        throw new ConflictException(
+          'This submission changed or is no longer complete. Refresh the task list before reviewing it.',
+        );
+      const completion = await tx.requirementCompletion.findUnique({
+        where: { userId_programId_requirementId: { userId, programId, requirementId } },
+        select: {
+          requirementId: true,
+          completedAt: true,
+          verifiedAt: true,
+          verifiedBy: { select: { id: true, firstName: true, lastName: true } },
+        },
+      });
+      if (!completion) throw new ConflictException('This submission is no longer available. Refresh the task list.');
+      return completion;
+    });
+  }
+
   constructor(
     private prisma: PrismaService,
     private checkpointsService: CheckpointsService,
@@ -135,27 +237,22 @@ export class UsersOnProgramsService {
       : null;
   }
 
-  async getParticipantRequirements(userId: string) {
+  async getParticipantRequirements(userId: string, access: RequirementCalendarAccess = {}) {
+    const requirementSelect = {
+      where: { dueAt: { not: null } },
+      select: { id: true, name: true, dueAt: true },
+      orderBy: { dueAt: 'asc' },
+    } satisfies Prisma.RequirementFindManyArgs;
     const enrollments = await this.prisma.usersOnPrograms.findMany({
       where: { userId },
       select: {
-        program: {
-          select: {
-            id: true,
-            name: true,
-            Requirement: {
-              where: { dueAt: { not: null } },
-              select: { id: true, name: true, dueAt: true, actionInstructions: true },
-              orderBy: { dueAt: 'asc' },
-            },
-          },
-        },
+        program: { select: { id: true, name: true, Requirement: requirementSelect } },
         requirementCompletions: { select: { requirementId: true } },
       },
     });
 
-    return enrollments.flatMap(({ program, requirementCompletions }) => {
-      const completedIds = new Set([...requirementCompletions.map(({ requirementId }) => requirementId)]);
+    const enrolledRequirements = enrollments.flatMap(({ program, requirementCompletions }) => {
+      const completedIds = new Set(requirementCompletions.map(({ requirementId }) => requirementId));
 
       return program.Requirement.map((requirement) => ({
         id: requirement.id,
@@ -165,8 +262,44 @@ export class UsersOnProgramsService {
         dueAt: requirement.dueAt,
         isCompleted: completedIds.has(requirement.id),
         canComplete: true,
+        isEnrolled: true,
       }));
     });
+
+    const managedScope =
+      access.role === 'Administrator'
+        ? {}
+        : access.role === 'Partner_Staff' && access.partnerId
+          ? { partnerId: access.partnerId }
+          : null;
+    if (!managedScope) {
+      return enrolledRequirements;
+    }
+
+    const managedPrograms = await this.prisma.program.findMany({
+      where: {
+        ...managedScope,
+        isTemplate: false,
+        id: { notIn: enrollments.map(({ program }) => program.id) },
+      },
+      select: { id: true, name: true, Requirement: requirementSelect },
+    });
+
+    return [
+      ...enrolledRequirements,
+      ...managedPrograms.flatMap((program) =>
+        program.Requirement.map((requirement) => ({
+          id: requirement.id,
+          name: requirement.name,
+          programId: program.id,
+          programName: program.name,
+          dueAt: requirement.dueAt,
+          isCompleted: false,
+          canComplete: false,
+          isEnrolled: false,
+        })),
+      ),
+    ];
   }
 
   async completeRequirement(userId: string, programId: string, requirementId: string) {

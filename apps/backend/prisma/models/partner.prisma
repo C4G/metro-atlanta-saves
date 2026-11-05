@@ -11,6 +11,7 @@ model Partner {
   website   String?
   program   Program[]
   users     User[]
+  frequentTasks FrequentTask[]
 
   @@map("partners")
 }
