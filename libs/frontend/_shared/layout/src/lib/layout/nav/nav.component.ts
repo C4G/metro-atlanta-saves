@@ -15,10 +15,12 @@ import { PushNotificationService } from '../../services/push-notification.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="h-14 border-b border-outline bg-surface/95 text-ink backdrop-blur sm:h-16" aria-label="Primary">
-      <div class="flex h-full w-full items-center gap-3 px-3 sm:gap-4 sm:px-5">
+      <div
+        class="flex h-full w-full items-center gap-3 px-3 sm:gap-4 sm:px-5 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+      >
         <a
           [routerLink]="authStore.user() ? '/dashboard' : '/'"
-          class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+          class="flex min-w-0 items-center gap-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand lg:justify-self-start"
           aria-label="Metro Atlanta Saves home"
         >
           <span class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-soft">
@@ -36,17 +38,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
           </span>
         </a>
 
-        <div class="ml-auto flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            class="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:hidden"
-            aria-label="Open navigation menu"
-            [matMenuTriggerFor]="mobileNavMenu"
-            data-testid="navigation-menu"
-          >
-            <mat-icon>menu</mat-icon>
-          </button>
-
+        <div class="hidden items-center justify-center gap-2 lg:flex">
           @if (authStore.user()) {
             <a
               routerLink="/dashboard"
@@ -56,6 +48,15 @@ import { PushNotificationService } from '../../services/push-notification.servic
             >
               <mat-icon>space_dashboard</mat-icon>
               Dashboard
+            </a>
+            <a
+              routerLink="/discussion-boards"
+              routerLinkActive="bg-brand-soft/70 text-brand-strong"
+              ariaCurrentWhenActive="page"
+              class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand lg:inline-flex [&_mat-icon]:h-4 [&_mat-icon]:w-4 [&_mat-icon]:text-base [&_mat-icon]:leading-4"
+            >
+              <mat-icon aria-hidden="true">forum</mat-icon>
+              Discussion
             </a>
           }
           @if (authStore.isStaff()) {
@@ -78,7 +79,17 @@ import { PushNotificationService } from '../../services/push-notification.servic
               Admin
             </a>
           }
-
+        </div>
+        <div class="ml-auto flex min-w-0 items-center gap-2 sm:gap-3 lg:ml-0 lg:justify-self-end">
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:hidden"
+            aria-label="Open navigation menu"
+            [matMenuTriggerFor]="mobileNavMenu"
+            data-testid="navigation-menu"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
           <button
             type="button"
             class="hidden h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand lg:flex"
@@ -126,6 +137,14 @@ import { PushNotificationService } from '../../services/push-notification.servic
         <a class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold" mat-menu-item routerLink="/dashboard">
           <mat-icon>space_dashboard</mat-icon>
           <span>Dashboard</span>
+        </a>
+        <a
+          class="my-0.5 min-h-11 rounded-xl text-[0.8125rem] font-semibold"
+          mat-menu-item
+          routerLink="/discussion-boards"
+        >
+          <mat-icon aria-hidden="true">forum</mat-icon>
+          <span>Discussion</span>
         </a>
       }
       @if (authStore.isStaff()) {

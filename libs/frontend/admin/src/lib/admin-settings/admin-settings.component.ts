@@ -112,16 +112,38 @@ const ADMIN_GROUPS: readonly AdminGroup[] = [
   template: `
     <div class="bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
       <div class="mx-auto max-w-7xl space-y-6">
-        <header class="rounded-3xl border border-outline bg-surface-raised px-6 py-8 sm:px-10 sm:py-10">
-          <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <div class="max-w-2xl">
-              <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-strong">Platform administration</p>
-              <h1 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-                Admin Dashboard
-              </h1>
-              <p class="mt-3 text-sm leading-6 text-ink-muted">
-                Choose the part of the platform you want to manage. Tools are grouped by the work they support.
-              </p>
+        <header
+          class="relative overflow-hidden rounded-3xl border border-outline bg-surface-subtle px-6 py-8 sm:px-10 sm:py-10"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[22px] border-brand/10"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -bottom-24 right-20 h-44 w-44 rounded-full border border-brand/15"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute right-14 top-16 h-3 w-3 rounded-full bg-brand/35 sm:right-28"
+          ></span>
+          <div class="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
+            <div class="flex max-w-2xl items-start gap-4">
+              <span
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong"
+                aria-hidden="true"
+              >
+                <mat-icon>admin_panel_settings</mat-icon>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-brand-strong">Platform administration</p>
+                <h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+                  Admin Dashboard
+                </h1>
+                <p class="mt-3 text-sm leading-6 text-ink-muted">
+                  Choose the part of the platform you want to manage. Tools are grouped by the work they support.
+                </p>
+              </div>
             </div>
 
             <label class="relative block">
@@ -134,7 +156,7 @@ const ADMIN_GROUPS: readonly AdminGroup[] = [
               </mat-icon>
               <input
                 type="search"
-                class="min-h-11 w-full rounded-xl border border-outline bg-surface py-2.5 pl-11 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-brand focus:ring-2 focus:ring-brand/25"
+                class="min-h-11 w-full rounded-xl border border-outline bg-surface-raised py-2.5 pl-11 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-brand focus:ring-2 focus:ring-brand/25"
                 placeholder="Search management tools"
                 [value]="searchQuery()"
                 (input)="updateSearch($event)"

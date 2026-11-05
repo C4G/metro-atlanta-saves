@@ -24,7 +24,10 @@ import { ThemeService } from '@mas/frontend-shared-data-access';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 5000 } },
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+      useValue: { duration: 5000, horizontalPosition: 'end', verticalPosition: 'bottom' },
+    },
     provideClientHydration(
       withEventReplay(),
       withHttpTransferCacheOptions({

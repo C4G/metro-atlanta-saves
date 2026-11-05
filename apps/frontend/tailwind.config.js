@@ -29,6 +29,16 @@ module.exports = {
           on: 'rgb(var(--mas-on-brand) / <alpha-value>)',
         },
         danger: 'rgb(var(--mas-danger) / <alpha-value>)',
+        warn: {
+          soft: 'rgb(var(--mas-warn-soft) / <alpha-value>)',
+          ink: 'rgb(var(--mas-warn-ink) / <alpha-value>)',
+        },
+        review: {
+          DEFAULT: 'rgb(var(--mas-review) / <alpha-value>)',
+          soft: 'rgb(var(--mas-review-soft) / <alpha-value>)',
+          ink: 'rgb(var(--mas-review-ink) / <alpha-value>)',
+          on: 'rgb(var(--mas-on-review) / <alpha-value>)',
+        },
       },
     },
   },

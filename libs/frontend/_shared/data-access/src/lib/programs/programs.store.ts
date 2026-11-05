@@ -8,7 +8,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import type { CheckpointName, Enrollment, Program } from '@mas/prisma-client/browser';
-import { debounceTime, distinctUntilChanged, pipe, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, exhaustMap, pipe, switchMap } from 'rxjs';
 
 type AddProgram = Omit<Program, 'id' | 'createdAt' | 'updatedAt'>;
 
@@ -16,8 +16,11 @@ export type UserAndEnrollment = Enrollment & { firstName: string; lastName: stri
 
 type ProgramsState = {
   enrollments: UserAndEnrollment[];
+  enrollmentsLoading: boolean;
+  enrollmentsLoadFailed: boolean;
   programs: Program[];
-  program: Program | null;
+  program: (Program & { checkpointNames?: { name: string }[]; partner?: { name: string } }) | null;
+  programSaving: boolean;
   upcomingPrograms: Program[];
   usersPrograms: (Program & { isTemplate?: boolean })[];
   checkpointNames: CheckpointName[];
@@ -32,8 +35,11 @@ type ProgramSearch = {
 
 const initialState: ProgramsState = {
   enrollments: [],
+  enrollmentsLoading: false,
+  enrollmentsLoadFailed: false,
   programs: [],
   program: null,
+  programSaving: false,
   upcomingPrograms: [],
   usersPrograms: [],
   checkpointNames: [],
@@ -67,15 +73,16 @@ export const ProgramsStore = signalStore(
       clearUserPrograms: () => {
         patchState(store, (state) => ({ ...state, usersPrograms: [] }));
       },
-      convertToUser: rxMethod<{ programId: string; enrollmentId: string }>(
+      convertToUser: rxMethod<{ programId: string; enrollmentId: string; onApproved?: () => void }>(
         pipe(
-          switchMap(({ programId, enrollmentId }) =>
+          switchMap(({ programId, enrollmentId, onApproved }) =>
             http.post<UserAndEnrollment>(`${BASE_URL}/${programId}/enrollment/${enrollmentId}`, {}).pipe(
               tapResponse({
                 next: ({ firstName, lastName, id }) => {
                   patchState(store, (state) => ({
                     enrollments: state.enrollments.filter((e) => e.id !== id),
                   }));
+                  onApproved?.();
                   snackBar.open(`${firstName} ${lastName} has been approved and added to the program!`, undefined, {
                     panelClass: 'success',
                     duration: 5000,
@@ -125,21 +132,24 @@ export const ProgramsStore = signalStore(
       ),
       getEnrollments: rxMethod<string>(
         pipe(
-          switchMap((programId) =>
-            http.get<UserAndEnrollment[]>(`${BASE_URL}/${programId}/enrollments`).pipe(
+          switchMap((programId) => {
+            patchState(store, { enrollments: [], enrollmentsLoading: true, enrollmentsLoadFailed: false });
+            return http.get<UserAndEnrollment[]>(`${BASE_URL}/${programId}/enrollments`).pipe(
               tapResponse({
                 next: (enrollments) => {
                   patchState(store, { enrollments });
                 },
                 error: () => {
+                  patchState(store, { enrollmentsLoadFailed: true });
                   snackBar.open('There was an error retreiving enrollments', undefined, {
                     panelClass: 'error',
                     duration: 5000,
                   });
                 },
+                finalize: () => patchState(store, { enrollmentsLoading: false }),
               }),
-            ),
-          ),
+            );
+          }),
         ),
       ),
       getPrograms: rxMethod<string | undefined>(
@@ -243,30 +253,34 @@ export const ProgramsStore = signalStore(
           ),
         ),
       ),
-      patchProgram: rxMethod<Partial<Program>>(
+      patchProgram: rxMethod<Partial<Program> & { keepOpen?: boolean; onSaved?: () => void }>(
         pipe(
-          switchMap((program) =>
-            http.patch<Program>(`${BASE_URL}/${program.id}`, program).pipe(
+          exhaustMap(({ keepOpen, onSaved, ...program }) => {
+            patchState(store, { programSaving: true });
+            return http.patch<Program>(`${BASE_URL}/${program.id}`, program).pipe(
               tapResponse({
                 next: (program) => {
                   patchState(store, (state) => ({
                     programs: state.programs.map((a) => (a.id === program.id ? program : a)),
+                    program: state.program?.id === program.id ? program : state.program,
                   }));
-                  dialogRef.closeAll();
+                  if (!keepOpen) dialogRef.closeAll();
+                  onSaved?.();
                   snackBar.open(`${program.name} has been updated`, undefined, {
                     panelClass: 'success',
                     duration: 5000,
                   });
                 },
                 error: (resp: HttpErrorResponse) => {
-                  snackBar.open(resp.error.message[0] || `There was an error updating the program`, undefined, {
+                  snackBar.open(resp.error?.message?.[0] || `There was an error updating the program`, undefined, {
                     panelClass: 'error',
                     duration: 5000,
                   });
                 },
+                finalize: () => patchState(store, { programSaving: false }),
               }),
-            ),
-          ),
+            );
+          }),
         ),
       ),
       addProgram: rxMethod<AddProgram>(
