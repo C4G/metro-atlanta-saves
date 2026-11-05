@@ -1,205 +1,152 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, Injector, input, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ReceiptPreviewComponent, SpinnerComponent } from '@mas/frontend-shared-components';
+import {
+  LoaderComponent,
+  ReceiptPreviewComponent,
+  SectionPanelComponent,
+  SpinnerComponent,
+} from '@mas/frontend-shared-components';
 import { MonthTaskStatus, RosterStatus, TaskReviewStore } from '@mas/frontend-shared-data-access';
+import {
+  AVATAR,
+  AVATAR_SM,
+  CONTROL,
+  CONTROL_PRIMARY,
+  CONTROL_SM,
+  ICON_CONTROL,
+  ICON_TILE,
+  PILLS,
+  ROW,
+  SEGMENT,
+  SEGMENT_BUTTON,
+} from '../ui/staff-ui';
 import { openMonthlyPlan } from './monthly-plan-dialog.component';
 
-const STATUS_CLASSES: Record<RosterStatus, string> = {
-  review: 'border-review/40 bg-review-soft text-review-ink',
-  done: 'border-brand/40 text-brand-strong',
-  open: 'border-warn-ink/30 bg-warn-soft text-warn-ink',
-  upcoming: 'border-outline bg-surface-subtle text-ink-muted',
+export const ROSTER_PILLS: Record<RosterStatus, string> = {
+  review: PILLS.brand,
+  done: PILLS.soft,
+  open: PILLS.warn,
+  upcoming: PILLS.muted,
 };
+
+export const taskStatusLabel = (task: MonthTaskStatus) =>
+  task.isLegacy
+    ? 'Complete in an older program record'
+    : !task.isComplete
+      ? 'Not complete yet'
+      : task.isStaffCompleted
+        ? 'Marked done by staff'
+        : 'Completed by participant';
+
+const CELL =
+  'relative flex min-h-10 w-full min-w-14 items-center justify-center rounded-xl border text-sm font-bold tabular-nums transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface';
 
 @Component({
   selector: 'mas-monthly-progress',
-  imports: [SpinnerComponent, CurrencyPipe, MatIcon, RouterLink],
+  imports: [
+    CurrencyPipe,
+    LoaderComponent,
+    MatIcon,
+    NgTemplateOutlet,
+    RouterLink,
+    SectionPanelComponent,
+    SpinnerComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section aria-labelledby="monthly-progress-heading" class="space-y-5">
-      <header class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 id="monthly-progress-heading" class="text-2xl font-semibold tracking-tight">Tasks review</h2>
-        </div>
-        <div class="flex flex-wrap items-center gap-2">
-          @if (store.data() && store.months().length) {
-            <div role="group" aria-label="View" class="flex gap-1 rounded-xl bg-surface-subtle p-1">
-              <button
-                type="button"
-                (click)="store.setView('month')"
-                [attr.aria-pressed]="store.view() === 'month'"
-                class="min-h-9 rounded-lg px-3.5 text-sm font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-                [class.bg-surface-raised]="store.view() === 'month'"
-                [class.text-brand-strong]="store.view() === 'month'"
-                [class.text-ink-muted]="store.view() !== 'month'"
-              >
-                Month
-              </button>
-              <button
-                type="button"
-                (click)="store.setView('grid')"
-                [attr.aria-pressed]="store.view() === 'grid'"
-                class="min-h-9 rounded-lg px-3.5 text-sm font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-                [class.bg-surface-raised]="store.view() === 'grid'"
-                [class.text-brand-strong]="store.view() === 'grid'"
-                [class.text-ink-muted]="store.view() !== 'grid'"
-              >
-                All months grid
-              </button>
-            </div>
-          }
+    <ng-template #viewTools>
+      <div class="flex flex-wrap items-center justify-end gap-2 max-sm:w-full">
+        <div role="group" aria-label="View" [class]="segmentClass + ' max-sm:w-full'">
           <button
             type="button"
-            (click)="openPlan()"
-            [disabled]="!store.data()"
-            class="min-h-11 rounded-xl border border-brand-strong bg-brand-strong px-4 text-sm font-bold text-brand-on hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-canvas disabled:opacity-50"
+            [class]="segmentButtonClass + ' max-sm:flex-1'"
+            [attr.aria-pressed]="store.view() === 'month'"
+            (click)="store.setView('month')"
           >
-            Edit monthly plan
+            Month
+          </button>
+          <button
+            type="button"
+            [class]="segmentButtonClass + ' max-sm:flex-1'"
+            [attr.aria-pressed]="store.view() === 'grid'"
+            (click)="store.setView('grid')"
+          >
+            All months grid
           </button>
         </div>
-      </header>
+        <button type="button" [class]="primaryClass + ' max-sm:w-full'" (click)="openPlan()">
+          <mat-icon class="mas-icon-sm" aria-hidden="true">edit_calendar</mat-icon>
+          Edit monthly plan
+        </button>
+      </div>
+    </ng-template>
 
-      @if (!store.data() && !store.loadFailed()) {
-        <div role="status" class="space-y-5">
-          <span class="sr-only">Loading monthly progress</span>
-          <div
-            aria-hidden="true"
-            class="flex animate-pulse items-center justify-between gap-4 rounded-2xl border border-outline bg-surface-raised px-5 py-4 motion-reduce:animate-none"
-          >
-            <span class="h-6 w-28 rounded-lg bg-outline/50"></span>
-            <span class="flex gap-2">
-              <span class="h-11 w-11 rounded-xl bg-outline/50"></span>
-              <span class="h-11 w-36 rounded-xl bg-outline/50"></span>
-              <span class="h-11 w-11 rounded-xl bg-outline/50"></span>
-            </span>
-          </div>
-          <div aria-hidden="true" class="flex flex-wrap items-start gap-5">
-            <div
-              class="min-w-0 flex-[999_1_36rem] animate-pulse rounded-2xl border border-outline bg-surface-raised motion-reduce:animate-none"
-            >
-              <div class="flex gap-2 border-b border-outline p-4">
-                @for (filter of [1, 2, 3, 4]; track filter) {
-                  <span class="h-10 w-28 rounded-xl bg-outline/50"></span>
-                }
-              </div>
-              <div class="space-y-1 p-2.5">
-                @for (row of skeletonRows; track row) {
-                  <div class="flex items-center gap-4 px-3.5 py-3">
-                    <span class="h-9 w-9 shrink-0 rounded-full bg-outline/50"></span>
-                    <span class="h-4 flex-1 rounded-lg bg-outline/50"></span>
-                    <span class="h-4 w-16 rounded-lg bg-outline/50"></span>
-                    <span class="h-7 w-24 rounded-lg bg-outline/50"></span>
-                  </div>
-                }
-              </div>
-            </div>
-            <div
-              class="min-w-0 flex-[1_1_22rem] animate-pulse space-y-4 rounded-2xl border border-outline bg-surface-raised p-5 motion-reduce:animate-none"
-            >
-              <span class="block h-5 w-1/2 rounded-lg bg-outline/50"></span>
-              @for (task of [1, 2, 3]; track task) {
-                <span class="block h-14 rounded-xl bg-outline/50"></span>
-              }
-              <span class="block h-24 rounded-xl bg-outline/50"></span>
-            </div>
-          </div>
-        </div>
-      } @else if (store.loadFailed()) {
-        <div role="alert" class="rounded-2xl border border-outline bg-surface-raised p-6">
-          <p class="text-sm text-danger">We could not load monthly progress.</p>
-          <button
-            type="button"
-            (click)="store.load(id())"
-            class="mt-3 min-h-11 rounded-xl px-4 text-sm font-bold text-brand-strong underline focus:outline-none focus:ring-2 focus:ring-brand"
-          >
-            Try again
-          </button>
-        </div>
-      } @else if (store.data() && !store.months().length) {
-        <div class="rounded-2xl border border-dashed border-outline bg-surface-raised px-6 py-12 text-center">
-          <mat-icon class="text-brand-strong" aria-hidden="true">calendar_month</mat-icon>
-          <h3 class="mt-3 text-lg font-bold">This program has no months yet</h3>
-          <p class="mt-1 text-sm text-ink-muted">Choose how many months it runs, then assign tasks to each month.</p>
-          <button
-            type="button"
-            (click)="openPlan()"
-            class="mt-4 min-h-11 rounded-xl border border-brand px-4 text-sm font-bold text-brand-strong hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
-          >
-            Set up months
-          </button>
-        </div>
-      } @else if (store.data()) {
-        @if (store.saveError()) {
-          <p role="alert" class="text-sm leading-6 text-danger">{{ store.saveError() }}</p>
-        }
-        @if (store.view() === 'grid') {
-          <section
-            aria-labelledby="all-months-heading"
-            class="overflow-x-auto rounded-2xl border border-outline bg-surface-raised"
-          >
-            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-outline px-5 py-4">
-              <div>
-                <h3 id="all-months-heading" class="text-base font-bold">All {{ store.months().length }} months</h3>
-                <p class="mt-0.5 text-sm text-ink-muted">
-                  Spot who is falling behind across the program. Select a cell to open that month.
-                </p>
-              </div>
-              <p
-                class="inline-flex min-h-9 items-center gap-2 rounded-xl bg-review-soft px-3 text-sm font-bold text-review-ink"
-              >
-                <mat-icon aria-hidden="true" class="!h-4 !w-4 shrink-0 !text-base !leading-none">
-                  verified_user
-                </mat-icon>
-                {{ store.awaitingReviewTotal() }} {{ store.awaitingReviewTotal() === 1 ? 'task' : 'tasks' }} waiting for
-                review
-              </p>
-            </div>
-            @if (store.programGrid().length) {
-              <table class="w-full min-w-[56rem] border-collapse text-left">
+    @if (!store.data() && !store.loadFailed()) {
+      <mas-loader label="Loading tasks review" />
+    } @else if (store.loadFailed()) {
+      <div role="alert" class="rounded-2xl border border-outline/65 bg-surface/60 p-6">
+        <p class="text-sm text-ink-muted">We could not load tasks review.</p>
+        <button type="button" [class]="controlClass + ' mt-3'" (click)="store.load(id())">Try again</button>
+      </div>
+    } @else if (!store.months().length) {
+      <div class="rounded-2xl border border-dashed border-outline bg-surface/60 px-6 py-12 text-center">
+        <span [class]="iconTileClass + ' mx-auto'" aria-hidden="true">
+          <mat-icon class="mas-icon-md">calendar_month</mat-icon>
+        </span>
+        <h2 class="mt-3 text-lg font-bold">This program has no months yet</h2>
+        <p class="mt-1 text-sm text-ink-muted">Choose how many months it runs, then assign tasks to each month.</p>
+        <button type="button" [class]="primaryClass + ' mt-4'" (click)="openPlan()">Set up months</button>
+      </div>
+    } @else {
+      @if (store.saveError()) {
+        <p role="alert" class="mb-4 text-sm leading-6 text-danger">{{ store.saveError() }}</p>
+      }
+      @if (store.view() === 'grid') {
+        <mas-section-panel [heading]="'All ' + store.months().length + ' months'" headingId="all-months-heading">
+          <ng-container panelActions *ngTemplateOutlet="viewTools" />
+          @if (store.programGrid().length) {
+            <div class="overflow-x-auto">
+              <table class="w-full border-separate border-spacing-0 text-sm">
                 <caption class="sr-only">Task completion for every participant in every month</caption>
                 <thead>
-                  <tr class="border-b border-outline">
-                    <th scope="col" class="px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-ink-subtle">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="sticky left-0 z-10 border-b border-outline/55 bg-surface py-2.5 pl-4 pr-2 text-left text-xs font-bold text-ink-muted sm:static sm:bg-transparent sm:pl-5"
+                    >
                       Participant
                     </th>
                     @for (month of store.monthSummaries(); track month.number) {
-                      <th scope="col" class="p-1 text-center">
+                      <th
+                        scope="col"
+                        class="whitespace-nowrap border-b border-outline/55 px-1 py-2.5 text-center text-xs font-bold"
+                        [class]="
+                          month.state === 'now' ? 'rounded-t-xl bg-brand-soft/45 text-brand-strong' : 'text-ink-muted'
+                        "
+                        [attr.aria-current]="month.state === 'now' ? 'date' : null"
+                      >
+                        <abbr [title]="month.name" class="no-underline">M{{ month.number }}</abbr>
                         <span
-                          class="block rounded-xl px-1 py-2"
-                          [class.bg-brand-soft]="month.state === 'now'"
-                          [attr.aria-current]="month.state === 'now' ? 'date' : null"
+                          class="block text-xs leading-4"
+                          [class]="month.awaitingReview ? 'font-bold text-brand-strong' : 'font-normal text-ink-muted'"
                         >
-                          <abbr
-                            [title]="month.name"
-                            class="block text-xs font-bold uppercase tracking-[0.08em] no-underline"
-                            [class.text-brand-strong]="month.state === 'now'"
-                            [class.text-ink-subtle]="month.state !== 'now'"
-                          >
-                            M{{ month.number }}
-                          </abbr>
-                          <span
-                            class="mt-0.5 block text-xs font-bold"
-                            [class.text-review-ink]="month.awaitingReview > 0"
-                            [class.text-ink-muted]="month.awaitingReview === 0"
-                          >
-                            {{
-                              month.awaitingReview
-                                ? month.awaitingReview + ' to review'
-                                : month.state === 'upcoming'
-                                  ? 'Upcoming'
-                                  : 'Nothing to review'
-                            }}
-                          </span>
+                          {{
+                            month.awaitingReview
+                              ? month.awaitingReview + ' to review'
+                              : month.state === 'upcoming'
+                                ? 'Upcoming'
+                                : 'Nothing to review'
+                          }}
                         </span>
                       </th>
                     }
                     <th
                       scope="col"
-                      class="px-5 py-3 text-right text-xs font-bold uppercase tracking-[0.12em] text-ink-subtle"
+                      class="border-b border-outline/55 py-2.5 pl-2 pr-4 text-right text-xs font-bold text-ink-muted sm:pr-5"
                     >
                       Overall
                     </th>
@@ -207,65 +154,70 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                 </thead>
                 <tbody>
                   @for (row of store.programGrid(); track row.id) {
-                    <tr class="border-b border-outline last:border-b-0">
-                      <th scope="row" class="px-5 py-1.5 font-normal">
-                        <span class="flex items-center gap-3">
-                          <span
-                            aria-hidden="true"
-                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand-strong"
-                          >
-                            {{ row.initials }}
-                          </span>
-                          <span class="min-w-0 truncate text-sm font-bold">{{ row.name }}</span>
+                    <tr class="group">
+                      <th
+                        scope="row"
+                        class="sticky left-0 z-10 border-b border-outline/35 bg-surface py-1 pl-4 pr-2 text-left font-bold group-last:border-b-0 sm:static sm:bg-transparent sm:pl-5"
+                      >
+                        <span class="flex min-w-32 items-center gap-2.5 whitespace-nowrap sm:min-w-36">
+                          <span [class]="avatarSmClass" aria-hidden="true">{{ row.initials }}</span>
+                          {{ row.name }}
                         </span>
                       </th>
                       @for (cell of row.cells; track cell.month) {
                         @let allDone = cell.tasks.length > 0 && cell.completeCount === cell.tasks.length;
-                        @let idle = cell.isUpcoming && !cell.completeCount;
-                        <td class="p-1">
-                          <button
-                            type="button"
-                            (click)="store.openMonth(row.id, cell.month)"
-                            [attr.aria-label]="
-                              row.name +
-                              ', Month ' +
-                              cell.month +
-                              ': ' +
-                              cell.completeCount +
-                              ' of ' +
-                              cell.tasks.length +
-                              ' tasks complete, ' +
-                              cell.awaitingReview +
-                              ' waiting for review. Open this month'
-                            "
-                            class="relative flex min-h-11 w-full items-center justify-center rounded-xl border text-sm font-bold tabular-nums transition-colors hover:border-ink/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised"
-                            [class.border-transparent]="!idle"
-                            [class.border-dashed]="idle"
-                            [class.border-outline]="idle"
-                            [class.bg-brand-strong]="allDone && !idle"
-                            [class.text-brand-on]="allDone && !idle"
-                            [class.bg-warn-soft]="!allDone && !idle"
-                            [class.text-warn-ink]="!allDone && !idle"
-                            [class.text-ink-subtle]="idle"
-                          >
-                            @if (cell.awaitingReview) {
-                              <span
-                                aria-hidden="true"
-                                class="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-surface-raised bg-review px-1 text-xs font-bold text-review-on"
-                              >
-                                {{ cell.awaitingReview }}
-                              </span>
-                            }
-                            {{ idle ? '—' : cell.completeCount + '/' + cell.tasks.length }}
-                          </button>
+                        <td
+                          class="border-b border-outline/35 p-1 group-last:border-b-0"
+                          [class]="cell.month === store.currentMonth() ? 'bg-brand-soft/25' : ''"
+                        >
+                          @if (cell.isUpcoming && !cell.completeCount) {
+                            <span
+                              [class]="cellClass + ' border-dashed border-outline text-ink-subtle'"
+                              [attr.aria-label]="row.name + ', Month ' + cell.month + ', not open yet'"
+                            >
+                              —
+                            </span>
+                          } @else {
+                            <button
+                              type="button"
+                              [class]="
+                                cellClass +
+                                (allDone
+                                  ? ' border-transparent bg-brand-soft/80 text-brand-strong hover:border-brand'
+                                  : ' border-warn-ink/40 bg-warn-soft text-warn-ink hover:border-warn-ink')
+                              "
+                              [attr.aria-label]="
+                                row.name +
+                                ', Month ' +
+                                cell.month +
+                                ': ' +
+                                cell.completeCount +
+                                ' of ' +
+                                cell.tasks.length +
+                                ' tasks complete, ' +
+                                cell.awaitingReview +
+                                ' waiting for review. Open this month'
+                              "
+                              (click)="store.openMonth(row.id, cell.month)"
+                            >
+                              {{ cell.completeCount }}/{{ cell.tasks.length }}
+                              @if (cell.awaitingReview) {
+                                <span
+                                  class="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-surface bg-brand-strong px-1 text-xs font-bold text-brand-on"
+                                  aria-hidden="true"
+                                >
+                                  {{ cell.awaitingReview }}
+                                </span>
+                              }
+                            </button>
+                          }
                         </td>
                       }
-                      <td class="px-5 py-1.5 text-right">
-                        <span class="block text-sm font-bold tabular-nums">{{ row.percentComplete }}%</span>
+                      <td class="border-b border-outline/35 py-1 pl-2 pr-4 text-right group-last:border-b-0 sm:pr-5">
+                        <span class="block font-bold tabular-nums">{{ row.percentComplete }}%</span>
                         <span
-                          class="block text-xs font-bold"
-                          [class.text-warn-ink]="row.openMonths > 0"
-                          [class.text-brand-strong]="row.openMonths === 0"
+                          class="block whitespace-nowrap text-xs font-bold"
+                          [class]="row.openMonths ? 'text-warn-ink' : 'text-brand-strong'"
                         >
                           {{
                             row.openMonths
@@ -278,122 +230,111 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                   }
                 </tbody>
               </table>
-              <ul class="flex flex-wrap gap-x-5 gap-y-2 border-t border-outline px-5 py-4 text-xs text-ink-muted">
-                <li class="flex items-center gap-2">
-                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded-lg bg-brand-strong"></span>
-                  All tasks done
-                </li>
-                <li class="flex items-center gap-2">
-                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded-lg border border-warn-ink bg-warn-soft"></span>
-                  In progress
-                </li>
-                <li class="flex items-center gap-2">
-                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded-lg border border-dashed border-outline"></span>
-                  Not open yet
-                </li>
-                <li class="flex items-center gap-2">
-                  <span aria-hidden="true" class="h-3.5 w-3.5 rounded-full bg-review"></span>
-                  Waiting for your review
-                </li>
-              </ul>
-            } @else {
-              <p class="px-6 py-12 text-center text-sm text-ink-muted">
-                Participants will appear here once they join this program.
-              </p>
-            }
-          </section>
-        } @else {
+            </div>
+            <ul
+              class="flex flex-wrap gap-x-4 gap-y-2 border-t border-outline/55 px-4 pb-4 pt-3 text-xs text-ink-muted sm:px-5"
+            >
+              <li class="flex items-center gap-1.5">
+                <span class="h-3.5 w-3.5 rounded bg-brand-soft/80" aria-hidden="true"></span>
+                All tasks done
+              </li>
+              <li class="flex items-center gap-1.5">
+                <span class="h-3.5 w-3.5 rounded border border-warn-ink/40 bg-warn-soft" aria-hidden="true"></span>
+                In progress
+              </li>
+              <li class="flex items-center gap-1.5">
+                <span class="h-3.5 w-3.5 rounded border border-dashed border-outline" aria-hidden="true"></span>
+                Not open yet
+              </li>
+              <li class="flex items-center gap-1.5">
+                <span class="h-3 w-3 rounded-full bg-brand-strong" aria-hidden="true"></span>
+                Waiting for your review
+              </li>
+            </ul>
+          } @else {
+            <p class="px-6 py-12 text-center text-sm text-ink-muted">
+              Participants will appear here once they join this program.
+            </p>
+          }
+        </mas-section-panel>
+      } @else {
+        <div class="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           @if (store.focusedSummary(); as month) {
             <section
+              class="min-w-0 overflow-hidden rounded-2xl border border-outline/65 bg-surface/60"
               aria-labelledby="focused-month-heading"
-              class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-outline bg-surface-raised px-5 py-4"
-            >
-              <h3 id="focused-month-heading" class="text-xl font-bold">{{ month.name }}</h3>
-              <div class="flex items-center gap-2">
-                <button
-                  type="button"
-                  (click)="store.stepMonth(-1)"
-                  [disabled]="store.isFirstMonth()"
-                  aria-label="Previous month"
-                  class="flex h-11 w-11 items-center justify-center rounded-xl border border-outline bg-surface text-ink hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-40 disabled:hover:bg-surface"
-                >
-                  <mat-icon aria-hidden="true">chevron_left</mat-icon>
-                </button>
-                <button
-                  type="button"
-                  (click)="store.focusOn(null)"
-                  [disabled]="month.state === 'now'"
-                  class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-outline bg-surface px-4 text-sm font-bold text-brand-strong hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:text-ink-muted disabled:opacity-60 disabled:hover:bg-surface"
-                >
-                  <mat-icon aria-hidden="true" class="!h-5 !w-5 shrink-0 !text-xl !leading-none">today</mat-icon>
-                  Current month
-                </button>
-                <button
-                  type="button"
-                  (click)="store.stepMonth(1)"
-                  [disabled]="store.isLastMonth()"
-                  aria-label="Next month"
-                  class="flex h-11 w-11 items-center justify-center rounded-xl border border-outline bg-surface text-ink hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-40 disabled:hover:bg-surface"
-                >
-                  <mat-icon aria-hidden="true">chevron_right</mat-icon>
-                </button>
-              </div>
-            </section>
-          }
-
-          <div class="flex flex-wrap items-start gap-5">
-            <section
-              aria-label="Participants this month"
-              class="min-w-0 flex-[999_1_36rem] rounded-2xl border border-outline bg-surface-raised"
             >
               <div
-                role="group"
-                aria-label="Filter participants"
-                class="flex flex-wrap gap-2 border-b border-outline p-4"
+                class="flex flex-wrap items-center justify-between gap-3 border-b border-outline/55 px-4 py-4 sm:px-5"
               >
-                @for (filter of store.rosterFilters(); track filter.value) {
+                <div class="flex items-center gap-2.5">
+                  <h2 id="focused-month-heading" class="text-base font-bold">{{ month.name }}</h2>
+                  @if (month.state === 'now') {
+                    <span [class]="pills.soft">This month</span>
+                  }
+                </div>
+                <ng-container *ngTemplateOutlet="viewTools" />
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-2 px-4 pt-3">
+                <div role="group" aria-label="Filter participants" [class]="segmentClass + ' max-sm:w-full'">
+                  @for (filter of store.rosterFilters(); track filter.value) {
+                    <button
+                      type="button"
+                      [class]="segmentButtonClass + (filter.value === 'open' ? ' max-sm:hidden' : ' max-sm:flex-1')"
+                      [attr.aria-pressed]="store.rosterFilter() === filter.value"
+                      (click)="store.setRosterFilter(filter.value)"
+                    >
+                      {{ filter.label }}
+                      <span class="font-normal tabular-nums opacity-80">{{ filter.count }}</span>
+                    </button>
+                  }
+                </div>
+                <div class="flex gap-2 max-sm:order-first max-sm:w-full">
                   <button
                     type="button"
-                    (click)="store.setRosterFilter(filter.value)"
-                    [attr.aria-pressed]="store.rosterFilter() === filter.value"
-                    class="inline-flex min-h-10 items-center gap-2 rounded-xl border px-3.5 text-sm font-bold hover:bg-brand-soft/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-                    [class.border-brand]="store.rosterFilter() === filter.value"
-                    [class.bg-brand-soft]="store.rosterFilter() === filter.value"
-                    [class.text-brand-strong]="store.rosterFilter() === filter.value"
-                    [class.border-outline]="store.rosterFilter() !== filter.value"
+                    [class]="iconControlClass"
+                    aria-label="Previous month"
+                    [disabled]="store.isFirstMonth()"
+                    (click)="store.stepMonth(-1)"
                   >
-                    {{ filter.label }}
-                    <span
-                      aria-hidden="true"
-                      class="inline-flex h-6 min-w-6 items-center justify-center rounded-lg border border-outline bg-surface px-1.5 text-xs tabular-nums text-ink-muted"
-                    >
-                      {{ filter.count }}
-                    </span>
+                    <mat-icon class="mas-icon-md" aria-hidden="true">chevron_left</mat-icon>
                   </button>
-                }
+                  <button
+                    type="button"
+                    [class]="controlClass + ' max-sm:flex-1'"
+                    [disabled]="month.state === 'now'"
+                    (click)="store.focusOn(null)"
+                  >
+                    <mat-icon class="mas-icon-sm" aria-hidden="true">today</mat-icon>
+                    This month
+                  </button>
+                  <button
+                    type="button"
+                    [class]="iconControlClass"
+                    aria-label="Next month"
+                    [disabled]="store.isLastMonth()"
+                    (click)="store.stepMonth(1)"
+                  >
+                    <mat-icon class="mas-icon-md" aria-hidden="true">chevron_right</mat-icon>
+                  </button>
+                </div>
               </div>
-              <ul class="p-2.5">
+              <ul class="flex flex-col gap-2 p-3 sm:p-4" aria-label="Participants this month">
                 @for (person of store.filteredRoster(); track person.id) {
                   @let selected = store.selectedMonth()?.id === person.id;
                   <li>
                     <button
                       type="button"
-                      (click)="store.select(person.id)"
+                      class="grid w-full grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 rounded-xl border p-2 text-left transition-colors hover:border-brand/70 hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:grid-cols-[2.5rem_minmax(0,1fr)_11rem_6.5rem_auto] sm:pr-3"
+                      [class]="selected ? selectedRowClass : rowClass"
                       [attr.aria-pressed]="selected"
-                      class="my-0.5 flex w-full flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border px-3.5 py-3 text-left transition-colors hover:bg-brand-soft/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-                      [class.border-brand]="selected"
-                      [class.bg-brand-soft]="selected"
-                      [class.border-transparent]="!selected"
+                      (click)="select(person.id)"
                     >
+                      <span [class]="avatarClass" aria-hidden="true">{{ person.initials }}</span>
+                      <span class="truncate text-sm font-bold">{{ person.name }}</span>
                       <span
-                        aria-hidden="true"
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand-strong"
-                        [class.bg-surface-raised]="selected"
+                        class="col-span-2 col-start-2 row-start-2 flex items-center gap-2.5 sm:col-span-1 sm:col-start-auto sm:row-start-auto"
                       >
-                        {{ person.initials }}
-                      </span>
-                      <span class="min-w-0 flex-[1_1_9rem] truncate text-sm font-bold">{{ person.name }}</span>
-                      <span class="flex flex-[0_1_11rem] items-center gap-2.5">
                         <span
                           class="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-ink/10"
                           role="progressbar"
@@ -407,18 +348,16 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                             [style.width.%]="person.percentComplete"
                           ></span>
                         </span>
-                        <span class="min-w-9 text-xs font-bold tabular-nums text-ink-muted">
+                        <span class="min-w-8 text-right text-xs font-bold tabular-nums text-ink-muted">
                           {{ person.completeCount }}/{{ person.tasks.length }}
                         </span>
                       </span>
-                      <span class="min-w-24 text-xs text-ink-muted">
+                      <span class="hidden text-xs text-ink-muted sm:block">
                         {{ person.documents.length }} {{ person.documents.length === 1 ? 'document' : 'documents' }}
                       </span>
                       <span
-                        class="inline-flex min-h-8 min-w-28 items-center justify-center rounded-xl border px-3 text-xs font-bold"
-                        [class]="statusClasses[person.status]"
-                        [class.bg-brand-soft]="person.status === 'done' && !selected"
-                        [class.bg-surface-raised]="person.status === 'done' && selected"
+                        class="col-start-3 row-start-1 justify-self-end sm:col-start-auto sm:row-start-auto"
+                        [class]="rosterPills[person.status]"
                       >
                         {{ person.statusLabel }}
                       </span>
@@ -435,151 +374,121 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                 }
               </ul>
             </section>
+          }
 
-            @if (store.selectedMonth(); as detail) {
-              <aside
-                aria-labelledby="selected-month-heading"
-                class="min-w-0 flex-[1_1_22rem] rounded-2xl border border-outline bg-surface-raised"
-              >
-                <div class="border-b border-outline p-5">
-                  <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">
-                    Month {{ detail.month }}
-                  </p>
-                  <h3 id="selected-month-heading" class="mt-1 text-xl font-bold">{{ detail.name }}</h3>
+          @if (store.selectedMonth(); as detail) {
+            <section
+              [id]="detailId"
+              class="min-w-0 scroll-mt-24 overflow-hidden rounded-2xl border border-outline/65 bg-surface/60"
+              aria-labelledby="selected-month-heading"
+            >
+              <div class="flex items-center gap-3 border-b border-outline/55 px-4 py-4 sm:px-5">
+                <span [class]="avatarClass" aria-hidden="true">{{ detail.initials }}</span>
+                <div class="min-w-0">
+                  <h2 id="selected-month-heading" class="truncate text-base font-bold">{{ detail.name }}</h2>
+                  <p class="text-xs text-ink-muted">Month {{ detail.month }}</p>
                 </div>
-                <div class="space-y-2.5 p-5">
+              </div>
+              <div class="flex flex-col gap-4 p-4 sm:p-5">
+                <div class="flex flex-col gap-2.5">
                   <div class="flex items-center justify-between gap-2">
-                    <h4 class="text-xs font-bold uppercase tracking-[0.12em] text-ink-subtle">Tasks</h4>
+                    <h3 class="text-sm font-bold">Tasks</h3>
                     <button
                       type="button"
+                      [class]="controlSmClass"
+                      [disabled]="!detail.unreviewedCount"
                       (click)="reviewAll(detail.id, detail.tasks)"
-                      [disabled]="!detail.awaitingReview"
-                      class="min-h-9 rounded-xl border border-brand px-3 text-xs font-bold text-brand-strong hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-40 disabled:hover:bg-transparent"
                     >
                       Mark all reviewed
                     </button>
                   </div>
                   @for (task of detail.tasks; track task.requirementId) {
                     @let saving = store.pending().includes(detail.id + ':' + task.requirementId);
-                    <article
-                      class="overflow-hidden rounded-2xl border bg-surface"
-                      [class.border-review]="!!task.completion && !task.isReviewed"
-                      [class.border-outline]="!task.completion || task.isReviewed"
-                    >
-                      <div class="px-4 pb-3 pt-3.5">
-                        <h5 class="text-base font-bold leading-snug">{{ task.name }}</h5>
-                        <p
-                          class="mt-1.5 flex items-center gap-2 text-sm"
-                          [class.text-ink]="task.isComplete"
-                          [class.text-ink-muted]="!task.isComplete"
-                        >
-                          <span
-                            aria-hidden="true"
-                            class="flex h-[1.125rem] w-[1.125rem] shrink-0 items-center justify-center rounded-full"
-                            [class.bg-brand-strong]="task.isComplete"
-                            [class.text-brand-on]="task.isComplete"
-                            [class.bg-surface-subtle]="!task.isComplete"
-                          >
-                            @if (task.isComplete) {
-                              <svg class="h-3 w-3" viewBox="0 0 16 16" fill="none">
-                                <path
-                                  d="M3.25 8.25 6.5 11.5l6.25-7"
-                                  stroke="currentColor"
-                                  stroke-width="2.25"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            }
-                          </span>
-                          {{
-                            task.isLegacy
-                              ? 'Complete in an older program record'
-                              : task.isComplete
-                                ? 'Marked complete by participant'
-                                : 'Not complete yet'
-                          }}
-                        </p>
-                      </div>
-                      <label
-                        class="flex min-h-12 items-center justify-between gap-3 border-t border-outline px-4 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-inset has-[:focus-visible]:ring-brand"
-                        [class.cursor-pointer]="!!task.completion && !saving"
-                        [class.cursor-not-allowed]="!task.completion"
-                        [class.bg-review-soft]="task.isReviewed"
-                        [class.text-review-ink]="task.isReviewed"
-                        [class.bg-surface-subtle]="!task.isReviewed"
-                        [class.text-ink]="!task.isReviewed && !!task.completion"
-                        [class.text-ink-muted]="!task.completion"
+                    <article [class]="rowClass + ' overflow-hidden'">
+                      <button
+                        type="button"
+                        role="checkbox"
+                        class="flex w-full items-start gap-3 px-3.5 py-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand disabled:cursor-wait"
+                        [attr.aria-checked]="task.isComplete"
+                        [attr.aria-label]="
+                          (task.isComplete ? 'Mark not done: ' : 'Mark done: ') + task.name + ' for ' + detail.name
+                        "
+                        [disabled]="saving"
+                        (click)="toggleDone(detail.id, task)"
                       >
-                        <span class="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em]">
-                          <mat-icon aria-hidden="true" class="!h-4 !w-4 shrink-0 !text-base !leading-none">
-                            verified_user
-                          </mat-icon>
-                          {{
-                            task.isReviewed
-                              ? 'Reviewed'
-                              : task.completion
-                                ? 'Mark as reviewed'
-                                : 'Review after completion'
-                          }}
+                        <span
+                          class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2"
+                          [class]="task.isComplete ? 'border-brand bg-brand text-brand-on' : 'border-ink-muted/60'"
+                          aria-hidden="true"
+                        >
+                          @if (task.isComplete) {
+                            <mat-icon class="!h-4 !w-4 !text-base !leading-none">check</mat-icon>
+                          }
                         </span>
-                        <input
-                          #review
-                          type="checkbox"
-                          class="peer sr-only"
-                          [checked]="task.isReviewed"
-                          [disabled]="!task.completion || saving"
-                          (change)="toggleReview(detail.id, task, review)"
-                          [attr.aria-label]="'Reviewed: ' + task.name + ' for ' + detail.name"
-                        />
-                        @if (saving) {
+                        <span class="min-w-0">
+                          <span class="block text-sm font-bold leading-5">{{ task.name }}</span>
                           <span
-                            aria-hidden="true"
-                            class="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
-                          ></span>
+                            class="mt-1 flex items-center gap-2 text-xs"
+                            [class]="task.isComplete ? 'text-brand-strong' : 'text-ink-muted'"
+                          >
+                            <span
+                              class="h-3 w-3 rounded-full border-2"
+                              [class]="task.isComplete ? 'border-brand bg-brand' : 'border-ink-muted/45'"
+                              aria-hidden="true"
+                            ></span>
+                            {{ statusLabel(task) }}
+                          </span>
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        class="flex min-h-10 w-full items-center justify-between gap-3 border-t border-outline/55 px-3.5 text-xs font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand disabled:cursor-wait"
+                        [class]="task.isReviewed ? 'text-brand-strong' : 'text-ink-muted hover:text-ink'"
+                        [attr.aria-pressed]="task.isReviewed"
+                        [attr.aria-label]="'Reviewed: ' + task.name + ' for ' + detail.name"
+                        [disabled]="saving"
+                        (click)="toggleReview(detail.id, task)"
+                      >
+                        <span class="flex items-center gap-1.5">
+                          <mat-icon class="mas-icon-sm" aria-hidden="true">
+                            {{ task.isReviewed ? 'verified' : 'verified_user' }}
+                          </mat-icon>
+                          {{ task.isReviewed ? 'Reviewed' : 'Mark reviewed' }}
+                        </span>
+                        @if (saving) {
+                          <mas-spinner />
                         } @else {
                           <span
+                            class="flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded border-2"
+                            [class]="task.isReviewed ? 'border-brand bg-brand text-brand-on' : 'border-ink-muted/55'"
                             aria-hidden="true"
-                            class="flex h-[1.375rem] w-[1.375rem] shrink-0 items-center justify-center rounded-lg border-2 peer-disabled:opacity-50"
-                            [class.border-review]="task.isReviewed || !!task.completion"
-                            [class.bg-review]="task.isReviewed"
-                            [class.text-review-on]="task.isReviewed"
-                            [class.border-outline]="!task.completion"
-                            [class.bg-surface-raised]="!task.isReviewed"
                           >
                             @if (task.isReviewed) {
-                              <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none">
-                                <path
-                                  d="M3.25 8.25 6.5 11.5l6.25-7"
-                                  stroke="currentColor"
-                                  stroke-width="2.25"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
+                              <mat-icon class="!h-3.5 !w-3.5 !text-sm !leading-none">check</mat-icon>
                             }
                           </span>
                         }
-                      </label>
+                      </button>
                     </article>
                   } @empty {
-                    <p class="rounded-2xl border border-dashed border-outline p-5 text-center text-sm text-ink-muted">
+                    <p class="rounded-xl border border-dashed border-outline p-5 text-center text-sm text-ink-muted">
                       No tasks are assigned to Month {{ detail.month }}.
                     </p>
                   }
-                  <p class="flex items-start gap-1.5 pt-1 text-xs leading-4 text-ink-muted">
-                    <mat-icon aria-hidden="true" class="!h-4 !w-4 shrink-0 !text-base !leading-none">
-                      visibility_off
-                    </mat-icon>
+                  <p class="flex items-start gap-1.5 text-xs leading-4 text-ink-muted">
+                    <mat-icon class="mas-icon-sm shrink-0" aria-hidden="true">visibility_off</mat-icon>
                     Reviews are for staff only. Participants never see them.
                   </p>
                 </div>
-                <div class="space-y-2 px-5 pb-4">
-                  <h4 class="text-xs font-bold uppercase tracking-[0.12em] text-ink-subtle">Monthly update</h4>
+
+                <div class="border-t border-outline/55"></div>
+
+                <div class="flex flex-col gap-2.5">
+                  <h3 class="text-sm font-bold">Monthly update</h3>
                   <dl class="grid grid-cols-2 gap-2">
-                    <div class="rounded-xl border border-outline p-3">
+                    <div class="rounded-xl border border-dashed border-brand/30 p-3">
                       <dt class="text-xs text-ink-muted">Amount saved</dt>
-                      <dd class="mt-1 text-lg font-bold">
+                      <dd class="mt-1 text-lg font-bold tabular-nums">
                         {{
                           detail.checkpoint?.savedMoney === null || detail.checkpoint?.savedMoney === undefined
                             ? '—'
@@ -587,38 +496,38 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                         }}
                       </dd>
                     </div>
-                    <div class="rounded-xl border border-outline p-3">
+                    <div class="rounded-xl border border-dashed border-brand/30 p-3">
                       <dt class="text-xs text-ink-muted">Credit score</dt>
-                      <dd class="mt-1 text-lg font-bold">{{ detail.checkpoint?.creditScore ?? '—' }}</dd>
+                      <dd class="mt-1 text-lg font-bold tabular-nums">{{ detail.checkpoint?.creditScore ?? '—' }}</dd>
                     </div>
                   </dl>
                   @if (detail.checkpoint?.application; as notes) {
                     <p
-                      class="whitespace-pre-line rounded-xl border border-outline p-3 text-sm leading-6 text-ink-muted"
+                      class="whitespace-pre-line rounded-xl border border-outline/55 p-3 text-sm leading-6 text-ink-muted"
                     >
                       {{ notes }}
                     </p>
                   }
                 </div>
-                <div class="space-y-2 px-5 pb-5">
+
+                <div class="border-t border-outline/55"></div>
+
+                <div class="flex flex-col gap-2.5">
                   @let uploading = store.uploading() === detail.id + ':' + detail.month;
                   <div class="flex items-center justify-between gap-2">
-                    <h4 class="text-xs font-bold uppercase tracking-[0.12em] text-ink-subtle">Documents</h4>
+                    <h3 class="text-sm font-bold">Documents</h3>
                     <label
-                      class="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg border border-outline bg-surface px-3 text-xs font-bold text-brand-strong hover:bg-brand-soft focus-within:ring-2 focus-within:ring-brand"
+                      [class]="controlSmClass + ' cursor-pointer focus-within:ring-2 focus-within:ring-brand'"
                       [class.pointer-events-none]="uploading"
                       [class.opacity-60]="uploading"
                     >
-                      <span class="relative inline-flex items-center justify-center gap-1.5">
-                        <span class="inline-flex items-center gap-1.5" [class.invisible]="uploading">
-                          <mat-icon aria-hidden="true" class="!h-4 !w-4 !text-base !leading-none">upload</mat-icon>
-                          Upload receipt
-                        </span>
-                        @if (uploading) {
-                          <mas-spinner class="absolute" />
-                          <span class="sr-only">Uploading receipt</span>
-                        }
-                      </span>
+                      @if (uploading) {
+                        <mas-spinner />
+                        <span class="sr-only">Uploading receipt</span>
+                      } @else {
+                        <mat-icon class="mas-icon-sm" aria-hidden="true">upload</mat-icon>
+                      }
+                      Upload receipt
                       <input
                         #receipts
                         type="file"
@@ -635,22 +544,24 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                     <p role="alert" class="text-xs text-danger">{{ store.uploadError() }}</p>
                   }
                   @if (detail.documents.length) {
-                    <ul class="grid grid-cols-2 gap-2">
+                    <ul class="flex flex-col gap-2">
                       @for (document of detail.documents; track document.id) {
-                        <li>
+                        <li [class]="rowClass + ' flex items-center gap-3 p-2'">
+                          <span [class]="iconTileClass" aria-hidden="true">
+                            <mat-icon class="mas-icon-sm">
+                              {{ document.type.includes('pdf') ? 'picture_as_pdf' : 'receipt_long' }}
+                            </mat-icon>
+                          </span>
+                          <span class="min-w-0 flex-1 truncate text-sm font-bold" [title]="document.name">
+                            {{ document.name }}
+                          </span>
                           <button
                             type="button"
-                            (click)="viewDocument(document.id, document.name)"
+                            [class]="controlSmClass"
                             [attr.aria-label]="'View ' + document.name"
-                            class="flex w-full flex-col gap-2 rounded-xl border border-outline bg-surface p-2.5 text-left hover:border-brand/50 hover:bg-brand-soft/40 focus:outline-none focus:ring-2 focus:ring-brand"
+                            (click)="viewDocument(document.id, document.name)"
                           >
-                            <span
-                              aria-hidden="true"
-                              class="flex h-16 items-center justify-center rounded-lg bg-surface-subtle text-ink-subtle"
-                            >
-                              <mat-icon>{{ document.type.includes('pdf') ? 'picture_as_pdf' : 'image' }}</mat-icon>
-                            </span>
-                            <span class="truncate text-xs font-bold" [title]="document.name">{{ document.name }}</span>
+                            View
                           </button>
                         </li>
                       }
@@ -660,61 +571,99 @@ const STATUS_CLASSES: Record<RosterStatus, string> = {
                       No documents uploaded for this month.
                     </p>
                   }
-                  <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                    <a
-                      [routerLink]="['/partner-staff/programs', id(), 'users', detail.id]"
-                      class="inline-flex min-h-11 items-center gap-1 rounded-lg text-sm font-bold text-brand-strong hover:underline focus:outline-none focus:ring-2 focus:ring-brand"
-                    >
-                      Open participant record
-                      <mat-icon aria-hidden="true" class="!h-4 !w-4 shrink-0 !text-base !leading-none">
-                        arrow_forward
-                      </mat-icon>
-                    </a>
-                  </div>
-                  <button
-                    type="button"
-                    (click)="store.selectNextToReview()"
-                    [disabled]="!store.nextToReview()"
-                    class="mt-1 min-h-11 w-full rounded-xl border border-brand px-4 text-sm font-bold text-brand-strong hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-40 disabled:hover:bg-transparent"
-                  >
-                    {{ store.nextToReview() ? 'Next participant to review' : 'Nobody else to review this month' }}
-                  </button>
                 </div>
-              </aside>
-            }
-          </div>
-        }
+
+                <a
+                  [routerLink]="['/partner-staff/programs', id(), 'users', detail.id]"
+                  class="inline-flex min-h-10 items-center gap-1 self-start rounded-lg text-sm font-bold text-brand-strong hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                >
+                  Open participant record
+                  <mat-icon class="mas-icon-sm" aria-hidden="true">arrow_forward</mat-icon>
+                </a>
+                <button
+                  type="button"
+                  [class]="primaryClass + ' w-full'"
+                  [disabled]="!store.nextToReview()"
+                  (click)="nextToReview()"
+                >
+                  {{ store.nextToReview() ? 'Next participant to review' : 'Nobody else to review this month' }}
+                </button>
+              </div>
+            </section>
+          }
+        </div>
       }
-    </section>
+    }
   `,
   host: { class: 'block' },
 })
 export default class MonthlyProgressComponent {
   readonly id = input.required<string>();
   readonly store = inject(TaskReviewStore);
-  readonly statusClasses = STATUS_CLASSES;
-  readonly skeletonRows = [1, 2, 3, 4, 5, 6];
+  readonly rosterPills = ROSTER_PILLS;
+  readonly pills = PILLS;
+  readonly statusLabel = taskStatusLabel;
+  readonly segmentClass = SEGMENT;
+  readonly segmentButtonClass = SEGMENT_BUTTON;
+  readonly controlClass = CONTROL;
+  readonly controlSmClass = CONTROL_SM;
+  readonly primaryClass = CONTROL_PRIMARY;
+  readonly iconControlClass = ICON_CONTROL;
+  readonly iconTileClass = ICON_TILE;
+  readonly avatarClass = AVATAR;
+  readonly avatarSmClass = AVATAR_SM;
+  readonly cellClass = CELL;
+  readonly rowClass = ROW;
+  readonly selectedRowClass = 'border-brand bg-surface-raised ring-1 ring-inset ring-brand';
+  readonly detailId = 'participant-month';
   private readonly dialog = inject(MatDialog);
   private readonly injector = inject(Injector);
+  private readonly fragment = toSignal(inject(ActivatedRoute).fragment);
+  private openedFragment: string | null = null;
 
-  toggleReview(userId: string, task: MonthTaskStatus, checkbox: HTMLInputElement): void {
-    checkbox.checked = task.isReviewed;
-    if (!task.completion) return;
+  readonly fragmentEffect = effect(() => {
+    const fragment = this.fragment() ?? null;
+    if (!fragment || fragment === this.openedFragment) return;
+    const month = this.store.data()?.requirements.find(({ id }) => id === fragment)?.month;
+    if (!month) return;
+    this.openedFragment = fragment;
+    untracked(() => {
+      this.store.setView('month');
+      this.store.focusOn(month);
+    });
+  });
+
+
+  select(userId: string): void {
+    this.store.select(userId);
+    this.revealDetail();
+  }
+
+  nextToReview(): void {
+    this.store.selectNextToReview();
+    this.revealDetail();
+  }
+
+  toggleDone(userId: string, task: MonthTaskStatus): void {
+    this.store.setCompletion({ userId, requirementId: task.requirementId, complete: !task.isComplete });
+  }
+
+  toggleReview(userId: string, task: MonthTaskStatus): void {
     this.store.verify({
       userId,
       requirementId: task.requirementId,
-      completedAt: new Date(task.completion.completedAt).toISOString(),
+      completedAt: task.completion ? new Date(task.completion.completedAt).toISOString() : undefined,
       verified: !task.isReviewed,
     });
   }
 
   reviewAll(userId: string, tasks: MonthTaskStatus[]): void {
     for (const task of tasks) {
-      if (!task.completion || task.isReviewed) continue;
+      if (task.isReviewed) continue;
       this.store.verify({
         userId,
         requirementId: task.requirementId,
-        completedAt: new Date(task.completion.completedAt).toISOString(),
+        completedAt: task.completion ? new Date(task.completion.completedAt).toISOString() : undefined,
         verified: true,
       });
     }
@@ -729,21 +678,6 @@ export default class MonthlyProgressComponent {
     });
   }
 
-  // Links from the dashboard calendar name a task; open the month that holds it once per link.
-  private readonly fragment = toSignal(inject(ActivatedRoute).fragment);
-  private openedFragment: string | null = null;
-  readonly fragmentEffect = effect(() => {
-    const fragment = this.fragment() ?? null;
-    if (!fragment || fragment === this.openedFragment) return;
-    const month = this.store.data()?.requirements.find(({ id }) => id === fragment)?.month;
-    if (!month) return;
-    this.openedFragment = fragment;
-    untracked(() => {
-      this.store.setView('month');
-      this.store.focusOn(month);
-    });
-  });
-
   uploadReceipts(userId: string, month: number, input: HTMLInputElement): void {
     const files = Array.from(input.files ?? []);
     input.value = '';
@@ -752,5 +686,15 @@ export default class MonthlyProgressComponent {
 
   openPlan(): void {
     openMonthlyPlan(this.dialog, this.injector, this.store.focusedMonth());
+  }
+
+  private revealDetail(): void {
+    if (typeof window === 'undefined' || !window.matchMedia?.('(max-width: 1023px)').matches) return;
+    requestAnimationFrame(() =>
+      document.getElementById(this.detailId)?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start',
+      }),
+    );
   }
 }

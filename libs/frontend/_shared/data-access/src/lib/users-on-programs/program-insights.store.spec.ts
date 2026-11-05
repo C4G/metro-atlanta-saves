@@ -100,7 +100,6 @@ describe('ProgramInsightsStore', () => {
       ['Credit improved', '1 of 2'],
       ['Not saving yet', '1'],
     ]);
-    expect(store.kpis()[4].note).toBe('1 went down');
   });
 
   it('charts savings for months that have started and marks the current one', () => {

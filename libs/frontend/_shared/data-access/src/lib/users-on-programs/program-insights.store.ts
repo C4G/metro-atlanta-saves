@@ -17,6 +17,15 @@ export const INSIGHTS_PERIODS: { value: InsightsPeriod; label: string }[] = [
   { value: 'quarter', label: 'Last 3 months' },
 ];
 
+const TABLE_COLUMNS: { label: string; sort: InsightsSort | null }[] = [
+  { label: 'Participant', sort: 'name' },
+  { label: 'Saved', sort: 'saved' },
+  { label: 'Credit score', sort: null },
+  { label: 'Credit change', sort: 'credit' },
+  { label: 'Tasks done', sort: 'tasks' },
+  { label: 'Receipts', sort: null },
+];
+
 const SORTS: { value: InsightsSort; label: string }[] = [
   { value: 'saved', label: 'Most saved' },
   { value: 'credit', label: 'Credit gain' },
@@ -30,10 +39,8 @@ const STATUSES: { value: ParticipantStatus; label: string }[] = [
   { value: 'notStarted', label: 'Not started' },
 ];
 
-// Points gained between the first and latest monthly credit scores; null until there are two scores.
 export const creditChange = (scores: number[]) => (scores.length > 1 ? (scores.at(-1) ?? 0) - scores[0] : null);
 
-// Someone is on track when every task from the months before this one is done.
 export const participantStatus = ({
   hasActivity,
   overdueOpen,
@@ -42,7 +49,6 @@ export const participantStatus = ({
   overdueOpen: number;
 }): ParticipantStatus => (!hasActivity ? 'notStarted' : overdueOpen ? 'behind' : 'onTrack');
 
-// Quotes a spreadsheet cell when it holds a comma, quote, or line break.
 export const csvCell = (value: string | number) => {
   const text = String(value);
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
@@ -136,43 +142,36 @@ export const ProgramInsightsStore = signalStore(
         const total = all.reduce((sum, person) => sum + person.saved, 0);
         const scored = all.flatMap(({ delta }) => (delta === null ? [] : [delta]));
         const average = scored.length ? scored.reduce((sum, delta) => sum + delta, 0) / scored.length : null;
-        const declined = scored.filter((delta) => delta < 0).length;
         const notSaving = all.filter(({ saved }) => !saved).length;
         return [
           {
             label: 'Tasks complete',
             value: possible ? `${Math.round((done / possible) * 100)}%` : '—',
-            note: `${done} of ${possible} ${possible === 1 ? 'task' : 'tasks'}`,
             tone: 'ink',
           },
           {
             label: 'Total saved',
             value: money(total),
-            note: `Across ${all.length} ${all.length === 1 ? 'participant' : 'participants'}`,
             tone: 'ink',
           },
           {
             label: 'Average saved',
             value: money(all.length ? Math.round(total / all.length) : 0),
-            note: 'Per participant',
             tone: 'ink',
           },
           {
             label: 'Avg credit change',
             value: average === null ? '—' : signed(Number(average.toFixed(1))),
-            note: scored.length ? `${scored.length} with two scores` : 'No one has two scores yet',
             tone: average !== null && average > 0 ? 'brand' : 'ink',
           },
           {
             label: 'Credit improved',
             value: scored.length ? `${scored.filter((delta) => delta > 0).length} of ${scored.length}` : '—',
-            note: declined ? `${declined} went down` : 'No one went down',
             tone: 'ink',
           },
           {
             label: 'Not saving yet',
             value: String(notSaving),
-            note: 'No savings recorded',
             tone: notSaving ? 'warn' : 'ink',
           },
         ];
@@ -211,7 +210,6 @@ export const ProgramInsightsStore = signalStore(
         const receipts = all.reduce((sum, person) => sum + person.receipts, 0);
         return {
           groups,
-          basis: `Based on tasks through Month ${review.currentMonth()}`,
           receiptsLabel: `${all.reduce((sum, person) => sum + person.receiptsReviewed, 0)} of ${receipts}`,
           awaitingReview: review.awaitingReviewTotal(),
         };
@@ -244,6 +242,16 @@ export const ProgramInsightsStore = signalStore(
         },
       ]),
       sorts: computed(() => SORTS.map((option) => ({ ...option, isActive: option.value === sort() }))),
+      columns: computed(() =>
+        TABLE_COLUMNS.map(({ label, sort: column }) => {
+          const isSorted = column === sort();
+          return {
+            label,
+            isSorted,
+            ariaSort: isSorted ? (column === 'name' ? 'ascending' : 'descending') : null,
+          };
+        }),
+      ),
       table,
       reportCsv: computed(() =>
         [

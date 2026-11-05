@@ -8,7 +8,7 @@ import {
   UsersOnProgramsStore,
 } from '@mas/frontend-shared-data-access';
 import { UsersForProgramsStore } from '../users-on-programs/ui/add-users-on-programs/users-for-programs.store';
-import { initialsOf, ManageProgramStore, matchesPerson } from './manage-program.store';
+import { appliedAgo, initialsOf, ManageProgramStore, matchesPerson } from './manage-program.store';
 import { fileKind } from './program-documents.store';
 
 const user = (userId: string, firstName: string, lastName: string) => ({
@@ -29,6 +29,18 @@ describe('manage program helpers', () => {
     expect(fileKind('application/pdf')).toBe('PDF');
     expect(fileKind('image/png')).toBe('IMG');
     expect(fileKind('text/csv')).toBe('DOC');
+  });
+});
+
+describe('appliedAgo', () => {
+  const now = new Date(2026, 10, 2, 15, 30);
+  it.each([
+    [new Date(2026, 10, 2, 9), 'Applied today'],
+    [new Date(2026, 10, 1, 23), 'Applied yesterday'],
+    [new Date(2026, 9, 30, 8), 'Applied 3 days ago'],
+    [new Date(2026, 10, 5), 'Applied today'],
+  ])('describes %s', (appliedAt, label) => {
+    expect(appliedAgo(appliedAt, now, 'en-US')).toBe(label);
   });
 });
 
@@ -90,6 +102,7 @@ describe('ManageProgramStore', () => {
           provide: ProgramsStore,
           useValue: {
             program: signal({ name: 'Pilot', startDate: null, endDate: null, partner: { name: 'Frontline Housing' } }),
+            programName: signal('Pilot'),
             enrollments: signal([]),
           },
         },
@@ -99,12 +112,21 @@ describe('ManageProgramStore', () => {
   });
   afterEach(() => TestBed.resetTestingModule());
 
-  it('lists participants by first name with their savings and tasks', () => {
-    expect(store.rows().map(({ name, savedLabel, tasksLabel }) => [name, savedLabel, tasksLabel])).toEqual([
-      ['Avery Johnson', '$451.00', '3/6'],
-      ['Zoe Park', '$0.00', '0/1'],
+  it('lists participants by first name and filters them by name or email', () => {
+    expect(store.rows().map(({ name, initials }) => [name, initials])).toEqual([
+      ['Avery Johnson', 'AJ'],
+      ['Zoe Park', 'ZP'],
     ]);
     expect(store.tabs().map(({ count }) => count)).toEqual([2, 1]);
+    store.setQuery('zoe');
+    expect(store.rows().map(({ name }) => name)).toEqual(['Zoe Park']);
+  });
+
+  it('clears the add search when someone starts adding people', () => {
+    store.setAddQuery('mor');
+    store.startAdding();
+    expect(store.addQuery()).toBe('');
+    expect(store.addView().heading).toBe('Add a participant');
   });
 
   it('only offers people who are not in the program yet', () => {

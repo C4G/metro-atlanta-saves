@@ -11,7 +11,7 @@ import {
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { exhaustMap, filter, map, mergeMap, pipe, switchMap, tap } from 'rxjs';
+import { exhaustMap, filter, map, mergeMap, Observable, pipe, switchMap, tap } from 'rxjs';
 import { monthOfProgram } from './program-month';
 
 const baseUrl = '/api/users-on-programs/program';
@@ -22,8 +22,8 @@ export type MonthTaskStatus = {
   completion: TaskReviewCompletion | null;
   isComplete: boolean;
   isReviewed: boolean;
-  // Legacy records count as complete but have no submission that staff can verify.
   isLegacy: boolean;
+  isStaffCompleted: boolean;
 };
 
 export type ParticipantMonth = {
@@ -64,7 +64,7 @@ export type MonthlyPlanSubmission = {
 
 export type ParticipantTotals = { saved: number; tasksDone: number; taskTotal: number };
 
-export type RosterFilter = 'all' | 'review' | 'open' | 'done';
+export type RosterFilter = 'all' | 'review' | 'open';
 
 export type RosterStatus = 'review' | 'done' | 'open' | 'upcoming';
 
@@ -72,7 +72,6 @@ const ROSTER_FILTERS: { value: RosterFilter; label: string }[] = [
   { value: 'all', label: 'Everyone' },
   { value: 'review', label: 'To review' },
   { value: 'open', label: 'Not finished' },
-  { value: 'done', label: 'All set' },
 ];
 
 const statusLabel = (status: RosterStatus, awaitingReview: number) =>
@@ -92,13 +91,11 @@ type TaskReviewState = {
   pending: string[];
   saveError: string;
   view: 'month' | 'grid';
-  // The month being reviewed; null follows the program's current month.
   focusMonth: number | null;
   rosterFilter: RosterFilter;
   selectedUserId: string | null;
   planSaving: boolean;
   planError: string;
-  // The participant month receiving a staff upload, as "userId:month".
   uploading: string | null;
   uploadError: string;
 };
@@ -135,7 +132,6 @@ export const TaskReviewStore = signalStore(
     const rows = computed(() => {
       const review = data();
       if (!review) return [];
-      // Both the month roster and the all-months grid list people by first name.
       const byFirstName = [...review.participants].sort(
         (a, b) =>
           a.firstName.localeCompare(b.firstName, locale, { sensitivity: 'base' }) ||
@@ -159,6 +155,7 @@ export const TaskReviewStore = signalStore(
                   isComplete: !!completion || isLegacy,
                   isReviewed: !!completion?.verifiedAt,
                   isLegacy,
+                  isStaffCompleted: !!completion?.completedById && completion.completedById !== participant.id,
                 };
               });
             const entries = (participant.checkpoints ?? []).filter((checkpoint) => checkpoint.name === name);
@@ -189,7 +186,6 @@ export const TaskReviewStore = signalStore(
       months,
       currentMonth,
       participantRows: rows,
-      // Totals across the whole program, matching what each participant sees on their own pages.
       participantTotals: computed(() => {
         const review = data();
         const requirementIds = new Set((review?.requirements ?? []).map(({ id }) => id));
@@ -264,20 +260,16 @@ export const TaskReviewStore = signalStore(
               status,
               statusLabel: statusLabel(status, cell.awaitingReview),
               reviewedCount: cell.tasks.filter((task) => task.isReviewed).length,
+              unreviewedCount: cell.tasks.filter((task) => !task.isReviewed).length,
               percentComplete: cell.tasks.length ? Math.round((cell.completeCount / cell.tasks.length) * 100) : 0,
             },
           ];
         }),
       );
-      // Filters overlap: someone can have work to review and still have tasks left to finish.
       const matchesFilter = (
         filter: RosterFilter,
         { awaitingReview, isFinished }: { awaitingReview: number; isFinished: boolean },
-      ) =>
-        filter === 'all' ||
-        (filter === 'review' && awaitingReview > 0) ||
-        (filter === 'open' && !isFinished) ||
-        (filter === 'done' && isFinished && awaitingReview === 0);
+      ) => filter === 'all' || (filter === 'review' && awaitingReview > 0) || (filter === 'open' && !isFinished);
       const filteredRoster = computed(() => roster().filter((person) => matchesFilter(rosterFilter(), person)));
       const selectedMonth = computed(
         () => roster().find(({ id }) => id === selectedUserId()) ?? filteredRoster().at(0) ?? roster().at(0) ?? null,
@@ -327,18 +319,15 @@ export const TaskReviewStore = signalStore(
       const next = months[months.findIndex(({ number }) => number === store.focusedMonth()) + step];
       if (next) patchState(store, { focusMonth: next.number });
     },
-    // Keeps the next person visible even when the current filter would hide them.
     selectNextToReview: () => {
       const next = store.nextToReview();
       if (!next) return;
       const visible = store.filteredRoster().some(({ id }) => id === next.id);
       patchState(store, { selectedUserId: next.id, rosterFilter: visible ? store.rosterFilter() : 'all' });
     },
-    // Opens one participant's month from the all-months grid.
     openMonth: (selectedUserId: string, focusMonth: number) =>
       patchState(store, { view: 'month', focusMonth, selectedUserId, rosterFilter: 'all' }),
     clearPlanError: () => patchState(store, { planError: '' }),
-    // Staff upload receipts for a participant, filed under that month's entry.
     uploadReceipts: rxMethod<{ userId: string; month: number; files: File[] }>(
       pipe(
         filter(() => store.uploading() === null),
@@ -422,16 +411,10 @@ export const TaskReviewStore = signalStore(
         }),
       ),
     ),
-    verify: rxMethod<{ userId: string; requirementId: string; completedAt: string; verified: boolean }>(
+    verify: rxMethod<{ userId: string; requirementId: string; completedAt?: string; verified: boolean }>(
       pipe(
         filter(({ userId, requirementId }) => !store.pending().includes(`${userId}:${requirementId}`)),
-        filter(
-          ({ userId, requirementId }) =>
-            !!store
-              .data()
-              ?.participants.find((person) => person.id === userId)
-              ?.completions.some((completion) => completion.requirementId === requirementId),
-        ),
+        filter(({ completedAt, verified }) => !!completedAt || verified),
         tap(({ userId, requirementId }) =>
           patchState(store, { pending: [...store.pending(), `${userId}:${requirementId}`], saveError: '' }),
         ),
@@ -455,9 +438,12 @@ export const TaskReviewStore = signalStore(
                               ? person
                               : {
                                   ...person,
-                                  completions: person.completions.map((completion) =>
-                                    completion.requirementId === requirementId ? updated : completion,
-                                  ),
+                                  completions: [
+                                    ...person.completions.filter(
+                                      (completion) => completion.requirementId !== requirementId,
+                                    ),
+                                    updated,
+                                  ],
                                 },
                           ),
                         }
@@ -473,6 +459,52 @@ export const TaskReviewStore = signalStore(
                   patchState(store, { pending: store.pending().filter((id) => id !== `${userId}:${requirementId}`) }),
               }),
             );
+        }),
+      ),
+    ),
+    setCompletion: rxMethod<{ userId: string; requirementId: string; complete: boolean }>(
+      pipe(
+        filter(({ userId, requirementId }) => !store.pending().includes(`${userId}:${requirementId}`)),
+        tap(({ userId, requirementId }) =>
+          patchState(store, { pending: [...store.pending(), `${userId}:${requirementId}`], saveError: '' }),
+        ),
+        mergeMap(({ userId, requirementId, complete }) => {
+          const programId = store.programId();
+          const url = `${baseUrl}/${programId}/participants/${userId}/requirements/${requirementId}/completion`;
+          const request: Observable<TaskReviewCompletion | null> = complete
+            ? http.post<TaskReviewCompletion>(url, {})
+            : http.delete<{ requirementId: string }>(url).pipe(map(() => null));
+          return request.pipe(
+            tapResponse({
+              next: (completion) => {
+                if (store.programId() !== programId) return;
+                patchState(store, (state) => ({
+                  data: state.data
+                    ? {
+                        ...state.data,
+                        participants: state.data.participants.map((person) =>
+                          person.id !== userId
+                            ? person
+                            : {
+                                ...person,
+                                requirementStatus: completion
+                                  ? person.requirementStatus
+                                  : person.requirementStatus.filter((id) => id !== requirementId),
+                                completions: [
+                                  ...person.completions.filter((entry) => entry.requirementId !== requirementId),
+                                  ...(completion ? [completion] : []),
+                                ],
+                              },
+                        ),
+                      }
+                    : null,
+                }));
+              },
+              error: () => patchState(store, { saveError: 'We could not update that task. Please try again.' }),
+              finalize: () =>
+                patchState(store, { pending: store.pending().filter((id) => id !== `${userId}:${requirementId}`) }),
+            }),
+          );
         }),
       ),
     ),
