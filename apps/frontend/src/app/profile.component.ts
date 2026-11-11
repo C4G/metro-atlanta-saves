@@ -1,3 +1,4 @@
+import { MatIcon } from '@angular/material/icon';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,25 +7,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'mas-profile',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [MatIcon, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bg-canvas px-4 py-8 text-ink sm:px-6 sm:py-10 lg:px-8">
+    <div class="px-4 py-8 text-ink sm:px-6 sm:py-10 lg:px-8">
       <div class="mx-auto max-w-5xl">
         <a
           routerLink="/dashboard"
           class="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold text-brand-strong transition-colors hover:bg-brand-soft/60 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-canvas"
         >
-          <svg
-            aria-hidden="true"
-            class="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">chevron_left</mat-icon>
           Back to dashboard
         </a>
 
@@ -185,17 +177,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
             <div class="mt-6 rounded-2xl bg-surface-subtle p-4">
               <div class="flex gap-3">
-                <svg
-                  aria-hidden="true"
-                  class="mt-0.5 h-5 w-5 shrink-0 text-brand-strong"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <rect x="5" y="11" width="14" height="10" rx="2" />
-                  <path stroke-linecap="round" d="M8 11V7a4 4 0 0 1 8 0v4" />
-                </svg>
+                <mat-icon aria-hidden="true" class="mas-icon-md mt-0.5 shrink-0 text-brand-strong">lock</mat-icon>
                 <div>
                   <h3 class="text-sm font-bold">Sign-in security</h3>
                   <p class="mt-1 text-xs leading-5 text-ink-muted">

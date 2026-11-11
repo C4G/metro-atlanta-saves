@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { computed, inject } from '@angular/core';
+import { computed, inject, LOCALE_ID } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -11,6 +11,85 @@ import type { CheckpointName, Enrollment, Program } from '@mas/prisma-client/bro
 import { debounceTime, distinctUntilChanged, exhaustMap, pipe, switchMap } from 'rxjs';
 
 type AddProgram = Omit<Program, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type ProgramCardStatus = 'active' | 'archived' | 'open' | 'closed';
+
+export type ProgramCard = {
+  program: Program;
+  status: ProgramCardStatus;
+  label: string;
+  isInactive: boolean;
+  meta: string;
+};
+
+export const PROGRAM_STATUS_LABELS: Record<ProgramCardStatus, string> = {
+  active: 'Active',
+  archived: 'Archived',
+  open: 'Open',
+  closed: 'Closed',
+};
+
+export const joinedProgramStatus = (program: Pick<Program, 'endDate'>, now: Date): ProgramCardStatus =>
+  program.endDate && new Date(program.endDate) < now ? 'archived' : 'active';
+
+export const upcomingProgramStatus = (program: Pick<Program, 'startDate'>, now: Date): ProgramCardStatus =>
+  program.startDate && new Date(program.startDate) <= now ? 'closed' : 'open';
+
+export type DirectorySection = 'active' | 'upcoming' | 'inactive' | 'template';
+
+export type DirectoryCard = {
+  program: Program;
+  label: string;
+  meta: string;
+  isInactive: boolean;
+  isTemplate: boolean;
+};
+
+export type DirectoryGroup = {
+  key: DirectorySection;
+  title: string;
+  emptyText: string;
+  query: string;
+  total: number;
+  cards: DirectoryCard[];
+};
+
+export const DIRECTORY_SECTIONS: { key: DirectorySection; title: string; label: string; emptyText: string }[] = [
+  { key: 'active', title: 'Active programs', label: 'Active', emptyText: 'No active programs right now.' },
+  { key: 'upcoming', title: 'Upcoming programs', label: 'Upcoming', emptyText: 'No upcoming programs.' },
+  { key: 'inactive', title: 'Inactive programs', label: 'Archived', emptyText: 'No inactive programs.' },
+  { key: 'template', title: 'Templates', label: 'Template', emptyText: 'No templates yet.' },
+];
+
+export const directorySectionFor = (
+  program: Pick<Program, 'isTemplate' | 'startDate' | 'endDate'>,
+  now: Date,
+): DirectorySection => {
+  if (program.isTemplate) return 'template';
+  if (program.endDate && new Date(program.endDate) < now) return 'inactive';
+  if (program.startDate && new Date(program.startDate) > now) return 'upcoming';
+  return 'active';
+};
+
+export const directoryMeta = (
+  program: Pick<Program, 'startDate' | 'endDate'>,
+  section: DirectorySection,
+  locale: string,
+): string => {
+  const date = (value: Date | string) => formatDate(value, 'MMM d, y', locale);
+  if (section === 'template') return 'Dates are set when cloned';
+  if (section === 'inactive' && program.endDate) return `Ended ${date(program.endDate)}`;
+  if (program.startDate && program.endDate) return `${date(program.startDate)} – ${date(program.endDate)}`;
+  if (program.startDate) return `${section === 'active' ? 'Started' : 'Starts'} ${date(program.startDate)}`;
+  return 'Dates to be set';
+};
+
+export const matchesDirectoryQuery = (program: Pick<Program, 'name' | 'description'>, query: string): boolean => {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return true;
+  const text = `${program.name} ${(program.description ?? '').replace(/<[^>]*>/g, ' ')}`.toLowerCase();
+  return text.includes(needle);
+};
 
 export type UserAndEnrollment = Enrollment & { firstName: string; lastName: string };
 
@@ -24,6 +103,7 @@ type ProgramsState = {
   upcomingPrograms: Program[];
   usersPrograms: (Program & { isTemplate?: boolean })[];
   checkpointNames: CheckpointName[];
+  directoryQueries: Record<DirectorySection, string>;
 };
 
 type SubmitEnroll = Omit<Enrollment, 'id' | 'createdAt' | 'updatedAt'>;
@@ -43,6 +123,7 @@ const initialState: ProgramsState = {
   upcomingPrograms: [],
   usersPrograms: [],
   checkpointNames: [],
+  directoryQueries: { active: '', upcoming: '', inactive: '', template: '' },
 };
 
 const BASE_URL = '/api/programs';
@@ -50,18 +131,81 @@ const BASE_URL = '/api/programs';
 export const ProgramsStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed(({ program }) => ({
-    computedProgramCreatedAt: computed<string>(() => {
-      return new Date(program()?.createdAt || '').toLocaleString();
+  withComputed(
+    ({ program, programs, usersPrograms, upcomingPrograms, directoryQueries }, locale = inject(LOCALE_ID)) => ({
+      directoryGroups: computed<DirectoryGroup[]>(() => {
+        const now = new Date();
+        const queries = directoryQueries();
+        const sorted = [...programs()].sort(
+          (a, b) => new Date(a.startDate ?? 0).getTime() - new Date(b.startDate ?? 0).getTime(),
+        );
+        return DIRECTORY_SECTIONS.map(({ key, title, label, emptyText }) => {
+          const inSection = sorted.filter((entry) => directorySectionFor(entry, now) === key);
+          const ordered = key === 'inactive' ? [...inSection].reverse() : inSection;
+          return {
+            key,
+            title,
+            emptyText,
+            query: queries[key],
+            total: inSection.length,
+            cards: ordered
+              .filter((entry) => matchesDirectoryQuery(entry, queries[key]))
+              .map((entry) => ({
+                program: entry,
+                label,
+                meta: directoryMeta(entry, key, locale),
+                isInactive: key === 'inactive',
+                isTemplate: key === 'template',
+              })),
+          };
+        });
+      }),
+      myProgramCards: computed<ProgramCard[]>(() => {
+        const now = new Date();
+        return usersPrograms()
+          .map((joined): ProgramCard => {
+            const status = joinedProgramStatus(joined, now);
+            return {
+              program: joined,
+              status,
+              label: PROGRAM_STATUS_LABELS[status],
+              isInactive: status === 'archived',
+              meta:
+                status === 'archived' && joined.endDate ? `Ended ${formatDate(joined.endDate, 'MMM d', locale)}` : '',
+            };
+          })
+          .sort((a, b) => Number(a.isInactive) - Number(b.isInactive));
+      }),
+      explorePrograms: computed<ProgramCard[]>(() => {
+        const now = new Date();
+        const joinedIds = new Set(usersPrograms().map((joined) => joined.id));
+        return upcomingPrograms()
+          .filter((upcoming) => !joinedIds.has(upcoming.id))
+          .map((upcoming): ProgramCard => {
+            const status = upcomingProgramStatus(upcoming, now);
+            const start = upcoming.startDate ? formatDate(upcoming.startDate, 'MMM d', locale) : '';
+            return {
+              program: upcoming,
+              status,
+              label: PROGRAM_STATUS_LABELS[status],
+              isInactive: status === 'closed',
+              meta: start ? `${status === 'open' ? 'Starts' : 'Enrollment closed · Started'} ${start}` : '',
+            };
+          })
+          .sort((a, b) => Number(a.isInactive) - Number(b.isInactive));
+      }),
+      computedProgramCreatedAt: computed<string>(() => {
+        return new Date(program()?.createdAt || '').toLocaleString();
+      }),
+      computedProgramDates: computed<string>(() => {
+        const start = program()?.startDate;
+        const end = program()?.endDate;
+        return start && end
+          ? `${formatDate(start, 'M/dd/yyyy', 'en-US')} to ${formatDate(end, 'M/dd/yyyy', 'en-US')}`
+          : '';
+      }),
     }),
-    computedProgramDates: computed<string>(() => {
-      const start = program()?.startDate;
-      const end = program()?.endDate;
-      return start && end
-        ? `${formatDate(start, 'M/dd/yyyy', 'en-US')} to ${formatDate(end, 'M/dd/yyyy', 'en-US')}`
-        : '';
-    }),
-  })),
+  ),
   withMethods(
     (
       store,
@@ -70,6 +214,12 @@ export const ProgramsStore = signalStore(
       dialogRef = inject(MatDialog),
       router = inject(Router),
     ) => ({
+      setDirectoryQuery: (section: DirectorySection, query: string) => {
+        patchState(store, (state) => ({ directoryQueries: { ...state.directoryQueries, [section]: query } }));
+      },
+      clearDirectoryQueries: () => {
+        patchState(store, { directoryQueries: initialState.directoryQueries });
+      },
       clearUserPrograms: () => {
         patchState(store, (state) => ({ ...state, usersPrograms: [] }));
       },

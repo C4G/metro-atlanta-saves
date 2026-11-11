@@ -71,7 +71,7 @@ const LANDING_SECTIONS = [
       </section>
     </div>
   `,
-  host: { class: 'block min-h-full bg-canvas' },
+  host: { class: 'block min-h-full' },
 })
 export default class EducationManagementComponent {
   readonly sections = LANDING_SECTIONS;

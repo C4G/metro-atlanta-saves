@@ -8,6 +8,7 @@ export * from './educational-resources';
 export * from './images';
 export * from './introduction';
 export * from './learnings';
+export * from './main-nav';
 export * from './partners';
 export * from './programs';
 export * from './stories';

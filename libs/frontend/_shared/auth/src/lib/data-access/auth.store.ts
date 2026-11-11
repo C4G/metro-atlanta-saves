@@ -51,6 +51,12 @@ const initialState: AuthState = {
 };
 
 const BASE_URL = '/api/auth';
+
+export const roleLabelFor = (role: UserFull['role'] | undefined): string => {
+  if (role === 'Administrator') return 'Admin';
+  if (role === 'Partner_Staff') return 'Partner staff';
+  return 'Participant';
+};
 type ManagedSessionResponse = { session: { impersonatedBy?: string | null }; user: unknown } | null;
 
 export const AuthStore = signalStore(
@@ -65,6 +71,8 @@ export const AuthStore = signalStore(
     }),
     isAdmin: computed<boolean>(() => user()?.role === 'Administrator'),
     isStaff: computed<boolean>(() => user()?.role === 'Administrator' || user()?.role === 'Partner_Staff'),
+    roleLabel: computed<string>(() => roleLabelFor(user()?.role)),
+    fullName: computed<string>(() => [user()?.firstName, user()?.lastName].filter(Boolean).join(' ')),
   })),
   withMethods(
     (
