@@ -8,6 +8,7 @@ import { type ColDef } from 'ag-grid-community';
 import { BlogActionsComponent } from './ui/blog-actions/blog-actions.component';
 import { AddBlogComponent } from './ui/add-blog/add-blog.component';
 import { AgGridComponent } from '@mas/frontend-shared-components';
+import { htmlToText } from '@mas/frontend-shared-util';
 
 @Component({
   selector: 'mas-admin-blogs',
@@ -49,6 +50,7 @@ export default class AdminBlogsComponent {
     {
       field: 'body',
       filter: true,
+      valueFormatter: (params) => htmlToText(params.value),
     },
     {
       field: 'createdAt',

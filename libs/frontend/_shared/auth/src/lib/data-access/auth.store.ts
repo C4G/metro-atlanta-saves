@@ -98,7 +98,7 @@ export const AuthStore = signalStore(
             page === 'register'
               ? '/dashboard'
               : user.firstProgramId
-                ? `/program-profiles/${user.firstProgramId}/savings`
+                ? `/program-profiles/${user.firstProgramId}/progress`
                 : '/';
           await router.navigateByUrl(route);
         } catch {

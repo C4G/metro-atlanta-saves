@@ -5,7 +5,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { ExtendedImage } from '@mas/models';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
-import { catchError, concatMap, from, map, of } from 'rxjs';
+import { catchError, concatMap, finalize, from, map, of } from 'rxjs';
 import { CheckpointsStore } from '../checkpoints';
 import { ImagesStore } from '../images';
 
@@ -16,6 +16,7 @@ type DocumentManagementState = {
   loadingImageId: string | null;
   loadedImages: Record<string, boolean>;
   currentImageIndex: number;
+  reviewingCheckpointIds: string[];
   selectedUserFilter: string | null;
   selectedCheckpointFilter: string | null;
   pendingUpdates: {
@@ -31,6 +32,7 @@ const initialState: DocumentManagementState = {
   loadingImageId: null,
   loadedImages: {},
   currentImageIndex: 0,
+  reviewingCheckpointIds: [],
   selectedUserFilter: null,
   selectedCheckpointFilter: 'unassigned',
   pendingUpdates: { userId: null, checkpointId: null },
@@ -43,7 +45,7 @@ export const DocumentManagementStore = signalStore(
     const imagesStore = inject(ImagesStore);
 
     const filteredImages = computed(() => {
-      return imagesStore.images().sort((a, b) => imageComparer(a, b));
+      return [...imagesStore.images()].sort((a, b) => imageComparer(a, b));
     });
 
     const checkpointsStore = inject(CheckpointsStore);
@@ -91,6 +93,32 @@ export const DocumentManagementStore = signalStore(
     const http = inject(HttpClient);
 
     return {
+      setReceiptReview(checkpointIds: string[], reviewed: boolean) {
+        const ids = [...new Set(checkpointIds)].filter((id) =>
+          imagesStore.images().some((image) => image.checkpointId === id && image.imageVerified !== reviewed),
+        );
+        if (!ids.length || ids.some((id) => store.reviewingCheckpointIds().includes(id))) return;
+        patchState(store, { reviewingCheckpointIds: [...store.reviewingCheckpointIds(), ...ids] });
+        from(ids)
+          .pipe(
+            concatMap((id) =>
+              http.post(`/api/checkpoints/${id}/${reviewed ? 'approve' : 'reject'}`, {}).pipe(
+                map(() => {
+                  imagesStore.setCheckpointReview(id, reviewed);
+                }),
+              ),
+            ),
+            finalize(() =>
+              patchState(store, {
+                reviewingCheckpointIds: store.reviewingCheckpointIds().filter((id) => !ids.includes(id)),
+              }),
+            ),
+          )
+          .subscribe({
+            error: () =>
+              snackBar.open('We could not update the receipt review. Please try again.'),
+          });
+      },
       updateProgramId(id: string) {
         patchState(store, {
           programId: id,
@@ -184,6 +212,7 @@ export const DocumentManagementStore = signalStore(
           patchState(store, (state) => ({
             ...state,
             currentImageIndex: state.currentImageIndex + 1,
+            pendingUpdates: { userId: null, checkpointId: null },
           }));
         }
       },
@@ -193,6 +222,7 @@ export const DocumentManagementStore = signalStore(
           patchState(store, (state) => ({
             ...state,
             currentImageIndex: state.currentImageIndex - 1,
+            pendingUpdates: { userId: null, checkpointId: null },
           }));
         }
       },
@@ -200,7 +230,7 @@ export const DocumentManagementStore = signalStore(
       selectImage(index: number) {
         const images = store.filteredImages();
         if (index >= 0 && index < images.length) {
-          patchState(store, { currentImageIndex: index });
+          patchState(store, { currentImageIndex: index, pendingUpdates: { userId: null, checkpointId: null } });
         }
       },
 
@@ -399,6 +429,10 @@ export const DocumentManagementStore = signalStore(
         patchState(store, {
           loadedImages: {},
           imageUrls: {},
+          currentImageIndex: 0,
+          selectedUserFilter: null,
+          selectedCheckpointFilter: null,
+          pendingUpdates: { userId: null, checkpointId: null },
         });
       },
     };

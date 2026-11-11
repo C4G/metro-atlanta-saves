@@ -12,12 +12,20 @@ type ImagesState = {
   blob: Blob | null;
   type: string | null;
   images: ExtendedImage[];
+  loading: boolean;
+  loadFailed: boolean;
+  previewLoading: boolean;
+  previewError: boolean;
 };
 
 const initialState: ImagesState = {
   blob: null,
   type: null,
   images: [],
+  loading: false,
+  loadFailed: false,
+  previewLoading: false,
+  previewError: false,
 };
 
 const BASE_URL = '/api/images';
@@ -26,6 +34,13 @@ export const ImagesStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods((store, http = inject(HttpClient), snackBar = inject(MatSnackBar), dialogRef = inject(MatDialog)) => ({
+    setCheckpointReview: (checkpointId: string, reviewed: boolean) => {
+      patchState(store, {
+        images: store
+          .images()
+          .map((image) => (image.checkpointId === checkpointId ? { ...image, imageVerified: reviewed } : image)),
+      });
+    },
     getAllImages: rxMethod<{
       programId: string;
       userFilter?: string | null;
@@ -33,6 +48,7 @@ export const ImagesStore = signalStore(
     }>(
       pipe(
         switchMap(({ programId, userFilter, checkpointFilter }) => {
+          patchState(store, { images: [], loading: true, loadFailed: false });
           let params = new HttpParams().set('programId', programId);
 
           // Handle user filter
@@ -55,11 +71,13 @@ export const ImagesStore = signalStore(
                 patchState(store, { images });
               },
               error: (resp: HttpErrorResponse) => {
-                snackBar.open(resp.error.message[0] || `There was an error loading images`, undefined, {
+                patchState(store, { loadFailed: true });
+                snackBar.open(resp.error?.message?.[0] || `There was an error loading images`, undefined, {
                   panelClass: 'error',
                   duration: 5000,
                 });
               },
+              finalize: () => patchState(store, { loading: false }),
             }),
           );
         }),
@@ -86,8 +104,9 @@ export const ImagesStore = signalStore(
     ),
     getImage: rxMethod<string>(
       pipe(
-        switchMap((id) =>
-          http.get(`${BASE_URL}/${id}`, { observe: 'response', responseType: 'blob' }).pipe(
+        switchMap((id) => {
+          patchState(store, { blob: null, type: null, previewLoading: true, previewError: false });
+          return http.get(`${BASE_URL}/${id}`, { observe: 'response', responseType: 'blob' }).pipe(
             tapResponse({
               next: (resp) => {
                 patchState(store, {
@@ -96,14 +115,16 @@ export const ImagesStore = signalStore(
                 });
               },
               error: (resp: HttpErrorResponse) => {
-                snackBar.open(resp.error.message[0] || `There was an error loading the image`, undefined, {
+                patchState(store, { previewError: true });
+                snackBar.open(resp.error?.message?.[0] || `There was an error loading the image`, undefined, {
                   panelClass: 'error',
                   duration: 5000,
                 });
               },
+              finalize: () => patchState(store, { previewLoading: false }),
             }),
-          ),
-        ),
+          );
+        }),
       ),
     ),
     addImages: rxMethod<{ form: FormData; programId: string; checkpointId?: string; cb?: () => void }>(

@@ -15,6 +15,8 @@ type AddUsersOnPrograms = Omit<UsersOnPrograms, 'createdAt' | 'updatedAt' | 'pro
 type UsersOnProgramsState = {
   programId: string | null;
   users: UsersOnProgramsWithName[];
+  usersLoading: boolean;
+  usersLoadFailed: boolean;
   userOnProgram: UserOnProgramAgg | null;
   savingRequirementIds: string[];
 };
@@ -22,6 +24,8 @@ type UsersOnProgramsState = {
 const initialState: UsersOnProgramsState = {
   programId: null,
   users: [],
+  usersLoading: false,
+  usersLoadFailed: false,
   userOnProgram: null,
   savingRequirementIds: [],
 };
@@ -70,7 +74,7 @@ export const UsersOnProgramsStore = signalStore(
       const requirementCompletions = userData?.requirementCompletions ?? [];
 
       return (
-        requirement?.map(({ id, name, actionInstructions, dueAt, EducationalContent }) => {
+        requirement?.map(({ id, name, actionInstructions, dueAt, month, EducationalContent }) => {
           const completion = requirementCompletions.find((item) => item.requirementId === id);
           const isCompleted = !!completion;
 
@@ -80,6 +84,7 @@ export const UsersOnProgramsStore = signalStore(
             actionInstructions,
             dueAt,
             dueLabel: dueAt ? formatDate(dueAt, 'MMM d, y', locale) : null,
+            month,
             isActionRequirement: !!actionInstructions?.trim(),
             canComplete: true,
             status: isCompleted ? 'COMPLETED' : 'TODO',
@@ -259,21 +264,24 @@ export const UsersOnProgramsStore = signalStore(
       ),
       getUsers: rxMethod<void>(
         pipe(
-          switchMap(() =>
-            http.get<UsersOnProgramsWithName[]>(`${BASE_URL}${'/program/' + store.programId()}`).pipe(
+          switchMap(() => {
+            patchState(store, { users: [], usersLoading: true, usersLoadFailed: false });
+            return http.get<UsersOnProgramsWithName[]>(`${BASE_URL}${'/program/' + store.programId()}`).pipe(
               tapResponse({
                 next: (users) => {
                   patchState(store, (state) => ({ ...state, users }));
                 },
                 error: () => {
+                  patchState(store, { usersLoadFailed: true });
                   snackBar.open('There was an error retreiving users', undefined, {
                     panelClass: 'error',
                     duration: 5000,
                   });
                 },
+                finalize: () => patchState(store, { usersLoading: false }),
               }),
-            ),
-          ),
+            );
+          }),
         ),
       ),
       patchUser: rxMethod<Partial<UsersOnPrograms>>(
@@ -337,6 +345,29 @@ export const UsersOnProgramsStore = signalStore(
                   },
                 }),
               ),
+          ),
+        ),
+      ),
+      enrollParticipant: rxMethod<string>(
+        pipe(
+          mergeMap((userId) =>
+            http.post<UsersOnProgramsWithName>(`${BASE_URL}`, { userId, programId: store.programId() }).pipe(
+              tapResponse({
+                next: (added) => {
+                  patchState(store, (state) => ({ users: [...state.users, added] }));
+                  snackBar.open(`${added.firstName} ${added.lastName} has been added to the program.`, undefined, {
+                    panelClass: 'success',
+                  });
+                },
+                error: (resp: HttpErrorResponse) =>
+                  snackBar.open(
+                    (resp.status < 500 && resp.error?.message?.[0]) ||
+                      'We could not add that participant. Please try again.',
+                    undefined,
+                    { panelClass: 'error' },
+                  ),
+              }),
+            ),
           ),
         ),
       ),

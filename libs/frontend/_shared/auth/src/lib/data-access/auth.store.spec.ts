@@ -251,7 +251,7 @@ describe('AuthStore managed sessions', () => {
       await complete;
 
       expect(store.user()?.id).toBe(user.id);
-      expect(router.navigateByUrl).toHaveBeenCalledWith('/program-profiles/program-1/savings');
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/program-profiles/program-1/progress');
     } finally {
       window.history.replaceState({}, '', originalUrl);
     }

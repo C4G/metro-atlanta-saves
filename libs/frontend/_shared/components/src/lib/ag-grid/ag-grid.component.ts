@@ -4,9 +4,11 @@ import { type ColDef } from 'ag-grid-community';
 import { ThemeService } from '@mas/frontend-shared-data-access';
 import { AgGridAngular } from 'ag-grid-angular';
 
+import { SpinnerComponent } from '../loader/spinner.component';
+
 @Component({
   selector: 'mas-ag-grid',
-  imports: [AgGridAngular],
+  imports: [SpinnerComponent, AgGridAngular],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block min-h-96',
@@ -23,7 +25,10 @@ import { AgGridAngular } from 'ag-grid-angular';
       />
     } @else {
       <div class="flex items-center justify-center h-full min-h-96">
-        <p>Loading table...</p>
+        <p class="flex items-center gap-2" role="status">
+          <mas-spinner class="text-brand" />
+          <span class="sr-only">Loading table</span>
+        </p>
       </div>
     }
   `,
