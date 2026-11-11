@@ -5,6 +5,7 @@ export * from './ag-grid';
 export * from './confirm-dialog';
 export * from './edit-profile';
 export * from './mimic-user-modal/mimic-user-modal.component';
+export * from './mimic-user-modal/mimic-ring.component';
 export * from './view-dynamic-image';
 export * from './searchable-dropdown';
 export * from './document-dropzone';

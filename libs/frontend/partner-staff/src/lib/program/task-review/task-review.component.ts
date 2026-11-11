@@ -129,7 +129,7 @@ import { SpinnerComponent } from '@mas/frontend-shared-components';
                   <p class="mb-2 text-xs font-medium text-ink-subtle">Participant</p>
                   <a
                     [routerLink]="['/partner-staff/programs', id(), 'users', row.participant.id]"
-                    class="rounded font-semibold text-brand-strong hover:underline focus:outline-none focus:ring-2 focus:ring-brand"
+                    class="rounded-lg font-semibold text-brand-strong hover:underline focus:outline-none focus:ring-2 focus:ring-brand"
                   >
                     {{ row.participant.firstName }} {{ row.participant.lastName }}
                   </a>
@@ -140,7 +140,7 @@ import { SpinnerComponent } from '@mas/frontend-shared-components';
                   <a
                     routerLink="../requirements"
                     [fragment]="row.requirement.id"
-                    class="rounded text-sm font-semibold hover:text-brand-strong hover:underline focus:outline-none focus:ring-2 focus:ring-brand"
+                    class="rounded-lg text-sm font-semibold hover:text-brand-strong hover:underline focus:outline-none focus:ring-2 focus:ring-brand"
                   >
                     {{ row.requirement.name }}
                   </a>

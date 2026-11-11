@@ -55,9 +55,9 @@ const STATUS_BAR: Record<ParticipantStatus, string> = {
               <div
                 class="animate-pulse rounded-2xl border border-outline bg-surface-raised motion-reduce:animate-none space-y-2.5 p-4"
               >
-                <span class="mx-auto block h-3 w-2/3 rounded-md bg-outline/50"></span>
-                <span class="mx-auto block h-7 w-1/2 rounded-md bg-outline/50"></span>
-                <span class="mx-auto block h-3 w-3/4 rounded-md bg-outline/50"></span>
+                <span class="mx-auto block h-3 w-2/3 rounded-lg bg-outline/50"></span>
+                <span class="mx-auto block h-7 w-1/2 rounded-lg bg-outline/50"></span>
+                <span class="mx-auto block h-3 w-3/4 rounded-lg bg-outline/50"></span>
               </div>
             }
           </div>
@@ -65,7 +65,7 @@ const STATUS_BAR: Record<ParticipantStatus, string> = {
             <div
               class="animate-pulse rounded-2xl border border-outline bg-surface-raised motion-reduce:animate-none p-5"
             >
-              <span class="block h-5 w-1/3 rounded-md bg-outline/50"></span>
+              <span class="block h-5 w-1/3 rounded-lg bg-outline/50"></span>
               <div class="mt-5 flex h-48 items-end gap-1.5">
                 @for (bar of skeletonBars; track $index) {
                   <span class="flex-1 rounded-t-md bg-outline/50" [style.height.%]="bar"></span>
@@ -75,10 +75,10 @@ const STATUS_BAR: Record<ParticipantStatus, string> = {
             <div
               class="animate-pulse rounded-2xl border border-outline bg-surface-raised motion-reduce:animate-none space-y-3 p-5"
             >
-              <span class="block h-5 w-1/2 rounded-md bg-outline/50"></span>
+              <span class="block h-5 w-1/2 rounded-lg bg-outline/50"></span>
               <span class="block h-3 rounded-full bg-outline/50"></span>
               @for (row of [1, 2, 3]; track row) {
-                <span class="block h-4 rounded-md bg-outline/50"></span>
+                <span class="block h-4 rounded-lg bg-outline/50"></span>
               }
               <span class="block h-12 rounded-xl bg-outline/50"></span>
             </div>
@@ -88,12 +88,12 @@ const STATUS_BAR: Record<ParticipantStatus, string> = {
               <div
                 class="animate-pulse rounded-2xl border border-outline bg-surface-raised motion-reduce:animate-none space-y-3 p-5"
               >
-                <span class="block h-5 w-2/5 rounded-md bg-outline/50"></span>
+                <span class="block h-5 w-2/5 rounded-lg bg-outline/50"></span>
                 @for (row of [1, 2, 3, 4, 5]; track row) {
                   <div class="flex items-center gap-3">
                     <span class="h-8 w-8 shrink-0 rounded-full bg-outline/50"></span>
-                    <span class="h-4 flex-1 rounded-md bg-outline/50"></span>
-                    <span class="h-4 w-14 rounded-md bg-outline/50"></span>
+                    <span class="h-4 flex-1 rounded-lg bg-outline/50"></span>
+                    <span class="h-4 w-14 rounded-lg bg-outline/50"></span>
                   </div>
                 }
               </div>
@@ -103,9 +103,9 @@ const STATUS_BAR: Record<ParticipantStatus, string> = {
             aria-hidden="true"
             class="animate-pulse rounded-2xl border border-outline bg-surface-raised motion-reduce:animate-none space-y-3 p-5"
           >
-            <span class="block h-5 w-1/4 rounded-md bg-outline/50"></span>
+            <span class="block h-5 w-1/4 rounded-lg bg-outline/50"></span>
             @for (row of [1, 2, 3, 4, 5, 6]; track row) {
-              <span class="block h-8 rounded-md bg-outline/50"></span>
+              <span class="block h-8 rounded-lg bg-outline/50"></span>
             }
           </div>
         </div>
@@ -152,7 +152,7 @@ const STATUS_BAR: Record<ParticipantStatus, string> = {
               <ol class="mt-5 flex h-48 items-end gap-1.5" aria-label="Savings for each month">
                 @for (bar of savings.bars; track bar.number) {
                   <li class="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1">
-                    <span class="truncate text-[0.6875rem] font-bold tabular-nums text-ink-muted" aria-hidden="true">
+                    <span class="truncate text-xs font-bold tabular-nums text-ink-muted" aria-hidden="true">
                       {{ bar.label }}
                     </span>
                     <span
@@ -166,7 +166,7 @@ const STATUS_BAR: Record<ParticipantStatus, string> = {
                       [class.border-dashed]="bar.value === null"
                       [class.border-outline]="bar.value === null"
                     ></span>
-                    <span class="text-[0.6875rem] font-bold text-ink-subtle" aria-hidden="true">M{{ bar.number }}</span>
+                    <span class="text-xs font-bold text-ink-subtle" aria-hidden="true">M{{ bar.number }}</span>
                   </li>
                 }
               </ol>

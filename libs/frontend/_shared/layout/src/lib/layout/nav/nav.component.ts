@@ -18,7 +18,7 @@ import { filter } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { MainNavStore, ProgramsStore, ThemeService } from '@mas/frontend-shared-data-access';
-import { MimicUserModalComponent } from '@mas/frontend-shared-components';
+import { MimicRingComponent, MimicUserModalComponent } from '@mas/frontend-shared-components';
 import { PushNotificationService } from '../../services/push-notification.service';
 
 export const ACCOUNT_MENU_POSITIONS: ConnectedPosition[] = [
@@ -28,7 +28,16 @@ export const ACCOUNT_MENU_POSITIONS: ConnectedPosition[] = [
 
 @Component({
   selector: 'mas-nav',
-  imports: [CdkMenu, CdkMenuItem, CdkMenuItemCheckbox, CdkMenuTrigger, MatIcon, RouterLink, RouterLinkActive],
+  imports: [
+    CdkMenu,
+    CdkMenuItem,
+    CdkMenuItemCheckbox,
+    CdkMenuTrigger,
+    MatIcon,
+    MimicRingComponent,
+    RouterLink,
+    RouterLinkActive,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav
@@ -100,13 +109,21 @@ export const ACCOUNT_MENU_POSITIONS: ConnectedPosition[] = [
               [cdkMenuPosition]="accountMenuPositions"
               [attr.aria-label]="'Account menu, ' + fullName()"
             >
-              <span
-                class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
-                [class.ring-2]="authStore.isMimicking()"
-                [class.ring-danger]="authStore.isMimicking()"
-              >
-                {{ authStore.initials() }}
-              </span>
+              @if (authStore.isMimicking()) {
+                <mas-mimic-ring>
+                  <span
+                    class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+                  >
+                    {{ authStore.initials() }}
+                  </span>
+                </mas-mimic-ring>
+              } @else {
+                <span
+                  class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-strong text-xs font-bold text-brand-on"
+                >
+                  {{ authStore.initials() }}
+                </span>
+              }
               <span class="hidden max-w-40 truncate sm:inline">{{ fullName() }}</span>
               <mat-icon
                 class="mas-icon-sm transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none"
@@ -436,8 +453,14 @@ export class NavComponent {
   }
 
   openMimicUserModal() {
+    const phone = this.notificationsSupported && window.matchMedia('(max-width: 767px)').matches;
     this.dialog.open(MimicUserModalComponent, {
-      panelClass: 'w-96',
+      panelClass: 'mas-card-dialog',
+      backdropClass: 'mas-card-backdrop',
+      width: '32.5rem',
+      maxWidth: 'calc(100vw - 1rem)',
+      position: phone ? { top: '4.5rem' } : undefined,
+      ariaLabelledBy: 'mimic-user-heading',
     });
   }
 }

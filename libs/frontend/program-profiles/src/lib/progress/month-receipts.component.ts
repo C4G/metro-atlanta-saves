@@ -1,186 +1,150 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { AuthStore } from '@mas/frontend-shared-auth';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { ReceiptPreviewComponent, SpinnerComponent } from '@mas/frontend-shared-components';
 import { MonthReceiptsStore } from '@mas/frontend-shared-data-access';
 
 @Component({
   selector: 'mas-month-receipts',
-  imports: [SpinnerComponent],
+  imports: [MatIcon, SpinnerComponent],
   providers: [MonthReceiptsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="mt-5 border-t border-outline pt-4" [attr.aria-label]="monthName() + ' receipts'">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <h4 class="text-sm font-semibold">{{ archive() ? 'Earlier receipts' : 'Receipts' }}</h4>
+    <section class="flex flex-col gap-3" [attr.aria-label]="monthName() + ' receipts'">
+      <div class="flex items-baseline justify-between gap-3">
+        <h3 class="text-sm font-bold">{{ archive() ? 'Earlier receipts' : 'Receipts' }}</h3>
         @if (store.receipts().length) {
-          <span
-            role="status"
-            class="inline-flex items-center gap-1.5 rounded-lg bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-strong"
-          >
-            <svg
-              aria-hidden="true"
-              class="h-4 w-4 shrink-0"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m8 12 6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l9-9" />
-            </svg>
-            {{ store.receipts().length === 1 ? 'Receipt attached' : store.receipts().length + ' receipts attached' }}
+          <span role="status" class="text-xs tabular-nums text-ink-muted">
+            {{ store.receipts().length === 1 ? '1 file' : store.receipts().length + ' files' }}
           </span>
         }
       </div>
-      <p class="mt-1 text-xs leading-5 text-ink-muted">
-        {{
-          archive()
-            ? 'Previously uploaded receipts without a month association.'
-            : store.receipts().length
-              ? 'Select a receipt to preview it.'
-              : 'Attach supporting documents for ' + monthName() + '.'
-        }}
-      </p>
+      @if (archive()) {
+        <p class="text-xs leading-5 text-ink-muted">Previously uploaded receipts without a month association.</p>
+      }
       @if (store.loading()) {
-        <p role="status" class="mt-3 text-xs text-ink-muted flex items-center gap-2">
+        <p role="status" class="flex items-center gap-2 text-xs text-ink-muted">
           <mas-spinner class="text-brand" />
           <span class="sr-only">Loading receipts</span>
         </p>
       }
       @if (store.loadFailed()) {
-        <p role="alert" class="mt-3 text-xs text-danger">Receipts could not be loaded.</p>
+        <p role="alert" class="text-xs text-danger">Receipts could not be loaded.</p>
         <button
           type="button"
           (click)="reload()"
-          class="min-h-11 rounded-lg px-2 text-sm text-brand-strong underline focus:outline-none focus:ring-2 focus:ring-brand"
+          class="min-h-10 self-start rounded-xl border border-brand/25 bg-surface-raised/70 px-3 text-xs font-bold text-ink transition-colors hover:border-brand/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
         >
           Try again
         </button>
       }
-      <ul class="space-y-2" [class.mt-3]="store.receipts().length > 0">
-        @for (receipt of store.receipts(); track receipt.id) {
-          <li class="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2">
-            <button
-              type="button"
-              (click)="view(receipt.id, receipt.name)"
-              [attr.aria-label]="'View ' + receipt.name"
-              class="flex h-16 min-w-0 items-center gap-3 rounded-xl border border-outline bg-surface-raised px-3 text-left hover:bg-brand-soft/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
-            >
-              <span
-                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand-strong"
+      @if (store.receipts().length) {
+        <ul class="flex flex-col gap-2">
+          @for (receipt of store.receipts(); track receipt.id) {
+            <li class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2">
+              <button
+                type="button"
+                (click)="view(receipt.id, receipt.name)"
+                [attr.aria-label]="'View ' + receipt.name"
+                class="flex min-h-[3.25rem] min-w-0 items-center gap-3 rounded-xl border border-brand/25 bg-surface-raised/70 py-1.5 pl-1.5 pr-3 text-left transition-colors hover:border-brand/70 hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               >
-                <svg
+                <span
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-soft/70 text-brand-strong"
                   aria-hidden="true"
-                  class="h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.75"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
                 >
-                  <path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 13h6M9 17h4" />
-                </svg>
-              </span>
-              <span class="min-w-0 flex-1">
-                <span class="block truncate text-sm font-semibold text-ink" [title]="receipt.name">
-                  {{ receipt.name }}
+                  <mat-icon class="mas-icon-md">receipt_long</mat-icon>
                 </span>
-                <span class="mt-1 block text-xs font-medium text-brand-strong">View receipt</span>
-              </span>
-            </button>
-            @if (!receipt.imageVerified || auth.isAdmin()) {
-              @if (confirmingId() === receipt.id) {
-                <div class="col-span-2 mt-2 rounded-xl border border-outline bg-surface p-3">
-                  <p class="text-xs leading-5 text-ink-muted">
-                    Delete this receipt? This permanently removes the file. Your saved progress will not change.
-                  </p>
-                  <div class="mt-2 flex flex-wrap justify-end gap-2">
-                    <button
-                      type="button"
-                      (click)="confirmingId.set(null)"
-                      class="min-h-11 rounded-lg px-3 text-xs font-semibold text-ink-muted hover:bg-brand-soft/20 focus:outline-none focus:ring-2 focus:ring-brand"
-                    >
-                      Keep receipt
-                    </button>
-                    <button
-                      type="button"
-                      (click)="remove(receipt.id)"
-                      class="min-h-11 rounded-lg border border-danger/30 px-3 text-xs font-semibold text-danger hover:bg-danger/10 focus:outline-none focus:ring-2 focus:ring-brand"
-                    >
-                      Delete receipt
-                    </button>
+                <span class="min-w-0 flex-1">
+                  <span class="block truncate text-sm font-bold text-ink" [title]="receipt.name">
+                    {{ receipt.name }}
+                  </span>
+                  <span class="block text-xs text-ink-muted">
+                    {{ receipt.imageVerified ? 'Verified' : 'View receipt' }}
+                  </span>
+                </span>
+              </button>
+              @if (!receipt.imageVerified || auth.isAdmin()) {
+                @if (confirmingId() === receipt.id) {
+                  <div class="col-span-2 mt-2 rounded-xl border border-outline/65 bg-surface/60 p-3">
+                    <p class="text-xs leading-5 text-ink-muted">
+                      Delete this receipt? This permanently removes the file. Your saved progress will not change.
+                    </p>
+                    <div class="mt-2 flex flex-wrap justify-end gap-2">
+                      <button
+                        type="button"
+                        (click)="confirmingId.set(null)"
+                        class="min-h-10 rounded-xl border border-brand/25 bg-surface-raised/70 px-3 text-xs font-bold text-ink transition-colors hover:border-brand/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                      >
+                        Keep receipt
+                      </button>
+                      <button
+                        type="button"
+                        (click)="remove(receipt.id)"
+                        class="min-h-10 rounded-xl border border-danger/40 px-3 text-xs font-bold text-danger transition-colors hover:border-danger/70 hover:bg-danger/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                      >
+                        Delete receipt
+                      </button>
+                    </div>
                   </div>
-                </div>
-              } @else {
-                <button
-                  type="button"
-                  (click)="confirmingId.set(receipt.id)"
-                  [disabled]="!!store.deletingId()"
-                  [attr.aria-label]="'Delete ' + receipt.name"
-                  [title]="'Delete ' + receipt.name"
-                  class="inline-flex h-16 w-11 items-center justify-center rounded-xl border border-outline text-ink-muted hover:bg-danger/10 hover:text-danger focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand disabled:opacity-50"
-                >
-                  @if (store.deletingId() === receipt.id) {
-                    <mas-spinner />
-                  } @else {
-                    <svg
-                      aria-hidden="true"
-                      class="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.75"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" />
-                    </svg>
-                  }
-                </button>
+                } @else {
+                  <button
+                    type="button"
+                    (click)="confirmingId.set(receipt.id)"
+                    [disabled]="!!store.deletingId()"
+                    [attr.aria-label]="'Delete ' + receipt.name"
+                    [title]="'Delete ' + receipt.name"
+                    class="inline-flex min-h-[3.25rem] w-11 items-center justify-center rounded-xl border border-brand/25 bg-surface-raised/70 text-ink-muted transition-colors hover:border-danger/45 hover:text-danger focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+                  >
+                    @if (store.deletingId() === receipt.id) {
+                      <mas-spinner />
+                    } @else {
+                      <mat-icon class="mas-icon-md" aria-hidden="true">delete</mat-icon>
+                    }
+                  </button>
+                }
               }
-            }
-          </li>
-        }
-      </ul>
+            </li>
+          }
+        </ul>
+      }
       @if (!archive() && !store.loading() && !store.loadFailed()) {
-        <input
-          #files
-          type="file"
-          class="sr-only"
-          tabindex="-1"
-          accept=".jpg,.jpeg,.png,.webp,.pdf"
-          multiple
-          (change)="upload(files)"
-        />
-        <button
-          type="button"
-          [disabled]="store.uploading() || !context()"
-          [attr.aria-busy]="store.uploading()"
-          (click)="files.click()"
-          class="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-outline px-3 text-sm font-semibold text-brand-strong hover:bg-brand-soft/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand disabled:opacity-50"
-        >
-          <span class="relative inline-flex items-center justify-center">
-            <span [class.invisible]="store.uploading()">
-              {{ store.receipts().length ? 'Add more receipts' : 'Upload receipts' }}
+        <div class="flex flex-col items-center gap-1 rounded-xl border border-dashed border-brand/45 p-3 text-center">
+          <input
+            #files
+            type="file"
+            class="sr-only"
+            tabindex="-1"
+            accept=".jpg,.jpeg,.png,.webp,.pdf"
+            multiple
+            (change)="upload(files)"
+          />
+          <button
+            type="button"
+            [disabled]="store.uploading() || !context()"
+            [attr.aria-busy]="store.uploading()"
+            (click)="files.click()"
+            class="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-brand/25 bg-surface-raised/70 px-3 text-sm font-bold text-ink transition-colors hover:border-brand/70 hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+          >
+            <span class="relative inline-flex items-center justify-center gap-2">
+              <span class="inline-flex items-center gap-2" [class.invisible]="store.uploading()">
+                <mat-icon class="mas-icon-sm" aria-hidden="true">upload</mat-icon>
+                {{ store.receipts().length ? 'Add more receipts' : 'Upload receipts' }}
+              </span>
+              @if (store.uploading()) {
+                <mas-spinner class="absolute" />
+                <span class="sr-only">Uploading receipts</span>
+              }
             </span>
-            @if (store.uploading()) {
-              <mas-spinner class="absolute" />
-              <span class="sr-only">Uploading receipts</span>
-            }
-          </span>
-        </button>
-        <p class="mt-2 text-xs leading-5 text-ink-subtle">
-          Choose one or more files · JPG, PNG, WebP, or PDF · Up to 5 MB each
-        </p>
+          </button>
+          <p class="text-xs leading-5 text-ink-muted">JPG, PNG, WebP or PDF · up to 5 MB each</p>
+        </div>
       }
       @if (store.error()) {
-        <p role="alert" class="mt-2 text-xs text-danger">{{ store.error() }}</p>
+        <p role="alert" class="text-xs text-danger">{{ store.error() }}</p>
       }
       @if (store.notice()) {
-        <p role="status" class="mt-2 text-xs text-brand-strong">{{ store.notice() }}</p>
+        <p role="status" class="text-xs text-brand-strong">{{ store.notice() }}</p>
       }
     </section>
   `,

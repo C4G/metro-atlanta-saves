@@ -25,6 +25,7 @@ describe('ProgressComponent', () => {
 
   const setup = () => {
     const start = new Date();
+    start.setDate(1);
     start.setMonth(start.getMonth() - 1);
     TestBed.configureTestingModule({
       imports: [ProgressComponent],
@@ -72,7 +73,8 @@ describe('ProgressComponent', () => {
 
   it('opens the current month with its tasks and leaves out tasks without a month', () => {
     const { element } = setup();
-    expect(element.querySelector('[aria-current="step"]')?.textContent).toContain('Month 2');
+    expect(element.querySelector('ol [aria-current="step"]')?.textContent).toContain('Month 2');
+    expect(element.querySelector('[role="status"][aria-live="polite"]')?.textContent).toContain('This month');
     const month = element.querySelector('[aria-labelledby="month-heading-2"]');
     expect(month?.textContent).toContain('This month');
     expect(Array.from(month?.querySelectorAll('ul label') ?? []).map((item) => item.id)).toEqual(['b', 'c']);
@@ -96,15 +98,18 @@ describe('ProgressComponent', () => {
     expect(element.querySelector<HTMLButtonElement>('[aria-label="Previous month"]')?.disabled).toBe(true);
 
     const current = Array.from(element.querySelectorAll('button')).find((item) =>
-      item.textContent?.includes('Current month'),
+      item.textContent?.includes('This month'),
     );
     expect(current?.disabled).toBe(false);
     current?.click();
     fixture.detectChanges();
     expect(element.querySelector('#month-heading-2')).not.toBeNull();
     expect(current?.disabled).toBe(true);
-    expect(element.querySelector('[aria-label="Show earlier months"]')).not.toBeNull();
-    expect(element.querySelector('[aria-label="Show later months"]')).not.toBeNull();
+    const dots = element.querySelectorAll<HTMLButtonElement>('[aria-label="Jump to a month"] button');
+    expect(dots.length).toBe(3);
+    dots[2].click();
+    fixture.detectChanges();
+    expect(element.querySelector('#month-heading-3')).not.toBeNull();
 
     element.querySelector<HTMLButtonElement>('[aria-label="Previous month"]')?.click();
     fixture.detectChanges();

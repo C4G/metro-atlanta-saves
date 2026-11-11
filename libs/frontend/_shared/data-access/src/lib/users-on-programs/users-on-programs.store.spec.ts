@@ -3,7 +3,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { calculateCreditScoreChange, UsersOnProgramsStore } from './users-on-programs.store';
+import {
+  calculateCreditScoreChange,
+  matchesParticipantQuery,
+  participantInitials,
+  UsersOnProgramsStore,
+} from './users-on-programs.store';
 
 describe('UsersOnProgramsStore task completion', () => {
   it.each(['Attend a meetup.', null])(
@@ -88,5 +93,55 @@ describe('calculateCreditScoreChange', () => {
         { name: 'Month 3', creditScore: 640, createdAt: new Date('2026-03-01') },
       ]),
     ).toBe(30);
+  });
+});
+
+describe('participant search', () => {
+  const jordan = { firstName: 'Jordan', lastName: 'Okafor', bio: 'Saving for a first car' };
+
+  it('builds initials from the first and last name', () => {
+    expect(participantInitials({ firstName: ' jordan', lastName: 'okafor' })).toBe('JO');
+  });
+
+  it.each([
+    ['', true],
+    ['  okaf ', true],
+    ['FIRST CAR', true],
+    ['homebuyer', false],
+  ])('matches %p against the name and bio: %p', (query, expected) => {
+    expect(matchesParticipantQuery(jordan, query)).toBe(expected);
+  });
+
+  it('treats a missing bio as empty', () => {
+    expect(matchesParticipantQuery({ ...jordan, bio: null }, 'car')).toBe(false);
+  });
+
+  it('filters the roster and adds initials as the query changes', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        UsersOnProgramsStore,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: MatDialog, useValue: {} },
+        { provide: MatSnackBar, useValue: { open: jest.fn() } },
+      ],
+    });
+    const store = TestBed.inject(UsersOnProgramsStore);
+    const http = TestBed.inject(HttpTestingController);
+    store.setProgramId('program-1');
+    store.getUsers();
+    http
+      .expectOne((request) => request.url.includes('/api/users-on-programs'))
+      .flush([
+        { userId: 'u1', firstName: 'Jordan', lastName: 'Okafor', bio: 'Saving for a first car' },
+        { userId: 'u2', firstName: 'Rosa', lastName: 'Patel', bio: null },
+      ]);
+
+    expect(store.visibleParticipants().map(({ initials }) => initials)).toEqual(['JO', 'RP']);
+
+    store.setParticipantQuery('rosa');
+
+    expect(store.visibleParticipants().map(({ userId }) => userId)).toEqual(['u2']);
+    TestBed.resetTestingModule();
   });
 });
