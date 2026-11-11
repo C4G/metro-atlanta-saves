@@ -14,56 +14,80 @@ import { RequirementsCalendarComponent } from './requirements-calendar.component
   template: `
     <div class="bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
       <div class="mx-auto max-w-7xl space-y-8">
-        <header class="rounded-3xl border border-outline bg-surface-raised px-6 py-8 sm:px-10 sm:py-10">
-          <div class="max-w-3xl">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-strong">Your dashboard</p>
-            <h1 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              {{ welcomeHeading() }}
-            </h1>
-            <p class="mt-3 max-w-3xl text-pretty text-sm leading-6 text-ink-muted">
-              Continue your program, connect with your community, or find practical tools for your next step.
-            </p>
+        <header
+          class="relative overflow-hidden rounded-3xl border border-outline bg-surface-subtle px-6 py-8 sm:px-10 sm:py-10"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[22px] border-brand/10"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -bottom-24 right-20 h-44 w-44 rounded-full border border-brand/15"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute right-14 top-16 h-3 w-3 rounded-full bg-brand/35 sm:right-28"
+          ></span>
+          <div class="relative flex max-w-3xl items-start gap-4">
+            <span
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong"
+              aria-hidden="true"
+            >
+              <mat-icon>wb_sunny</mat-icon>
+            </span>
+            <div>
+              <p class="text-sm font-semibold text-brand-strong">Your dashboard</p>
+              <h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+                {{ welcomeHeading() }}
+              </h1>
+              <p class="mt-3 max-w-2xl text-pretty text-sm leading-6 text-ink-muted">
+                Continue your program, connect with your community, or find practical tools for your next step.
+              </p>
+            </div>
           </div>
         </header>
 
-        <section class="grid gap-3 sm:grid-cols-3" aria-label="Dashboard overview">
-          <article class="rounded-2xl border border-outline bg-surface px-5 py-4 shadow-sm">
-            <div class="flex items-center justify-between gap-4">
-              <p class="text-xs font-semibold text-ink-muted">My programs</p>
-              <span
-                class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-soft/70 text-brand-strong"
-                aria-hidden="true"
-              >
-                <mat-icon>school</mat-icon>
-              </span>
-            </div>
-            <p class="mt-3 text-2xl font-bold text-ink">{{ programsStore.usersPrograms().length }}</p>
-          </article>
-          <article class="rounded-2xl border border-outline bg-surface px-5 py-4 shadow-sm">
-            <div class="flex items-center justify-between gap-4">
-              <p class="text-xs font-semibold text-ink-muted">Discussion boards</p>
-              <span
-                class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-soft/70 text-brand-strong"
-                aria-hidden="true"
-              >
-                <mat-icon>forum</mat-icon>
-              </span>
-            </div>
-            <p class="mt-3 text-2xl font-bold text-ink">{{ discussionBoardsStore.boards().length }}</p>
-          </article>
-          <article class="rounded-2xl border border-outline bg-surface px-5 py-4 shadow-sm">
-            <div class="flex items-center justify-between gap-4">
-              <p class="text-xs font-semibold text-ink-muted">Available programs</p>
-              <span
-                class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-soft/70 text-brand-strong"
-                aria-hidden="true"
-              >
-                <mat-icon>explore</mat-icon>
-              </span>
-            </div>
-            <p class="mt-3 text-2xl font-bold text-ink">{{ availablePrograms().length }}</p>
-          </article>
-        </section>
+        @if (authStore.isStaff()) {
+          <section class="grid gap-3 sm:grid-cols-3" aria-label="Dashboard overview">
+            <article class="rounded-2xl border border-outline bg-surface px-5 py-4 shadow-sm">
+              <div class="flex items-center justify-between gap-4">
+                <p class="text-xs font-semibold text-ink-muted">My programs</p>
+                <span
+                  class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-soft/70 text-brand-strong"
+                  aria-hidden="true"
+                >
+                  <mat-icon>school</mat-icon>
+                </span>
+              </div>
+              <p class="mt-3 text-2xl font-bold text-ink">{{ programsStore.usersPrograms().length }}</p>
+            </article>
+            <article class="rounded-2xl border border-outline bg-surface px-5 py-4 shadow-sm">
+              <div class="flex items-center justify-between gap-4">
+                <p class="text-xs font-semibold text-ink-muted">Discussion boards</p>
+                <span
+                  class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-soft/70 text-brand-strong"
+                  aria-hidden="true"
+                >
+                  <mat-icon>forum</mat-icon>
+                </span>
+              </div>
+              <p class="mt-3 text-2xl font-bold text-ink">{{ discussionBoardsStore.boards().length }}</p>
+            </article>
+            <article class="rounded-2xl border border-outline bg-surface px-5 py-4 shadow-sm">
+              <div class="flex items-center justify-between gap-4">
+                <p class="text-xs font-semibold text-ink-muted">Available programs</p>
+                <span
+                  class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-soft/70 text-brand-strong"
+                  aria-hidden="true"
+                >
+                  <mat-icon>explore</mat-icon>
+                </span>
+              </div>
+              <p class="mt-3 text-2xl font-bold text-ink">{{ availablePrograms().length }}</p>
+            </article>
+          </section>
+        }
 
         <mas-requirements-calendar />
 
@@ -80,7 +104,7 @@ import { RequirementsCalendarComponent } from './requirements-calendar.component
               <div class="grid gap-4 p-5 sm:grid-cols-2">
                 @for (program of programsStore.usersPrograms(); track program.id) {
                   <article
-                    class="group flex min-h-64 flex-col rounded-2xl border border-outline bg-surface-raised p-5 transition-colors hover:border-brand hover:bg-brand-soft/35 focus-within:border-brand focus-within:bg-brand-soft/35"
+                    class="group relative flex min-h-64 flex-col rounded-2xl border border-outline bg-surface-raised p-5 transition-colors hover:border-brand hover:bg-brand-soft/35 focus-within:border-brand focus-within:bg-brand-soft/35"
                   >
                     <div class="flex items-start justify-between gap-3">
                       <span class="rounded-full bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand-strong">
@@ -99,10 +123,15 @@ import { RequirementsCalendarComponent } from './requirements-calendar.component
                       [innerHTML]="program.description || 'Open your program to view progress and next steps.'"
                     ></div>
                     <a
-                      class="mt-auto inline-flex min-h-10 items-center justify-center rounded-xl bg-brand-strong px-4 py-2 text-xs font-bold text-brand-on transition-colors hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface-raised"
-                      [routerLink]="['/program-profiles', program.id]"
+                      class="mt-auto inline-flex min-h-10 items-center justify-center rounded-xl bg-brand-strong px-4 py-2 text-xs font-bold text-brand-on transition-colors after:absolute after:inset-0 after:rounded-2xl after:content-[''] hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface-raised"
+                      [routerLink]="
+                        authStore.isStaff()
+                          ? ['/partner-staff/programs', program.id, 'progress']
+                          : ['/program-profiles', program.id]
+                      "
+                      [attr.aria-label]="'Open ' + program.name"
                     >
-                      Open program
+                      {{ authStore.isStaff() ? 'Open Program' : 'Open program' }}
                     </a>
                   </article>
                 }

@@ -1,21 +1,10 @@
 import { formatDate } from '@angular/common';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, computed, inject, LOCALE_ID, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { ParticipantRequirementsStore } from '@mas/frontend-shared-data-access';
+import { CalendarTask, ParticipantRequirementsStore } from '@mas/frontend-shared-data-access';
 import { RouterLink } from '@angular/router';
-import { ParticipantRequirement } from '@mas/models';
-
-type CalendarTask = {
-  requirement: ParticipantRequirement;
-  id: string;
-  title: string;
-  program: string;
-  programId: string;
-  dueAt: string;
-  dueLabel: string;
-  isCompleted: boolean;
-  canComplete: boolean;
-};
 
 type CalendarDay = {
   day: number;
@@ -30,10 +19,17 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 const toIsoDate = (date: Date): string => {
   return formatDate(date, 'yyyy-MM-dd', 'en-US');
 };
+const PROGRAM_MENU_POSITIONS: ConnectedPosition[] = [
+  { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 8 },
+  { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 8 },
+  { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom', offsetY: -8 },
+];
+
+import { SpinnerComponent } from '@mas/frontend-shared-components';
 
 @Component({
   selector: 'mas-requirements-calendar',
-  imports: [MatIcon, RouterLink],
+  imports: [SpinnerComponent, CdkConnectedOverlay, CdkOverlayOrigin, CdkTrapFocus, MatIcon, RouterLink],
   providers: [ParticipantRequirementsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -44,30 +40,201 @@ const toIsoDate = (date: Date): string => {
           <h2 class="mt-1 text-xl font-bold text-ink">Calendar</h2>
           <p class="mt-1 text-sm text-ink-muted">Select a day to see what is due.</p>
         </div>
-        <div class="flex items-center gap-2" aria-label="Calendar navigation">
+        <div class="flex flex-wrap items-center gap-2">
           <button
+            #programOrigin="cdkOverlayOrigin"
+            cdkOverlayOrigin
             type="button"
-            class="flex h-10 w-10 items-center justify-center rounded-xl border border-outline text-ink transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
-            aria-label="Previous month"
-            (click)="changeMonth(-1)"
+            class="flex min-h-10 items-center gap-2 rounded-xl border px-3 text-xs font-bold transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:cursor-default disabled:opacity-60"
+            [class.border-outline]="requirementsStore.allProgramsVisible()"
+            [class.text-ink]="requirementsStore.allProgramsVisible()"
+            [class.border-brand]="!requirementsStore.allProgramsVisible()"
+            [class.bg-brand-soft]="!requirementsStore.allProgramsVisible()"
+            [class.text-brand-strong]="!requirementsStore.allProgramsVisible()"
+            aria-haspopup="dialog"
+            aria-controls="calendar-program-filter"
+            [attr.aria-expanded]="programMenuOpen()"
+            [attr.aria-label]="programFilterLabel()"
+            [disabled]="!requirementsStore.programs().length"
+            (click)="programMenuOpen.set(!programMenuOpen())"
           >
-            <mat-icon aria-hidden="true">chevron_left</mat-icon>
+            <mat-icon class="!h-[1.125rem] !w-[1.125rem] !text-[1.125rem]" aria-hidden="true">filter_list</mat-icon>
+            @if (requirementsStore.allProgramsVisible()) {
+              <span>All programs</span>
+            } @else {
+              <span>Programs</span>
+              <span
+                class="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-strong px-1.5 text-[0.6875rem] text-brand-on"
+              >
+                {{ requirementsStore.visiblePrograms().length }}
+              </span>
+            }
+            <mat-icon
+              class="!h-[1.125rem] !w-[1.125rem] !text-[1.125rem] transition-transform motion-reduce:transition-none"
+              [class.rotate-180]="programMenuOpen()"
+              aria-hidden="true"
+            >
+              expand_more
+            </mat-icon>
           </button>
-          <button
-            type="button"
-            class="min-h-10 rounded-xl border border-outline px-3 text-xs font-bold text-brand-strong transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
-            (click)="showToday()"
+          <ng-template
+            cdkConnectedOverlay
+            cdkConnectedOverlayHasBackdrop
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayOrigin]="programOrigin"
+            [cdkConnectedOverlayOpen]="programMenuOpen()"
+            [cdkConnectedOverlayPositions]="programMenuPositions"
+            (backdropClick)="closeProgramMenu()"
+            (detach)="closeProgramMenu()"
+            (overlayKeydown)="closeProgramMenuOnEscape($event)"
           >
-            Today
-          </button>
-          <button
-            type="button"
-            class="flex h-10 w-10 items-center justify-center rounded-xl border border-outline text-ink transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
-            aria-label="Next month"
-            (click)="changeMonth(1)"
-          >
-            <mat-icon aria-hidden="true">chevron_right</mat-icon>
-          </button>
+            <div
+              id="calendar-program-filter"
+              class="w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-outline bg-surface-raised text-ink shadow-xl"
+              role="dialog"
+              aria-label="Filter calendar by program"
+              cdkTrapFocus
+              cdkTrapFocusAutoCapture
+            >
+              @if (requirementsStore.programs().length > programSearchThreshold) {
+                <div class="border-b border-outline p-3">
+                  <label class="relative block">
+                    <span class="sr-only">Find a program</span>
+                    <mat-icon
+                      class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle"
+                      aria-hidden="true"
+                    >
+                      search
+                    </mat-icon>
+                    <input
+                      #programSearch
+                      cdkFocusInitial
+                      type="search"
+                      class="min-h-10 w-full rounded-xl border border-outline bg-surface py-2 pl-11 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-brand focus:ring-2 focus:ring-brand/25"
+                      placeholder="Find a program"
+                      [value]="requirementsStore.programQuery()"
+                      (input)="requirementsStore.setProgramQuery(programSearch.value)"
+                    />
+                  </label>
+                </div>
+              }
+              <div class="flex items-center justify-between gap-2 px-4 pb-1.5 pt-2.5">
+                <p
+                  id="calendar-program-list-label"
+                  class="text-xs font-bold uppercase tracking-[0.14em] text-ink-subtle"
+                >
+                  Programs
+                </p>
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    class="min-h-8 rounded-xl border border-outline px-3 text-xs font-bold text-brand-strong transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:cursor-default disabled:opacity-50 disabled:hover:border-outline disabled:hover:bg-transparent"
+                    [disabled]="requirementsStore.allProgramsVisible()"
+                    (click)="requirementsStore.showAllPrograms()"
+                  >
+                    Select all
+                  </button>
+                  <button
+                    type="button"
+                    class="min-h-8 rounded-xl border border-outline px-3 text-xs font-bold text-ink transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand disabled:cursor-default disabled:opacity-50 disabled:hover:border-outline disabled:hover:bg-transparent"
+                    [disabled]="!requirementsStore.visiblePrograms().length"
+                    (click)="requirementsStore.hideAllPrograms()"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <ul
+                class="max-h-64 space-y-1 overflow-y-auto px-2 pb-2 pt-1"
+                aria-labelledby="calendar-program-list-label"
+              >
+                @for (program of requirementsStore.matchingPrograms(); track program.id) {
+                  <li>
+                    <label
+                      class="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-transparent px-2 py-1.5 transition-colors hover:border-brand/40 hover:bg-brand-soft/40 has-[:focus-visible]:border-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-inset has-[:focus-visible]:ring-brand"
+                      [class.bg-brand-soft]="program.isVisible"
+                    >
+                      <input
+                        type="checkbox"
+                        class="sr-only"
+                        [attr.cdkFocusInitial]="
+                          $first && requirementsStore.programs().length <= programSearchThreshold ? '' : null
+                        "
+                        [checked]="program.isVisible"
+                        (change)="requirementsStore.toggleProgram(program.id)"
+                      />
+                      <span
+                        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors"
+                        [class.border-brand-strong]="program.isVisible"
+                        [class.bg-brand-strong]="program.isVisible"
+                        [class.text-brand-on]="program.isVisible"
+                        [class.border-brand]="!program.isVisible"
+                        [class.bg-surface]="!program.isVisible"
+                        aria-hidden="true"
+                      >
+                        @if (program.isVisible) {
+                          <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none">
+                            <path
+                              d="M3.25 8.25 6.5 11.5l6.25-7"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        }
+                      </span>
+                      <span class="min-w-0 flex-1">
+                        <span class="block truncate text-sm font-bold text-ink">{{ program.name }}</span>
+                        <span class="mt-0.5 block text-xs text-ink-muted">
+                          {{ program.taskCount }} {{ program.taskCount === 1 ? 'task' : 'tasks' }}
+                        </span>
+                      </span>
+                    </label>
+                  </li>
+                } @empty {
+                  <li class="px-2 py-4 text-center text-sm text-ink-muted">No programs match your search.</li>
+                }
+              </ul>
+              <div class="flex items-center justify-between gap-3 border-t border-outline bg-surface-subtle px-4 py-3">
+                <p class="text-xs text-ink-muted" aria-live="polite">
+                  Showing {{ requirementsStore.visiblePrograms().length }} of {{ requirementsStore.programs().length }}
+                </p>
+                <button
+                  type="button"
+                  class="min-h-10 rounded-xl border border-brand-strong bg-brand-strong px-4 text-xs font-bold text-brand-on transition-colors hover:border-brand hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface-subtle"
+                  (click)="closeProgramMenu()"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </ng-template>
+          <div class="flex items-center gap-2" role="group" aria-label="Calendar navigation">
+            <button
+              type="button"
+              class="flex h-10 w-10 items-center justify-center rounded-xl border border-outline text-ink transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
+              aria-label="Previous month"
+              (click)="changeMonth(-1)"
+            >
+              <mat-icon aria-hidden="true">chevron_left</mat-icon>
+            </button>
+            <button
+              type="button"
+              class="min-h-10 rounded-xl border border-outline px-3 text-xs font-bold text-brand-strong transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
+              (click)="showToday()"
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              class="flex h-10 w-10 items-center justify-center rounded-xl border border-outline text-ink transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
+              aria-label="Next month"
+              (click)="changeMonth(1)"
+            >
+              <mat-icon aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -122,7 +289,10 @@ const toIsoDate = (date: Date): string => {
           <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">Selected day</p>
           <h3 class="mt-2 text-lg font-bold text-ink">{{ selectedDayHeading() }}</h3>
           @if (requirementsStore.loading()) {
-            <p class="mt-5 text-sm text-ink-muted">Loading your calendar…</p>
+            <p class="mt-5 text-sm text-ink-muted flex items-center gap-2" role="status">
+              <mas-spinner class="text-brand" />
+              <span class="sr-only">Loading your calendar</span>
+            </p>
           } @else if (requirementsStore.loadFailed()) {
             <p class="mt-5 text-sm text-ink-muted">We could not load your calendar.</p>
             <button
@@ -141,7 +311,7 @@ const toIsoDate = (date: Date): string => {
                 >
                   <a
                     class="absolute inset-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface-subtle"
-                    [routerLink]="['/program-profiles', task.programId, 'course-progress']"
+                    [routerLink]="task.link"
                     [fragment]="task.id"
                     [attr.aria-label]="'Open ' + task.title + ' in ' + task.program"
                   ></a>
@@ -197,7 +367,13 @@ const toIsoDate = (date: Date): string => {
                       </div>
                       <h4 class="mt-1.5 text-sm font-bold leading-5 text-ink">{{ task.title }}</h4>
                       @if (!task.canComplete) {
-                        <span class="sr-only">Read-only requirement. Updated by your program team.</span>
+                        <span class="sr-only">
+                          {{
+                            task.isEnrolled
+                              ? 'Read-only requirement. Updated by your program team.'
+                              : 'Opens this task’s month in Tasks Review.'
+                          }}
+                        </span>
                       }
                       <p class="mt-1 flex h-5 items-center gap-1.5 text-xs text-ink-muted">
                         <mat-icon class="shrink-0 text-brand-strong" aria-hidden="true">school</mat-icon>
@@ -215,10 +391,17 @@ const toIsoDate = (date: Date): string => {
               >
                 <mat-icon aria-hidden="true">event_available</mat-icon>
               </span>
-              <p class="mt-3 text-sm font-bold text-ink">Nothing due this day</p>
-              <p class="mt-1 text-xs leading-5 text-ink-muted">
-                You can focus on another step or choose a marked date.
-              </p>
+              @if (requirementsStore.visiblePrograms().length || !requirementsStore.programs().length) {
+                <p class="mt-3 text-sm font-bold text-ink">Nothing due this day</p>
+                <p class="mt-1 text-xs leading-5 text-ink-muted">
+                  You can focus on another step or choose a marked date.
+                </p>
+              } @else {
+                <p class="mt-3 text-sm font-bold text-ink">No programs selected</p>
+                <p class="mt-1 text-xs leading-5 text-ink-muted">
+                  Choose a program from the Programs menu to see its tasks.
+                </p>
+              }
             </div>
           }
         </aside>
@@ -234,23 +417,13 @@ export class RequirementsCalendarComponent {
   readonly today = new Date();
   readonly visibleMonth = signal(new Date(this.today.getFullYear(), this.today.getMonth(), 1));
   readonly selectedDate = signal(toIsoDate(this.today));
-  readonly tasksByDate = computed<Readonly<Record<string, readonly CalendarTask[]>>>(() => {
-    const grouped: Record<string, CalendarTask[]> = {};
-    for (const requirement of this.requirementsStore.requirements()) {
-      const date = toIsoDate(new Date(requirement.dueAt));
-      (grouped[date] ??= []).push({
-        requirement,
-        id: requirement.id,
-        title: requirement.name,
-        program: requirement.programName,
-        programId: requirement.programId,
-        dueAt: requirement.dueAt,
-        dueLabel: this.formatDueLabel(requirement.dueAt),
-        isCompleted: requirement.isCompleted,
-        canComplete: requirement.canComplete,
-      });
-    }
-    return grouped;
+  readonly programMenuOpen = signal(false);
+  readonly programMenuPositions = PROGRAM_MENU_POSITIONS;
+  readonly programSearchThreshold = 5;
+  readonly programFilterLabel = computed(() => {
+    const total = this.requirementsStore.programs().length;
+    const visible = this.requirementsStore.visiblePrograms().length;
+    return `Filter calendar by program, ${visible === total ? 'all' : `${visible} of ${total}`} selected`;
   });
   readonly monthHeading = computed(() => formatDate(this.visibleMonth(), 'MMMM', this.locale));
   readonly yearHeading = computed(() => `${this.visibleMonth().getFullYear()}`);
@@ -262,19 +435,19 @@ export class RequirementsCalendarComponent {
     return Array.from({ length: totalDays }, (_, index) => {
       const date = new Date(month.getFullYear(), month.getMonth(), index + 1);
       const iso = toIsoDate(date);
-      const tasks = this.tasksByDate()[iso] ?? [];
+      const tasks = this.requirementsStore.tasksByDate()[iso] ?? [];
       const dueLabel = tasks.length ? `, ${tasks.length} item${tasks.length === 1 ? '' : 's'} due` : ', nothing due';
       return {
         day: index + 1,
         iso,
         isToday: iso === todayIso,
         tasks,
-        indicatorTasks: tasks.slice(0, 3),
+        indicatorTasks: tasks.slice(0, 2),
         label: `${formatDate(date, 'EEEE, MMMM d, yyyy', this.locale)}${dueLabel}`,
       };
     });
   });
-  readonly selectedTasks = computed(() => this.tasksByDate()[this.selectedDate()] ?? []);
+  readonly selectedTasks = computed(() => this.requirementsStore.tasksByDate()[this.selectedDate()] ?? []);
   readonly selectedDayHeading = computed(() =>
     formatDate(new Date(`${this.selectedDate()}T12:00:00`), 'EEEE, MMMM d', this.locale),
   );
@@ -283,14 +456,15 @@ export class RequirementsCalendarComponent {
     this.requirementsStore.load();
   }
 
-  private formatDueLabel(value: string): string {
-    const dueAt = new Date(value);
-    const date = formatDate(dueAt, 'MMM d', this.locale);
-    const isToday = toIsoDate(dueAt) === toIsoDate(this.today);
-    const isEndOfDay =
-      (dueAt.getHours() === 0 && dueAt.getMinutes() === 0) || (dueAt.getHours() === 23 && dueAt.getMinutes() === 59);
-    const time = isEndOfDay ? 'End of day' : formatDate(dueAt, 'h:mm a', this.locale);
-    return `Due ${isToday ? `today, ${date}` : date} · ${time}`;
+  closeProgramMenuOnEscape(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeProgramMenu();
+    }
+  }
+  closeProgramMenu(): void {
+    this.programMenuOpen.set(false);
+    this.requirementsStore.setProgramQuery('');
   }
 
   showToday(): void {

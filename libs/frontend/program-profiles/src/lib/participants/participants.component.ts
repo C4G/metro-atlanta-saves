@@ -13,7 +13,23 @@ import { UsersOnProgramsStore } from '@mas/frontend-shared-data-access';
         <h2 id="participants-heading" class="mt-1 text-2xl font-black tracking-tight">Participants</h2>
         <p class="mt-2 text-sm text-ink-muted">Meet the people learning and saving alongside you.</p>
       </div>
-      @if (usersOnProgramsStore.users().length) {
+      @if (usersOnProgramsStore.usersLoading()) {
+        <div role="status" class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <span class="sr-only">Loading participants</span>
+          @for (card of skeletonCards; track card) {
+            <div aria-hidden="true" class="rounded-2xl border border-outline bg-surface-raised p-5">
+              <div class="flex animate-pulse items-start gap-4 motion-reduce:animate-none">
+                <span class="h-11 w-11 shrink-0 rounded-xl bg-outline/50"></span>
+                <span class="min-w-0 flex-1 space-y-2.5 pt-1">
+                  <span class="block h-4 w-2/5 rounded-md bg-outline/50"></span>
+                  <span class="block h-3 w-full rounded-md bg-outline/50"></span>
+                  <span class="block h-3 w-3/4 rounded-md bg-outline/50"></span>
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (usersOnProgramsStore.users().length) {
         <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           @for (user of usersOnProgramsStore.users(); track user.userId) {
             <article
@@ -50,4 +66,5 @@ import { UsersOnProgramsStore } from '@mas/frontend-shared-data-access';
 })
 export default class ParticipantsComponent {
   usersOnProgramsStore = inject(UsersOnProgramsStore);
+  readonly skeletonCards = [1, 2, 3, 4, 5, 6];
 }

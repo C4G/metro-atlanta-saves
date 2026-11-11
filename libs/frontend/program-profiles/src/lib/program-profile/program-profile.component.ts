@@ -17,75 +17,64 @@ interface ProgramNavItem {
   template: `
     <main class="min-h-full bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
       <div class="mx-auto max-w-7xl">
-        <a
-          routerLink="/dashboard"
-          class="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-sm font-bold text-brand-strong transition-colors hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand"
+        <header
+          class="relative overflow-clip rounded-3xl border border-outline bg-surface-subtle px-6 py-8 sm:px-10 sm:py-10"
         >
-          <mat-icon aria-hidden="true">arrow_back</mat-icon>
-          Back to dashboard
-        </a>
-
-        <header class="mt-4 overflow-hidden rounded-3xl border border-outline bg-surface-raised">
-          <div class="px-6 py-7 sm:px-8 sm:py-9">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-strong">Your program</p>
-            <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
-              {{ programsStore.program()?.name || 'Program' }}
-            </h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-ink-muted sm:text-base">
-              Find your next task, review your progress, and keep your program records together.
-            </p>
-          </div>
-
-          @if (!authStore.isStaff()) {
-            <div class="grid border-t border-outline sm:grid-cols-2">
-              <section class="p-5 sm:border-r sm:border-outline sm:p-6" aria-label="Program progress">
-                @let percentageCompleted = usersOnProgramsStore.percentageCompleted();
-                <div class="flex items-end justify-between gap-4">
-                  <div>
-                    <p class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink-subtle">
-                      <mat-icon class="shrink-0 text-brand-strong" aria-hidden="true">trending_up</mat-icon>
-                      Progress
-                    </p>
-                    <p class="mt-1 text-2xl font-black">{{ percentageCompleted }}%</p>
-                  </div>
-                </div>
-                <div class="mt-4 h-2 overflow-hidden rounded-full bg-surface-subtle" aria-hidden="true">
-                  <div class="h-full rounded-full bg-brand" [style.width.%]="percentageCompleted"></div>
-                </div>
-              </section>
-              <section class="border-t border-outline p-5 sm:border-t-0 sm:p-6" aria-label="Total savings">
-                <div class="flex items-end justify-between gap-4">
-                  <div>
-                    <p class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink-subtle">
-                      <mat-icon class="shrink-0 text-brand-strong" aria-hidden="true">savings</mat-icon>
-                      Total saved
-                    </p>
-                    <p class="mt-1 text-2xl font-black">{{ usersOnProgramsStore.userProgramSavings() }}</p>
-                  </div>
-                </div>
-              </section>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[22px] border-brand/10"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -bottom-24 right-20 h-44 w-44 rounded-full border border-brand/15"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute right-14 top-16 h-3 w-3 rounded-full bg-brand/35 sm:right-28"
+          ></span>
+          <div class="relative flex flex-wrap items-start gap-4 sm:flex-nowrap">
+            <span
+              aria-hidden="true"
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong"
+            >
+              <mat-icon>school</mat-icon>
+            </span>
+            <div class="min-w-0 flex-1 basis-48">
+              <p class="text-sm font-semibold text-brand-strong">Your program</p>
+              <h1 class="mt-2 break-words font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+                {{ programsStore.program()?.name || 'Program' }}
+              </h1>
+              @if (programsStore.program()?.description; as description) {
+                <div
+                  class="rich-content mt-3 max-w-3xl break-words text-sm leading-6 text-ink-muted"
+                  [innerHTML]="description"
+                ></div>
+              }
             </div>
-          }
+            <nav
+              aria-label="Program pages"
+              class="relative flex w-full shrink-0 gap-1 rounded-2xl border border-outline bg-surface p-1 sm:ml-auto sm:mt-6 sm:w-auto"
+            >
+              @for (link of headerLinks(); track link.routerLink) {
+                <a
+                  [routerLink]="link.routerLink"
+                  routerLinkActive="!bg-brand-strong !text-brand-on"
+                  ariaCurrentWhenActive="page"
+                  class="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-sm font-bold text-ink-muted transition-colors hover:bg-brand-soft hover:text-brand-strong focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-surface sm:flex-none sm:px-4"
+                >
+                  <mat-icon
+                    aria-hidden="true"
+                    class="!hidden !h-5 !w-5 shrink-0 !text-xl !leading-none sm:!inline-block"
+                  >
+                    {{ link.icon }}
+                  </mat-icon>
+                  {{ link.name }}
+                </a>
+              }
+            </nav>
+          </div>
         </header>
 
-        <nav
-          class="mt-6 overflow-x-auto rounded-2xl border border-outline bg-surface p-2"
-          aria-label="Program sections"
-        >
-          <div class="flex min-w-max justify-center gap-1 md:min-w-full">
-            @for (link of links(); track link.routerLink) {
-              <a
-                [routerLink]="link.routerLink"
-                routerLinkActive="bg-brand-soft/70 text-brand-strong"
-                [routerLinkActiveOptions]="{ exact: link.routerLink === './' }"
-                class="inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-ink-muted transition-colors hover:bg-brand-soft/70 hover:text-brand-strong focus:outline-none focus:ring-2 focus:ring-brand"
-              >
-                <mat-icon aria-hidden="true">{{ link.icon }}</mat-icon>
-                {{ link.name }}
-              </a>
-            }
-          </div>
-        </nav>
         <router-outlet />
       </div>
     </main>
@@ -98,18 +87,15 @@ export default class ProgramProfileComponent {
   programsStore = inject(ProgramsStore);
   usersOnProgramsStore = inject(UsersOnProgramsStore);
 
-  links = computed<ProgramNavItem[]>(() => {
-    const sharedLinks: ProgramNavItem[] = [
-      { routerLink: './', name: 'Overview', icon: 'dashboard' },
-      { routerLink: './particpants', name: 'Participants', icon: 'groups' },
-    ];
+  // Staff only see the roster; participants also get their own progress and insights pages.
+  headerLinks = computed<ProgramNavItem[]>(() => {
+    const roster: ProgramNavItem = { routerLink: './particpants', name: 'Participants', icon: 'groups' };
     return this.authStore.isStaff()
-      ? sharedLinks
+      ? [roster]
       : [
-          ...sharedLinks,
-          { routerLink: './course-progress', name: 'My tasks', icon: 'task_alt' },
-          { routerLink: './savings', name: 'My progress', icon: 'monitoring' },
-          { routerLink: './receipts', name: 'Receipts', icon: 'receipt_long' },
+          { routerLink: './progress', name: 'My Progress', icon: 'monitoring' },
+          { routerLink: './insights', name: 'My Insights', icon: 'insights' },
+          roster,
         ];
   });
 
