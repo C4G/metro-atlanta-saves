@@ -63,6 +63,12 @@ describe('ProgramsComponent', () => {
     expect(fixture.componentInstance.programCards()).toHaveLength(2);
     expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Programs');
     expect(fixture.nativeElement.querySelectorAll('article')).toHaveLength(2);
+    const card = fixture.nativeElement.querySelector('article') as HTMLElement;
+    expect(card.querySelector('a')?.textContent).toContain('Open Program');
+    expect(card.querySelector('a')?.getAttribute('href')).toMatch(/\/progress$/);
+    expect(Array.from(card.querySelectorAll('button')).some((button) => button.textContent?.trim() === 'Edit')).toBe(
+      false,
+    );
   });
 
   it('requests filtered programs from the server', () => {

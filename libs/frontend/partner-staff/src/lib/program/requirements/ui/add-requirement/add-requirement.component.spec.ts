@@ -1,8 +1,9 @@
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { expect } from '@jest/globals';
-import { EducationalContentStore } from '@mas/frontend-shared-data-access';
+import { EducationalContentStore, ProgramsStore } from '@mas/frontend-shared-data-access';
 import { RequirementsStore } from '../../requirements.store';
 import { AddRequirementComponent } from './add-requirement.component';
 
@@ -20,12 +21,19 @@ describe('AddRequirementComponent action configuration', () => {
     TestBed.configureTestingModule({
       imports: [AddRequirementComponent],
       providers: [
+        provideNativeDateAdapter(),
         { provide: MAT_DIALOG_DATA, useFactory: () => dialogData },
         {
           provide: EducationalContentStore,
           useValue: { contentList: signal([]), getContentList: jest.fn() },
         },
         { provide: RequirementsStore, useValue: { addRequirement, patchRequirement } },
+        {
+          provide: ProgramsStore,
+          useValue: {
+            program: signal({ checkpointNames: [{ name: 'Month 2' }, { name: 'Lunch Receipt' }, { name: 'Month 1' }] }),
+          },
+        },
       ],
     });
   });
@@ -44,6 +52,7 @@ describe('AddRequirementComponent action configuration', () => {
       dueDate: localDueDate,
       dueTime: localDueTime,
       reminderDaysBefore: null,
+      month: null,
     });
 
     component.submitForm();
@@ -51,10 +60,10 @@ describe('AddRequirementComponent action configuration', () => {
     expect(addRequirement).toHaveBeenCalledWith({
       name: 'Attend a meetup',
       educationalContentId: null,
-      month: null,
       actionInstructions: 'Join the in-person meetup.',
       dueAt: new Date(`${localDueDate}T${localDueTime}`).toISOString(),
       reminderDaysBefore: null,
+      month: null,
     });
   });
 
@@ -89,6 +98,7 @@ describe('AddRequirementComponent action configuration', () => {
       actionInstructions: 'Join the in-person meetup.',
       dueAt,
       reminderDaysBefore: null,
+      month: null,
     });
   });
 
@@ -101,6 +111,7 @@ describe('AddRequirementComponent action configuration', () => {
       dueDate: '2026-11-15',
       dueTime: '',
       reminderDaysBefore: 7,
+      month: null,
     });
 
     fixture.componentInstance.submitForm();
@@ -143,5 +154,15 @@ describe('AddRequirementComponent action configuration', () => {
     fixture = TestBed.createComponent(AddRequirementComponent);
     fixture.componentInstance.submitForm();
     expect(patchRequirement).toHaveBeenCalledWith(expect.objectContaining({ reminderDaysBefore: 7 }));
+  });
+
+  it('offers the program months and saves the chosen month', () => {
+    fixture = TestBed.createComponent(AddRequirementComponent);
+    expect(fixture.componentInstance.monthOptions()).toEqual([1, 2]);
+    fixture.componentInstance.requirementForm.patchValue({ name: 'Open an account', month: 2 });
+
+    fixture.componentInstance.submitForm();
+
+    expect(addRequirement).toHaveBeenCalledWith(expect.objectContaining({ name: 'Open an account', month: 2 }));
   });
 });

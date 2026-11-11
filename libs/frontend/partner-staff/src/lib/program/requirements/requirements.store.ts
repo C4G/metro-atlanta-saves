@@ -5,7 +5,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { type Requirement } from '@mas/prisma-client/browser';
+import { type Prisma, type Requirement } from '@mas/prisma-client/browser';
 import { MatDialog } from '@angular/material/dialog';
 
 type RequirementPayload = Omit<Requirement, 'dueAt' | 'actionInstructions'> & {
@@ -17,11 +17,16 @@ export type AddRequirement = Omit<RequirementPayload, 'id' | 'createdAt' | 'upda
 
 type RequirementsState = {
   programId: string | null;
-  requirements: Requirement[];
+  loading: boolean;
+  loadFailed: boolean;
+  requirements: (Requirement &
+    Partial<Pick<Prisma.RequirementGetPayload<{ include: { EducationalContent: true } }>, 'EducationalContent'>>)[];
 };
 
 const initialState: RequirementsState = {
   programId: null,
+  loading: false,
+  loadFailed: false,
   requirements: [],
 };
 
@@ -49,21 +54,24 @@ export const RequirementsStore = signalStore(
     },
     getRequirements: rxMethod<void>(
       pipe(
-        switchMap(() =>
-          http.get<Requirement[]>(`${BASE_URL}${'/program/' + store.programId()}`).pipe(
+        switchMap(() => {
+          patchState(store, { requirements: [], loading: true, loadFailed: false });
+          return http.get<RequirementsState['requirements']>(`${BASE_URL}${'/program/' + store.programId()}`).pipe(
             tapResponse({
               next: (requirements) => {
                 patchState(store, (state) => ({ ...state, requirements }));
               },
               error: () => {
+                patchState(store, { loadFailed: true });
                 snackBar.open('There was an error retreiving requirements', undefined, {
                   panelClass: 'error',
                   duration: 5000,
                 });
               },
+              finalize: () => patchState(store, { loading: false }),
             }),
-          ),
-        ),
+          );
+        }),
       ),
     ),
     patchRequirement: rxMethod<Partial<RequirementPayload> & Pick<Requirement, 'id'>>(

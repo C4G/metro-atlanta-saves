@@ -9,7 +9,6 @@ import { ProgramsStore } from '@mas/frontend-shared-data-access';
 import { type Program } from '@mas/prisma-client/browser';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { type ICellRendererParams } from 'ag-grid-community';
-import { AddProgramComponent } from '../add-program/add-program.component';
 import { CloneDialogComponent } from './clone-dialog/clone-dialog.component';
 
 @Component({
@@ -38,10 +37,10 @@ import { CloneDialogComponent } from './clone-dialog/clone-dialog.component';
             <span>Clone</span>
           </button>
         }
-        <button mat-menu-item (click)="openEdit()">
+        <a mat-menu-item [routerLink]="['/partner-staff/programs', program()?.id, 'edit']">
           <mat-icon color="accent">edit</mat-icon>
           <span>Edit</span>
-        </button>
+        </a>
         <button mat-menu-item (click)="openDeleteConfirm()">
           <mat-icon color="warn">delete</mat-icon>
           <span>Delete</span>
@@ -94,13 +93,6 @@ export class ProgramActionsComponent implements ICellRendererAngularComp {
           }
         },
       },
-    });
-  }
-
-  openEdit() {
-    this.dialog.open(AddProgramComponent, {
-      data: this.program(),
-      panelClass: 'w-full',
     });
   }
 }
