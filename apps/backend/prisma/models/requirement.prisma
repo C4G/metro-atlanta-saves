@@ -6,6 +6,7 @@ model Requirement {
   actionInstructions   String?
   dueAt                DateTime?
   reminderDaysBefore   Int?
+  month                Int?
   program              Program                 @relation(fields: [programId], references: [id])
   programId            String
   educationalContentId String?

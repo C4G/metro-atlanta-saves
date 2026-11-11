@@ -20,9 +20,9 @@ export class CreateUsersOnProgramsDto {
   })
   programId!: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @IsNotEmpty()
   @ApiPropertyOptional({
     type: String,
     isArray: true,
@@ -31,6 +31,7 @@ export class CreateUsersOnProgramsDto {
   })
   requirementStatus?: string[];
 
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({
     type: Boolean,
@@ -48,6 +49,7 @@ export class CreateUsersOnProgramsDto {
   })
   educationStatus?: string;
 
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({
     type: Boolean,

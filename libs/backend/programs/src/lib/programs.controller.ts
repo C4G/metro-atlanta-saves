@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UnauthorizedException,
@@ -27,6 +28,8 @@ import { UserFull } from '@mas/models';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EnrollDto } from './dto/enroll.dto';
 import { CloneProgramDto } from './dto/clone-progrmam.dto';
+import { SaveMonthlyPlanDto } from './dto/save-monthly-plan.dto';
+import { SaveFrequentTaskDto } from './dto/save-frequent-task.dto';
 
 @Controller('programs')
 @ApiBearerAuth()
@@ -160,6 +163,60 @@ export class ProgramsController {
       throw new UnauthorizedException(['You can only add programs for your associated partner']);
     }
     return this.programsService.update(id, updateProgramDto);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Put(':id/monthly-plan')
+  async saveMonthlyPlan(
+    @Req() request: Request & { user: UserFull },
+    @Param('id') id: string,
+    @Body() body: SaveMonthlyPlanDto,
+  ) {
+    const partnerId = await this.programsService.getPartnerId(id);
+    if (validateUserAnyRole(request, partnerId)) {
+      throw new UnauthorizedException(['You can only plan months for programs managed by your partner.']);
+    }
+    return this.programsService.saveMonthlyPlan(id, body);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Get(':id/frequent-tasks')
+  async getFrequentTasks(@Req() request: Request & { user: UserFull }, @Param('id') id: string) {
+    await this.assertPartnerStaff(request, id);
+    return this.programsService.getFrequentTasks(id);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Post(':id/frequent-tasks')
+  async addFrequentTask(
+    @Req() request: Request & { user: UserFull },
+    @Param('id') id: string,
+    @Body() body: SaveFrequentTaskDto,
+  ) {
+    await this.assertPartnerStaff(request, id);
+    return this.programsService.addFrequentTask(id, body);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Administrator', 'Partner_Staff')
+  @Delete(':id/frequent-tasks/:taskId')
+  async removeFrequentTask(
+    @Req() request: Request & { user: UserFull },
+    @Param('id') id: string,
+    @Param('taskId') taskId: string,
+  ) {
+    await this.assertPartnerStaff(request, id);
+    return this.programsService.removeFrequentTask(id, taskId);
+  }
+
+  private async assertPartnerStaff(request: Request & { user: UserFull }, programId: string) {
+    const partnerId = await this.programsService.getPartnerId(programId);
+    if (validateUserAnyRole(request, partnerId)) {
+      throw new UnauthorizedException(['You can only manage frequently used tasks for your partner.']);
+    }
   }
 
   @UseGuards(RoleGuard)

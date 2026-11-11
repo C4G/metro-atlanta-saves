@@ -2,6 +2,12 @@
 
 set -euo pipefail
 
+# Nx's terminal IPC sockets include process IDs, which macOS can reuse after
+# an interrupted run. Isolate each startup from stale or concurrent sockets.
+# Keep the path short enough for Unix socket path-length limits.
+export NX_SOCKET_DIR
+NX_SOCKET_DIR="$(mktemp -d /tmp/mas-nx.XXXXXX)"
+
 compose_file="./docker-compose.dev.yaml"
 
 if [[ ! -f .env ]]; then

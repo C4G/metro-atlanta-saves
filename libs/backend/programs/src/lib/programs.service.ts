@@ -1,8 +1,12 @@
 import { PrismaService } from '@mas/backend-prisma';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { CreateProgramDto } from './dto/create-program.dto';
 import { EnrollDto } from './dto/enroll.dto';
 import { UpdateProgramDto } from './dto/update-program.dto';
+import { SaveMonthlyPlanDto } from './dto/save-monthly-plan.dto';
+import { SaveFrequentTaskDto } from './dto/save-frequent-task.dto';
+
+const monthNumber = (name: string) => Number(/^month\s+(\d+)$/i.exec(name.trim())?.[1] ?? 0);
 
 @Injectable()
 export class ProgramsService {
@@ -230,6 +234,7 @@ export class ProgramsService {
             name: true,
           },
         },
+        partner: { select: { name: true } },
       },
     });
     if (!program) {
@@ -253,6 +258,115 @@ export class ProgramsService {
         checkpointNames: true,
       },
     });
+  }
+
+  async saveMonthlyPlan(
+    programId: string,
+    { months, assignments, newTasks = [], removedRequirementIds = [] }: SaveMonthlyPlanDto,
+  ) {
+    return this.prismaService.$transaction(async (tx) => {
+      const program = await tx.program.findUnique({
+        where: { id: programId },
+        select: { checkpointNames: { select: { name: true } }, Requirement: { select: { id: true, month: true } } },
+      });
+      if (!program) throw new BadRequestException(['The program does not exist']);
+
+      const assigned = new Map(assignments.map((assignment) => [assignment.requirementId, assignment]));
+      const removed = new Set(removedRequirementIds);
+      const programRequirementIds = new Set(program.Requirement.map(({ id }) => id));
+      if ([...assigned.keys(), ...removed].some((id) => !programRequirementIds.has(id))) {
+        throw new BadRequestException(['Every task must belong to this program.']);
+      }
+      if (
+        [...assigned.values(), ...newTasks].some(({ month }) => month !== null && month !== undefined && month > months)
+      ) {
+        throw new BadRequestException([`Tasks can only be assigned to Month 1 through Month ${months}.`]);
+      }
+      const stranded = program.Requirement.filter(
+        ({ id, month }) => !assigned.has(id) && !removed.has(id) && month !== null && month > months,
+      );
+      if (stranded.length) {
+        throw new ConflictException([`Move or remove the tasks after Month ${months} before shortening the program.`]);
+      }
+
+      const monthNames = Array.from({ length: months }, (_, index) => `Month ${index + 1}`);
+      await tx.checkpointName.createMany({
+        data: monthNames.map((name, index) => ({ name, type: 'Savings' as const, sequence: index + 1 })),
+        skipDuplicates: true,
+      });
+      const otherNames = program.checkpointNames.filter(({ name }) => !monthNumber(name)).map(({ name }) => ({ name }));
+      await tx.program.update({
+        where: { id: programId },
+        data: {
+          updatedAt: new Date(),
+          checkpointNames: { set: [...otherNames, ...monthNames.map((name) => ({ name }))] },
+        },
+      });
+      if (removed.size) await tx.requirement.deleteMany({ where: { id: { in: [...removed] }, programId } });
+      for (const [id, { month, name, dueAt, educationalContentId }] of assigned) {
+        if (removed.has(id)) continue;
+        await tx.requirement.update({
+          where: { id },
+          data: {
+            month: month ?? null,
+            updatedAt: new Date(),
+            ...(name !== undefined && { name: name.trim() }),
+            ...(dueAt !== undefined && { dueAt, ...(dueAt === null && { reminderDaysBefore: null }) }),
+            ...(educationalContentId !== undefined && { educationalContentId }),
+          },
+        });
+      }
+      const created = [];
+      for (const task of newTasks) {
+        created.push(
+          await tx.requirement.create({
+            data: {
+              programId,
+              name: task.name.trim(),
+              month: task.month,
+              dueAt: task.dueAt ?? null,
+              educationalContentId: task.educationalContentId ?? null,
+            },
+            select: { id: true, name: true, dueAt: true, month: true, educationalContentId: true },
+          }),
+        );
+      }
+      return {
+        months,
+        assignments: [...assigned.keys()]
+          .filter((id) => !removed.has(id))
+          .map((requirementId) => ({ requirementId, month: assigned.get(requirementId)?.month ?? null })),
+        created,
+        removedRequirementIds: [...removed],
+      };
+    });
+  }
+
+  async getFrequentTasks(programId: string) {
+    const partnerId = await this.getPartnerId(programId);
+    return this.prismaService.frequentTask.findMany({
+      where: { partnerId },
+      select: { id: true, name: true, educationalContentId: true },
+      orderBy: { name: 'asc' },
+    });
+  }
+
+  async addFrequentTask(programId: string, { name, educationalContentId }: SaveFrequentTaskDto) {
+    const partnerId = await this.getPartnerId(programId);
+    const trimmed = name.trim();
+    return this.prismaService.frequentTask.upsert({
+      where: { partnerId_name: { partnerId, name: trimmed } },
+      create: { partnerId, name: trimmed, educationalContentId: educationalContentId ?? null },
+      update: { educationalContentId: educationalContentId ?? null },
+      select: { id: true, name: true, educationalContentId: true },
+    });
+  }
+
+  async removeFrequentTask(programId: string, taskId: string) {
+    const partnerId = await this.getPartnerId(programId);
+    const { count } = await this.prismaService.frequentTask.deleteMany({ where: { id: taskId, partnerId } });
+    if (!count) throw new BadRequestException(['That frequently used task does not exist.']);
+    return { id: taskId };
   }
 
   async isUserInProgram(userId: string, programId: string) {

@@ -9,6 +9,7 @@ model EducationalContent {
   updatedAt                         DateTime                                     @default(now())
   EducationalCategoryContentMapping EducationalContentsOnEducationalCategories[]
   Requirement                       Requirement[]
+  FrequentTask                      FrequentTask[]
 
   @@map("educationalContents")
 }

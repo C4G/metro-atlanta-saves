@@ -138,6 +138,6 @@ export class AddRequirementComponent {
       return;
     }
 
-    this.requirementsStore.addRequirement(requirementValues);
+    this.requirementsStore.addRequirement({ ...requirementValues, month: null });
   }
 }

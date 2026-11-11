@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class CreateRequirementDto {
   @IsString()
@@ -39,6 +39,18 @@ export class CreateRequirementDto {
     description: 'Send one email reminder one or seven calendar days before the shared due timestamp',
   })
   reminderDaysBefore?: number | null;
+
+  @IsInt()
+  @Min(1)
+  @Max(36)
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: Number,
+    nullable: true,
+    example: 2,
+    description: 'The 1-based program month this task belongs to',
+  })
+  month?: number | null;
 
   @IsString()
   @IsOptional()
