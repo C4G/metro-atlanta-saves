@@ -2,43 +2,36 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AuthStore } from '@mas/frontend-shared-auth';
-import { DiscussionBoardsStore, ProgramsStore } from '@mas/frontend-shared-data-access';
-import { of, throwError } from 'rxjs';
+import { ProgramsStore } from '@mas/frontend-shared-data-access';
 
 import { DashboardComponent } from './dashboard.component';
 
 describe('DashboardComponent', () => {
-  let boards = signal([
-    {
-      id: 'board-1',
-      name: 'Community board',
-      description: 'Connect with peers',
-      memberCount: 8,
-      postCount: 3,
-    },
-  ]);
   const usersPrograms = signal([{ id: 'program-1', name: 'Active program', description: 'In progress' }]);
   const upcomingPrograms = signal([
     { id: 'program-1', name: 'Active program', description: 'In progress', startDate: null },
     { id: 'program-2', name: 'Available program', description: 'Open now', startDate: null },
   ]);
+  const card = (program: { id: string; name: string; description: string }, status: string, isInactive = false) => ({
+    program,
+    status,
+    label: status[0].toUpperCase() + status.slice(1),
+    isInactive,
+    meta: '',
+  });
+  const myProgramCards = signal([
+    card({ id: 'program-1', name: 'Active program', description: 'In progress' }, 'active'),
+    card({ id: 'program-3', name: 'Past program', description: 'Finished' }, 'archived', true),
+  ]);
+  const explorePrograms = signal([
+    card({ id: 'program-2', name: 'Available program', description: 'Open now' }, 'open'),
+  ]);
   const getProgramsForUser = jest.fn();
   const getUpcoming = jest.fn();
-  const getBoards = jest.fn(() => of([]));
 
   beforeEach(() => {
     getProgramsForUser.mockClear();
     getUpcoming.mockClear();
-    getBoards.mockClear();
-    boards = signal([
-      {
-        id: 'board-1',
-        name: 'Community board',
-        description: 'Connect with peers',
-        memberCount: 8,
-        postCount: 3,
-      },
-    ]);
 
     TestBed.configureTestingModule({
       imports: [DashboardComponent],
@@ -46,64 +39,78 @@ describe('DashboardComponent', () => {
         provideRouter([]),
         {
           provide: AuthStore,
-          useValue: { user: signal({ firstName: 'Jordan' }), isStaff: signal(false) },
+          useValue: { user: signal({ firstName: 'Jordan' }), isStaff: signal(false), isAdmin: signal(false) },
         },
         {
           provide: ProgramsStore,
-          useValue: { usersPrograms, upcomingPrograms, getProgramsForUser, getUpcoming },
-        },
-        {
-          provide: DiscussionBoardsStore,
-          useValue: { boards, getBoards },
+          useValue: {
+            usersPrograms,
+            upcomingPrograms,
+            myProgramCards,
+            explorePrograms,
+            getProgramsForUser,
+            getUpcoming,
+          },
         },
       ],
     });
   });
 
-  it('loads participant programs and discussion boards', () => {
+  it('loads participant programs under the Dashboard title', () => {
     const fixture = TestBed.createComponent(DashboardComponent);
     fixture.detectChanges();
 
     expect(getProgramsForUser).toHaveBeenCalledTimes(1);
     expect(getUpcoming).toHaveBeenCalledTimes(1);
-    expect(fixture.componentInstance.welcomeHeading()).toBe('Welcome back, Jordan.');
-    expect(getBoards).toHaveBeenCalledTimes(1);
-    expect(fixture.componentInstance.discussionBoardsStore.boards()).toHaveLength(1);
-    expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Welcome back, Jordan.');
+    expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toBe('Dashboard');
+    expect(fixture.nativeElement.textContent).not.toContain('Stay connected');
   });
 
-  it('does not offer programs in which the participant is already enrolled', () => {
-    const fixture = TestBed.createComponent(DashboardComponent);
-    fixture.detectChanges();
-
-    expect(fixture.componentInstance.availablePrograms().map((program) => program.id)).toEqual(['program-2']);
-  });
-
-  it.each([false, true])('links program cards to the correct view for staff=%s', (isStaff) => {
+  it.each([
+    ['participants', false, false],
+    ['partner staff', true, false],
+    ['admins', true, true],
+  ])('leaves section navigation to the header for %s', (_role, isStaff, isAdmin) => {
     TestBed.overrideProvider(AuthStore, {
-      useValue: { user: signal({ firstName: 'Jordan' }), isStaff: signal(isStaff) },
+      useValue: { user: signal({ firstName: 'Jordan' }), isStaff: signal(isStaff), isAdmin: signal(isAdmin) },
     });
     const fixture = TestBed.createComponent(DashboardComponent);
     fixture.detectChanges();
-    const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
-      '[aria-labelledby="my-programs-heading"] article a',
+
+    expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toBe('Dashboard');
+    expect(fixture.nativeElement.querySelector('nav[aria-label="Main sections"]')).toBeNull();
+  });
+
+  it('shows program status pills and the action for each state', () => {
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    const myPrograms = element.querySelector('[aria-labelledby="my-programs-heading"]') as HTMLElement;
+    const explore = element.querySelector('[aria-labelledby="explore-programs-heading"]') as HTMLElement;
+
+    expect(myPrograms.textContent).toContain('Active');
+    expect(myPrograms.textContent).toContain('Archived');
+    expect(myPrograms.querySelector('a[aria-label="View program: Past program"]')).not.toBeNull();
+    expect(explore.textContent).toContain('Open');
+    expect(explore.querySelector('a[aria-label="View and enroll: Available program"]')?.getAttribute('href')).toBe(
+      '/enroll/program-2',
     );
-    expect(!!fixture.nativeElement.querySelector('[aria-label="Dashboard overview"]')).toBe(isStaff);
-    expect(link.getAttribute('href')).toBe(
+    expect(explore.textContent).not.toContain('Active program');
+  });
+
+  it.each([false, true])('links program cards without overview cards for staff=%s', (isStaff) => {
+    TestBed.overrideProvider(AuthStore, {
+      useValue: { user: signal({ firstName: 'Jordan' }), isStaff: signal(isStaff), isAdmin: signal(false) },
+    });
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    const link = element.querySelector('[aria-labelledby="my-programs-heading"] article a');
+
+    expect(element.querySelector('[aria-label="Dashboard overview"]')).toBeNull();
+    expect(element.textContent).not.toContain('Discussion boards');
+    expect(link?.getAttribute('href')).toBe(
       isStaff ? '/partner-staff/programs/program-1/progress' : '/program-profiles/program-1',
     );
-  });
-
-  it('shows the empty discussion state when boards cannot be loaded', () => {
-    boards.set([]);
-    TestBed.overrideProvider(DiscussionBoardsStore, {
-      useValue: { boards, getBoards: jest.fn(() => throwError(() => new Error('Request failed'))) },
-    });
-
-    const fixture = TestBed.createComponent(DashboardComponent);
-    fixture.detectChanges();
-
-    expect(fixture.componentInstance.discussionBoardsStore.boards()).toEqual([]);
-    expect(fixture.nativeElement.textContent).toContain('No discussion boards are available yet.');
   });
 });

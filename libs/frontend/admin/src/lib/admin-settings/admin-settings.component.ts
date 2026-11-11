@@ -1,226 +1,162 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { PageTitleComponent, SectionPanelComponent } from '@mas/frontend-shared-components';
 
-type AdminArea = {
+export type AdminArea = {
   title: string;
   description: string;
   route: string;
-  icon: string;
-  searchText: string;
 };
 
-type AdminGroup = {
+export type AdminGroup = {
   id: string;
   title: string;
-  description: string;
-  icon: string;
+  searchLabel: string;
+  internal?: boolean;
   areas: readonly AdminArea[];
 };
 
-const createArea = (title: string, description: string, route: string, icon: string): AdminArea => ({
-  title,
-  description,
-  route,
-  icon,
-  searchText: `${title} ${description}`.toLocaleLowerCase(),
-});
-
-const ADMIN_GROUPS: readonly AdminGroup[] = [
+export const ADMIN_GROUPS: readonly AdminGroup[] = [
   {
     id: 'people',
     title: 'People & organizations',
-    description: 'Manage platform access and the organizations delivering each program.',
-    icon: 'groups',
+    searchLabel: 'Search people & organizations',
     areas: [
-      createArea('Users', 'Manage accounts, roles, and partner assignments.', '/admin/users', 'manage_accounts'),
-      createArea('Partners', 'Manage organizations and their staff relationships.', '/admin/partners', 'handshake'),
+      { title: 'Users', description: 'Manage accounts, roles, and partner assignments.', route: '/admin/users' },
+      {
+        title: 'Partners',
+        description: 'Manage organizations and their staff relationships.',
+        route: '/admin/partners',
+      },
     ],
   },
   {
     id: 'programs',
     title: 'Program operations',
-    description: 'Set up programs and the shared checkpoints used to measure progress.',
-    icon: 'settings_suggest',
+    searchLabel: 'Search program operations',
     areas: [
-      createArea(
-        'Programs',
-        'Create programs and manage their participants and requirements.',
-        '/partner-staff/programs',
-        'folder_managed',
-      ),
-      createArea(
-        'Checkpoint names',
-        'Configure the checkpoint labels available across programs.',
-        '/admin/checkpoint-names',
-        'checklist',
-      ),
+      {
+        title: 'Programs',
+        description: 'Create programs and manage their participants and requirements.',
+        route: '/partner-staff/programs',
+      },
+      {
+        title: 'Checkpoint names',
+        description: 'Configure the checkpoint labels available across programs.',
+        route: '/admin/checkpoint-names',
+      },
     ],
   },
   {
     id: 'content',
     title: 'Content & guidance',
-    description: 'Keep participant-facing information accurate, useful, and current.',
-    icon: 'menu_book',
+    searchLabel: 'Search content & guidance',
     areas: [
-      createArea('Blogs', 'Create and publish educational articles.', '/admin/blogs', 'article'),
-      createArea(
-        'Educational resources',
-        'Organize learning content, categories, and notifications.',
-        '/admin/education-management',
-        'school',
-      ),
-      createArea('Landing page', 'Update stories and key landing-page content.', '/admin/home-management', 'home'),
-      createArea('About Us', 'Manage cohorts and About Us content.', '/admin/about-us-management', 'diversity_3'),
-      createArea(
-        'User guide',
-        'Maintain guidance available to platform participants.',
-        '/admin/user-guide',
-        'help_center',
-      ),
+      { title: 'Blogs', description: 'Create and publish educational articles.', route: '/admin/blogs' },
+      {
+        title: 'Educational resources',
+        description: 'Organize learning content, categories, and notifications.',
+        route: '/admin/education-management',
+      },
+      {
+        title: 'Landing page',
+        description: 'Update stories and key landing-page content.',
+        route: '/admin/home-management',
+      },
+      { title: 'About Us', description: 'Manage cohorts and About Us content.', route: '/admin/about-us-management' },
+      {
+        title: 'User guide',
+        description: 'Maintain guidance available to platform participants.',
+        route: '/admin/user-guide',
+      },
     ],
   },
   {
     id: 'engagement',
     title: 'Participant engagement',
-    description: 'Communicate important information to the people in your programs.',
-    icon: 'campaign',
+    searchLabel: 'Search participant engagement',
     areas: [
-      createArea('Email campaign', 'Prepare and send a platform-wide participant email.', '/admin/email-blast', 'mail'),
+      {
+        title: 'Email campaign',
+        description: 'Prepare and send a platform-wide participant email.',
+        route: '/admin/email-blast',
+      },
     ],
   },
   {
     id: 'c4g',
     title: 'C4G team only',
-    description: 'Internal tools maintained by the C4G team.',
-    icon: 'verified_user',
+    searchLabel: 'Search C4G tools',
+    internal: true,
     areas: [
-      createArea(
-        'Peer Evaluation Guide',
-        'Maintain the internal guide used for peer evaluations.',
-        '/admin/peer-evaluation-guide',
-        'fact_check',
-      ),
+      {
+        title: 'Peer Evaluation Guide',
+        description: 'Maintain the internal guide used for peer evaluations.',
+        route: '/admin/peer-evaluation-guide',
+      },
     ],
   },
 ];
 
+export const filterAdminAreas = (areas: readonly AdminArea[], query: string): readonly AdminArea[] => {
+  const needle = query.trim().toLocaleLowerCase();
+  if (!needle) return areas;
+  return areas.filter((area) => `${area.title} ${area.description}`.toLocaleLowerCase().includes(needle));
+};
+
 @Component({
   selector: 'mas-admin-settings',
-  imports: [MatIcon, RouterLink],
+  imports: [MatIcon, PageTitleComponent, RouterLink, SectionPanelComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bg-canvas px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
-      <div class="mx-auto max-w-7xl space-y-6">
-        <header
-          class="relative overflow-hidden rounded-3xl border border-outline bg-surface-subtle px-6 py-8 sm:px-10 sm:py-10"
-        >
-          <span
-            aria-hidden="true"
-            class="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[22px] border-brand/10"
-          ></span>
-          <span
-            aria-hidden="true"
-            class="pointer-events-none absolute -bottom-24 right-20 h-44 w-44 rounded-full border border-brand/15"
-          ></span>
-          <span
-            aria-hidden="true"
-            class="pointer-events-none absolute right-14 top-16 h-3 w-3 rounded-full bg-brand/35 sm:right-28"
-          ></span>
-          <div class="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <div class="flex max-w-2xl items-start gap-4">
-              <span
-                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong"
-                aria-hidden="true"
-              >
-                <mat-icon>admin_panel_settings</mat-icon>
-              </span>
-              <div>
-                <p class="text-sm font-semibold text-brand-strong">Platform administration</p>
-                <h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-                  Admin Dashboard
-                </h1>
-                <p class="mt-3 text-sm leading-6 text-ink-muted">
-                  Choose the part of the platform you want to manage. Tools are grouped by the work they support.
-                </p>
-              </div>
-            </div>
+    <div class="px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
+      <div class="mx-auto max-w-7xl space-y-8">
+        <mas-page-title title="Admin" />
 
-            <label class="relative block">
-              <span class="sr-only">Search admin tools</span>
+        @for (group of visibleGroups(); track group.id) {
+          <mas-section-panel [heading]="group.title" [headingId]="group.id" [tag]="group.internal ? 'Internal' : ''">
+            <label panelActions class="relative block w-full sm:w-72">
+              <span class="sr-only">{{ group.searchLabel }}</span>
               <mat-icon
-                class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle"
+                class="mas-icon-sm pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle"
                 aria-hidden="true"
               >
                 search
               </mat-icon>
               <input
                 type="search"
-                class="min-h-11 w-full rounded-xl border border-outline bg-surface-raised py-2.5 pl-11 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-brand focus:ring-2 focus:ring-brand/25"
-                placeholder="Search management tools"
-                [value]="searchQuery()"
-                (input)="updateSearch($event)"
+                class="min-h-10 w-full rounded-xl border border-brand/25 bg-surface-raised/70 py-2 pl-9 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle hover:border-brand/70 hover:bg-surface-raised focus:border-brand/70 focus:bg-surface-raised focus-visible:ring-2 focus-visible:ring-brand"
+                [placeholder]="group.searchLabel"
+                [value]="group.query"
+                (input)="updateSearch(group.id, $event)"
               />
             </label>
-          </div>
-        </header>
 
-        @if (visibleGroups().length) {
-          <div class="space-y-5">
-            @for (group of visibleGroups(); track group.id) {
-              <section
-                class="overflow-hidden rounded-3xl border border-outline bg-surface"
-                [attr.aria-labelledby]="group.id"
-              >
-                <div class="flex items-start gap-4 border-b border-outline bg-surface-subtle px-5 py-5 sm:px-6">
-                  <span
-                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong"
+            @if (group.areas.length) {
+              <div class="grid gap-2 p-4 sm:grid-cols-2 sm:p-5">
+                @for (area of group.areas; track area.route) {
+                  <a
+                    class="group flex min-h-16 items-center gap-3 rounded-xl border border-brand/25 bg-surface-raised/70 py-3 pl-4 pr-3 text-ink transition-colors hover:border-brand/70 hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                    [routerLink]="area.route"
                   >
-                    <mat-icon aria-hidden="true">{{ group.icon }}</mat-icon>
-                  </span>
-                  <div>
-                    <h2 [id]="group.id" class="text-lg font-bold text-ink">{{ group.title }}</h2>
-                    <p class="mt-1 text-sm leading-5 text-ink-muted">{{ group.description }}</p>
-                  </div>
-                </div>
-
-                <div class="grid gap-3 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-3">
-                  @for (area of group.areas; track area.route) {
-                    <a
-                      class="group flex min-h-40 flex-col rounded-2xl border border-outline bg-surface-raised p-5 transition-colors hover:border-brand hover:bg-brand-soft/35 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface"
-                      [routerLink]="area.route"
+                    <span class="min-w-0 flex-1">
+                      <span class="block text-sm font-bold">{{ area.title }}</span>
+                      <span class="mt-0.5 block text-xs text-ink-muted">{{ area.description }}</span>
+                    </span>
+                    <mat-icon
+                      class="mas-icon-md text-ink-muted transition-colors group-hover:text-brand-strong"
+                      aria-hidden="true"
                     >
-                      <span
-                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand-strong transition-colors group-hover:bg-brand group-hover:text-brand-on"
-                      >
-                        <mat-icon aria-hidden="true">{{ area.icon }}</mat-icon>
-                      </span>
-                      <span class="mt-4 text-base font-bold text-ink">{{ area.title }}</span>
-                      <span class="mt-1 text-sm leading-5 text-ink-muted">{{ area.description }}</span>
-                      <span class="mt-auto pt-4 text-xs font-bold text-brand-strong">Open management area</span>
-                    </a>
-                  }
-                </div>
-              </section>
+                      chevron_right
+                    </mat-icon>
+                  </a>
+                }
+              </div>
+            } @else {
+              <p class="px-5 py-8 text-center text-sm text-ink-muted">No matches in this section.</p>
             }
-          </div>
-        } @else {
-          <section class="rounded-3xl border border-outline bg-surface px-6 py-16 text-center" aria-live="polite">
-            <span
-              class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong"
-            >
-              <mat-icon aria-hidden="true">search_off</mat-icon>
-            </span>
-            <h2 class="mt-4 text-lg font-bold text-ink">No management tools found</h2>
-            <p class="mt-1 text-sm text-ink-muted">Try a broader search such as users, programs, or content.</p>
-            <button
-              type="button"
-              class="mt-5 inline-flex min-h-10 items-center justify-center rounded-xl border border-outline bg-surface-raised px-4 text-sm font-bold text-brand-strong transition-colors hover:border-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand/40"
-              (click)="clearSearch()"
-            >
-              Clear search
-            </button>
-          </section>
+          </mas-section-panel>
         }
       </div>
     </div>
@@ -228,27 +164,16 @@ const ADMIN_GROUPS: readonly AdminGroup[] = [
   host: { class: 'block' },
 })
 export default class AdminSettingsComponent {
-  readonly searchQuery = signal('');
-  readonly visibleGroups = computed(() => {
-    const query = this.searchQuery().trim().toLocaleLowerCase();
-    if (!query) return ADMIN_GROUPS;
+  readonly queries = signal<Record<string, string>>({});
+  readonly visibleGroups = computed(() =>
+    ADMIN_GROUPS.map((group) => {
+      const query = this.queries()[group.id] ?? '';
+      return { ...group, query, areas: filterAdminAreas(group.areas, query) };
+    }),
+  );
 
-    return ADMIN_GROUPS.map((group) => ({
-      ...group,
-      areas: group.areas.filter(
-        (area) =>
-          area.searchText.includes(query) ||
-          group.title.toLocaleLowerCase().includes(query) ||
-          group.description.toLocaleLowerCase().includes(query),
-      ),
-    })).filter((group) => group.areas.length);
-  });
-
-  clearSearch(): void {
-    this.searchQuery.set('');
-  }
-
-  updateSearch(event: Event): void {
-    this.searchQuery.set((event.target as HTMLInputElement).value);
+  updateSearch(groupId: string, event: Event): void {
+    const query = (event.target as HTMLInputElement).value;
+    this.queries.update((queries) => ({ ...queries, [groupId]: query }));
   }
 }

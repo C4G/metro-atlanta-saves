@@ -1,3 +1,4 @@
+import { MatIcon } from '@angular/material/icon';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -84,7 +85,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
 @Component({
   selector: 'mas-rich-text-editor',
   standalone: true,
-  imports: [],
+  imports: [MatIcon],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -284,7 +285,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
       <div class="flex items-center gap-0.5 px-2 py-1.5 border-b border-gray-100 bg-gray-50/80 select-none flex-wrap">
         <!-- Heading / Paragraph selector -->
         <select
-          class="h-[28px] rounded px-1.5 text-xs font-semibold text-gray-600 bg-white border border-gray-200 hover:border-gray-300 focus:outline-none focus:border-blue-400 cursor-pointer transition-colors mr-0.5"
+          class="h-[28px] rounded-lg px-1.5 text-xs font-semibold text-gray-600 bg-white border border-gray-200 hover:border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer transition-colors mr-0.5"
           [value]="currentHeadingLevel()"
           (mousedown)="$event.stopPropagation()"
           (change)="setHeading($event)"
@@ -300,72 +301,36 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Bold (⌘B)"
-          class="flex items-center justify-center w-[28px] h-[28px] rounded text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="flex items-center justify-center w-[28px] h-[28px] rounded-lg text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isBold()"
           [class.!text-gray-900]="isBold()"
           (mousedown)="$event.preventDefault(); toggle('bold')"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">format_bold</mat-icon>
         </button>
 
         <!-- Italic -->
         <button
           type="button"
           title="Italic (⌘I)"
-          class="flex items-center justify-center w-[28px] h-[28px] rounded text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="flex items-center justify-center w-[28px] h-[28px] rounded-lg text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isItalic()"
           [class.!text-gray-900]="isItalic()"
           (mousedown)="$event.preventDefault(); toggle('italic')"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="19" y1="4" x2="10" y2="4" />
-            <line x1="14" y1="20" x2="5" y2="20" />
-            <line x1="15" y1="4" x2="9" y2="20" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">format_italic</mat-icon>
         </button>
 
         <!-- Underline -->
         <button
           type="button"
           title="Underline (⌘U)"
-          class="flex items-center justify-center w-[28px] h-[28px] rounded text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="flex items-center justify-center w-[28px] h-[28px] rounded-lg text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isUnderline()"
           [class.!text-gray-900]="isUnderline()"
           (mousedown)="$event.preventDefault(); toggle('underline')"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M6 4v6a6 6 0 0 0 12 0V4" />
-            <line x1="4" y1="20" x2="20" y2="20" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">format_underlined</mat-icon>
         </button>
 
         <div class="w-px h-4 bg-gray-200 mx-1 shrink-0"></div>
@@ -374,24 +339,12 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Link"
-          class="flex items-center justify-center w-[28px] h-[28px] rounded text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="flex items-center justify-center w-[28px] h-[28px] rounded-lg text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isLink()"
           [class.!text-gray-900]="isLink()"
           (mousedown)="$event.preventDefault(); toggleLink()"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">link</mat-icon>
         </button>
 
         <div class="w-px h-4 bg-gray-200 mx-1 shrink-0"></div>
@@ -400,56 +353,24 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Bullet list"
-          class="flex items-center justify-center w-[28px] h-[28px] rounded text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="flex items-center justify-center w-[28px] h-[28px] rounded-lg text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isBulletList()"
           [class.!text-gray-900]="isBulletList()"
           (mousedown)="$event.preventDefault(); toggle('bulletList')"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="9" y1="6" x2="20" y2="6" />
-            <line x1="9" y1="12" x2="20" y2="12" />
-            <line x1="9" y1="18" x2="20" y2="18" />
-            <circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none" />
-            <circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none" />
-            <circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">format_list_bulleted</mat-icon>
         </button>
 
         <!-- Ordered list -->
         <button
           type="button"
           title="Numbered list"
-          class="flex items-center justify-center w-[28px] h-[28px] rounded text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="flex items-center justify-center w-[28px] h-[28px] rounded-lg text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isOrderedList()"
           [class.!text-gray-900]="isOrderedList()"
           (mousedown)="$event.preventDefault(); toggle('orderedList')"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="10" y1="6" x2="21" y2="6" />
-            <line x1="10" y1="12" x2="21" y2="12" />
-            <line x1="10" y1="18" x2="21" y2="18" />
-            <path d="M4 6h1v4" />
-            <path d="M4 10h2" />
-            <path d="M6 18H4c0-1 2-2 2-3s-1-2-2-2" />
-          </svg>
+          <mat-icon aria-hidden="true" class="mas-icon-sm">format_list_numbered</mat-icon>
         </button>
 
         <div class="w-px h-4 bg-gray-200 mx-1 shrink-0"></div>
@@ -457,7 +378,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Align left"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isTextAlign('left')"
           (mousedown)="$event.preventDefault(); setTextAlign('left')"
         >
@@ -466,7 +387,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Align center"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isTextAlign('center')"
           (mousedown)="$event.preventDefault(); setTextAlign('center')"
         >
@@ -475,7 +396,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Align right"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isTextAlign('right')"
           (mousedown)="$event.preventDefault(); setTextAlign('right')"
         >
@@ -484,7 +405,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Justify"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.bg-gray-200]="isTextAlign('justify')"
           (mousedown)="$event.preventDefault(); setTextAlign('justify')"
         >
@@ -493,7 +414,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Decrease indent"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           (mousedown)="$event.preventDefault(); changeIndent(-1)"
         >
           Outdent
@@ -501,7 +422,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Increase indent"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           (mousedown)="$event.preventDefault(); changeIndent(1)"
         >
           Indent
@@ -512,7 +433,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Insert table"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           (mousedown)="$event.preventDefault(); insertTable()"
         >
           Table
@@ -520,7 +441,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Add table row"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           (mousedown)="$event.preventDefault(); addTableRow()"
         >
           + Row
@@ -528,7 +449,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Add table column"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           (mousedown)="$event.preventDefault(); addTableColumn()"
         >
           + Col
@@ -536,7 +457,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Delete table"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-red-600 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-red-600 transition-colors"
           (mousedown)="$event.preventDefault(); deleteTable()"
         >
           Delete table
@@ -551,7 +472,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Undo"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           (mousedown)="$event.preventDefault(); undo()"
         >
           Undo
@@ -559,7 +480,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Redo"
-          class="px-2 h-[28px] rounded text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="px-2 h-[28px] rounded-lg text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           (mousedown)="$event.preventDefault(); redo()"
         >
           Redo
@@ -570,7 +491,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
         <button
           type="button"
           title="Insert image"
-          class="flex items-center justify-center w-[28px] h-[28px] rounded text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="flex items-center justify-center w-[28px] h-[28px] rounded-lg text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           [class.opacity-50]="uploadingImage()"
           (mousedown)="$event.preventDefault(); imageFileInput.click()"
           [disabled]="uploadingImage()"
@@ -590,20 +511,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
               <path d="M21 12a9 9 0 1 1-6.219-8.56" />
             </svg>
           } @else {
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-              <circle cx="9" cy="9" r="2" />
-              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-            </svg>
+            <mat-icon aria-hidden="true" class="mas-icon-sm">image</mat-icon>
           }
         </button>
       </div>
@@ -624,7 +532,7 @@ const SUPPORTED_SOURCE_TAGS = new Set([
       @if (sourceError()) {
         <p class="px-3 py-1.5 text-xs text-red-600 bg-red-50" role="alert">{{ sourceError() }}</p>
       }
-      <div class="flex items-center justify-between px-3 py-1 text-[11px] text-gray-400 border-t border-gray-100">
+      <div class="flex items-center justify-between px-3 py-1 text-xs text-gray-400 border-t border-gray-100">
         <span>{{ wordCount() }} words</span>
         <button
           type="button"
@@ -661,48 +569,23 @@ const SUPPORTED_SOURCE_TAGS = new Set([
           <button
             type="button"
             title="Edit link"
-            class="flex items-center justify-center w-6 h-6 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors shrink-0"
+            class="flex items-center justify-center w-6 h-6 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors shrink-0"
             (mousedown)="$event.preventDefault(); editLink()"
           >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-              <path d="m15 5 4 4" />
-            </svg>
+            <mat-icon aria-hidden="true" class="mas-icon-sm">edit</mat-icon>
           </button>
           <button
             type="button"
             title="Remove link"
-            class="flex items-center justify-center w-6 h-6 rounded text-gray-500 hover:bg-gray-100 hover:text-red-500 transition-colors shrink-0"
+            class="flex items-center justify-center w-6 h-6 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-red-500 transition-colors shrink-0"
             (mousedown)="$event.preventDefault(); deleteLink()"
           >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M3 6h18" />
-              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-            </svg>
+            <mat-icon aria-hidden="true" class="mas-icon-sm">delete</mat-icon>
           </button>
         } @else {
           <input
             type="url"
-            class="rte-link-input w-48 text-xs rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition"
+            class="rte-link-input w-48 text-xs rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition"
             placeholder="https://"
             [value]="pendingLinkUrl()"
             (input)="setPendingLinkUrl($event)"
@@ -712,41 +595,18 @@ const SUPPORTED_SOURCE_TAGS = new Set([
           <button
             type="button"
             title="Confirm"
-            class="flex items-center justify-center w-6 h-6 rounded text-gray-500 hover:bg-gray-100 hover:text-green-600 transition-colors shrink-0"
+            class="flex items-center justify-center w-6 h-6 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-green-600 transition-colors shrink-0"
             (mousedown)="$event.preventDefault(); confirmLink()"
           >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
+            <mat-icon aria-hidden="true" class="mas-icon-sm">check</mat-icon>
           </button>
           <button
             type="button"
             title="Cancel"
-            class="flex items-center justify-center w-6 h-6 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors shrink-0"
+            class="flex items-center justify-center w-6 h-6 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors shrink-0"
             (mousedown)="$event.preventDefault(); cancelLink()"
           >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
+            <mat-icon aria-hidden="true" class="mas-icon-sm">close</mat-icon>
           </button>
         }
       </div>
