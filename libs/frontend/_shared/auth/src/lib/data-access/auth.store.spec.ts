@@ -113,6 +113,37 @@ describe('AuthStore managed sessions', () => {
     request.flush({ message: 'If the email exists, check your email.' });
   });
 
+  it('lets the page show its own sent state instead of leaving it', () => {
+    const store = TestBed.inject(AuthStore);
+    const http = TestBed.inject(HttpTestingController);
+    const router = TestBed.inject(Router);
+    http.expectOne('/api/auth/get-session').flush(null);
+    const onSent = jest.fn();
+
+    store.forgotPassword({ email: user.email, onSent });
+
+    const request = http.expectOne('/api/auth/request-password-reset');
+    expect(request.request.body).toEqual({
+      email: user.email,
+      redirectTo: `${document.location.origin}/reset-password`,
+    });
+    request.flush({ message: 'If the email exists, check your email.' });
+    expect(onSent).toHaveBeenCalledTimes(1);
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('sends people to sign in after resetting their password', () => {
+    const store = TestBed.inject(AuthStore);
+    const http = TestBed.inject(HttpTestingController);
+    const router = TestBed.inject(Router);
+    http.expectOne('/api/auth/get-session').flush(null);
+
+    store.resetPassword({ password: 'Password123!', token: 'reset-token' });
+
+    http.expectOne('/api/auth/reset-password').flush({ status: true });
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
+  });
+
   it('starts impersonation with a target ID and retains the originating profile locally', () => {
     const store = TestBed.inject(AuthStore);
     const http = TestBed.inject(HttpTestingController);

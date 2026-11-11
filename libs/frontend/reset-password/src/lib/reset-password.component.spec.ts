@@ -17,7 +17,8 @@ describe('ResetPasswordComponent', () => {
     const fixture = TestBed.createComponent(ResetPasswordComponent);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('form')).toBeNull();
-    expect(fixture.nativeElement.querySelector('[role=alert]').textContent).toContain('Request a new password link');
+    expect(fixture.nativeElement.querySelector('h1').textContent).toContain('This link doesn’t work');
+    expect(fixture.nativeElement.querySelector('[role=alert]').textContent).toContain('Request a new link');
     fixture.componentInstance.submitForm();
     expect(resetPassword).not.toHaveBeenCalled();
   });
@@ -46,5 +47,26 @@ describe('ResetPasswordComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('#reset-password').type).toBe('text');
     expect(fixture.nativeElement.querySelector('#reset-confirm-password').type).toBe('text');
+  });
+
+  it('waits for the button before pointing out mismatched passwords', () => {
+    const fixture = TestBed.createComponent(ResetPasswordComponent);
+    fixture.componentRef.setInput('token', 'reset-token');
+    fixture.detectChanges();
+    const type = (selector: string, value: string) => {
+      const input = fixture.nativeElement.querySelector(selector) as HTMLInputElement;
+      input.value = value;
+      input.dispatchEvent(new Event('input'));
+      input.dispatchEvent(new Event('blur'));
+    };
+    type('#reset-password', 'Password123!');
+    type('#reset-confirm-password', 'different');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#reset-confirm-error')).toBeNull();
+    fixture.nativeElement.querySelector('button[type="submit"]').click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#reset-confirm-error').textContent).toContain(
+      'The passwords don’t match',
+    );
   });
 });
