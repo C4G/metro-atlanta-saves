@@ -1,13 +1,13 @@
 model Program {
-  id               String             @id @default(uuid())
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  id               String               @id @default(uuid())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @default(now())
   name             String
-  isTemplate       Boolean            @default(false)
+  isTemplate       Boolean              @default(false)
   Requirement      Requirement[]
   UsersOnPrograms  UsersOnPrograms[]
   alliesOnPrograms AlliesOnPrograms[]
-  partner          Partner            @relation(fields: [partnerId], references: [id])
+  partner          Partner              @relation(fields: [partnerId], references: [id])
   partnerId        String
   description      String?
   startDate        DateTime?
@@ -16,6 +16,7 @@ model Program {
   enrollment       Enrollment[]
   Image            Image[]
   discussionBoards DiscussionBoard[]
+  payments         ParticipantPayment[]
 
   @@map("programs")
 }

@@ -197,12 +197,14 @@ export class ProgramsService {
     const enrollments = await this.prismaService.enrollment.findMany({
       where: { programId },
       include: { user: true },
+      orderBy: { createdAt: 'asc' },
     });
 
     return enrollments.map(({ user, ...rest }) => ({
       ...rest,
       firstName: user.firstName,
       lastName: user.lastName,
+      email: user.email,
     }));
   }
 

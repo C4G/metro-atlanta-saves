@@ -6,6 +6,8 @@ model RequirementCompletion {
   verifiedAt    DateTime?
   verifiedById  String?
   verifiedBy    User?           @relation("RequirementVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
+  completedById String?
+  completedBy   User?           @relation("RequirementCompleter", fields: [completedById], references: [id], onDelete: SetNull)
   userOnProgram UsersOnPrograms @relation(fields: [userId, programId], references: [userId, programId], onDelete: Cascade)
   requirement   Requirement     @relation(fields: [requirementId], references: [id], onDelete: Cascade)
 

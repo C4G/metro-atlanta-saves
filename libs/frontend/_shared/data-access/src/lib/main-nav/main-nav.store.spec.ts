@@ -153,5 +153,17 @@ describe('MainNavStore', () => {
       expect(store.programPages().map(({ label }) => label)).toEqual(['Participants']);
       expect(store.dockItems().map(({ label }) => label)).toEqual(['Dashboard', 'Discussion', 'Programs']);
     });
+
+    it('gives staff the workspace pages and dock inside a program they run', () => {
+      const store = setup(true);
+      store.enterProgram({ id: 'program-1', name: 'Pilot', workspace: true });
+
+      expect(store.programPages().map(({ label, link }) => [label, link])).toEqual([
+        ['Tasks review', '/partner-staff/programs/program-1/progress'],
+        ['Insights', '/partner-staff/programs/program-1/insights'],
+        ['Manage program', '/partner-staff/programs/program-1/manage'],
+      ]);
+      expect(store.dockItems().map(({ label }) => label)).toEqual(['Tasks', 'Insights', 'Manage']);
+    });
   });
 });

@@ -15,7 +15,10 @@ export type MainSection = {
     | 'admin'
     | 'progress'
     | 'program-insights'
-    | 'participants';
+    | 'participants'
+    | 'review'
+    | 'staff-insights'
+    | 'manage';
   label: string;
   icon: string;
   link: string | null;
@@ -31,6 +34,7 @@ export type MainSectionAccess = {
 export type ProgramContext = {
   id: string;
   name: string;
+  workspace?: boolean;
 };
 
 type MainNavState = {
@@ -62,6 +66,15 @@ const ADMIN_SECTIONS: MainSection[] = [
 export const mainSectionsFor = ({ signedIn, isStaff, isAdmin }: MainSectionAccess): MainSection[] => {
   if (!signedIn) return [];
   return [...EVERYONE_SECTIONS, ...(isStaff ? STAFF_SECTIONS : []), ...(isAdmin ? ADMIN_SECTIONS : [])];
+};
+
+export const staffWorkspacePagesFor = (programId: string): MainSection[] => {
+  const base = `/partner-staff/programs/${programId}`;
+  return [
+    { key: 'review', label: 'Tasks review', icon: 'table_chart', link: `${base}/progress`, exact: false },
+    { key: 'staff-insights', label: 'Insights', icon: 'insights', link: `${base}/insights`, exact: false },
+    { key: 'manage', label: 'Manage program', icon: 'tune', link: `${base}/manage`, exact: false },
+  ];
 };
 
 export const programPagesFor = (programId: string, isStaff: boolean): MainSection[] => {
@@ -100,6 +113,9 @@ export const switcherLabelFor = (
 export const DOCK_LABELS: Partial<Record<MainSection['key'], string>> = {
   progress: 'Progress',
   'program-insights': 'Insights',
+  review: 'Tasks',
+  'staff-insights': 'Insights',
+  manage: 'Manage',
 };
 
 export const sectionForUrl = (sections: MainSection[], url: string): MainSection | null => {
@@ -153,7 +169,8 @@ export const MainNavStore = signalStore(
     );
     const programPages = computed<MainSection[]>(() => {
       const program = store.program();
-      return program ? programPagesFor(program.id, authStore.isStaff()) : [];
+      if (!program) return [];
+      return program.workspace ? staffWorkspacePagesFor(program.id) : programPagesFor(program.id, authStore.isStaff());
     });
     const dockItems = computed<MainSection[]>(() =>
       programPages().length > 1

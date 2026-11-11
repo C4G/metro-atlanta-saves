@@ -1,4 +1,4 @@
-import { formatCurrency, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { computed, inject, LOCALE_ID } from '@angular/core';
 import {
   AlliesOnProgramsStore,
@@ -14,30 +14,32 @@ export type PeopleTab = 'participants' | 'allies';
 type ManageProgramState = {
   tab: PeopleTab;
   query: string;
-  adding: boolean;
   addQuery: string;
-  // The person waiting for the staff member to confirm their removal.
   removing: { userId: string; tab: PeopleTab } | null;
-  editingSettings: boolean;
 };
 
 const initialState: ManageProgramState = {
   tab: 'participants',
   query: '',
-  adding: false,
   addQuery: '',
   removing: null,
-  editingSettings: false,
 };
 
 const MAX_CANDIDATES = 6;
+const DAY = 86_400_000;
 
 export const initialsOf = (firstName: string, lastName: string) =>
   `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
-// Matches people by any part of their name or email, ignoring case.
 export const matchesPerson = (query: string, ...fields: string[]) =>
   !query.trim() || fields.join(' ').toLowerCase().includes(query.trim().toLowerCase());
+
+export const appliedAgo = (appliedAt: Date | string, now: Date, locale: string) => {
+  const startOf = (value: Date) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
+  const days = Math.round((startOf(now) - startOf(new Date(appliedAt))) / DAY);
+  const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-Math.max(days, 0), 'day');
+  return `Applied ${relative}`;
+};
 
 export const ManageProgramStore = signalStore(
   withState(initialState),
@@ -52,41 +54,27 @@ export const ManageProgramStore = signalStore(
       locale = inject(LOCALE_ID),
     ) => {
       const day = (value: Date | string | null | undefined) => (value ? formatDate(value, 'MMM d, y', locale) : '');
+      const byFirstName = <T extends { firstName: string }>(people: T[]) =>
+        [...people].sort((a, b) => a.firstName.localeCompare(b.firstName, locale, { sensitivity: 'base' }));
       const participantPeople = computed(() =>
-        [...participants.users()]
-          .sort((a, b) => a.firstName.localeCompare(b.firstName, locale, { sensitivity: 'base' }))
-          .map((user) => {
-            const totals = review.participantTotals().get(user.userId);
-            const done = totals?.tasksDone ?? 0;
-            // Someone added since the review data loaded has every task still ahead of them.
-            const total = totals?.taskTotal ?? review.data()?.requirements.length ?? 0;
-            return {
-              userId: user.userId,
-              name: `${user.firstName} ${user.lastName}`.trim(),
-              initials: initialsOf(user.firstName, user.lastName),
-              email: user.email,
-              savedLabel: formatCurrency(totals?.saved ?? 0, locale, '$', 'USD', '1.2-2'),
-              tasksLabel: `${done}/${total}`,
-              tasksPercent: total ? Math.round((done / total) * 100) : 0,
-              isParticipant: true,
-              record: user,
-            };
-          }),
+        byFirstName(participants.users()).map((user) => ({
+          userId: user.userId,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          initials: initialsOf(user.firstName, user.lastName),
+          email: user.email,
+          isParticipant: true,
+          record: user,
+        })),
       );
       const allyPeople = computed(() =>
-        [...allies.allies()]
-          .sort((a, b) => a.firstName.localeCompare(b.firstName, locale, { sensitivity: 'base' }))
-          .map((ally) => ({
-            userId: ally.userId,
-            name: `${ally.firstName} ${ally.lastName}`.trim(),
-            initials: initialsOf(ally.firstName, ally.lastName),
-            email: ally.email,
-            savedLabel: '—',
-            tasksLabel: 'Ally',
-            tasksPercent: 0,
-            isParticipant: false,
-            record: null,
-          })),
+        byFirstName(allies.allies()).map((ally) => ({
+          userId: ally.userId,
+          name: `${ally.firstName} ${ally.lastName}`.trim(),
+          initials: initialsOf(ally.firstName, ally.lastName),
+          email: ally.email,
+          isParticipant: false,
+          record: null,
+        })),
       );
       const people = computed(() => (tab() === 'participants' ? participantPeople() : allyPeople()));
       return {
@@ -100,17 +88,17 @@ export const ManageProgramStore = signalStore(
         ),
         rows: computed(() => people().filter((person) => matchesPerson(query(), person.name, person.email))),
         addView: computed(() => {
-          const name = programs.program()?.name ?? 'this program';
+          const name = programs.programName();
           return tab() === 'allies'
             ? {
                 button: 'Add ally',
-                heading: `Add an ally to ${name}`,
-                hint: 'Allies support participants and can see the program, but have no tasks of their own.',
+                heading: 'Add an ally',
+                hint: `Allies support participants in ${name} and have no tasks of their own.`,
               }
             : {
                 button: 'Add participant',
-                heading: `Add a participant to ${name}`,
-                hint: 'They’ll see every month’s tasks as soon as you add them.',
+                heading: 'Add a participant',
+                hint: `They see every month’s tasks in ${name} as soon as you add them.`,
               };
         }),
         candidates: computed(() => {
@@ -136,7 +124,7 @@ export const ManageProgramStore = signalStore(
             ({ userId }) => userId === target.userId,
           );
           if (!person) return null;
-          const programName = programs.program()?.name ?? 'this program';
+          const programName = programs.programName();
           return {
             ...person,
             roleLabel: `${person.isParticipant ? 'Participant' : 'Ally'} in ${programName}`,
@@ -190,7 +178,9 @@ export const ManageProgramStore = signalStore(
             id: enrollment.id,
             name: `${enrollment.firstName} ${enrollment.lastName}`.trim(),
             initials: initialsOf(enrollment.firstName, enrollment.lastName),
-            appliedLabel: `Applied ${day(enrollment.createdAt)}`,
+            email: enrollment.email ?? '',
+            appliedOn: day(enrollment.createdAt),
+            appliedLabel: appliedAgo(enrollment.createdAt, new Date(), locale),
           })),
         ),
       };
@@ -205,12 +195,10 @@ export const ManageProgramStore = signalStore(
     ) => ({
       setTab: (tab: PeopleTab) => patchState(store, { tab, addQuery: '' }),
       setQuery: (query: string) => patchState(store, { query }),
-      toggleAdding: () => {
-        const adding = !store.adding();
-        if (adding && !directory.users().length) directory.getUsers();
-        patchState(store, { adding, addQuery: '' });
+      startAdding: () => {
+        if (!directory.users().length) directory.getUsers();
+        patchState(store, { addQuery: '' });
       },
-      closeAdding: () => patchState(store, { adding: false, addQuery: '' }),
       setAddQuery: (addQuery: string) => patchState(store, { addQuery }),
       add: (userId: string) => {
         if (store.tab() === 'participants') participants.enrollParticipant(userId);
@@ -225,7 +213,6 @@ export const ManageProgramStore = signalStore(
         else allies.deleteAlly(target.userId);
         patchState(store, { removing: null });
       },
-      setEditingSettings: (editingSettings: boolean) => patchState(store, { editingSettings }),
     }),
   ),
 );

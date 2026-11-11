@@ -114,7 +114,6 @@ describe('TaskReviewStore monthly progress', () => {
       ['all', 2],
       ['review', 1],
       ['open', 1],
-      ['done', 0],
     ]);
     store.setRosterFilter('open');
     expect(store.filteredRoster().map(({ id }) => id)).toEqual(['person-2']);
