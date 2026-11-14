@@ -4,6 +4,7 @@ import {
   ArrayMaxSize,
   IsArray,
   IsDateString,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -48,6 +49,16 @@ export class MonthAssignmentDto {
   @IsString()
   @ApiPropertyOptional({ type: String, nullable: true, description: 'Learning content to attach, or null' })
   educationalContentId?: string | null;
+
+  @IsOptional()
+  @IsIn([1, 7])
+  @ApiPropertyOptional({
+    type: Number,
+    enum: [1, 7],
+    nullable: true,
+    description: 'Send one email reminder one or seven days before the due date, or null for none',
+  })
+  reminderDaysBefore?: number | null;
 }
 
 export class NewPlanTaskDto {
@@ -72,6 +83,16 @@ export class NewPlanTaskDto {
   @IsString()
   @ApiPropertyOptional({ type: String, nullable: true })
   educationalContentId?: string | null;
+
+  @IsOptional()
+  @IsIn([1, 7])
+  @ApiPropertyOptional({
+    type: Number,
+    enum: [1, 7],
+    nullable: true,
+    description: 'Send one email reminder one or seven days before the due date, or null for none',
+  })
+  reminderDaysBefore?: number | null;
 }
 
 export class SaveMonthlyPlanDto {

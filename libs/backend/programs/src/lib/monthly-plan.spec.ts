@@ -18,8 +18,8 @@ describe('ProgramsService.saveMonthlyPlan', () => {
     findUnique.mockResolvedValue({
       checkpointNames: [{ name: 'Month 1' }, { name: 'Month 2' }, { name: 'Month 3' }, { name: 'Lunch Receipt' }],
       Requirement: [
-        { id: 'task-1', month: 1 },
-        { id: 'task-2', month: 3 },
+        { id: 'task-1', month: 1, dueAt: null },
+        { id: 'task-2', month: 3, dueAt: new Date('2026-12-01T23:59:00Z') },
       ],
     });
     const tx = {
@@ -96,9 +96,47 @@ describe('ProgramsService.saveMonthlyPlan', () => {
       month: 2,
       dueAt: null,
       educationalContentId: 'content-1',
+      reminderDaysBefore: null,
     });
     expect(result.created).toHaveLength(1);
     expect(result.removedRequirementIds).toEqual(['task-2']);
+  });
+
+  it('saves reminders for tasks that have a due date', async () => {
+    await service.saveMonthlyPlan('program-1', {
+      months: 3,
+      assignments: [{ requirementId: 'task-2', month: 3, reminderDaysBefore: 7 }],
+      newTasks: [{ name: 'Upload statement', month: 1, dueAt: '2026-10-20T23:59:00.000Z', reminderDaysBefore: 1 }],
+    });
+
+    expect(updateRequirement).toHaveBeenCalledWith({
+      where: { id: 'task-2' },
+      data: expect.objectContaining({ reminderDaysBefore: 7 }),
+    });
+    expect(createRequirement.mock.calls[0][0].data).toEqual(expect.objectContaining({ reminderDaysBefore: 1 }));
+  });
+
+  it('clears the reminder when the due date is removed', async () => {
+    await service.saveMonthlyPlan('program-1', {
+      months: 3,
+      assignments: [{ requirementId: 'task-2', month: 3, dueAt: null }],
+    });
+
+    expect(updateRequirement.mock.calls[0][0].data).toEqual(
+      expect.objectContaining({ dueAt: null, reminderDaysBefore: null }),
+    );
+  });
+
+  it.each([
+    { assignments: [{ requirementId: 'task-1', month: 1, reminderDaysBefore: 1 }] },
+    { assignments: [{ requirementId: 'task-2', month: 3, dueAt: null, reminderDaysBefore: 7 }] },
+    { assignments: [], newTasks: [{ name: 'Survey', month: 1, reminderDaysBefore: 7 }] },
+  ])('refuses a reminder without a due date: %p', async (change) => {
+    await expect(service.saveMonthlyPlan('program-1', { months: 3, ...change })).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    expect(updateRequirement).not.toHaveBeenCalled();
+    expect(createRequirement).not.toHaveBeenCalled();
   });
 
   it('lets a removed task free up the months being cut', async () => {
@@ -125,6 +163,7 @@ describe('ProgramsService.saveMonthlyPlan', () => {
     { months: 2 },
     { months: 2, assignments: [], newTasks: [{ name: '', month: 1 }] },
     { months: 2, assignments: [], newTasks: [{ name: 'Task', month: 0 }] },
+    { months: 2, assignments: [{ requirementId: 'task-1', month: 1, reminderDaysBefore: 3 }] },
   ])('validates the incoming plan %p', async (body) => {
     expect((await validate(plainToInstance(SaveMonthlyPlanDto, body))).length).toBeGreaterThan(0);
   });

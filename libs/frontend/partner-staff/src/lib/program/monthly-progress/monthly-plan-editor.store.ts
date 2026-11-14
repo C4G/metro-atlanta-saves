@@ -20,6 +20,7 @@ export type DraftTask = {
   month: number | null;
   due: string;
   educationalContentId: string | null;
+  reminder: number | null;
 };
 
 export type TaskForm = {
@@ -27,6 +28,7 @@ export type TaskForm = {
   name: string;
   due: string;
   educationalContentId: string | null;
+  reminder: number | null;
   saveToFrequent: boolean;
   pickingContent: boolean;
   contentQuery: string;
@@ -59,6 +61,7 @@ const emptyForm: TaskForm = {
   name: '',
   due: '',
   educationalContentId: null,
+  reminder: null,
   saveToFrequent: false,
   pickingContent: false,
   contentQuery: '',
@@ -72,6 +75,15 @@ export const toDateInput = (dueAt: Date | string | null | undefined) => {
 };
 
 export const toDueAt = (due: string) => (due ? new Date(`${due}T23:59`).toISOString() : null);
+
+export const REMINDER_OPTIONS: { value: number | null; label: string }[] = [
+  { value: null, label: 'None' },
+  { value: 1, label: '1 day before' },
+  { value: 7, label: '7 days before' },
+];
+
+export const reminderLabel = (reminder: number | null) =>
+  reminder === 1 ? 'Reminder 1 day before' : reminder === 7 ? 'Reminder 7 days before' : '';
 
 export const monthRange = (startDate: Date | string | null | undefined, month: number) => {
   if (!startDate) return null;
@@ -140,7 +152,7 @@ export const MonthlyPlanEditorStore = signalStore(
               const isStarred = frequent.savedNames().has(taskKey(task.name));
               return {
                 ...task,
-                meta: attached ? `${due} · ${attached.title}` : due,
+                meta: [due, task.due && reminderLabel(task.reminder), attached?.title].filter(Boolean).join(' · '),
                 isStarred,
                 isEditing: form()?.key === task.key,
                 starLabel: isStarred
@@ -159,6 +171,11 @@ export const MonthlyPlanEditorStore = signalStore(
             ...current,
             isNew: current.key === null,
             canSubmit: current.name.trim().length > 0,
+            canRemind: !!current.due,
+            reminders: REMINDER_OPTIONS.map((option) => ({
+              ...option,
+              isSelected: (current.due ? current.reminder : null) === option.value,
+            })),
             content:
               attached && current.educationalContentId
                 ? { ...attached, mark: contentMark(current.educationalContentId) }
@@ -198,6 +215,7 @@ export const MonthlyPlanEditorStore = signalStore(
                 month: task.month,
                 ...(task.name.trim() !== was.name && { name: task.name.trim() }),
                 ...(task.due !== was.due && { dueAt: toDueAt(task.due) }),
+                ...(task.reminder !== was.reminder && { reminderDaysBefore: task.reminder }),
                 ...(task.educationalContentId !== was.educationalContentId && {
                   educationalContentId: task.educationalContentId,
                 }),
@@ -213,6 +231,7 @@ export const MonthlyPlanEditorStore = signalStore(
                     month: task.month,
                     dueAt: toDueAt(task.due),
                     educationalContentId: task.educationalContentId,
+                    reminderDaysBefore: task.due ? task.reminder : null,
                   },
                 ],
           );
@@ -269,6 +288,7 @@ export const MonthlyPlanEditorStore = signalStore(
               name: task.name,
               due: task.due,
               educationalContentId: task.educationalContentId,
+              reminder: task.reminder,
             },
           });
         }
@@ -282,12 +302,13 @@ export const MonthlyPlanEditorStore = signalStore(
         const name = form?.name.trim();
         if (!form || !name) return;
         const month = store.selected() || null;
+        const reminder = form.due ? form.reminder : null;
         if (form.key === null) {
           const key = `n${store.nextKey()}`;
           patchState(store, {
             tasks: [
               ...store.tasks(),
-              { key, id: null, name, month, due: form.due, educationalContentId: form.educationalContentId },
+              { key, id: null, name, month, due: form.due, educationalContentId: form.educationalContentId, reminder },
             ],
             nextKey: store.nextKey() + 1,
             form: null,
@@ -298,7 +319,7 @@ export const MonthlyPlanEditorStore = signalStore(
               .tasks()
               .map((task) =>
                 task.key === form.key
-                  ? { ...task, name, due: form.due, educationalContentId: form.educationalContentId }
+                  ? { ...task, name, due: form.due, educationalContentId: form.educationalContentId, reminder }
                   : task,
               ),
             form: null,
@@ -336,7 +357,15 @@ export const MonthlyPlanEditorStore = signalStore(
         patchState(store, {
           tasks: [
             ...store.tasks(),
-            { key, id: null, name: saved.name, month, due: '', educationalContentId: saved.educationalContentId },
+            {
+              key,
+              id: null,
+              name: saved.name,
+              month,
+              due: '',
+              educationalContentId: saved.educationalContentId,
+              reminder: null,
+            },
           ],
           nextKey: store.nextKey() + 1,
         });

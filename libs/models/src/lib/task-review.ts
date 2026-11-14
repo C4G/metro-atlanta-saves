@@ -26,12 +26,11 @@ export type ProgramMonth = { name: string; number: number };
 export type TaskReviewData = {
   startDate: Date | string | null;
   months: ProgramMonth[];
-  requirements: Pick<Requirement, 'id' | 'name' | 'dueAt' | 'month' | 'educationalContentId'>[];
-  participants: (Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> &
-    { requirementStatus: string[] } & {
-      completions: TaskReviewCompletion[];
-      checkpoints: TaskReviewCheckpoint[];
-    })[];
+  requirements: Pick<Requirement, 'id' | 'name' | 'dueAt' | 'month' | 'educationalContentId' | 'reminderDaysBefore'>[];
+  participants: (Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> & { requirementStatus: string[] } & {
+    completions: TaskReviewCompletion[];
+    checkpoints: TaskReviewCheckpoint[];
+  })[];
 };
 
 export type FrequentTask = { id: string; name: string; educationalContentId: string | null };

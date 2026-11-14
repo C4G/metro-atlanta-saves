@@ -269,7 +269,10 @@ export class ProgramsService {
     return this.prismaService.$transaction(async (tx) => {
       const program = await tx.program.findUnique({
         where: { id: programId },
-        select: { checkpointNames: { select: { name: true } }, Requirement: { select: { id: true, month: true } } },
+        select: {
+          checkpointNames: { select: { name: true } },
+          Requirement: { select: { id: true, month: true, dueAt: true } },
+        },
       });
       if (!program) throw new BadRequestException(['The program does not exist']);
 
@@ -284,6 +287,13 @@ export class ProgramsService {
       ) {
         throw new BadRequestException([`Tasks can only be assigned to Month 1 through Month ${months}.`]);
       }
+      const dueDates = new Map(program.Requirement.map(({ id, dueAt }) => [id, dueAt]));
+      const remindsWithoutDueDate =
+        [...assigned.values()].some(
+          ({ requirementId, dueAt, reminderDaysBefore }) =>
+            reminderDaysBefore != null && (dueAt === undefined ? !dueDates.get(requirementId) : !dueAt),
+        ) || newTasks.some(({ dueAt, reminderDaysBefore }) => reminderDaysBefore != null && !dueAt);
+      if (remindsWithoutDueDate) throw new BadRequestException(['A due date is required to schedule a reminder.']);
       const stranded = program.Requirement.filter(
         ({ id, month }) => !assigned.has(id) && !removed.has(id) && month !== null && month > months,
       );
@@ -305,7 +315,7 @@ export class ProgramsService {
         },
       });
       if (removed.size) await tx.requirement.deleteMany({ where: { id: { in: [...removed] }, programId } });
-      for (const [id, { month, name, dueAt, educationalContentId }] of assigned) {
+      for (const [id, { month, name, dueAt, educationalContentId, reminderDaysBefore }] of assigned) {
         if (removed.has(id)) continue;
         await tx.requirement.update({
           where: { id },
@@ -313,6 +323,7 @@ export class ProgramsService {
             month: month ?? null,
             updatedAt: new Date(),
             ...(name !== undefined && { name: name.trim() }),
+            ...(reminderDaysBefore !== undefined && { reminderDaysBefore }),
             ...(dueAt !== undefined && { dueAt, ...(dueAt === null && { reminderDaysBefore: null }) }),
             ...(educationalContentId !== undefined && { educationalContentId }),
           },
@@ -328,8 +339,16 @@ export class ProgramsService {
               month: task.month,
               dueAt: task.dueAt ?? null,
               educationalContentId: task.educationalContentId ?? null,
+              reminderDaysBefore: task.reminderDaysBefore ?? null,
             },
-            select: { id: true, name: true, dueAt: true, month: true, educationalContentId: true },
+            select: {
+              id: true,
+              name: true,
+              dueAt: true,
+              month: true,
+              educationalContentId: true,
+              reminderDaysBefore: true,
+            },
           }),
         );
       }

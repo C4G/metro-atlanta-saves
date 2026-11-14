@@ -50,9 +50,16 @@ export type PlanAssignment = {
   name?: string;
   dueAt?: string | null;
   educationalContentId?: string | null;
+  reminderDaysBefore?: number | null;
 };
 
-export type NewPlanTask = { name: string; month: number; dueAt: string | null; educationalContentId: string | null };
+export type NewPlanTask = {
+  name: string;
+  month: number;
+  dueAt: string | null;
+  educationalContentId: string | null;
+  reminderDaysBefore: number | null;
+};
 
 export type MonthlyPlanSubmission = {
   months: number;
@@ -547,6 +554,12 @@ export const TaskReviewStore = signalStore(
                                     edit.educationalContentId === undefined
                                       ? requirement.educationalContentId
                                       : edit.educationalContentId,
+                                  reminderDaysBefore:
+                                    edit.dueAt === null
+                                      ? null
+                                      : edit.reminderDaysBefore === undefined
+                                        ? requirement.reminderDaysBefore
+                                        : edit.reminderDaysBefore,
                                 }
                               : requirement;
                           }),
