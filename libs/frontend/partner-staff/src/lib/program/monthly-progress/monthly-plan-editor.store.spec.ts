@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { FrequentTasksStore, TaskReviewStore } from '@mas/frontend-shared-data-access';
-import { MonthlyPlanEditorStore, monthRange, toDueAt, windowFor } from './monthly-plan-editor.store';
+import { MonthlyPlanEditorStore, monthRange, reminderLabel, toDueAt, windowFor } from './monthly-plan-editor.store';
 
 describe('monthly plan editor helpers', () => {
   it('finds the calendar days of a program month', () => {
@@ -20,6 +20,12 @@ describe('monthly plan editor helpers', () => {
   it('sets due dates at the end of the chosen day', () => {
     expect(toDueAt('')).toBeNull();
     expect(new Date(toDueAt('2026-11-02') ?? '').getHours()).toBe(23);
+  });
+
+  it('names the reminder shown under a task', () => {
+    expect(reminderLabel(1)).toBe('Reminder 1 day before');
+    expect(reminderLabel(7)).toBe('Reminder 7 days before');
+    expect(reminderLabel(null)).toBe('');
   });
 });
 
@@ -48,9 +54,9 @@ describe('MonthlyPlanEditorStore', () => {
       months: 3,
       month: 1,
       tasks: [
-        { id: 'a', name: 'Budgeting', month: 1, due: '', educationalContentId: null },
-        { id: 'b', name: 'Savings', month: 3, due: '2026-12-01', educationalContentId: null },
-        { id: 'c', name: 'Survey', month: null, due: '', educationalContentId: null },
+        { id: 'a', name: 'Budgeting', month: 1, due: '', educationalContentId: null, reminder: null },
+        { id: 'b', name: 'Savings', month: 3, due: '2026-12-01', educationalContentId: null, reminder: null },
+        { id: 'c', name: 'Survey', month: null, due: '', educationalContentId: null, reminder: null },
       ],
     });
   });
@@ -96,6 +102,33 @@ describe('MonthlyPlanEditorStore', () => {
       { requirementId: 'c', month: 2 },
     ]);
     expect(removedRequirementIds).toEqual(['a']);
+  });
+
+  it('sends a reminder only for tasks with a due date', () => {
+    editor.startAdding();
+    expect(editor.formView()?.canRemind).toBe(false);
+    editor.updateForm({ name: 'Upload statement', due: '2026-10-20', reminder: 7 });
+    expect(editor.formView()?.reminders.find(({ isSelected }) => isSelected)?.label).toBe('7 days before');
+    editor.submitForm();
+    editor.startAdding();
+    editor.updateForm({ name: 'Survey', reminder: 1 });
+    editor.submitForm();
+    editor.select(3);
+    editor.startEditing('t1');
+    editor.updateForm({ reminder: 1 });
+    editor.submitForm();
+
+    expect(editor.month().tasks[0].meta).toBe('Due Dec 1, 2026 · Reminder 1 day before');
+    const { newTasks, assignments } = editor.submission();
+    expect(newTasks.map(({ name, reminderDaysBefore }) => [name, reminderDaysBefore])).toEqual([
+      ['Upload statement', 7],
+      ['Survey', null],
+    ]);
+    expect(assignments.find(({ requirementId }) => requirementId === 'b')).toEqual({
+      requirementId: 'b',
+      month: 3,
+      reminderDaysBefore: 1,
+    });
   });
 
   it('saves a starred task to the partner’s frequently used list', () => {

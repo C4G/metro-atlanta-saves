@@ -74,7 +74,14 @@ export class UsersOnProgramsService {
       }),
       this.prisma.requirement.findMany({
         where: { programId },
-        select: { id: true, name: true, dueAt: true, month: true, educationalContentId: true },
+        select: {
+          id: true,
+          name: true,
+          dueAt: true,
+          month: true,
+          educationalContentId: true,
+          reminderDaysBefore: true,
+        },
         orderBy: [{ dueAt: { sort: 'asc', nulls: 'last' } }, { name: 'asc' }],
       }),
       this.prisma.usersOnPrograms.findMany({
@@ -542,7 +549,9 @@ export class UsersOnProgramsService {
       const createdUserOnProgram = await this.prisma.usersOnPrograms.create({
         data: {
           ...membershipData,
-          requirementCompletions: { create: [...new Set(requirementStatus)].map((requirementId) => ({ requirementId })) },
+          requirementCompletions: {
+            create: [...new Set(requirementStatus)].map((requirementId) => ({ requirementId })),
+          },
         },
         include: {
           user: {

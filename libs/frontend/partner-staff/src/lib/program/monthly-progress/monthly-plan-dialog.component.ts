@@ -22,6 +22,7 @@ import {
   LABEL,
   ROW,
   SEGMENT,
+  SEGMENT_BUTTON,
 } from '../ui/staff-ui';
 import { WindowFrameComponent } from '../ui/window-frame.component';
 import { MAX_MONTHS, MonthlyPlanEditorStore, toDateInput } from './monthly-plan-editor.store';
@@ -258,6 +259,34 @@ const SMALL_ICON_CONTROL =
                       />
                     </div>
                   </div>
+                  <div class="flex flex-col gap-1.5">
+                    <span id="plan-task-reminder" [class]="labelClass">Email reminder</span>
+                    <div
+                      [class]="segmentClass + ' self-start max-sm:w-full'"
+                      role="group"
+                      aria-labelledby="plan-task-reminder"
+                      [attr.aria-describedby]="form.canRemind ? null : 'plan-task-reminder-hint'"
+                    >
+                      @for (option of form.reminders; track option.label) {
+                        <button
+                          type="button"
+                          [class]="
+                            segmentButtonClass + ' max-sm:flex-1 disabled:pointer-events-none disabled:opacity-50'
+                          "
+                          [attr.aria-pressed]="option.isSelected"
+                          [disabled]="!form.canRemind && option.value !== null"
+                          (click)="editor.updateForm({ reminder: option.value })"
+                        >
+                          {{ option.label }}
+                        </button>
+                      }
+                    </div>
+                    @if (!form.canRemind) {
+                      <p id="plan-task-reminder-hint" class="text-xs text-ink-muted">
+                        Add a due date to email participants before it’s due.
+                      </p>
+                    }
+                  </div>
                   @if (form.content; as attached) {
                     <div class="flex flex-col gap-1.5">
                       <span [class]="labelClass">Content</span>
@@ -469,6 +498,7 @@ export class MonthlyPlanDialogComponent {
   readonly labelClass = LABEL;
   readonly rowClass = ROW;
   readonly segmentClass = SEGMENT;
+  readonly segmentButtonClass = SEGMENT_BUTTON;
   readonly starButtonClass = STAR_BUTTON;
   readonly starOnClass = 'border-brand/55 bg-brand-soft/70 text-brand-strong';
   readonly starOffClass = 'border-brand/25 text-ink-muted hover:border-brand/70 hover:text-ink';
@@ -491,6 +521,7 @@ export class MonthlyPlanDialogComponent {
         month: requirement.month,
         due: toDateInput(requirement.dueAt),
         educationalContentId: requirement.educationalContentId,
+        reminder: requirement.reminderDaysBefore,
       })),
     });
   }
