@@ -1,39 +1,34 @@
-import { Global, Module } from '@nestjs/common';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { MailService } from './mail.service';
+import { Global, Module, type Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { join } from 'path';
+import { Resend } from 'resend';
+import { MailService, RESEND_CLIENT_FACTORY, type ResendClientFactory } from './mail.service';
+
+const resendClientFactoryProvider: Provider = {
+  provide: RESEND_CLIENT_FACTORY,
+  inject: [ConfigService],
+  useFactory: (config: ConfigService): ResendClientFactory => {
+    let client: Resend | undefined;
+    let clientKey: string | undefined;
+
+    return () => {
+      const apiKey = config.get<string>('RESEND_API_KEY')?.trim();
+      if (!apiKey) {
+        throw new Error('RESEND_API_KEY is not configured; cannot send email.');
+      }
+
+      if (!client || clientKey !== apiKey) {
+        client = new Resend(apiKey);
+        clientKey = apiKey;
+      }
+
+      return client;
+    };
+  },
+};
 
 @Global()
 @Module({
-  imports: [
-    MailerModule.forRootAsync({
-      useFactory: async (config: ConfigService) => ({
-        transport: {
-          host: config.get('MAIL_HOST'),
-          port: config.get('MAIL_PORT'),
-          secure: false,
-          auth: {
-            user: config.get('MAIL_USER'),
-            pass: config.get('MAIL_PASSWORD'),
-          },
-        },
-        defaults: {
-          from: `"No Reply" <${config.get('MAIL_FROM')}>`,
-        },
-        template: {
-          dir: join(__dirname, './assets/templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
-          },
-        },
-      }),
-      inject: [ConfigService],
-    }),
-  ],
-  providers: [MailService],
+  providers: [resendClientFactoryProvider, MailService],
   exports: [MailService],
 })
 export class MailModule {}

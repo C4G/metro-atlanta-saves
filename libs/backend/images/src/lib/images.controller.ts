@@ -182,7 +182,7 @@ export class ImagesController {
         // If the user is in the given program, send an email and add the image
         if (programWithMatchingId) {
           // Logic to get partner emails and send an email with link to checkpoints
-          // https://www.brpatl.com/partner-staff/programs/:programId/users/:userId
+          // https://metroatlantasaves.com/partner-staff/programs/:programId/users/:userId
           const receipt = await this.imagesService.addOrReplaceImage(file, programId, checkpointId, request.user.id);
           try {
             const { partnerId } = await this.programsService.findOne(programId);

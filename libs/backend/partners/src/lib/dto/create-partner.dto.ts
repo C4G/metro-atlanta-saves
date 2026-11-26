@@ -60,7 +60,7 @@ export class CreatePartnerDto {
   @IsUrl()
   @ApiPropertyOptional({
     type: String,
-    example: 'https://www.brpatl.com',
+    example: 'https://metroatlantasaves.com',
     description: 'The partners website url',
   })
   website?: string;

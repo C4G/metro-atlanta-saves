@@ -14,7 +14,7 @@ export class CreateUserDto {
   @Transform((param) => param.value.trim().toLowerCase())
   @ApiProperty({
     type: String,
-    example: 'test@brpatl.com',
+    example: 'test@example.com',
     description: 'The users email',
   })
   email!: string;

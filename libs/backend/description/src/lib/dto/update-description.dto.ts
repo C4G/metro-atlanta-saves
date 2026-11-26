@@ -72,7 +72,7 @@ export class UpdateDescriptionDto {
   @IsUrl()
   @ApiProperty({
     type: String,
-    example: 'https://www.brpatl.com/apply',
+    example: 'https://metroatlantasaves.com/apply',
     description: 'The link the user will be taken to on button click',
     required: false,
   })

@@ -22,11 +22,14 @@ and `metro-atlanta-saves.c4g.dev` is reachable by anyone. That is fine for a
 faithful staging environment, but it is a deliberate choice rather than a side
 effect. If it is not what you want, seed a redacted subset instead.
 
-**On staging, leave the `MAIL_*` variables empty.** `MailModule` builds its
-transport lazily, so an unset `MAIL_HOST` does not stop the app booting — it
-makes sends fail instead. Filling them in means a staging action can email a
-real user, and reset links may reach real users. Keep mail
-broken there on purpose. Production, of course, needs the real values.
+Staging uses Resend through the backend `RESEND_API_KEY` and `MAIL_FROM`
+settings. Because the staging database is a copy of production, its user records
+contain real email addresses. Staging sends to the recipients selected by each
+application action, so a password reset, reminder, notification, or campaign
+can reach a real user. Campaign sends honor production's shared opt-out state;
+other selected transactional recipients remain unchanged. Avoid triggering
+staging email actions unless those recipients should receive the message. In
+particular, do not use a copied production mailing list for a test campaign.
 
 Authentication sessions are stored in the database. Users will need to sign in
 again after restoring a database copy. Credential passwords remain available
@@ -260,7 +263,7 @@ the content type and size against a known-good asset and a path that certainly
 does not exist:
 
 ```sh
-B=https://brpatl.com
+B=https://metroatlantasaves.com
 for u in "/images/<uuid>.jpg" "/assets/logo/<logo>.webp" "/definitely-not-real"; do
   printf '%-44s ' "$u"
   curl -s -o /dev/null -w '%{content_type} %{size_download}\n' "$B$u"
@@ -274,7 +277,7 @@ an `image/*` content type, the file is genuinely exposed.
 ## What does not come across
 
 - **Sessions.** Users log in again after restoring a database copy.
-- **Mail**, on staging. Deliberately non-functional; see the top of this document.
+- **Mail**, on staging. Configured to use Resend; see the top of this document.
 - **Most discussion images.** The pre-container deploy step ran
   `find /var/www/brpatl/backend -mindepth 1 -not -path ".../images*" -delete`,
   which matched `uploads/discussion-images` and wiped it on *every* deploy.

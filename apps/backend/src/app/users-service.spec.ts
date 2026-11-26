@@ -19,6 +19,7 @@ describe('UsersService impersonation candidates', () => {
     { api: { requestPasswordReset } } as any,
     { get: jest.fn().mockReturnValue('https://app.example.com') } as any,
     { sendBulkEmail: jest.fn() } as any,
+    { filterCampaignRecipients: jest.fn() } as any,
   );
 
   beforeEach(() => {
