@@ -1,0 +1,24 @@
+libs/backend/mail/src/lib/mail.service.ts
+  s_f731879cc4caa5::t_2d98dd95ac0bea 224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "68e162100979e977b3b9e28105ba466f16d1c5ef",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_f731879cc4caa5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a2161a-c7c2-7d93-8f52-5115c4807eb3",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
