@@ -1,0 +1,167 @@
+docker-compose.yaml
+  s_f731879cc4caa5::t_0e53c18578e802 55-57
+  s_f731879cc4caa5::t_ffeb5e5e45da34 58-60
+libs/models/src/lib/user-full.ts
+  s_f731879cc4caa5::t_7b76c281a5e9c6 3
+README.md
+  s_f731879cc4caa5::t_1ca65c0852aa95 32-36,166
+  s_f731879cc4caa5::t_e4c646961f9845 163,173-177,319
+libs/backend/users/src/lib/users.module.ts
+  s_f731879cc4caa5::t_29e100248e9880 1,4-5,7,9-11
+libs/backend/mail/src/lib/mail.module.ts
+  s_f731879cc4caa5::t_80f4eb20a7f1b7 1,3-27,31
+.env.example
+  s_f731879cc4caa5::t_0e53c18578e802 14-16,25,31-33,45
+  s_f731879cc4caa5::t_35d81b10a67584 36
+  s_f731879cc4caa5::t_ffeb5e5e45da34 34-35,37-39
+docs/data-migration.md
+  s_f731879cc4caa5::t_e4c646961f9845 25-32,266,280
+apps/backend/prisma/migrations/20261125000000_add_campaign_email_preferences/migration.sql
+  s_f731879cc4caa5::t_6c27d1b0e2c436 1
+libs/backend/educational-content/src/lib/educational-content.service.ts
+  s_f731879cc4caa5::t_bfde4b49cec4b2 5,15,134,146,148,158,170-171
+libs/backend/users/src/lib/email-preferences.controller.spec.ts
+  s_f731879cc4caa5::t_3aa2a546ef3e42 1-93
+libs/backend/checkpoints/src/lib/receipt-review.spec.ts
+  s_f731879cc4caa5::t_72c824610ab00a 9
+openspec/changes/switch-domain-and-email-to-resend/.openspec.yaml
+  s_f731879cc4caa5::t_eb9e7cd5535af2 1-2
+libs/backend/description/src/lib/dto/update-description.dto.ts
+  s_f731879cc4caa5::t_e3043ef160583b 75
+docs/google-auth.md
+  s_f731879cc4caa5::t_396cb5fe0f30b4 19
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 23-26
+  s_f731879cc4caa5::t_26db1f04b85242 7,9,17,28
+libs/backend/users/src/lib/dto/create-user.dto.ts
+  s_f731879cc4caa5::t_e3043ef160583b 17
+apps/backend/src/app/users-service.spec.ts
+  s_f731879cc4caa5::t_7d439d1eecebd2 22
+apps/backend/prisma/models/user.prisma
+  s_f731879cc4caa5::t_6c27d1b0e2c436 9
+libs/frontend/admin/src/lib/email-blast/email-blast.component.ts
+  s_f731879cc4caa5::t_e99d47df8d2c92 2,75,78
+  s_f731879cc4caa5::t_21be84d465825d 42,88
+  s_f731879cc4caa5::t_d1ade66494a8c4 92
+apps/backend/src/app/google-auth.spec.ts
+  s_f731879cc4caa5::t_72c824610ab00a 110,113-115,123
+openspec/changes/switch-domain-and-email-to-resend/specs/site-domain/spec.md
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 8,12,17,22,26,31,36,41,45,50,54
+  s_f731879cc4caa5::t_43c8e9cf940735 1-7,9-11,13-16,18-21,24-25,28-30,38-40,42-44,46-47
+  s_f731879cc4caa5::t_e688231fa481f9 23,27,32-35,37
+  s_f731879cc4caa5::t_d9491938456ebb 48-49,51-53,55-56
+docs/domain-and-email-cutover.md
+  s_f731879cc4caa5::t_e7d73a44ef8edd 1-10,17,30-32,39-90,95-107,113-130
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 18-29
+  s_f731879cc4caa5::t_ffeb5e5e45da34 11-16,33-35,37-38,91-94,108-112
+  s_f731879cc4caa5::t_f6d71f0a8a6486 36
+libs/backend/users/src/lib/email-preferences.service.spec.ts
+  s_f731879cc4caa5::t_3aa2a546ef3e42 1-108
+libs/backend/users/src/lib/users.service.ts
+  s_f731879cc4caa5::t_29e100248e9880 11,20,152,155-156
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 108-111
+libs/backend/images/src/lib/images-upload.spec.ts
+  s_f731879cc4caa5::t_72c824610ab00a 43
+openspec/changes/switch-domain-and-email-to-resend/specs/outbound-email/spec.md
+  s_f731879cc4caa5::t_f4cf7688da04ce 7,23,73,75,82,84-86,95-96,100,102,115,117-118
+  s_f731879cc4caa5::t_4915e910371261 9,98
+  s_f731879cc4caa5::t_d9491938456ebb 21,24-25,27-29,99,109
+  s_f731879cc4caa5::t_97107b7caac48f 30,32-34,36-39,41-44,46-49,51-53,56,104-105,107-108
+  s_f731879cc4caa5::t_ecc5c08862eec1 81,87,89-91,93-94
+  s_f731879cc4caa5::t_f6d71f0a8a6486 110-114
+  s_f731879cc4caa5::t_43c8e9cf940735 1-6,10-11,13-16,18-20,54,57-58,60-63,65-68,70-72,76-77,79-80
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 8,12,17,22,26,31,35,40,45,50,55,59,64,69,74,78,83,88,92,97,101,106,116
+  s_f731879cc4caa5::t_0a6cb3a63823d1 103
+libs/backend/partners/src/lib/dto/create-partner.dto.ts
+  s_f731879cc4caa5::t_e3043ef160583b 63
+libs/backend/mail/src/lib/email-unsubscribe-token.ts
+  s_f731879cc4caa5::t_6c27d1b0e2c436 1-36
+libs/backend/mail/src/lib/email-unsubscribe-token.spec.ts
+  s_f731879cc4caa5::t_3aa2a546ef3e42 1-26
+libs/backend/mail/src/lib/mail.service.ts
+  s_f731879cc4caa5::t_2a308ddf49b0fd 130-131,168-169
+  s_f731879cc4caa5::t_013190ad13ee2f 189
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 180-181
+  s_f731879cc4caa5::t_80f4eb20a7f1b7 2,4-6,10-13,17-18,21,25-27,31-34,36,40-42,46-47,66,73-78,80,84-86,91-95,97,99-128,166,190,193-238,242
+  s_f731879cc4caa5::t_35d81b10a67584 184-188
+  s_f731879cc4caa5::t_f47dc253c76d9a 7
+  s_f731879cc4caa5::t_2664a7e3a1e99d 129,167
+  s_f731879cc4caa5::t_6c27d1b0e2c436 8,48,87-90,132-165,170-179,182-183,191-192
+  s_f731879cc4caa5::t_c25f7ebe949bd1 9
+openspec/changes/switch-domain-and-email-to-resend/proposal.md
+  s_f731879cc4caa5::t_97107b7caac48f 13,29
+  s_f731879cc4caa5::t_e688231fa481f9 30
+  s_f731879cc4caa5::t_64ff5db8a2af51 32
+  s_f731879cc4caa5::t_f4cf7688da04ce 10,20,28
+  s_f731879cc4caa5::t_0a6cb3a63823d1 12
+  s_f731879cc4caa5::t_90cba70b86046a 1-2,4-9,14-19,21-27,31
+  s_f731879cc4caa5::t_368736d401870e 3
+  s_f731879cc4caa5::t_29172245045866 11
+docs/rich-text-editor.md
+  s_f731879cc4caa5::t_26db1f04b85242 28-30
+openspec/changes/switch-domain-and-email-to-resend/design.md
+  s_f731879cc4caa5::t_97107b7caac48f 13,20,42-43,48,64
+  s_f731879cc4caa5::t_64ff5db8a2af51 18,60
+  s_f731879cc4caa5::t_d9491938456ebb 40
+  s_f731879cc4caa5::t_f4cf7688da04ce 11,32,58,66
+  s_f731879cc4caa5::t_713a18265a74a5 1-10,12,14-17,19,21-31,33-37,39,41,44-47,49-57,59,61-63,67-72
+  s_f731879cc4caa5::t_4915e910371261 38,65
+package.json
+  s_f731879cc4caa5::t_8963392733d576 80
+libs/backend/discussion/src/lib/dto/create-discussion-post.dto.ts
+  s_f731879cc4caa5::t_e3043ef160583b 66
+libs/backend/users/src/lib/email-preferences.controller.ts
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 1
+  s_f731879cc4caa5::t_29e100248e9880 3-37,39-40,42-45,74-83
+  s_f731879cc4caa5::t_4915e910371261 2,38,41,46-73
+libs/backend/users/src/index.ts
+  s_f731879cc4caa5::t_29e100248e9880 4
+libs/backend/mail/src/lib/mail.service.spec.ts
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 16-18,20
+  s_f731879cc4caa5::t_3aa2a546ef3e42 3,26,28-32,139-149,151-156,160-163,166,171-181
+  s_f731879cc4caa5::t_3c8e1765f900f0 2,4-5,14-15,21-25,27,33,37-38,49,51,53,55-56,61,84,105,125
+  s_f731879cc4caa5::t_7144914336c704 19,60,69-79,83,92-99,104,113,124,133
+  s_f731879cc4caa5::t_35d81b10a67584 6-13,150,157-159,182-212
+  s_f731879cc4caa5::t_199a3c20c9b1d0 164-165,167-170
+  s_f731879cc4caa5::t_318248b2194755 213-216
+libs/backend/discussion/src/lib/discussion.service.ts
+  s_f731879cc4caa5::t_e3043ef160583b 92,773
+  s_f731879cc4caa5::t_7c8b3c8433bb1c 770-772
+libs/backend/users/src/lib/email-preferences.service.ts
+  s_f731879cc4caa5::t_013190ad13ee2f 75-79,92
+  s_f731879cc4caa5::t_f6d71f0a8a6486 67-72
+  s_f731879cc4caa5::t_29e100248e9880 1-66,73-74,80-91,93-124
+libs/backend/mail/src/index.ts
+  s_f731879cc4caa5::t_6c27d1b0e2c436 3
+libs/backend/images/src/lib/images.controller.ts
+  s_f731879cc4caa5::t_e3043ef160583b 185
+openspec/changes/switch-domain-and-email-to-resend/tasks.md
+  s_f731879cc4caa5::t_97107b7caac48f 20
+  s_f731879cc4caa5::t_a392d30b21d194 3-7,11,19
+  s_f731879cc4caa5::t_d9491938456ebb 13
+  s_f731879cc4caa5::t_c884e1c77295ca 18
+  s_f731879cc4caa5::t_ce055ca096d6ba 1-2,8-10,12,14-17
+libs/backend/shared/src/lib/util/map-user.ts
+  s_f731879cc4caa5::t_7d439d1eecebd2 5-6
+  s_f731879cc4caa5::t_7b76c281a5e9c6 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b7ff1758b3fec4dc29b7ebf97421849f22f0bfee",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_f731879cc4caa5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a2161a-c7c2-7d93-8f52-5115c4807eb3",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
