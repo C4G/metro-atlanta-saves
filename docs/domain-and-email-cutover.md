@@ -50,9 +50,10 @@ the value in both backend runtimes.
    host Resend names and do not treat it as an inbound mailbox.
 3. Remove the existing inbound MX records for `brpatl.com`. Do not configure an
    inbound mailbox or mail integration for either website domain.
-4. Keep `brpatl.com` and `www.brpatl.com` web DNS records pointed at the
-   production droplet while they are needed for HTTPS redirects. Do not change
-   DNS for `metro-atlanta-saves.c4g.dev`.
+4. Keep A records for `brpatl.com` and `www.brpatl.com` pointed at the
+   production droplet while they are needed for HTTPS redirects. Disable Dynu
+   URL forwarding for those hosts; Traefik must receive the requests to serve
+   TLS and redirect. Do not change DNS for `metro-atlanta-saves.c4g.dev`.
 
 ## Production web DNS, Coolify, and TLS
 
@@ -61,11 +62,13 @@ the value in both backend runtimes.
    supported apex and alias records.
 2. Add the new production hosts to the `metro-atlanta-saves` Coolify resource
    and confirm Traefik routes the apex to the frontend/API stack.
-3. Configure HTTP and HTTPS redirects to
-   `https://metroatlantasaves.com` for `brpatl.com`, `www.brpatl.com`, and
-   `www.metroatlantasaves.com`. Preserve request paths and query strings,
-   including `/api` paths. Redirect `http://metroatlantasaves.com` to its
-   HTTPS equivalent.
+3. In the production Coolify resource, configure a Traefik dynamic
+   `RedirectRegex` middleware for `brpatl.com` and `www.brpatl.com` that sends
+   requests to `https://metroatlantasaves.com` while preserving paths and query
+   strings, including `/api` paths. Attach it to the frontend and backend
+   routers. Do not add this temporary redirect to the application Compose file.
+   Do not redirect `www.metroatlantasaves.com`; it may serve the site as an
+   alias. Redirect `http://metroatlantasaves.com` to its HTTPS equivalent.
 4. Keep valid TLS certificates for the canonical apex and every HTTPS redirect
    hostname. Do not add the production hosts, redirects, DNS records, or TLS
    configuration to the staging resource.
@@ -97,8 +100,8 @@ Set production `VAPID_SUBJECT` to the canonical HTTPS origin.
 3. Deploy production and confirm the canonical site and
    `https://metroatlantasaves.com/api/health` return successfully over HTTPS.
 4. Check redirect status, target, path, and query preservation for HTTP and
-   HTTPS requests to each old/alternate host, including a page and an `/api`
-   path. For example:
+   HTTPS requests to both old hosts, including a page and an `/api` path. For
+   example:
 
    ```sh
    curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' \

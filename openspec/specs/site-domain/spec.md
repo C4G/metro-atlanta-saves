@@ -1,8 +1,16 @@
+# site-domain Specification
+
 ## Purpose
+
+
 
 Defines the public production hostname and the behavior expected while the application moves from its current domain to the new canonical domain.
 
-## ADDED Requirements
+
+
+## Requirements
+
+
 
 ### Requirement: Production uses the new canonical origin
 
@@ -18,19 +26,24 @@ The production application SHALL use `https://metroatlantasaves.com` as its cano
 - **WHEN** a user opens the production site at `https://metroatlantasaves.com` and signs in with an enabled authentication method
 - **THEN** authentication completes on that origin and the user can use the site's API with the resulting session
 
-### Requirement: Legacy and alternate hostnames redirect to the canonical origin
+### Requirement: Legacy hostnames redirect to the canonical origin
 
-The production deployment SHALL redirect HTTP and HTTPS requests for `brpatl.com`, `www.brpatl.com`, and `www.metroatlantasaves.com` to the matching path and query on `https://metroatlantasaves.com`. It SHALL serve valid HTTPS for each hostname so HTTPS requests can reach the redirect.
+The production deployment SHALL redirect HTTP and HTTPS requests for `brpatl.com` and `www.brpatl.com` to the matching path and query on `https://metroatlantasaves.com`. It SHALL serve valid HTTPS for both legacy hostnames so HTTPS requests can reach the redirect. The new `www.metroatlantasaves.com` hostname MAY serve the application as an alias without redirecting.
 
 #### Scenario: Visitor opens the old apex domain
 
 - **WHEN** a visitor requests a path and query on `http://brpatl.com` or `https://brpatl.com`
 - **THEN** the response redirects to the same path and query on `https://metroatlantasaves.com`
 
-#### Scenario: Visitor opens an old or alternate www hostname
+#### Scenario: Visitor opens the old www hostname
 
-- **WHEN** a visitor requests a path and query on HTTP or HTTPS at `www.brpatl.com` or `www.metroatlantasaves.com`
+- **WHEN** a visitor requests a path and query on HTTP or HTTPS at `www.brpatl.com`
 - **THEN** the response redirects to the same path and query on `https://metroatlantasaves.com`
+
+#### Scenario: Visitor opens the new www hostname
+
+- **WHEN** a visitor requests a page at `www.metroatlantasaves.com`
+- **THEN** the production site may serve it without redirecting to the apex
 
 #### Scenario: Visitor opens the new apex over HTTP
 
