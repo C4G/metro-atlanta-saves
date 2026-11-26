@@ -221,6 +221,7 @@ export class MailService {
     const filename = `${name}.hbs`;
     const paths = [
       join(__dirname, 'assets', 'templates', filename),
+      join(__dirname, '../../../../../apps/backend/src/assets/templates', filename),
       join(process.cwd(), 'apps', 'backend', 'src', 'assets', 'templates', filename),
     ];
 
