@@ -6,6 +6,7 @@ model User {
   firstName               String                  @default("")
   lastName                String                  @default("")
   email                   String                  @unique
+  emailUnsubscribedAt     DateTime?
   name                    String                  @default("")
   emailVerified           Boolean                 @default(false)
   image                   String?

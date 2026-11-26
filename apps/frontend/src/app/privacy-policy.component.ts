@@ -86,15 +86,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
           this policy as the site changes. The date at the top shows when it was last updated.
         </p>
       </section>
-
-      <section class="mt-10" aria-labelledby="contact-us">
-        <h2 id="contact-us" class="text-2xl font-semibold">Contact us</h2>
-        <p class="mt-4">
-          For privacy questions or requests, email
-          <a class="underline" href="mailto:admin@brpatl.com">admin&#64;brpatl.com</a>
-          .
-        </p>
-      </section>
     </article>
   `,
 })

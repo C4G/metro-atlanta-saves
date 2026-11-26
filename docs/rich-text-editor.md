@@ -25,8 +25,9 @@ an `/assets/rich-text/...` URL. In local development, the Angular proxy forwards
 that path to the API so the same URL works at `http://localhost:4200`.
 
 When HTML is sent through an email campaign, the mail service converts these
-public asset paths to absolute URLs using `PUBLIC_APP_URL` (for example,
-`https://brpatl.com`). It also inlines email-safe styles for tables, headers, and
+public asset paths to absolute URLs using the environment's `PUBLIC_APP_URL`
+(for example, `https://metroatlantasaves.com` in production or
+`https://metro-atlanta-saves.c4g.dev` in staging). It also inlines email-safe styles for tables, headers, and
 cells, and converts Tiptap indentation to inline `padding-left` styles because
 email clients do not load the application stylesheet. External email providers
 cannot retrieve localhost URLs.

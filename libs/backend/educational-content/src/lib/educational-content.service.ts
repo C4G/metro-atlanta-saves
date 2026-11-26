@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 
 import { PrismaService } from '@mas/backend-prisma';
 import { MailService } from '@mas/backend-mail';
+import { EmailPreferencesService } from '@mas/backend-users';
 import { assetUrl } from '@mas/backend-shared';
 import { EducationalContentWithCategories } from '@mas/models';
 import { NotificationConfigDto } from './dto/notification-config.dto';
@@ -11,6 +12,7 @@ export class EducationalContentService {
   constructor(
     private prisma: PrismaService,
     private mailService: MailService,
+    private emailPreferences: EmailPreferencesService,
   ) {}
 
   async getEducationalContent(categoryIds: string[]) {
@@ -129,7 +131,7 @@ export class EducationalContentService {
 
       if (config.programId) {
         const users = await this.prisma.usersOnPrograms.findMany({
-          where: { programId: config.programId },
+          where: { programId: config.programId, user: { emailUnsubscribedAt: null } },
           distinct: ['userId'],
           include: {
             user: {
@@ -141,9 +143,9 @@ export class EducationalContentService {
       } else if (config.userId) {
         const user = await this.prisma.user.findUnique({
           where: { id: config.userId },
-          select: { email: true },
+          select: { email: true, emailUnsubscribedAt: true },
         });
-        if (user) {
+        if (user && !user.emailUnsubscribedAt) {
           emails = [user.email];
         }
       }
@@ -153,6 +155,7 @@ export class EducationalContentService {
       body = contentDescription;
 
       const enrolledUsers = await this.prisma.usersOnPrograms.findMany({
+        where: { user: { emailUnsubscribedAt: null } },
         distinct: ['userId'],
         include: {
           user: {
@@ -164,7 +167,8 @@ export class EducationalContentService {
     }
 
     if (emails.length > 0) {
-      await this.mailService.sendNewEducationalContent(emails, heading, body);
+      const eligibleEmails = await this.emailPreferences.filterCampaignRecipients(emails);
+      await this.mailService.sendNewEducationalContent(eligibleEmails, heading, body);
     }
   }
 

@@ -107,12 +107,12 @@ describe('Google authentication configuration', () => {
     expect(decodeURIComponent(url)).toContain('http://localhost:3000/api/auth/callback/google');
   });
 
-  it('uses each allowed production hostname for its own OAuth callback', async () => {
+  it('uses the canonical production hostname for its OAuth callback', async () => {
     const config = new ConfigService({
       ...credentials,
-      BETTER_AUTH_URL: 'https://brpatl.com',
-      BETTER_AUTH_ALLOWED_HOSTS: 'brpatl.com,www.brpatl.com',
-      CORS_ORIGIN: 'https://brpatl.com,https://www.brpatl.com',
+      BETTER_AUTH_URL: 'https://metroatlantasaves.com',
+      BETTER_AUTH_ALLOWED_HOSTS: 'metroatlantasaves.com',
+      CORS_ORIGIN: 'https://metroatlantasaves.com',
     });
     const db = { user: [], account: [], session: [], verification: [] };
     const auth = betterAuth({
@@ -120,7 +120,7 @@ describe('Google authentication configuration', () => {
       database: memoryAdapter(db),
     });
 
-    for (const origin of ['https://brpatl.com', 'https://www.brpatl.com']) {
+    for (const origin of ['https://metroatlantasaves.com']) {
       const response = await auth.handler(
         new Request(`${origin}/api/auth/sign-in/social`, {
           method: 'POST',

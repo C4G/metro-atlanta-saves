@@ -89,7 +89,7 @@ export class DiscussionService {
   ) {
     const publicKey = this.configService.get<string>('VAPID_PUBLIC_KEY');
     const privateKey = this.configService.get<string>('VAPID_PRIVATE_KEY');
-    const subject = this.configService.get<string>('VAPID_SUBJECT') ?? 'mailto:admin@brpatl.com';
+    const subject = this.configService.get<string>('VAPID_SUBJECT') ?? 'https://metroatlantasaves.com';
     if (publicKey && privateKey) {
       webpush.setVapidDetails(subject, publicKey, privateKey);
     } else {
@@ -767,7 +767,10 @@ export class DiscussionService {
           `);
           const emails = boardMembers.map((m) => m.email).filter(Boolean);
           if (emails.length > 0) {
-            const boardUrl = dto.boardUrl ?? `https://brpatl.com/discussion/${boardId}`;
+            const publicAppUrl = (
+              this.configService.get<string>('PUBLIC_APP_URL') ?? 'https://metroatlantasaves.com'
+            ).replace(/\/+$/, '');
+            const boardUrl = dto.boardUrl ?? `${publicAppUrl}/discussion/${boardId}`;
             const postUrl = `${boardUrl}?tab=announcements&post=${id}`;
             const emailContent =
               `${(dto.emailBody ?? dto.body).trim()}` +

@@ -1,3 +1,3 @@
 import { User } from '@mas/prisma-client/browser';
 
-export type UserFull = User & { firstProgramId?: string };
+export type UserFull = Omit<User, 'emailUnsubscribedAt'> & { firstProgramId?: string };

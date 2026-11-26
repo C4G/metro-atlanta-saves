@@ -1,61 +1,51 @@
 import { UserFull } from '@mas/models';
-import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Handlebars, { type TemplateDelegate } from 'handlebars';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
+import { type CreateBatchEmailOptions, Resend } from 'resend';
+import { createEmailUnsubscribeToken } from './email-unsubscribe-token';
+
+export const RESEND_CLIENT_FACTORY = Symbol('RESEND_CLIENT_FACTORY');
+export type ResendClientFactory = () => Resend;
+
+const RESEND_BATCH_SIZE = 100;
 
 @Injectable()
 export class MailService {
+  private readonly templateCache = new Map<string, TemplateDelegate>();
+
   constructor(
-    private mailerService: MailerService,
     private configService: ConfigService,
+    @Inject(RESEND_CLIENT_FACTORY) private readonly createResendClient: ResendClientFactory,
   ) {}
 
   async sendForgotPassword(email: string, token: string, resetUrl?: string) {
-    const url = resetUrl ?? `https://brpatl.com/reset-password?token=${token}&email=${email}`;
-
-    await this.mailerService.sendMail({
-      to: email,
-      from: '"BRPATL" <no-reply@brpatl.com>',
-      subject: 'Forgot your email? Reset it now!',
-      template: './forgot-password',
-      context: {
-        url,
-      },
-    });
+    const url = resetUrl ?? `${this.getPublicAppUrl()}/reset-password?${new URLSearchParams({ token, email })}`;
+    const html = await this.renderTemplate('forgot-password', { url });
+    await this.sendIndividual(email, 'Forgot your email? Reset it now!', html);
   }
 
   async sendCheckpointImageChanged(approved: boolean, email: string, name: string) {
-    await this.mailerService.sendMail({
-      to: email,
-      from: '"BRPATL" <no-reply@brpatl.com>',
-      subject: `Your checkpoint submission was ${approved ? 'approved' : 'rejected'}!`,
-      template: './checkpoint-image-changed',
-      context: { name, status: approved ? 'approved' : 'rejected', approved },
+    const html = await this.renderTemplate('checkpoint-image-changed', {
+      name,
+      status: approved ? 'approved' : 'rejected',
+      approved,
     });
+    await this.sendIndividual(email, `Your checkpoint submission was ${approved ? 'approved' : 'rejected'}!`, html);
   }
 
   async sendPartnerStaffImageAdded(partnerEmails: string[], programId: string, { id, firstName, lastName }: UserFull) {
-    const url = `https://www.brpatl.com/partner-staff/programs/${programId}/users/${id}`;
-
-    await this.mailerService.sendMail({
-      to: partnerEmails,
-      from: '"BRPATL" <no-reply@brpatl.com>',
-      subject: 'A new image was added and awaiting approval!',
-      template: './user-image-added',
-      context: { url, name: `${firstName} ${lastName}` },
-    });
+    const url = `${this.getPublicAppUrl()}/partner-staff/programs/${encodeURIComponent(programId)}/users/${encodeURIComponent(id)}`;
+    const html = await this.renderTemplate('user-image-added', { url, name: `${firstName} ${lastName}` });
+    await this.sendToRecipients(partnerEmails, 'A new image was added and awaiting approval!', html);
   }
 
   async sendNewEducationalContent(emails: string[], heading: string, body: string) {
-    const url = 'https://brpatl.com/educational-resources';
-
-    await this.mailerService.sendMail({
-      to: emails,
-      from: '"BRPATL" <no-reply@brpatl.com>',
-      subject: heading,
-      template: './new-educational-content',
-      context: { heading, body, url },
-    });
+    const url = `${this.getPublicAppUrl()}/educational-resources`;
+    const html = await this.renderTemplate('new-educational-content', { heading, body, url });
+    await this.sendCampaignToRecipients(emails, heading, html);
   }
 
   async sendRequirementDueReminder({
@@ -73,39 +63,184 @@ export class MailService {
     dueAt: Date;
     programId: string;
   }) {
-    const publicAppUrl = (this.configService.get<string>('PUBLIC_APP_URL') ?? 'https://brpatl.com').replace(/\/+$/, '');
+    const publicAppUrl = this.getPublicAppUrl();
     const dueDate = new Intl.DateTimeFormat('en-US', {
       timeZone: 'America/New_York',
       dateStyle: 'long',
       timeStyle: 'short',
     }).format(dueAt);
 
-    await this.mailerService.sendMail({
-      to: email,
-      from: '"BRPATL" <no-reply@brpatl.com>',
-      subject: `Reminder: ${requirementName} is due soon`,
-      template: './requirement-due-reminder',
-      context: {
-        firstName,
-        requirementName,
-        programName,
-        dueDate,
-        url: `${publicAppUrl}/program-profiles/${programId}/course-progress`,
-      },
+    const html = await this.renderTemplate('requirement-due-reminder', {
+      firstName,
+      requirementName,
+      programName,
+      dueDate,
+      url: `${publicAppUrl}/program-profiles/${encodeURIComponent(programId)}/course-progress`,
     });
+    await this.sendIndividual(email, `Reminder: ${requirementName} is due soon`, html);
   }
 
   async sendBulkEmail(emails: string[], subject: string, body: string) {
-    await this.mailerService.sendMail({
-      to: emails,
-      from: '"BRPATL" <no-reply@brpatl.com>',
+    await this.sendToRecipients(emails, subject, this.toEmailHtml(body));
+  }
+
+  async sendBulkCampaignEmail(emails: string[], subject: string, body: string) {
+    await this.sendCampaignToRecipients(emails, subject, this.toEmailHtml(body));
+  }
+
+  private async sendIndividual(recipient: string, subject: string, html: string): Promise<void> {
+    const resend = this.createResendClient();
+    const { data, error } = await resend.emails.send({
+      from: this.getFrom(),
+      to: recipient,
       subject,
-      html: this.toEmailHtml(body),
+      html,
     });
+
+    if (error) {
+      throw new Error(`Resend email submission failed: ${error.message}`);
+    }
+    if (!data?.id) {
+      throw new Error('Resend email submission did not return an email ID.');
+    }
+  }
+
+  private async sendToRecipients(recipients: string[], subject: string, html: string): Promise<void> {
+    if (recipients.length === 0) {
+      return;
+    }
+
+    const resend = this.createResendClient();
+    const from = this.getFrom();
+    const messages: CreateBatchEmailOptions[] = recipients.map((recipient) => ({
+      from,
+      to: [recipient],
+      subject,
+      html,
+    }));
+
+    for (let start = 0; start < messages.length; start += RESEND_BATCH_SIZE) {
+      const batch = messages.slice(start, start + RESEND_BATCH_SIZE);
+      const { data, error } = await resend.batch.send(batch, { batchValidation: 'strict' });
+
+      if (error) {
+        throw new Error(`Resend batch email submission failed: ${error.message}`);
+      }
+      const acceptedCount = Array.isArray(data?.data) ? data.data.length : 0;
+      if (acceptedCount !== batch.length) {
+        throw new Error(`Resend accepted ${acceptedCount} of ${batch.length} batch messages.`);
+      }
+    }
+  }
+
+  private async sendCampaignToRecipients(recipients: string[], subject: string, html: string): Promise<void> {
+    if (recipients.length === 0) {
+      return;
+    }
+
+    const resend = this.createResendClient();
+    const from = this.getFrom();
+    const messages: CreateBatchEmailOptions[] = recipients.map((recipient) => {
+      const unsubscribeUrl = this.getUnsubscribeUrl(recipient);
+      const safeUrl = Handlebars.Utils.escapeExpression(unsubscribeUrl);
+      const campaignHtml = `${html}<p style="margin-top: 24px; color: #6b7280; font-size: 12px;"><a href="${safeUrl}">Unsubscribe from future campaign emails</a></p>`;
+
+      return {
+        from,
+        to: [recipient],
+        subject,
+        html: campaignHtml,
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      };
+    });
+
+    for (let start = 0; start < messages.length; start += RESEND_BATCH_SIZE) {
+      const batch = messages.slice(start, start + RESEND_BATCH_SIZE);
+      const { data, error } = await resend.batch.send(batch, { batchValidation: 'strict' });
+
+      if (error) {
+        throw new Error(`Resend campaign email submission failed: ${error.message}`);
+      }
+      const acceptedCount = Array.isArray(data?.data) ? data.data.length : 0;
+      if (acceptedCount !== batch.length) {
+        throw new Error(`Resend accepted ${acceptedCount} of ${batch.length} campaign messages.`);
+      }
+    }
+  }
+
+  private getUnsubscribeUrl(email: string): string {
+    const secret = this.configService.get<string>('EMAIL_UNSUBSCRIBE_SECRET')?.trim();
+    if (!secret || Buffer.byteLength(secret, 'utf8') < 32) {
+      throw new Error('EMAIL_UNSUBSCRIBE_SECRET must be configured with at least 32 bytes before sending campaigns.');
+    }
+
+    const endpoint =
+      this.configService.get<string>('EMAIL_UNSUBSCRIBE_URL')?.trim() ||
+      'https://metroatlantasaves.com/api/users/unsubscribe';
+    const url = new URL(endpoint);
+    const validEndpointPath = url.pathname === '/api/users/unsubscribe';
+    const isCanonicalEndpoint = url.origin === 'https://metroatlantasaves.com';
+    const isLocalDevelopmentEndpoint =
+      this.configService.get<string>('NODE_ENV') === 'development' && url.origin === 'http://localhost:3000';
+    if (!validEndpointPath || (!isCanonicalEndpoint && !isLocalDevelopmentEndpoint)) {
+      throw new Error('EMAIL_UNSUBSCRIBE_URL must use the canonical production unsubscribe endpoint.');
+    }
+    url.searchParams.set('token', createEmailUnsubscribeToken(email, secret));
+    return url.toString();
+  }
+
+  private getFrom(): string {
+    const address = this.configService.get<string>('MAIL_FROM')?.trim();
+    if (!address) {
+      throw new Error('MAIL_FROM is not configured; cannot send email.');
+    }
+    return `Metro Atlanta Saves <${address}>`;
+  }
+
+  private getPublicAppUrl(): string {
+    return (this.configService.get<string>('PUBLIC_APP_URL')?.trim() || 'https://metroatlantasaves.com').replace(
+      /\/+$/,
+      '',
+    );
+  }
+
+  private async renderTemplate(name: string, context: Record<string, unknown>): Promise<string> {
+    let template = this.templateCache.get(name);
+    if (!template) {
+      const source = await this.readTemplate(name);
+      template = Handlebars.compile(source, { strict: true });
+      this.templateCache.set(name, template);
+    }
+    return template(context);
+  }
+
+  private async readTemplate(name: string): Promise<string> {
+    const filename = `${name}.hbs`;
+    const paths = [
+      join(__dirname, 'assets', 'templates', filename),
+      join(__dirname, '../../../../../apps/backend/src/assets/templates', filename),
+      join(process.cwd(), 'apps', 'backend', 'src', 'assets', 'templates', filename),
+    ];
+
+    for (const path of paths) {
+      try {
+        return await readFile(path, 'utf8');
+      } catch (error) {
+        if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT') {
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    throw new Error(`Email template "${filename}" could not be found.`);
   }
 
   private toEmailHtml(body: string): string {
-    const publicAppUrl = (this.configService.get<string>('PUBLIC_APP_URL') ?? 'https://brpatl.com').replace(/\/+$/, '');
+    const publicAppUrl = this.getPublicAppUrl();
     const htmlWithAbsoluteImages = body.replace(/(\bsrc\s*=\s*["'])\/(assets\/rich-text\/)/gi, `$1${publicAppUrl}/$2`);
 
     const htmlWithTableStyles = htmlWithAbsoluteImages.replace(

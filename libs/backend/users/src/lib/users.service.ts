@@ -8,6 +8,7 @@ import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { AuthService as BetterAuthService } from '@thallesp/nestjs-better-auth';
 import { MailService } from '@mas/backend-mail';
+import { EmailPreferencesService } from './email-preferences.service';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
     private betterAuth: BetterAuthService,
     private config: ConfigService,
     private mailService: MailService,
+    private emailPreferences: EmailPreferencesService,
   ) {}
 
   async getUsers(requestingUser: Pick<UserFull, 'role' | 'partnerId'>) {
@@ -103,7 +105,10 @@ export class UsersService {
         });
         return user;
       });
-      const publicAppUrl = (this.config.get<string>('PUBLIC_APP_URL') ?? 'https://brpatl.com').replace(/\/+$/, '');
+      const publicAppUrl = (this.config.get<string>('PUBLIC_APP_URL') ?? 'https://metroatlantasaves.com').replace(
+        /\/+$/,
+        '',
+      );
       await this.betterAuth.api.requestPasswordReset({
         body: { email: createdUser.email, redirectTo: `${publicAppUrl}/reset-password` },
       });
@@ -144,9 +149,10 @@ export class UsersService {
 
   async sendBulkEmail(subject: string, body: string) {
     const users = await this.prisma.user.findMany({
+      where: { emailUnsubscribedAt: null },
       select: { email: true },
     });
-    const emails = users.map((u) => u.email);
-    await this.mailService.sendBulkEmail(emails, subject, body);
+    const emails = await this.emailPreferences.filterCampaignRecipients(users.map((u) => u.email));
+    await this.mailService.sendBulkCampaignEmail(emails, subject, body);
   }
 }

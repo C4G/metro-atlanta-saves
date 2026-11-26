@@ -29,7 +29,11 @@ your specific configuration values as needed:
 
 - Set database credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, etc.)
 - Configure JWT secret
-- Set up mail server details if needed
+- For local campaign email, set `RESEND_API_KEY`, `MAIL_FROM`, and a random
+  `EMAIL_UNSUBSCRIBE_SECRET` in the ignored root `.env` file. Never commit either
+  secret. Production and staging must share the same unsubscribe secret; staging
+  also needs `EMAIL_PREFERENCE_SOURCE_URL=https://metroatlantasaves.com/api/users/campaign-suppressions`
+  so it honors current production opt-outs.
 
 ## Start the app
 
@@ -156,15 +160,20 @@ Both environments are Docker Compose resources on the same Coolify instance
 
 | | Production | Staging |
 | --- | --- | --- |
-| URL | `brpatl.com`, `www.brpatl.com` | `metro-atlanta-saves.c4g.dev` |
+| URL | `metroatlantasaves.com` (old `brpatl.com` hosts redirect) | `metro-atlanta-saves.c4g.dev` |
 | Coolify resource | `metro-atlanta-saves` | `metro-atlanta-saves-staging` |
 | Server | `brp-01` — a DigitalOcean droplet added to Coolify as a **remote server** | Coolify's own host (`localhost`) |
-| Mail | real `MAIL_*` | **empty on purpose** — see [`docs/data-migration.md`](./docs/data-migration.md) |
+| Mail | Resend via backend `RESEND_API_KEY` | Resend via backend `RESEND_API_KEY`; campaigns honor shared opt-outs |
 | Data | real | a copy of production, including real PII |
 
 Production is a remote server rather than its own Coolify instance so the
 control plane does not consume the droplet's 4 GB of RAM. The running containers
 do not depend on Coolify being reachable — only deployments do.
+
+See the [domain and Resend cutover runbook](./docs/domain-and-email-cutover.md)
+for production DNS, Coolify/Traefik redirects and TLS, OAuth, sender setup,
+campaign unsubscribe configuration, and rollback steps. Staging keeps its
+existing hostname, DNS, TLS, and routing.
 
 `brp-01` was rebuilt onto Ubuntu 26.04 LTS in August 2026. Two things about that
 host are easy to get wrong:
@@ -307,4 +316,4 @@ It will show tasks that you can run with Nx.
 
 ### Web Address
 
-- [www.brpatl.com](https://www.brpatl.com)
+- [Metro Atlanta Saves](https://metroatlantasaves.com)

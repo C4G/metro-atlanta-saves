@@ -40,7 +40,7 @@ describe('Monthly receipt ownership', () => {
   });
   it('preserves a saved receipt and handles email rejection without terminating the process', async () => {
     findOne.mockResolvedValue({ id: 'month-1', programId: 'program-1', userId: 'participant-1' });
-    sendPartnerStaffImageAdded.mockRejectedValueOnce(new Error('SMTP unavailable'));
+    sendPartnerStaffImageAdded.mockRejectedValueOnce(new Error('Resend unavailable'));
     const warn = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     try {
       await expect(

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +39,7 @@ import { EmailBlastStore } from './email-blast.store';
           <mat-form-field class="sm:col-span-2">
             <mat-label>Discussion Board ID (optional)</mat-label>
             <input matInput formControlName="discussionBoardId" placeholder="e.g. abc123" (input)="updateBodyLink()" />
-            <mat-hint>Creates a direct link to brpatl.com/discussion/&lt;id&gt; in the email</mat-hint>
+            <mat-hint>Creates a direct link to this site's discussion board in the email</mat-hint>
           </mat-form-field>
         </div>
         <div>
@@ -71,10 +72,10 @@ import { EmailBlastStore } from './email-blast.store';
   },
 })
 export default class EmailBlastComponent {
+  private readonly document = inject(DOCUMENT);
   private fb = inject(FormBuilder);
   emailBlastStore = inject(EmailBlastStore);
-
-  readonly discussionBaseUrl = 'https://brpatl.com/discussion';
+  private readonly discussionBaseUrl = `${this.document.location?.origin || 'https://metroatlantasaves.com'}/discussion`;
 
   emailForm = this.fb.group({
     subject: this.fb.nonNullable.control('', [Validators.required]),
@@ -84,11 +85,11 @@ export default class EmailBlastComponent {
 
   updateBodyLink() {
     const id = this.emailForm.get('discussionBoardId')?.value?.trim();
-    const link = id ? `${this.discussionBaseUrl}/${id}` : this.discussionBaseUrl;
+    const link = id ? `${this.discussionBaseUrl}/${encodeURIComponent(id)}` : this.discussionBaseUrl;
     const linkHtml = `<p><a href="${link}">Join the Discussion &rarr;</a></p>`;
     const current: string = this.emailForm.get('body')?.value ?? '';
     const withoutOld = current
-      .replace(/<p><a href="https:\/\/brpatl\.com\/discussion[^"]*">Join the Discussion.*?<\/a><\/p>/g, '')
+      .replace(/<p><a href="https?:\/\/[^"]+\/discussion(?:\/[^"]*)?">Join the Discussion.*?<\/a><\/p>/gs, '')
       .trim();
     this.emailForm.get('body')?.setValue(withoutOld + '\n' + linkHtml);
   }

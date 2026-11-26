@@ -63,7 +63,7 @@ export class CreateDiscussionPostDto {
   @IsOptional()
   @ApiProperty({
     type: String,
-    example: 'https://brpatl.com/discussion/abc123',
+    example: 'https://metroatlantasaves.com/discussion/abc123',
     description: 'The board URL from the client, used as the link in the email notification.',
   })
   boardUrl?: string;
