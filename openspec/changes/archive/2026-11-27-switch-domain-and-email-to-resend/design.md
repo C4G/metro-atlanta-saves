@@ -23,7 +23,7 @@ See [proposal.md](proposal.md) for motivation and [the capability specs](specs/)
 
 ### Keep the application on the current Coolify stack and make the edge hostname-aware
 
-Point the new domain records at the existing production droplet and add the new apex and `www` hostname to the production Coolify resource so Traefik can route them and issue certificates. Keep `metroatlantasaves.com` as the application host. Configure host-level HTTPS redirects at Coolify/Traefik for the old apex, old `www`, and new `www` hostnames so redirects cover both frontend paths and `/api`, preserving the path and query. Retain the old domain's DNS and certificate coverage while redirects are required.
+Point the new domain records at the existing production droplet and add the new apex and `www` hostname to the production Coolify resource so Traefik can route them and issue certificates. Keep `metroatlantasaves.com` as the application host. Configure a temporary Traefik dynamic `RedirectRegex` middleware in Coolify for the old apex and old `www` hostnames, attached to both frontend and backend routers so redirects cover frontend paths and `/api`, preserving the path and query. Keep the new `www` hostname as a site alias without requiring a redirect. Retain the old domain's DNS and certificate coverage while redirects are required; Dynu URL forwarding must be disabled for those hosts so HTTPS reaches Traefik. Keep this temporary edge configuration out of the application Compose file.
 
 Alternative considered: add a second application or proxy stack for the new domain. That duplicates routing and deployment state without a need to move the running services.
 
@@ -64,7 +64,7 @@ Alternative considered: make these provider settings implicit in the source chan
 1. Add the Resend implementation and campaign unsubscribe flow, configure production and staging runtime secrets and shared opt-out checks, update production and staging public URL handling, and document the rollout while preserving staging's hostname, DNS, TLS, and edge routing.
 2. Verify the new sender domain in Resend, publish the records required for outbound sending, remove obsolete inbound MX routing for `brpatl.com`, add Resend and unsubscribe settings in both production and staging backend runtimes, and update Google OAuth settings for production.
 3. Point the new production domain and `www` DNS records at the existing droplet. Configure Coolify/Traefik routing and TLS for the new production hosts while retaining old hosts; do not alter staging's hostname, DNS, TLS, or edge routing. Deploy and check the production canonical site, API, auth flows, and public links, plus environment-specific email links and Resend delivery in both environments.
-4. Enable edge redirects from both `brpatl.com` hosts and `www.metroatlantasaves.com` to the new apex, then check path/query preservation and all API routes.
+4. Enable Coolify/Traefik edge redirects from both `brpatl.com` hosts to the new apex, then check path/query preservation and all API routes. Leave `www.metroatlantasaves.com` available as an alias.
 5. Roll back by restoring the previous Coolify hostname/auth environment values and DNS routing while the old deployment remains available. The Resend integration can be reverted in code without database changes; retain the new DNS records and verified domain if a rollback is needed.
 
 ## Open Questions
