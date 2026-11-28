@@ -14,7 +14,12 @@ const initialState: EmailBlastState = {
   sending: false,
 };
 
-type SendEmailPayload = { subject: string; body: string };
+export type EmailCampaignAudience =
+  | { type: 'users'; userIds: string[] }
+  | { type: 'board'; boardId: string }
+  | { type: 'program'; programId: string };
+
+type SendEmailPayload = { subject: string; body: string; audience: EmailCampaignAudience };
 
 export const EmailBlastStore = signalStore(
   withState(initialState),
@@ -27,7 +32,7 @@ export const EmailBlastStore = signalStore(
             tapResponse({
               next: () => {
                 patchState(store, { sending: false });
-                snackBar.open('Email sent to all users successfully', undefined, {
+                snackBar.open('Campaign email sent successfully', undefined, {
                   panelClass: 'success',
                   duration: 5000,
                 });

@@ -40,6 +40,15 @@ describe('DiscussionBoardsStore', () => {
     expect(store.boards()).toEqual([board]);
   });
 
+  it('loads all discussion boards for the administrator directory', () => {
+    store.getAllBoards().subscribe();
+    const request = http.expectOne('/api/discussion-boards/admin/all');
+    expect(request.request.method).toBe('GET');
+    request.flush([board]);
+
+    expect(store.boards()).toEqual([board]);
+  });
+
   it('clears stale boards when loading fails after the user context changes', () => {
     store.getBoards().subscribe();
     http.expectOne('/api/discussion-boards').flush([board]);

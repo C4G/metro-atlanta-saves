@@ -84,6 +84,16 @@ export const DiscussionBoardsStore = signalStore(
           return throwError(() => error);
         }),
       ),
+    getAllBoards: () =>
+      http.get<DiscussionBoard[]>(`${BASE_URL}/admin/all`).pipe(
+        tap((boards) => {
+          patchState(store, { boards });
+        }),
+        catchError((error: unknown) => {
+          patchState(store, { boards: [] });
+          return throwError(() => error);
+        }),
+      ),
     updateBoard: (boardId: string, changes: UpdateDiscussionBoard) =>
       http.patch<DiscussionBoard>(`${BASE_URL}/${boardId}`, changes).pipe(
         tap((updatedBoard) => {

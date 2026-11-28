@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService as BetterAuthService } from '@thallesp/nestjs-better-auth';
 import { MailService } from '@mas/backend-mail';
 import { EmailPreferencesService } from './email-preferences.service';
+import type { EmailCampaignAudience } from './dto/send-bulk-email.dto';
 
 @Injectable()
 export class UsersService {
@@ -147,12 +148,86 @@ export class UsersService {
     return users.map((obj) => obj.email);
   }
 
-  async sendBulkEmail(subject: string, body: string) {
-    const users = await this.prisma.user.findMany({
-      where: { emailUnsubscribedAt: null },
-      select: { email: true },
-    });
-    const emails = await this.emailPreferences.filterCampaignRecipients(users.map((u) => u.email));
+  async sendBulkEmail(subject: string, body: string, audience: EmailCampaignAudience) {
+    const emails = await this.resolveCampaignAudience(audience);
+    if (!emails.length) {
+      throw new BadRequestException('The selected audience has no eligible email recipients.');
+    }
     await this.mailService.sendBulkCampaignEmail(emails, subject, body);
+  }
+
+  async resolveCampaignAudience(audience: EmailCampaignAudience): Promise<string[]> {
+    const users = await this.resolveCampaignAudienceUsers(audience);
+    const uniqueEmails = [...new Set(users.map(({ email }) => email.trim()).filter(Boolean))];
+    return this.emailPreferences.filterCampaignRecipients(uniqueEmails);
+  }
+
+  private async resolveCampaignAudienceUsers(audience: EmailCampaignAudience): Promise<{ email: string }[]> {
+    if (!audience || typeof audience !== 'object' || Array.isArray(audience)) {
+      throw new BadRequestException('A valid campaign audience is required.');
+    }
+
+    if (audience.type === 'users') {
+      if (
+        Object.keys(audience).some((key) => !['type', 'userIds'].includes(key)) ||
+        !Array.isArray(audience.userIds) ||
+        audience.userIds.length === 0 ||
+        audience.userIds.some((id) => typeof id !== 'string' || !id.trim())
+      ) {
+        throw new BadRequestException('Select one or more valid users.');
+      }
+      const userIds = [...new Set(audience.userIds)];
+      const users = await this.prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, email: true },
+      });
+      if (users.length !== userIds.length) {
+        throw new BadRequestException('One or more selected users do not exist.');
+      }
+      return users;
+    } else if (audience.type === 'board') {
+      if (Object.keys(audience).some((key) => !['type', 'boardId'].includes(key)) || !audience.boardId?.trim()) {
+        throw new BadRequestException('Select one valid discussion board.');
+      }
+      const board = await this.prisma.discussionBoard.findUnique({
+        where: { id: audience.boardId },
+        select: { programId: true },
+      });
+      if (!board) throw new BadRequestException('The selected discussion board does not exist.');
+      const members = await this.prisma.discussionBoardMember.findMany({
+        where: {
+          boardId: audience.boardId,
+          isAdmin: false,
+          user: {
+            role: null,
+            ...(board.programId ? { alliesOnPrograms: { none: { programId: board.programId } } } : {}),
+          },
+        },
+        select: { user: { select: { email: true } } },
+      });
+      return members.map(({ user }) => user);
+    } else if (audience.type === 'program') {
+      if (Object.keys(audience).some((key) => !['type', 'programId'].includes(key)) || !audience.programId?.trim()) {
+        throw new BadRequestException('Select one valid program.');
+      }
+      const program = await this.prisma.program.findUnique({
+        where: { id: audience.programId },
+        select: {
+          UsersOnPrograms: {
+            where: {
+              user: {
+                role: null,
+                alliesOnPrograms: { none: { programId: audience.programId } },
+              },
+            },
+            select: { user: { select: { email: true } } },
+          },
+        },
+      });
+      if (!program) throw new BadRequestException('The selected program does not exist.');
+      return program.UsersOnPrograms.map(({ user }) => user);
+    }
+
+    throw new BadRequestException('Select one valid campaign audience.');
   }
 }
