@@ -1,0 +1,19 @@
+libs/backend/users/src/lib/users.service.ts
+  s_d0becf06f13545::t_8e25cde5c2d48e 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4b926cb0b285983fe036a42e061331f04a50df56",
+  "prompts": {},
+  "sessions": {
+    "s_d0becf06f13545": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a21dfc-200b-7363-b9e3-b84f05f17bbb",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
