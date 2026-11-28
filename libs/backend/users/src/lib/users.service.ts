@@ -6,7 +6,7 @@ import { UserFull, UsersNamesOnly } from '@mas/models';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
-import { AuthService as BetterAuthService } from '@thallesp/nestjs-better-auth';
+import type { AuthService as BetterAuthService } from '@thallesp/nestjs-better-auth';
 import { MailService } from '@mas/backend-mail';
 import { EmailPreferencesService } from './email-preferences.service';
 import type { EmailCampaignAudience } from './dto/send-bulk-email.dto';
