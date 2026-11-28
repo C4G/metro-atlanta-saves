@@ -31,10 +31,3 @@ export class SendBulkEmailDto {
   })
   audience!: EmailCampaignAudience;
 }
-
-export class ResolveCampaignRecipientsDto {
-  @IsDefined()
-  @IsObject()
-  @ApiProperty({ type: Object, description: 'The selected campaign audience' })
-  audience!: EmailCampaignAudience;
-}

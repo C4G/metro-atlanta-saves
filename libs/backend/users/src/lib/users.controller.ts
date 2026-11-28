@@ -3,7 +3,8 @@ import { ManagedSessionGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { UsersService } from './users.service';
 import { PatchUserDto } from './dto/patch-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ResolveCampaignRecipientsDto, SendBulkEmailDto } from './dto/send-bulk-email.dto';
+import { ResolveCampaignRecipientsDto } from './dto/resolve-campaign-recipients.dto';
+import { SendBulkEmailDto } from './dto/send-bulk-email.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserFull } from '@mas/models';
 
