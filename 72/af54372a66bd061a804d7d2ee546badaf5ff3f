@@ -1,0 +1,21 @@
+libs/backend/users/src/lib/users.controller.ts
+  s_d0becf06f13545::t_8ce0eaaadfdcbc 6-7
+libs/backend/users/src/lib/dto/resolve-campaign-recipients.dto.ts
+  s_d0becf06f13545::t_8ce0eaaadfdcbc 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "72af54372a66bd061a804d7d2ee546badaf5ff3f",
+  "prompts": {},
+  "sessions": {
+    "s_d0becf06f13545": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a21dfc-200b-7363-b9e3-b84f05f17bbb",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
