@@ -157,11 +157,16 @@ export class UsersService {
   }
 
   async resolveCampaignAudience(audience: EmailCampaignAudience): Promise<string[]> {
+    const users = await this.resolveCampaignAudienceUsers(audience);
+    const uniqueEmails = [...new Set(users.map(({ email }) => email.trim()).filter(Boolean))];
+    return this.emailPreferences.filterCampaignRecipients(uniqueEmails);
+  }
+
+  private async resolveCampaignAudienceUsers(audience: EmailCampaignAudience): Promise<{ email: string }[]> {
     if (!audience || typeof audience !== 'object' || Array.isArray(audience)) {
       throw new BadRequestException('A valid campaign audience is required.');
     }
 
-    let users: { email: string }[];
     if (audience.type === 'users') {
       if (
         Object.keys(audience).some((key) => !['type', 'userIds'].includes(key)) ||
@@ -172,10 +177,14 @@ export class UsersService {
         throw new BadRequestException('Select one or more valid users.');
       }
       const userIds = [...new Set(audience.userIds)];
-      users = await this.prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, email: true } });
+      const users = await this.prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, email: true },
+      });
       if (users.length !== userIds.length) {
         throw new BadRequestException('One or more selected users do not exist.');
       }
+      return users;
     } else if (audience.type === 'board') {
       if (Object.keys(audience).some((key) => !['type', 'boardId'].includes(key)) || !audience.boardId?.trim()) {
         throw new BadRequestException('Select one valid discussion board.');
@@ -196,7 +205,7 @@ export class UsersService {
         },
         select: { user: { select: { email: true } } },
       });
-      users = members.map(({ user }) => user);
+      return members.map(({ user }) => user);
     } else if (audience.type === 'program') {
       if (Object.keys(audience).some((key) => !['type', 'programId'].includes(key)) || !audience.programId?.trim()) {
         throw new BadRequestException('Select one valid program.');
@@ -216,12 +225,9 @@ export class UsersService {
         },
       });
       if (!program) throw new BadRequestException('The selected program does not exist.');
-      users = program.UsersOnPrograms.map(({ user }) => user);
-    } else {
-      throw new BadRequestException('Select one valid campaign audience.');
+      return program.UsersOnPrograms.map(({ user }) => user);
     }
 
-    const uniqueEmails = [...new Set(users.map(({ email }) => email.trim()).filter(Boolean))];
-    return this.emailPreferences.filterCampaignRecipients(uniqueEmails);
+    throw new BadRequestException('Select one valid campaign audience.');
   }
 }
