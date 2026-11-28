@@ -1,0 +1,40 @@
+libs/frontend/admin/src/lib/email-blast/email-blast.component.spec.ts
+  s_d0becf06f13545::t_b7f4e0c0051224 1-46,48-59,61-66,68-74,96-100,102-107
+  s_d0becf06f13545::t_1ff1d69a05f700 47,60,67,101
+  s_d0becf06f13545::t_de8534447521ec 75-95
+libs/backend/users/src/lib/users.controller.spec.ts
+  s_d0becf06f13545::t_1ff1d69a05f700 1-5
+  s_d0becf06f13545::t_7171136df6760c 17-18,21
+  s_d0becf06f13545::t_22d40fb8739ede 7-16,19-20,22-23
+  s_d0becf06f13545::t_706b3fdd4d5c7c 6
+libs/backend/users/src/lib/users.service.ts
+  s_d0becf06f13545::t_706b3fdd4d5c7c 9
+libs/frontend/admin/src/lib/email-blast/email-blast.store.spec.ts
+  s_d0becf06f13545::t_e509315a939c5e 1-67
+libs/frontend/_shared/data-access/src/lib/discussion-boards/discussion-boards.store.spec.ts
+  s_d0becf06f13545::t_e509315a939c5e 43-51
+libs/frontend/admin/src/lib/email-blast/email-recipient-modal.component.spec.ts
+  s_d0becf06f13545::t_b7f4e0c0051224 1,3-16,18-77,79-84
+  s_d0becf06f13545::t_1ff1d69a05f700 78
+  s_d0becf06f13545::t_c520bc55761c82 2,17
+libs/backend/users/src/lib/users.service.spec.ts
+  s_d0becf06f13545::t_e5a4294a7d7aa7 120-122
+  s_d0becf06f13545::t_22d40fb8739ede 1,3-119,123-135
+  s_d0becf06f13545::t_1ff1d69a05f700 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "132cdb544dbe2cfb177d0b869b880103d4f09046",
+  "prompts": {},
+  "sessions": {
+    "s_d0becf06f13545": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a21dfc-200b-7363-b9e3-b84f05f17bbb",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
