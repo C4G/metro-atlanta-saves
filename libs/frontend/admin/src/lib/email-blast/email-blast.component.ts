@@ -1,11 +1,16 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 import { RichTextEditorComponent, SpinnerComponent } from '@mas/frontend-shared-components';
-import { EmailBlastStore } from './email-blast.store';
+import { EmailBlastStore, type EmailCampaignAudience } from './email-blast.store';
+import { EmailRecipientModalComponent } from './email-recipient-modal.component';
 
 @Component({
   selector: 'mas-email-blast',
@@ -21,12 +26,35 @@ import { EmailBlastStore } from './email-blast.store';
   providers: [EmailBlastStore],
   template: `
     <div class="p-6">
-      <h2 class="text-2xl font-bold mb-3">Email Campaign</h2>
-      <p class="mb-4 text-sm text-gray-500">
-        Send an email to all users. Fill in a Discussion Board ID to automatically include a link to that board.
-      </p>
+      <h2 class="mb-3 text-2xl font-bold">Email Campaign</h2>
+      <p class="mb-4 text-sm text-gray-500">Choose individual users, one discussion board, or one program.</p>
       <form #form="ngForm" class="flex flex-col gap-4" [formGroup]="emailForm" (ngSubmit)="onSubmit()">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <section aria-labelledby="recipients-heading" class="rounded-xl border border-gray-200 p-4">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 id="recipients-heading" class="font-bold">Recipients</h3>
+              <p class="text-sm text-gray-500">{{ audienceSummary() || 'No recipients selected' }}</p>
+            </div>
+            <button mat-stroked-button type="button" (click)="openRecipientPicker()">
+              {{ recipientEmails().length ? 'Change recipients' : 'Choose recipients' }}
+            </button>
+          </div>
+          @if (resolvingRecipients()) {
+            <p class="text-sm text-gray-500">Loading recipient emails…</p>
+          }
+          @if (recipientEmails().length) {
+            <div class="flex flex-wrap gap-2" aria-label="Selected recipient email addresses">
+              @for (email of recipientEmails(); track email) {
+                <span
+                  class="max-w-full break-all rounded-full border border-brand/25 bg-surface-raised/70 px-3 py-1 text-xs text-ink"
+                >
+                  {{ email }}
+                </span>
+              }
+            </div>
+          }
+        </section>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <mat-form-field class="sm:col-span-2">
             <mat-label>Subject</mat-label>
             <input matInput formControlName="subject" cdkFocusInitial />
@@ -35,11 +63,6 @@ import { EmailBlastStore } from './email-blast.store';
             ) {
               <mat-error>Subject is required.</mat-error>
             }
-          </mat-form-field>
-          <mat-form-field class="sm:col-span-2">
-            <mat-label>Discussion Board ID (optional)</mat-label>
-            <input matInput formControlName="discussionBoardId" placeholder="e.g. abc123" (input)="updateBodyLink()" />
-            <mat-hint>Creates a direct link to this site's discussion board in the email</mat-hint>
           </mat-form-field>
         </div>
         <div>
@@ -53,56 +76,133 @@ import { EmailBlastStore } from './email-blast.store';
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="emailBlastStore.sending()"
-          class="w-fit ml-auto"
+          [disabled]="
+            emailBlastStore.sending() ||
+            emailForm.invalid ||
+            !selectedAudience() ||
+            !recipientEmails().length ||
+            resolvingRecipients()
+          "
+          class="ml-auto w-fit"
         >
           <span class="relative inline-flex items-center justify-center">
-            <span [class.invisible]="emailBlastStore.sending()">Send to All Users</span>
+            <span [class.invisible]="emailBlastStore.sending()">{{ submitLabel() }}</span>
             @if (emailBlastStore.sending()) {
               <mas-spinner class="absolute" />
-              <span class="sr-only">Send to All Users</span>
+              <span class="sr-only">Sending campaign</span>
             }
           </span>
         </button>
       </form>
     </div>
   `,
-  host: {
-    class: 'block',
-  },
+  host: { class: 'block' },
 })
 export default class EmailBlastComponent {
   private readonly document = inject(DOCUMENT);
-  private fb = inject(FormBuilder);
-  emailBlastStore = inject(EmailBlastStore);
+  private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  readonly emailBlastStore = inject(EmailBlastStore);
   private readonly discussionBaseUrl = `${this.document.location?.origin || 'https://metroatlantasaves.com'}/discussion`;
-
+  private appendedBoardId: string | null = null;
+  readonly selectedAudience = signal<EmailCampaignAudience | null>(null);
+  readonly recipientEmails = signal<string[]>([]);
+  readonly resolvingRecipients = signal(false);
+  readonly audienceSummary = computed(() => {
+    const audience = this.selectedAudience();
+    if (!audience) return '';
+    if (audience.type === 'users') return `${audience.userIds.length} individual users`;
+    return `${this.recipientEmails().length} recipients from ${audience.type === 'board' ? 'discussion board' : 'program'}`;
+  });
+  readonly submitLabel = computed(() =>
+    this.recipientEmails().length ? `Send to ${this.recipientEmails().length} recipients` : 'Select recipients',
+  );
   emailForm = this.fb.group({
     subject: this.fb.nonNullable.control('', [Validators.required]),
-    discussionBoardId: this.fb.nonNullable.control(''),
     body: this.fb.nonNullable.control('', [Validators.required]),
   });
 
-  updateBodyLink() {
-    const id = this.emailForm.get('discussionBoardId')?.value?.trim();
-    const link = id ? `${this.discussionBaseUrl}/${encodeURIComponent(id)}` : this.discussionBaseUrl;
-    const linkHtml = `<p><a href="${link}">Join the Discussion &rarr;</a></p>`;
-    const current: string = this.emailForm.get('body')?.value ?? '';
-    const withoutOld = current
-      .replace(/<p><a href="https?:\/\/[^"]+\/discussion(?:\/[^"]*)?">Join the Discussion.*?<\/a><\/p>/gs, '')
-      .trim();
-    this.emailForm.get('body')?.setValue(withoutOld + '\n' + linkHtml);
+  async openRecipientPicker(): Promise<void> {
+    const audience = await firstValueFrom(
+      this.dialog
+        .open(EmailRecipientModalComponent, {
+          width: 'min(100% - 2rem, 44rem)',
+          maxWidth: '44rem',
+          maxHeight: 'calc(100dvh - 2rem)',
+          autoFocus: false,
+          data: this.selectedAudience(),
+        })
+        .afterClosed(),
+    );
+    if (!audience) return;
+    this.resolvingRecipients.set(true);
+    this.selectedAudience.set(null);
+    this.recipientEmails.set([]);
+    this.updateBoardLink(null);
+    try {
+      const result = await firstValueFrom(
+        this.http.post<{ emails: string[] }>('/api/users/campaign-recipients', { audience }),
+      );
+      if (!result.emails.length) {
+        this.snackBar.open('This audience has no eligible email recipients.', undefined, {
+          panelClass: 'error',
+          duration: 5000,
+        });
+        return;
+      }
+      this.selectedAudience.set(audience);
+      this.recipientEmails.set(result.emails);
+      this.updateBoardLink(audience);
+    } catch {
+      this.snackBar.open('There was an error loading recipient emails.', undefined, {
+        panelClass: 'error',
+        duration: 5000,
+      });
+    } finally {
+      this.resolvingRecipients.set(false);
+    }
   }
 
-  onSubmit() {
-    if (this.emailForm.invalid) {
-      return;
+  private updateBoardLink(audience: EmailCampaignAudience | null): void {
+    const bodyControl = this.emailForm.controls.body;
+    let body = bodyControl.value;
+    if (this.appendedBoardId) {
+      body = this.removeBoardLink(body, this.appendedBoardId).trimEnd();
     }
+    this.appendedBoardId = audience?.type === 'board' ? audience.boardId : null;
+    if (this.appendedBoardId) {
+      const link = `${this.discussionBaseUrl}/${encodeURIComponent(this.appendedBoardId)}`;
+      const linkHtml = `<p><a href="${link}">Join the Discussion &rarr;</a></p>`;
+      body = `${body.trimEnd()}${body.trim() ? '\n' : ''}${linkHtml}`;
+    }
+    bodyControl.setValue(body);
+  }
 
-    const { discussionBoardId, ...payload } = this.emailForm.getRawValue();
+  private removeBoardLink(body: string, boardId: string): string {
+    const url = `${this.discussionBaseUrl}/${encodeURIComponent(boardId)}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const linkPattern = new RegExp(
+      `<p>\\s*<a\\b[^>]*href=["']${url}["'][^>]*>Join the Discussion(?:\\s*&rarr;|\\s*→)?</a>\\s*</p>`,
+      'g',
+    );
+    return body.replace(linkPattern, '');
+  }
+
+  onSubmit(): void {
+    const audience = this.selectedAudience();
+    if (this.emailForm.invalid || !audience || !this.recipientEmails().length) return;
+    const { subject, body } = this.emailForm.getRawValue();
     this.emailBlastStore.sendEmail({
-      ...payload,
-      onSuccess: () => this.emailForm.reset(),
+      subject,
+      body,
+      audience,
+      onSuccess: () => {
+        this.emailForm.reset();
+        this.appendedBoardId = null;
+        this.selectedAudience.set(null);
+        this.recipientEmails.set([]);
+      },
     });
   }
 }

@@ -3,7 +3,7 @@ import { ManagedSessionGuard, RoleGuard, Roles } from '@mas/backend-shared';
 import { UsersService } from './users.service';
 import { PatchUserDto } from './dto/patch-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { SendBulkEmailDto } from './dto/send-bulk-email.dto';
+import { ResolveCampaignRecipientsDto, SendBulkEmailDto } from './dto/send-bulk-email.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserFull } from '@mas/models';
 
@@ -58,6 +58,12 @@ export class UsersController {
   @HttpCode(204)
   @Roles('Administrator')
   sendBulkEmail(@Body() body: SendBulkEmailDto) {
-    return this.usersService.sendBulkEmail(body.subject, body.body);
+    return this.usersService.sendBulkEmail(body.subject, body.body, body.audience);
+  }
+
+  @Post('campaign-recipients')
+  @Roles('Administrator')
+  async campaignRecipients(@Body() body: ResolveCampaignRecipientsDto) {
+    return { emails: await this.usersService.getCampaignRecipients(body.audience) };
   }
 }
