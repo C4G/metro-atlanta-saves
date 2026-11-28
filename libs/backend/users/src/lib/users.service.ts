@@ -156,11 +156,7 @@ export class UsersService {
     await this.mailService.sendBulkCampaignEmail(emails, subject, body);
   }
 
-  async getCampaignRecipients(audience: EmailCampaignAudience) {
-    return this.resolveCampaignAudience(audience);
-  }
-
-  private async resolveCampaignAudience(audience: EmailCampaignAudience): Promise<string[]> {
+  async resolveCampaignAudience(audience: EmailCampaignAudience): Promise<string[]> {
     if (!audience || typeof audience !== 'object' || Array.isArray(audience)) {
       throw new BadRequestException('A valid campaign audience is required.');
     }

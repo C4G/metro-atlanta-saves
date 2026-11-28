@@ -65,6 +65,6 @@ export class UsersController {
   @Post('campaign-recipients')
   @Roles('Administrator')
   async campaignRecipients(@Body() body: ResolveCampaignRecipientsDto) {
-    return { emails: await this.usersService.getCampaignRecipients(body.audience) };
+    return { emails: await this.usersService.resolveCampaignAudience(body.audience) };
   }
 }
