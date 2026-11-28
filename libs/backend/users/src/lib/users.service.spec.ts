@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+jest.mock('@thallesp/nestjs-better-auth', () => ({ AuthService: class AuthService {} }));
 jest.mock('@mas/backend-shared', () => ({ mapUser: jest.fn(), randomPassword: jest.fn() }));
 import { UsersService } from './users.service';
 import type { EmailCampaignAudience } from './dto/send-bulk-email.dto';
