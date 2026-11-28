@@ -1,0 +1,57 @@
+libs/backend/users/src/lib/users.controller.ts
+  s_d0becf06f13545::t_3fb2d2d1afd4f4 6,66
+  s_d0becf06f13545::t_235dff25bf9cb0 63-65,67
+  s_d0becf06f13545::t_fe400b4e7c7f00 61
+  s_d0becf06f13545::t_f37245e0f87b46 62
+libs/frontend/_shared/data-access/src/lib/discussion-boards/discussion-boards.store.ts
+  s_d0becf06f13545::t_fe400b4e7c7f00 87-96
+libs/backend/users/src/lib/dto/send-bulk-email.dto.ts
+  s_d0becf06f13545::t_45624a79ae4af8 30-37
+  s_d0becf06f13545::t_fe400b4e7c7f00 1,4-8,19-29
+  s_d0becf06f13545::t_b8b62c2afe59c5 38-39
+openspec/specs/outbound-email/spec.md
+  s_d0becf06f13545::t_736f25d121f376 17,29-47
+  s_d0becf06f13545::t_e8de9222a41ea1 48
+libs/frontend/admin/src/lib/email-blast/email-blast.component.ts
+  s_d0becf06f13545::t_161a9bfaaf7d71 52,82-86,89,92,99,106
+  s_d0becf06f13545::t_1e9daa4bf8152a 81
+  s_d0becf06f13545::t_9e12b03156a0be 1,4,6,9-10,12-13,29-30,32-51,53-57,79-80,103-105,107
+  s_d0becf06f13545::t_cc640e17997b7c 109-121,127-165,168-178,180-190,192-195,197-205
+libs/backend/users/src/lib/users.service.ts
+  s_d0becf06f13545::t_2292147a2104e1 159-162
+  s_d0becf06f13545::t_e5e681c135da89 189,192-205,212-222
+  s_d0becf06f13545::t_3fbb1b0d47651d 12
+  s_d0becf06f13545::t_fe400b4e7c7f00 151-155,158,163-188,190-191,206-211,223-230
+libs/frontend/admin/src/lib/email-blast/email-blast.store.ts
+  s_d0becf06f13545::t_b55609e546b12e 17-22,35
+libs/frontend/admin/src/lib/email-blast/email-recipient-modal.component.ts
+  s_d0becf06f13545::t_c372841e005ecd 1,3-74,76-82,84-85,89-110
+  s_d0becf06f13545::t_314617b6ad602f 2,75,83,86-88
+  s_d0becf06f13545::t_d33b3a1df877fd 111-309
+openspec/changes/archive/2026-11-27-targeted-email-recipients/.openspec.yaml
+  s_d0becf06f13545::t_7df4f953c4e00a 1-2
+openspec/changes/archive/2026-11-27-targeted-email-recipients/design.md
+  s_d0becf06f13545::t_e31fe664a6c129 1-37
+openspec/changes/archive/2026-11-27-targeted-email-recipients/proposal.md
+  s_d0becf06f13545::t_535cace63fdb81 1-27
+openspec/changes/archive/2026-11-27-targeted-email-recipients/specs/outbound-email/spec.md
+  s_d0becf06f13545::t_1a2e91a7f4eb12 1-41
+openspec/changes/archive/2026-11-27-targeted-email-recipients/tasks.md
+  s_d0becf06f13545::t_b5da5669b8d402 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "19731299e7e18820f515f557a8e5923d85c6876d",
+  "prompts": {},
+  "sessions": {
+    "s_d0becf06f13545": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a21dfc-200b-7363-b9e3-b84f05f17bbb",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
